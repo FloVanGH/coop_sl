@@ -1,0 +1,24 @@
+[package]
+name = "gaming"
+version = "0.1.0"
+edition = "2021"
+authors = ["Florian Blasius <flovanpt@posteo.de>"]
+license = "MIT"
+description = "Example showing pico_engine and pico_ecs"
+publish = false
+repository = "https://codeberg.org/flovansl/slint_extensions"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+slint = { version = "0.3.0", default-features = false, features = ["compat-0-3-0"] }
+pico_engine = { path = "../../gaming/pico_engine", default-features = false }
+pico_ecs = { path = "../../gaming/pico_ecs", default-features = false }
+
+[build-dependencies]
+slint-build = "0.3.0"
+
+[features]
+default = ["std"]
+std = ["slint/default", "pico_engine/default", "pico_ecs/default"]

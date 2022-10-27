@@ -1,0 +1,26 @@
+[workspace]
+members = [
+   "examples/gaming",
+   "examples/platform_support",
+   "examples/widgets",
+   "gaming/pico_engine",
+   "gaming/pico_ecs",
+   "platform_support/slint_psp",
+   "platform_support/slint_redox",
+   "widgets/book_flip",
+   "widgets/co_widgets",
+   "internal/shared",
+]
+
+default-members = [
+    "examples/gaming",
+    "examples/platform_support",
+    "examples/widgets",
+    "gaming/pico_engine",
+    "gaming/pico_ecs",
+    "platform_support/slint_psp",
+    "platform_support/slint_redox",
+    "widgets/book_flip",
+    "widgets/co_widgets",
+    "internal/shared",
+]

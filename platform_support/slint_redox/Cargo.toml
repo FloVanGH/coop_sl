@@ -1,0 +1,15 @@
+[package]
+name = "slint_redox"
+version = "0.1.0"
+edition = "2021"
+authors = ["Florian Blasius <flovanpt@posteo.de>"]
+license = "MIT"
+description = "Slint platform support for Redox"
+repository = "https://codeberg.org/flovansl/slint_extensions"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+shared = { path = "../../internal/shared" }
+slint =  { version = "0.3.0", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
+#orbclient = { version = "0.3.34" }
