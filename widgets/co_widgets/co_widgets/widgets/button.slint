@@ -1,0 +1,26 @@
+import { co } from "../co/co.slint";
+
+// A Button with a `clicked` callback.
+export Button := Rectangle {
+    // Callback to handle button click.
+    callback clicked <=> touch.clicked;
+    
+    // Defines the text that is displayed on the button.
+    property<string> text: "text";
+
+    height: co.sizes.medium;
+
+    HorizontalLayout {  
+        padding-left: co.spaces.medium;
+        padding-right: co.spaces.medium;
+        spacing: co.spaces.small;
+
+        label := Text {
+            text <=> root.text;
+            vertical-alignment: center;
+            horizontal-alignment: center;
+        }
+    }
+
+    touch := TouchArea {}
+}

@@ -1,0 +1,26 @@
+import  { Colors } from "colors.slint";
+import  { Sizes } from "sizes.slint";
+import  { Spaces } from "spaces.slint";
+
+// Access to the style resources of teh `co` theme (dark and light).
+export global co := { 
+    // Toggles between light and dark theme.
+    property<bool> dark-theme: true;
+
+    // Access the color definitions of the  `co` theme.
+    property<Colors> colors : {
+        background: dark-theme ? #212121 : #E0E0E0
+    };
+
+    // Access the size definitions of the  `co` theme.
+    property<Sizes> sizes: {
+        medium: 32px,
+    };
+
+     // Access the space definitions of the  `co` theme.
+    property<Spaces> spaces: {
+        small: 4px,
+        medium: 8px,
+        large: 16px,
+    };
+}
