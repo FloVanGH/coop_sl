@@ -1,4 +1,4 @@
-import  { Colors } from "colors.slint";
+import  { Brushes } from "brushes.slint";
 import  { Durations } from "durations.slint";
 import  { Opacities } from "opacities.slint";
 import  { Radius } from "radius.slint";
@@ -6,18 +6,23 @@ import  { Sizes } from "sizes.slint";
 import  { Spaces } from "spaces.slint";
 import  { Typo, Font } from "typo.slint";
 
+import "../assets/fonts/Roboto-Regular.ttf";
+import "../assets/fonts/Roboto-Medium.ttf";
+
 // Access to the style resources of teh `co` theme (dark and light).
 export global co := { 
     // Toggles between light and dark theme.
     property<bool> dark-theme: true;
 
     // Defines the accent (primary) colo.
-    property<color> accent_color: dark-theme ? #01fec5 : #1d9bf2;
+    property<brush> accent_color: dark-theme ? #01fec5 : #1d9bf2;
 
-    // Access the color definitions of the `co` theme.
-    property<Colors> colors : {
+    // Access the brushes definitions of the `co` theme.
+    property<Brushes> brushes : {
         background: dark-theme ? #2d2d2d : #dfdfdf,
         foreground: dark-theme ? #dfdfdf : #2d2d2d,
+        surface: dark-theme ? #505050 : #7e7e7e,
+        on_surface: #212121,
         primary: accent-color,
         border: dark-theme ? #7e7e7e : #505050,
         state: #000000,
@@ -57,19 +62,19 @@ export global co := {
      // Access the space definitions of the  `co` theme.
      property<Typo> typo: {
         label_small: {
-            family: "Roboto Medium",
+            family: "Roboto",
             size: 10px,
             weight: 500
             
         },
         label_medium: {
-            family: "Roboto Medium",
+            family: "Roboto",
             size: 12px,
             weight: 500
             
         },
         label_large: {
-            family: "Roboto Medium",
+            family: "Roboto",
             size: 14px,
             weight: 500
         },

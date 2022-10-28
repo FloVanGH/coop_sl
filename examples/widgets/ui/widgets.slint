@@ -1,16 +1,52 @@
-import { CoWindow, Button , co } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
+import { CoWindow, OutlineButton, FilledButton , co } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
     height: 400px;
     title: "Widgets gallery";
 
-    HorizontalLayout {  
-        padding: 8px;
+    property<bool> default_primary: true;
+     property<brush> current_primary <=> co.accent_color;
 
-        Button {
+    callback update_theme();
+
+    update-theme => {  
+        if(default_primary) {
+            current_primary = co.dark_theme ? #01fec5 : #1d9bf2;
+        } else {
+            current_primary = co.dark_theme ? #6750A4 : #D0BCFF;
+        }
+    }
+
+    VerticalLayout {  
+        padding: 8px;
+        spacing: 4px;
+
+        OutlineButton {
             text: "light / dark";
-            clicked => { co.dark-theme = !co.dark-theme; }
+            clicked => { 
+                co.dark_theme = !co.dark_theme; 
+                update_theme();
+            }
+        }
+
+        OutlineButton {
+            text: "Change primary";
+            clicked => {  
+                root.default_primary = !root.default_primary;
+                update_theme();
+            }
+        }
+
+        FilledButton {
+            text: "Filled";
+            clicked => { debug("Filled clicked") }
+        }
+
+        FilledButton {
+            text: "Primary";
+            primary: true;
+            clicked => { debug("Primary clicked") }
         }
     }
 }  

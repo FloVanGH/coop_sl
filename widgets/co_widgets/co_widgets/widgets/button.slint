@@ -1,13 +1,14 @@
 import { co } from "../co/co.slint";
 import { StateLayer } from "../components/components.slint";
 
-// A Button with a `clicked` callback.
-export Button := Rectangle {
-    // Callback to handle button click.
+// Internal base button.
+BaseButton := Rectangle {
     callback clicked <=> state_layer.clicked;
-    
-    // Defines the text that is displayed on the button.
     property<string> text: "text";
+    property<length> container_border_width <=> container.border_width;
+    property<brush> container_border_color <=> container.border_color;
+    property<brush> container_background <=> container.background;
+    property<brush> label_color <=> label.color;
 
     width: size_helper.width + 2 * co.spaces.large;
     height: co.sizes.medium;
@@ -17,9 +18,7 @@ export Button := Rectangle {
         y: (parent.height - height) / 2;
         width: 100%;
         height: 100%;
-        border-width: 1px;
-        border-color: co.colors.border;
-        border-radius: co.radius.large;
+        border_radius: co.radius.large;
 
         animate width { duration: co.durations.fast; easing: ease_in_out; }
         animate height { duration: co.durations.fast; easing: ease_in_out; }
@@ -36,11 +35,13 @@ export Button := Rectangle {
     label := Text {
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
-        color: co.colors.foreground;
+        color: co.brushes.foreground;
         text <=> root.text;
         vertical-alignment: center;
         horizontal-alignment: center;
         font_size: co.typo.label_medium.size;
+        font_weight: co.typo.label_medium.weight;
+        font_family: co.typo.label_medium.family;
 
         animate font_size { duration: co.durations.fast; easing: ease_in_out; }
     }
@@ -65,4 +66,43 @@ export Button := Rectangle {
             label.font_size: co.typo.label_medium.size - 1px;
         }
     ]
+}
+
+// A bordered Button with a `clicked` callback.
+export OutlineButton := Rectangle {
+    // Callback to handle button click.
+    callback clicked <=> base.clicked;
+    
+    // Defines the text that is displayed on the button.
+    property<string> text: "text";
+
+    width: base.width;
+    height: base.height;
+
+    base := BaseButton {  
+        text <=> root.text;
+        container_border_width: 1px;
+        container_border_color: co.brushes.border;
+    }
+}
+
+// A filled Button with a `clicked` callback.
+export FilledButton := Rectangle {
+    // Callback to handle button click.
+    callback clicked <=> base.clicked;
+    
+    // Defines the text that is displayed on the button.
+    property<string> text: "text";
+
+    // If set to `true` the background of the button will uses `co.brushes.primary`.
+    property<bool> primary: false;
+
+    width: base.width;
+    height: base.height;
+
+    base := BaseButton {  
+        text <=> root.text;
+        container_background: root.primary ? co.brushes.primary : co.brushes.surface;
+        label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
+    }
 }
