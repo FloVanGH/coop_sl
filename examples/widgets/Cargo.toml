@@ -9,46 +9,29 @@ description = "Example uusign book_flip and co_widgets"
 publish = false
 repository = "https://codeberg.org/flovansl/slint_extensions"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+path = "src/main.rs"
+name = "widgets"
 
 
 [dependencies]
-# book_flip = { path = "../../widgets/book_flip", default-features = false }
-# co_widgets = { path = "../../widgets/co_widgets", default-features = false }
 slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0"] }
-
-# for the rp-pico, replace by the hal for your crate
-rp-pico = { version = "0.5", optional = true }
-cortex-m = { version = "0.7.6", optional = true }
-cortex-m-rt = {version = "0.7.1", optional = true }
-alloc-cortex-m = { version = "0.4.2", optional = true }
-st7789 = { version = "0.7", optional = true }
-shared-bus = { version = "0.2.4", optional = true }
-panic-halt = { version = "0.2.0", optional = true }
-display-interface-spi = { version = "0.4.1", optional = true }
-embedded-graphics-core = { version = "0.3.3", optional = true }
-embedded-hal = {version = "0.2.7", optional = true }
-fugit = { version = "0.3.6", optional = true }
+mcu-board-support = { git = "https://github.com/slint-ui/slint", branch = "florian/mcu-test", optional = true }
 
 [build-dependencies]
 slint-build = { version = "0.3.1" }
 
 [features]
 default = ["slint/default"]
-pico = [
-    "slint/unsafe-single-threaded",
-    "slint/libm",
-    "rp-pico",
-    "cortex-m",
-    "cortex-m-rt",
-    "alloc-cortex-m",
-    "embedded-hal",
-    "fugit",
-    "st7789",
-    "display-interface-spi",
-    "embedded-graphics-core",
-    "shared-bus",
-    "panic-halt"
-]
 
+# This is commented out by default because we don't want to build it as a library by default
+# The CI has a script that does sed "s/#wasm# //" to generate the wasm build.
 
+#wasm# [lib]
+#wasm# crate-type = ["cdylib"]
+#wasm# path = "main.rs"
+#wasm#
+#wasm# [target.'cfg(target_arch = "wasm32")'.dependencies]
+#wasm# wasm-bindgen = { version = "0.2" }
+#wasm# web-sys = { version = "0.3", features=["console"] }
+#wasm# console_error_panic_hook = "0.1.5"
