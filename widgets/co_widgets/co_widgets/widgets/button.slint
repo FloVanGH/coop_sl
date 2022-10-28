@@ -1,16 +1,19 @@
 import { co } from "../co/co.slint";
-import { StateLayer } from "../components/components.slint";
+import { StateLayer, Icon } from "../components/components.slint";
 
 // Internal base button.
 BaseButton := Rectangle {
     callback clicked <=> state_layer.clicked;
     property<string> text: "text";
+    property<string> icon <=> icon.icon;
     property<length> container_border_width <=> container.border_width;
     property<brush> container_border_color <=> container.border_color;
     property<brush> container_background <=> container.background;
     property<brush> label_color <=> label.color;
+    property<length> icon_size: root.icon == "" ? 0px : 12px;
+    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.small;
 
-    width: size_helper.width + 2 * co.spaces.large;
+    width: icon_size + spacing + size_helper.width + 2 * co.spaces.large;
     height: co.sizes.medium;
 
     container := Rectangle {
@@ -24,6 +27,14 @@ BaseButton := Rectangle {
         animate height { duration: co.durations.fast; easing: ease_in_out; }
     }
 
+    icon := Icon {
+        x: co.spaces.large;
+        y: (parent.height - height) / 2;
+        icon_size: root.icon_size;
+
+        animate icon_size { duration: co.durations.fast; easing: ease_in_out; }
+    }
+
     size_helper := Text {
         text: label.text;
         visible: false;
@@ -33,7 +44,7 @@ BaseButton := Rectangle {
     }
 
     label := Text {
-        x: (parent.width - width) / 2;
+        x: icon.x + spacing + icon.width;
         y: (parent.height - height) / 2;
         color: co.brushes.foreground;
         text <=> root.text;
@@ -64,6 +75,7 @@ BaseButton := Rectangle {
             state_layer.width: 96%;
             state_layer.height: 96%;
             label.font_size: co.typo.label_medium.size - 1px;
+            icon.icon_size: co.typo.label_medium.size - 1px;
         }
     ]
 }
@@ -75,6 +87,9 @@ export OutlineButton := Rectangle {
     
     // Defines the text that is displayed on the button.
     property<string> text: "text";
+
+    // Defines the optional icon of the button.
+    property<string> icon <=> base.icon;
 
     width: base.width;
     height: base.height;
@@ -93,6 +108,9 @@ export FilledButton := Rectangle {
     
     // Defines the text that is displayed on the button.
     property<string> text: "text";
+
+    // Defines the optional icon of the button.
+    property<string> icon <=> base.icon;
 
     // If set to `true` the background of the button will uses `co.brushes.primary`.
     property<bool> primary: false;

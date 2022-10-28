@@ -1,0 +1,17 @@
+
+// An icon components that works with svg paths as string.
+export Icon := Rectangle {
+    property<brush> icon_color: #ffffff;
+    property<string> icon: "";
+    property<length> icon_size: 0px;
+
+    width: icon_size;
+    height: icon_size;
+
+    Path {
+        fill: parent.icon_color;
+        commands: root.icon;
+        width: 100%;
+        height: 100%;
+    }
+}
