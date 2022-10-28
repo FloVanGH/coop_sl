@@ -1,0 +1,43 @@
+import { co } from "../co/co.slint";
+
+// A `TouchArea` that represents also a visual state (hover | pressed | focused) and can be used as transparent overlay.
+export StateLayer := TouchArea {
+    // If `true` the components has keyboard focus.
+    property<bool> has_focus: focus_scope.has_focus;
+    
+    // Defines the border radius of the state overlay.
+    property<length> border_radius <=> overlay.border_radius;
+
+    overlay := Rectangle {  
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        background: co.colors.state;
+    }
+  
+    focus_scope := FocusScope {
+        width: 0px; // Do not react on clicks
+        enabled <=> root.enabled;
+        key-pressed(event) => {
+            if (event.text == " " || event.text == "\n") {
+                 root.clicked();
+                 return accept;
+            }
+            return reject;
+        }
+    }
+
+    animate opacity { duration: co.durations.fast; easing: ease_in_out; }
+
+    states [
+        pressed when root.pressed : {
+            overlay.opacity: co.opacities.state-presseed;
+        }
+        hover when root.has_hover : {
+            overlay.opacity: co.opacities.state-hover;
+        }
+        focused when root.has_focus : {
+            overlay.opacity: co.opacities.state-presseed;
+        }
+    ]
+}
