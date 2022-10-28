@@ -1,4 +1,4 @@
-#[cfg(not(feature = "std"))]
+#[cfg(features = "pico")]
 fn main() {
     let config = slint_build::CompilerConfiguration::new()
         .embed_resources(slint_build::EmbedResourcesKind::EmbedForSoftwareRenderer);
@@ -6,7 +6,7 @@ fn main() {
     slint_build::print_rustc_flags().unwrap();
 }
 
-#[cfg(feature = "std")]
+#[cfg(not(features = "pico"))]
 fn main() {
     slint_build::compile("ui/widgets.slint").unwrap();
 }
