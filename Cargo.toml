@@ -8,6 +8,7 @@ members = [
    "gaming/pico_designer",
    "platform_support/slint_psp",
    "platform_support/slint_redox",
+   "platform_support/slint_rpi_pico",
    "widgets/book_flip",
    "widgets/co_widgets",
    "internal/shared",
@@ -22,7 +23,17 @@ default-members = [
     "gaming/pico_designer",
     "platform_support/slint_psp",
     "platform_support/slint_redox",
+    "platform_support/slint_rpi_pico",
     "widgets/book_flip",
     "widgets/co_widgets",
     "internal/shared",
 ]
+
+resolver="2"
+
+[profile.release]
+lto = true
+panic = "abort"
+
+[profile.dev]
+panic = "abort"

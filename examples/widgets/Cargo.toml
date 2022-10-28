@@ -13,14 +13,16 @@ build = "build.rs"
 [dependencies]
 book_flip = { path = "../../widgets/book_flip", default-features = false }
 co_widgets = { path = "../../widgets/co_widgets", default-features = false }
-slint = "0.3.0"
+slint = { version = "0.3.0", default-features = false }
+rp-pico = { version = "0.5", optional = true }
+slint_rpi_pico = { path = "../../platform_support/slint_rpi_pico", optional = true }
 
 [build-dependencies]
 slint-build = "0.3.0"
 
 [features]
-default = ["std"]
-std = ["slint/default", "book_flip/default", "co_widgets/default"]
+default = ["slint/default", "book_flip/default", "co_widgets/default"]
+pico = ["slint_rpi_pico", "slint/libm", "slint/unsafe-single-threaded"]
 
 # Remove the `#wasm#` to uncomment the wasm build.
 # This is commented out by default because we don't want to build it as a library by default

@@ -1,6 +1,8 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(not(feature = "std"), no_main)]
 
+#![cfg_attr(not(feature = "std"), feature(default_alloc_error_handler))]
+
 #[cfg(not(feature = "std"))]
 extern crate alloc;
 
@@ -20,11 +22,11 @@ pub fn main() {
     Widgets::new().run()
 }
 
-#[cfg(feature = "mcu-board-support")]
-#[mcu_board_support::entry]
+#[cfg(feature = "rpi")]
+#[rp_pico::entry]
 fn main() -> ! {
-    mcu_board_support::init();
-    Widgets::new().run();
+    slint_rpi_pico::init(||  Widgets::new().run());
+   
 
     panic!("Should not quit")
 }
