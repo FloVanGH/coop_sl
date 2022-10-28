@@ -1,27 +1,18 @@
 [package]
-name = "gaming"
+name = "pico_designer"
 version = "0.1.0"
 edition = "2021"
 authors = ["Florian Blasius <flovanpt@posteo.de>"]
 license = "MIT"
-description = "Example showing pico_engine and pico_ecs"
-publish = false
+description = "Experimental Entity Component System library for no_std enviroments"
 repository = "https://codeberg.org/flovansl/slint_extensions"
-build = "build.rs"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { version = "0.3.0", default-features = false, features = ["compat-0-3-0"] }
-pico_engine = { path = "../../gaming/pico_engine", default-features = false }
-pico_ecs = { path = "../../gaming/pico_ecs", default-features = false }
-
-[build-dependencies]
-slint-build = "0.3.0"
-
-[features]
-default = ["std"]
-std = ["slint/default", "pico_engine/default", "pico_ecs/default"]
+pico_engine = { path = "../pico_engine" }
+slint = "0.3.0"
 
 # Remove the `#wasm#` to uncomment the wasm build.
 # This is commented out by default because we don't want to build it as a library by default

@@ -1,4 +1,4 @@
-import { CoWindow, Button } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
+import { CoWindow, Button , co } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
@@ -9,8 +9,8 @@ export Widgets := CoWindow {
         padding: 8px;
 
         Button {
-            text: "Click me";
-            clicked => { debug("Button clicked") }
+            text: "light / dark";
+            clicked => { co.dark-theme = !co.dark-theme; }
         }
     }
 }  

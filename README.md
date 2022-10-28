@@ -12,6 +12,7 @@ This repository contains all my personal extension crates for [Slint](https://sl
 * gaming/
     * **pico_engine**: experimental engine based on slint with no_std support
     * **pico_ecs**: experimental Entity Component System library with support for no_std
+    * **pico_designer**: experimental map editor for the `pico_engine`
 * widgets/
     * **book_flip**: e-book widget for Slint
     * **co_widgets**`**: custom default widget library for Slint
@@ -24,6 +25,10 @@ This repository contains all my personal extension crates for [Slint](https://sl
 
 ## notes
 
-
 `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
 or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
+
+## Start with Slint
+
+* Language documentation: https://github.com/slint-ui/slint/tree/master/docs
+* Getting start: https://slint-ui.com/#tryout
