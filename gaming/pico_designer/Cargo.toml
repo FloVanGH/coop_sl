@@ -12,7 +12,7 @@ readme = "README.md"
 
 [dependencies]
 pico_engine = { path = "../pico_engine" }
-slint = "0.3.0"
+slint = "0.3.1"
 
 # Remove the `#wasm#` to uncomment the wasm build.
 # This is commented out by default because we don't want to build it as a library by default

@@ -12,12 +12,12 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { version = "0.3.0", default-features = false, features = ["compat-0-3-0"] }
+slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0"] }
 pico_engine = { path = "../../gaming/pico_engine", default-features = false }
 pico_ecs = { path = "../../gaming/pico_ecs", default-features = false }
 
 [build-dependencies]
-slint-build = "0.3.0"
+slint-build = "0.3.1"
 
 [features]
 default = ["std"]

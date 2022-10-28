@@ -12,5 +12,5 @@ readme = "README.md"
 
 [dependencies]
 shared = { path = "../../internal/shared" }
-slint =  { version = "0.3.0", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
+slint =  { version = "0.3.1", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
 #orbclient = { version = "0.3.34" }
