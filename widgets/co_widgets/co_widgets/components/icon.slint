@@ -5,8 +5,8 @@ export Icon := Rectangle {
     property<string> icon: "";
     property<length> icon_size: 0px;
 
-    width: icon_size;
-    height: icon_size;
+    width: icon != "" ? icon_size : 0px;
+    height: icon != "" ? icon_size : 0px;
 
     Path {
         fill: parent.icon_color;

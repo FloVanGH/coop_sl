@@ -3,124 +3,119 @@ import { StateLayer, Icon } from "../components/components.slint";
 
 // Internal base button.
 BaseButton := Rectangle {
-    callback clicked <=> state_layer.clicked;
+    callback clicked <=> i_state_layer.clicked;
     property<string> text: "text";
-    property<string> icon <=> icon.icon;
-    property<length> container_border_width <=> container.border_width;
-    property<brush> container_border_color <=> container.border_color;
-    property<brush> container_background <=> container.background;
-    property<brush> label_color <=> label.color;
-    property<length> icon_size: root.icon == "" ? 0px : 12px;
-    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.small;
+    property<string> icon <=> i_icon.icon;
+    property<length> i_container_border_width <=> i_container.border_width;
+    property<brush> i_container_border_color <=> i_container.border_color;
+    property<brush> i_container_background <=> i_container.background;
+    property<brush> label_color <=> i_label.color;
+    property<length> icon_size: co.icons.size_small;
+    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.medium;
+    property<float> scale: 1.0;
 
-    width: icon_size + spacing + size_helper.width + 2 * co.spaces.large;
+    padding_left:  co.spaces.large;
+    padding_right: co.spaces.large;
+
+    width: padding_left + i_container.icon_width + spacing + i_size_helper.width + padding_right;
     height: co.sizes.medium;
 
-    container := Rectangle {
+    i_container := Rectangle {
+        property<length> spacing: root.spacing;
+        property<length> icon_width: root.icon != "" ? root.icon_size : 0px;
+
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
-        width: 100%;
-        height: 100%;
+        width: root.width * root.scale;
+        height: root.height * root.scale;
         border_radius: co.radius.large;
+        padding_left: root.padding_left * root.scale;
+        padding_right: root.padding_right * root.scale;
 
-        animate width { duration: co.durations.fast; easing: ease_in_out; }
-        animate height { duration: co.durations.fast; easing: ease_in_out; }
+        i_icon := Icon {
+            x: parent.padding_right;
+            y: (parent.height - height) / 2;
+            icon_size: root.icon_size * root.scale;
+            icon_color: root.label_color;
+        }
+    
+        i_label := Text {
+            x: i_icon.x + i_icon.width + parent.spacing * root.scale;
+            y: (parent.height - height) / 2;
+            color: co.brushes.foreground;
+            text <=> root.text;
+            horizontal-alignment: center;
+            font_size: co.typo.label_medium.size * root.scale;
+            font_weight: co.typo.label_medium.weight;
+            font_family: co.typo.label_medium.family;
+        }
+
+        i_state_layer := StateLayer {  
+            width: 100%;
+            height: 100%;
+            border_radius: i_container.border_radius;
+        }
     }
 
-    icon := Icon {
-        x: co.spaces.large;
-        y: (parent.height - height) / 2;
-        icon_size: root.icon_size;
-
-        animate icon_size { duration: co.durations.fast; easing: ease_in_out; }
-    }
-
-    size_helper := Text {
-        text: label.text;
+    // used to calculate the un-scaled size of the button
+    i_size_helper := Text {
+        text: i_label.text;
         visible: false;
-        font_size: co.typo.label_medium.size;
-        font_weight: label.font_weight;
-        font_family: label.font_family;
-    }
-
-    label := Text {
-        x: icon.x + spacing + icon.width;
-        y: (parent.height - height) / 2;
-        color: co.brushes.foreground;
-        text <=> root.text;
-        vertical-alignment: center;
-        horizontal-alignment: center;
-        font_size: co.typo.label_medium.size;
-        font_weight: co.typo.label_medium.weight;
-        font_family: co.typo.label_medium.family;
-
-        animate font_size { duration: co.durations.fast; easing: ease_in_out; }
-    }
-
-    state_layer := StateLayer {  
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
-        width: 100%;
-        height: 100%;
-        border_radius: co.radius.large;
-
-        animate width { duration: co.durations.fast; easing: ease_in_out; }
-        animate height { duration: co.durations.fast; easing: ease_in_out; }
+        font_size: i_label.font_size;
+        font_weight: i_label.font_weight;
+        font_family: i_label.font_family;
     }
 
     states [
-        pressed when state_layer.pressed : {
-            container.width: 96%;
-            container.height: 96%;
-            state_layer.width: 96%;
-            state_layer.height: 96%;
-            label.font_size: co.typo.label_medium.size - 1px;
-            icon.icon_size: co.typo.label_medium.size - 1px;
+        pressed when i_state_layer.pressed : {
+            root.scale: 0.96;
         }
     ]
+
+    // animate scale { duration: co.durations.fast; easing: ease_in_out; }
 }
 
 // A bordered Button with a `clicked` callback.
 export OutlineButton := Rectangle {
     // Callback to handle button click.
-    callback clicked <=> base.clicked;
+    callback clicked <=> i_base.clicked;
     
     // Defines the text that is displayed on the button.
     property<string> text: "text";
 
     // Defines the optional icon of the button.
-    property<string> icon <=> base.icon;
+    property<string> icon <=> i_base.icon;
 
-    width: base.width;
-    height: base.height;
+    width: i_base.width;
+    height: i_base.height;
 
-    base := BaseButton {  
+    i_base := BaseButton {  
         text <=> root.text;
-        container_border_width: 1px;
-        container_border_color: co.brushes.border;
+        i_container_border_width: 1px;
+        i_container_border_color: co.brushes.border;
     }
 }
 
 // A filled Button with a `clicked` callback.
-export FilledButton := Rectangle {
+export Button := Rectangle {
     // Callback to handle button click.
-    callback clicked <=> base.clicked;
+    callback clicked <=> i_base.clicked;
     
     // Defines the text that is displayed on the button.
     property<string> text: "text";
 
     // Defines the optional icon of the button.
-    property<string> icon <=> base.icon;
+    property<string> icon <=> i_base.icon;
 
     // If set to `true` the background of the button will uses `co.brushes.primary`.
     property<bool> primary: false;
 
-    width: base.width;
-    height: base.height;
+    width: i_base.width;
+    height: i_base.height;
 
-    base := BaseButton {  
+    i_base := BaseButton {  
         text <=> root.text;
-        container_background: root.primary ? co.brushes.primary : co.brushes.surface;
+        i_container_background: root.primary ? co.brushes.primary : co.brushes.surface;
         label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
     }
 }

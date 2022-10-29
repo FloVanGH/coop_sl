@@ -1,5 +1,6 @@
 import  { Brushes } from "brushes.slint";
 import  { Durations } from "durations.slint";
+import  { Icons } from "icons.slint";
 import  { Opacities } from "opacities.slint";
 import  { Radius } from "radius.slint";
 import  { Sizes } from "sizes.slint";
@@ -28,10 +29,17 @@ export global co := {
         state: #000000,
     };
 
-     // Access the animation duration definitions of the `co` theme.
+    // Access the animation duration definitions of the `co` theme.
     property<Durations> durations : {
         slow: 500ms,
         fast: 200ms,
+    };
+
+     // Access the animation duration definitions of the `co` theme.
+     property<Icons> icons : {
+        size_small: 10px,
+        size_medium: 12px,
+        size_large: 14px,
     };
 
     // Access the opacitie definitions of the `co` theme.
