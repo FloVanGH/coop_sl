@@ -68,11 +68,11 @@ BaseButton := Rectangle {
 
     states [
         pressed when i_state_layer.pressed : {
-            root.scale: 0.96;
+            root.scale: 0.92;
         }
     ]
 
-    // animate scale { duration: co.durations.fast; easing: ease_in_out; }
+    animate scale { duration: co.durations.fast; easing: ease_in_out; }
 }
 
 // A bordered Button with a `clicked` callback.
@@ -116,6 +116,6 @@ export Button := Rectangle {
     i_base := BaseButton {  
         text <=> root.text;
         i_container_background: root.primary ? co.brushes.primary : co.brushes.surface;
-        label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
+        label_color:  co.brushes.on_surface;
     }
 }
