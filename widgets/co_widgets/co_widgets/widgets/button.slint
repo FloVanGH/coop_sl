@@ -86,8 +86,8 @@ export OutlineButton := Rectangle {
     // Defines the optional icon of the button.
     property<string> icon <=> i_base.icon;
 
-    width: i_base.width;
-    height: i_base.height;
+    width <=> i_base.width;
+    height <=> i_base.height;
     accessible-role: button;
     accessible-label <=> i_base.text;
 
@@ -112,8 +112,8 @@ export Button := Rectangle {
     // If set to `true` the background of the button will uses `co.brushes.primary`.
     property<bool> primary: false;
 
-    width: i_base.width;
-    height: i_base.height;
+    width <=> i_base.width;
+    height <=> i_base.height;
     accessible-role: button;
     accessible-label <=> i_base.text;
 
@@ -121,5 +121,30 @@ export Button := Rectangle {
         text <=> root.text;
         container_background: root.primary ? co.brushes.primary : co.brushes.surface;
         label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
+    }
+}
+
+// A button that only displays an icon.
+export IconButton := Rectangle {
+    // Defines the optional icon of the button.
+    property<string> icon <=> i_icon.icon;
+
+    width: co.sizes.medium;
+    height: width;
+    accessible-role: button;
+
+    i_icon := Icon {
+       x: (parent.width - width) / 2;
+       y: (parent.height - height) / 2;
+       icon_size: co.icons.size-medium;
+       icon_color: co.brushes.foreground;
+    }
+
+    StateLayer {  
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        width: co.sizes.large;
+        height: width;
+        border_radius: max(width, height) / 2;
     }
 }

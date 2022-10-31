@@ -1,4 +1,4 @@
-import { CoWindow, OutlineButton, Button , co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
+import { CoWindow, OutlineButton, Button, IconButton, co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
@@ -53,6 +53,10 @@ export Widgets := CoWindow {
             text: "Primary";
             primary: true;
             clicked => { debug("Primary clicked") }
+        }
+
+        IconButton {
+            icon: mi.add;
         }
     }
 }  
