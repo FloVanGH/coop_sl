@@ -6,9 +6,9 @@ BaseButton := Rectangle {
     callback clicked <=> i_state_layer.clicked;
     property<string> text: "text";
     property<string> icon <=> i_icon.icon;
-    property<length> i_container_border_width <=> i_container.border_width;
-    property<brush> i_container_border_color <=> i_container.border_color;
-    property<brush> i_container_background <=> i_container.background;
+    property<length> container_border_width <=> i_container.border_width;
+    property<brush> container_border_color <=> i_container.border_color;
+    property<brush> container_background <=> i_container.background;
     property<brush> label_color <=> i_label.color;
     property<length> icon_size: co.icons.size_small;
     property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.medium;
@@ -93,8 +93,8 @@ export OutlineButton := Rectangle {
 
     i_base := BaseButton {  
         text <=> root.text;
-        i_container_border_width: 1px;
-        i_container_border_color: co.brushes.border;
+        container_border_width: 1px;
+        container_border_color: co.brushes.border;
     }
 }
 
@@ -119,7 +119,7 @@ export Button := Rectangle {
 
     i_base := BaseButton {  
         text <=> root.text;
-        i_container_background: root.primary ? co.brushes.primary : co.brushes.surface;
+        container_background: root.primary ? co.brushes.primary : co.brushes.surface;
         label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
     }
 }
