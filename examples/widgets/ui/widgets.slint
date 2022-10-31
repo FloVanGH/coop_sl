@@ -1,4 +1,4 @@
-import { CoWindow, OutlineButton, Button, IconButton, co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
+import { CoWindow, OutlineButton, Button, IconButton, TextLine, co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
@@ -18,45 +18,57 @@ export Widgets := CoWindow {
         }
     }
 
-    VerticalLayout {  
+    GridLayout {  
         padding: co.spaces.medium;
-        spacing: co.spaces.medium;
+        spacing: co.spaces.large;
 
-        OutlineButton {
-            text: "light / dark";
-            clicked => { 
-                co.dark_theme = !co.dark_theme; 
-                update_theme();
+        VerticalLayout {  
+            spacing: co.spaces.medium;
+    
+            OutlineButton {
+                text: "light / dark";
+                clicked => { 
+                    co.dark_theme = !co.dark_theme; 
+                    update_theme();
+                }
+            }
+    
+            OutlineButton {
+                text: "Change primary";
+                clicked => {  
+                    root.default_primary = !root.default_primary;
+                    update_theme();
+                }
+            }
+    
+            Button {
+                text: "Filled";
+                clicked => { debug("Filled clicked") }
+            }
+    
+            Button {
+                text: "Icon";
+                icon: mi.settings;
+                clicked => { debug("Filled clicked") }
+            }
+    
+            Button {
+                text: "Primary";
+                primary: true;
+                clicked => { debug("Primary clicked") }
+            }
+    
+            IconButton {
+                icon: mi.add;
             }
         }
 
-        OutlineButton {
-            text: "Change primary";
-            clicked => {  
-                root.default_primary = !root.default_primary;
-                update_theme();
+        VerticalLayout {  
+            spacing: co.spaces.medium;
+            TextLine {
+                icon: mi.search;
+                placeholder: "Insert some text";
             }
-        }
-
-        Button {
-            text: "Filled";
-            clicked => { debug("Filled clicked") }
-        }
-
-        Button {
-            text: "Icon";
-            icon: mi.settings;
-            clicked => { debug("Filled clicked") }
-        }
-
-        Button {
-            text: "Primary";
-            primary: true;
-            clicked => { debug("Primary clicked") }
-        }
-
-        IconButton {
-            icon: mi.add;
         }
     }
 }  
