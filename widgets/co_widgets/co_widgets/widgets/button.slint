@@ -1,5 +1,6 @@
 import { co } from "../co/co.slint";
-import { StateLayer, Icon } from "../components/components.slint";
+import { StateLayer } from "../components/components.slint";
+import { MaterialIcon } from "../assets/icons/material_icon.slint";
 
 // Internal base button.
 BaseButton := Rectangle {
@@ -32,7 +33,7 @@ BaseButton := Rectangle {
         padding_left: root.padding_left * root.scale;
         padding_right: root.padding_right * root.scale;
 
-        i_icon := Icon {
+        i_icon := MaterialIcon {
             x: parent.padding_right;
             y: (parent.height - height) / 2;
             icon_size: root.icon_size * root.scale;
@@ -133,7 +134,7 @@ export IconButton := Rectangle {
     height: width;
     accessible-role: button;
 
-    i_icon := Icon {
+    i_icon := MaterialIcon {
        x: (parent.width - width) / 2;
        y: (parent.height - height) / 2;
        icon_size: co.icons.size-medium;
