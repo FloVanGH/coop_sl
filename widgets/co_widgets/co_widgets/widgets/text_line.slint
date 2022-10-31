@@ -1,6 +1,8 @@
 import { co } from "../co/co.slint";
 import { StateLayer } from "../components/components.slint";
+import { IconButton } from "button.slint";
 import { MaterialIcon } from "../assets/icons/material_icon.slint";
+import { mi } from "../assets/icons/material_icons.slint";
 
 // A single line text input widget.
 export TextLine := Rectangle {
@@ -15,6 +17,9 @@ export TextLine := Rectangle {
 
     // If set to false the widget is disabled.
     property<bool> enabled <=> i_input.enabled;
+
+    // If set to true a clear all button is displayed.
+    property<bool> clear_all: false;
 
     min_width: 168px;
     height: co.sizes.medium;
@@ -79,6 +84,13 @@ export TextLine := Rectangle {
                 font_weight: co.typo.label_medium.weight;
                 font_family: co.typo.label_medium.family;
             }
+        }
+
+        if(clear_all) : IconButton {
+            width: 50%;
+            y: (parent.height - height) / 2;
+            icon: mi.clear;
+            clicked => { text = ""; }
         }
     }
 
