@@ -14,6 +14,7 @@ BaseButton := Rectangle {
     property<length> icon_size: co.icons.size_small;
     property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.medium * scale;
     property<float> scale: 1.0;
+    property<bool> enabled <=> i_state_layer.enabled;
 
     padding_left:  co.spaces.large;
     padding_right: co.spaces.large;
@@ -32,33 +33,42 @@ BaseButton := Rectangle {
         border_radius: co.radius.large * root.scale;
         padding_left: root.padding_left * root.scale;
         padding_right: root.padding_right * root.scale;
+    }
 
-        i_icon := MaterialIcon {
-            x: parent.padding_right;
-            y: (parent.height - height) / 2;
-            icon_size: root.icon_size;
-            icon_color <=> root.label_color;
-        }
+    i_icon := MaterialIcon {
+        x: i_container.x + parent.padding_right;
+        y: (parent.height - height) / 2;
+        icon_size: root.icon_size;
+        icon_color <=> root.label_color;
+    }
 
-        i_label := Text {
-            x: icon == "" ? (parent.width - width) / 2 : i_icon.x + i_icon.width + parent.spacing;
-            y: (parent.height - height) / 2;
-            color: co.brushes.foreground;
-            text <=> root.text;
-            horizontal-alignment: center;
-            font_size: co.typo.label_medium.size;
-            font_weight: co.typo.label_medium.weight;
-            font_family: co.typo.label_medium.family;
-        }
+    i_label := Text {
+        x: icon == "" ? (parent.width - width) / 2 : i_container.x + parent.padding_right + i_icon.width + parent.spacing;
+        y: (parent.height - height) / 2;
+        color: co.brushes.foreground;
+        text <=> root.text;
+        horizontal-alignment: center;
+        font_size: co.typo.label_medium.size;
+        font_weight: co.typo.label_medium.weight;
+        font_family: co.typo.label_medium.family;
+    }
 
-        i_state_layer := StateLayer {  
-            border_radius <=> i_container.border_radius;
-        }
+    i_state_layer := StateLayer {  
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        width: root.width * root.scale;
+        height: root.height * root.scale;
+        border_radius <=> i_container.border_radius;
     }
 
     states [
         pressed when i_state_layer.pressed : {
             root.scale: 0.98;
+        }
+        disabled when !i_state_layer.enabled : {
+            i_container.opacity: co.opacities.container_disabled;
+            i_label.opacity: co.opacities.content_disabled;
+            i_icon.opacity: co.opacities.content_disabled;
         }
     ]
 
@@ -75,6 +85,9 @@ export OutlineButton := Rectangle {
 
     // Defines the optional icon of the button.
     property<string> icon <=> i_base.icon;
+
+    // If set to false the button is disabled.
+    property<bool> enabled <=> i_base.enabled;
 
     width <=> i_base.width;
     height <=> i_base.height;
@@ -102,6 +115,9 @@ export Button := Rectangle {
     // If set to `true` the background of the button will uses `co.brushes.primary`.
     property<bool> primary: false;
 
+    // If set to false the button is disabled.
+    property<bool> enabled <=> i_base.enabled;
+
     width <=> i_base.width;
     height <=> i_base.height;
     accessible-role: button;
@@ -112,12 +128,21 @@ export Button := Rectangle {
         container_background: root.primary ? co.brushes.primary : co.brushes.surface;
         label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
     }
+
+    states [
+        primary_disabled when !enabled && primary : {
+            i_base.label_color: co.brushes.foreground;
+        }
+    ]
 }
 
 // A button that only displays an icon.
 export IconButton := Rectangle {
     // Defines the optional icon of the button.
     property<string> icon <=> i_icon.icon;
+
+    // If set to false the button is disabled.
+    property<bool> enabled <=> i_state_layer.enabled;
 
     width: co.sizes.medium;
     height: width;
@@ -130,11 +155,18 @@ export IconButton := Rectangle {
        icon_color: co.brushes.foreground;
     }
 
-    StateLayer {  
+    i_state_layer := StateLayer {  
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
         width: co.sizes.large;
         height: width;
         border_radius: max(width, height) / 2;
     }
+
+    states [
+     
+        disabled when !i_state_layer.enabled : {
+            i_icon.opacity: co.opacities.container_disabled;
+        }
+    ]
 }

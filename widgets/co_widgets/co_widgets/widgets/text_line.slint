@@ -2,10 +2,15 @@ import { co } from "../co/co.slint";
 import { StateLayer } from "../components/components.slint";
 import { MaterialIcon } from "../assets/icons/material_icon.slint";
 
+// A single line text input widget.
 export TextLine := Rectangle {
+    // Defines the icon that is displayed in front of the text.
     property<string> icon <=> i_icon.icon;
+
+    // Defines a text that is diplayed if text is empty.
     property<string> placeholder: "placeholder";
 
+    property<string> text: "";
 
     min_width: 168px;
     height: co.sizes.medium;
@@ -33,7 +38,7 @@ export TextLine := Rectangle {
             icon_size: co.icons.size_medium;
         }
 
-        i_placeholder := Text {
+        if (text == "") : Text {
             text <=> root.placeholder;
             vertical_alignment: center;
             color: co.brushes.border;
@@ -41,5 +46,24 @@ export TextLine := Rectangle {
             font_weight: co.typo.label_medium.weight;
             font_family: co.typo.label_medium.family;
         }
+
+        // input := TextInput {
+        //     property <length> computed_x;
+        //     x: min(0px, max(parent.width - width, computed_x));
+        //     width: max(parent.width, preferred-width);
+        //     height: 100%;
+        //     color: enabled ? StyleMetrics.textedit-text-color : StyleMetrics.textedit-text-color-disabled;
+        //     cursor-position-changed(cpos) => {
+        //         if (cpos.x + computed_x < StyleMetrics.layout-padding) {
+        //             computed_x = - cpos.x + StyleMetrics.layout-padding;
+        //         } else if (cpos.x + computed_x > parent.width - StyleMetrics.layout-padding) {
+        //             computed_x = parent.width - cpos.x - StyleMetrics.layout-padding;
+        //         }
+        //     }
+        //     accepted => { root.accepted(self.text); }
+        //     edited => { root.edited(self.text); }
+        //     vertical-alignment: center;
+        //     single-line: true;
+        // }
     }
 }

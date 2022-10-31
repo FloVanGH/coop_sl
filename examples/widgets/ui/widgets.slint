@@ -7,6 +7,7 @@ export Widgets := CoWindow {
 
     property<bool> default_primary: true;
     property<brush> current_primary <=> co.accent_color;
+    property<bool> widgets_enabled: true;
 
     callback update_theme();
 
@@ -26,6 +27,7 @@ export Widgets := CoWindow {
             spacing: co.spaces.medium;
     
             OutlineButton {
+                enabled: widgets_enabled;
                 text: "light / dark";
                 clicked => { 
                     co.dark_theme = !co.dark_theme; 
@@ -34,6 +36,7 @@ export Widgets := CoWindow {
             }
     
             OutlineButton {
+                enabled: widgets_enabled;
                 text: "Change primary";
                 clicked => {  
                     root.default_primary = !root.default_primary;
@@ -42,17 +45,19 @@ export Widgets := CoWindow {
             }
     
             Button {
-                text: "Filled";
-                clicked => { debug("Filled clicked") }
+                text: widgets_enabled ? "Disable widgets" : "Enable widgets";
+                clicked => { widgets_enabled = !widgets_enabled; }
             }
     
             Button {
+                enabled: widgets_enabled;
                 text: "Icon";
                 icon: mi.settings;
                 clicked => { debug("Filled clicked") }
             }
     
             Button {
+                enabled: widgets_enabled;
                 text: "Primary";
                 primary: true;
                 clicked => { debug("Primary clicked") }
