@@ -59,8 +59,11 @@ export TextLine := Rectangle {
     // If set to true the text cannot be selected or changed by keyboard input.
     property read-only <=> i_input.read-only;
 
+    property<bool> keyboard_open: false;
+
     // Is emitted after text is changed.
     callback edited <=> i_input.edited;
+    callback clicked;
 
     min_width: 168px;
     height: co.sizes.medium;
@@ -124,6 +127,12 @@ export TextLine := Rectangle {
                 font_size: co.typo.label_medium.size;
                 font_weight: co.typo.label_medium.weight;
                 font_family: co.typo.label_medium.family;
+            }
+
+            if(keyboard_open) : TouchArea {  
+                width: 100%;
+                height: 100%;
+                clicked => { root.clicked(); }
             }
         }
 

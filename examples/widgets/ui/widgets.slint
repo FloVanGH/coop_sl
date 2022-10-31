@@ -1,4 +1,4 @@
-import { CoWindow, OutlineButton, Button, IconButton, TextLine, co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
+import { CoWindow, OutlineButton, Button, IconButton, TextLine, KeyboardPage, co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
@@ -22,7 +22,7 @@ export Widgets := CoWindow {
         }
     }
 
-    Rectangle {  
+    keyboard_page := KeyboardPage {  
         background: root.background;
 
         GridLayout {  
@@ -59,7 +59,7 @@ export Widgets := CoWindow {
                     enabled: widgets_enabled;
                     text: "Icon";
                     icon: mi.settings;
-                    clicked => { debug("Filled clicked") }
+                 
                 }
         
                 Button {
@@ -81,6 +81,9 @@ export Widgets := CoWindow {
                     enabled: widgets_enabled;
                     icon: mi.search;
                     placeholder: "Insert some text";
+                    keyboard_open: true;
+
+                    clicked => { keyboard_page.keyboard_open = true; }
                 }
             }
         }
