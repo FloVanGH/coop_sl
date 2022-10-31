@@ -13,19 +13,23 @@ import "../assets/fonts/Roboto-Medium.ttf";
 // Access to the style resources of teh `co` theme (dark and light).
 export global co := { 
     // Toggles between light and dark theme.
-    property<bool> dark-theme: true;
+    property<bool> dark_theme: true;
 
-    // Defines the accent (primary) colo.
-    property<brush> accent_color: dark-theme ? #01fec5 : #1d9bf2;
+    // Defines the accent (primary) brush.
+    property<brush> accent_color: dark_theme ? #01fec5 : #1d9bf2;
+
+    // Defines the on accent (primary) brush.
+    property<brush> on_accent_color:  dark_theme ? #212121 : #dfdfdf;
 
     // Access the brushes definitions of the `co` theme.
     property<Brushes> brushes : {
-        background: dark-theme ? #2d2d2d : #dfdfdf,
-        foreground: dark-theme ? #dfdfdf : #2d2d2d,
-        surface: dark-theme ? #505050 : #BDBDBD,
-        on_surface: dark-theme ? #212121 : #dfdfdf,
+        background: dark_theme ? #2d2d2d : #dfdfdf,
+        foreground: dark_theme ? #dfdfdf : #2d2d2d,
+        surface: dark_theme ? #505050 : #BDBDBD,
+        on_surface: dark_theme ? #212121 : #dfdfdf,
         primary: accent-color,
-        border: dark-theme ? #7e7e7e : #505050,
+        on_primary: on_accent_color,
+        border: dark_theme ? #7e7e7e : #505050,
         state: #000000,
     };
 

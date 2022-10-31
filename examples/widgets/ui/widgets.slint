@@ -7,6 +7,7 @@ export Widgets := CoWindow {
 
     property<bool> default_primary: true;
     property<brush> current_primary <=> co.accent_color;
+    property<brush> current_on_primary <=> co.on_accent_color;
     property<bool> widgets_enabled: true;
 
     callback update_theme();
@@ -14,8 +15,10 @@ export Widgets := CoWindow {
     update-theme => {  
         if(default_primary) {
             current_primary = co.dark_theme ? #01fec5 : #1d9bf2;
+            current_on_primary = co.dark_theme ? #212121 : #dfdfdf;
         } else {
             current_primary = co.dark_theme ? #6750A4 : #D0BCFF;
+            current_on_primary = #212121;
         }
     }
 

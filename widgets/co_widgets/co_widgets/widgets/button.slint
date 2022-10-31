@@ -139,7 +139,7 @@ export Button := Rectangle {
     i_base := BaseButton {  
         text <=> root.text;
         container_background: root.primary ? co.brushes.primary : co.brushes.surface;
-        label_color:  root.primary ? co.brushes.on_surface : co.brushes.foreground;
+        label_color: root.primary ? co.brushes.on_primary : co.brushes.foreground;
     }
 
     states [
