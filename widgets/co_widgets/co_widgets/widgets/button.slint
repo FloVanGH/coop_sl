@@ -12,13 +12,13 @@ BaseButton := Rectangle {
     property<brush> container_background <=> i_container.background;
     property<brush> label_color <=> i_label.color;
     property<length> icon_size: co.icons.size_small;
-    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.medium;
+    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.medium * scale;
     property<float> scale: 1.0;
 
     padding_left:  co.spaces.large;
     padding_right: co.spaces.large;
 
-    width: padding_left + i_container.icon_width + spacing + i_size_helper.width + padding_right;
+    width: padding_left + i_container.icon_width + spacing + i_label.width + padding_right;
     height: co.sizes.medium;
 
     i_container := Rectangle {
@@ -36,17 +36,17 @@ BaseButton := Rectangle {
         i_icon := MaterialIcon {
             x: parent.padding_right;
             y: (parent.height - height) / 2;
-            icon_size: root.icon_size * root.scale;
-            icon_color: root.label_color;
+            icon_size: root.icon_size;
+            icon_color <=> root.label_color;
         }
-    
+
         i_label := Text {
-            x: icon == "" ? (parent.width - width) / 2 : i_icon.x + i_icon.width + parent.spacing * root.scale;
+            x: icon == "" ? (parent.width - width) / 2 : i_icon.x + i_icon.width + parent.spacing;
             y: (parent.height - height) / 2;
             color: co.brushes.foreground;
             text <=> root.text;
             horizontal-alignment: center;
-            font_size: co.typo.label_medium.size * root.scale;
+            font_size: co.typo.label_medium.size;
             font_weight: co.typo.label_medium.weight;
             font_family: co.typo.label_medium.family;
         }
@@ -58,18 +58,9 @@ BaseButton := Rectangle {
         }
     }
 
-    // used to calculate the un-scaled size of the button
-    i_size_helper := Text {
-        text: i_label.text;
-        visible: false;
-        font_size: i_label.font_size;
-        font_weight: i_label.font_weight;
-        font_family: i_label.font_family;
-    }
-
     states [
         pressed when i_state_layer.pressed : {
-            root.scale: 0.94;
+            root.scale: 0.98;
         }
     ]
 
