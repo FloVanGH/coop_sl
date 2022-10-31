@@ -19,62 +19,66 @@ export Widgets := CoWindow {
         }
     }
 
-    GridLayout {  
-        padding: co.spaces.medium;
-        spacing: co.spaces.large;
+    Rectangle {  
+        background: root.background;
 
-        VerticalLayout {  
-            spacing: co.spaces.medium;
+        GridLayout {  
+            padding: co.spaces.medium;
+            spacing: co.spaces.large;
     
-            OutlineButton {
-                enabled: widgets_enabled;
-                text: "light / dark";
-                clicked => { 
-                    co.dark_theme = !co.dark_theme; 
-                    update_theme();
+            VerticalLayout {  
+                spacing: co.spaces.medium;
+        
+                OutlineButton {
+                    enabled: widgets_enabled;
+                    text: "light / dark";
+                    clicked => { 
+                        co.dark_theme = !co.dark_theme; 
+                        update_theme();
+                    }
+                }
+        
+                OutlineButton {
+                    enabled: widgets_enabled;
+                    text: "Change primary";
+                    clicked => {  
+                        root.default_primary = !root.default_primary;
+                        update_theme();
+                    }
+                }
+        
+                Button {
+                    text: widgets_enabled ? "Disable widgets" : "Enable widgets";
+                    clicked => { widgets_enabled = !widgets_enabled; }
+                }
+        
+                Button {
+                    enabled: widgets_enabled;
+                    text: "Icon";
+                    icon: mi.settings;
+                    clicked => { debug("Filled clicked") }
+                }
+        
+                Button {
+                    enabled: widgets_enabled;
+                    text: "Primary";
+                    primary: true;
+                    clicked => { debug("Primary clicked") }
+                }
+        
+                IconButton {
+                    icon: mi.add;
                 }
             }
     
-            OutlineButton {
-                enabled: widgets_enabled;
-                text: "Change primary";
-                clicked => {  
-                    root.default_primary = !root.default_primary;
-                    update_theme();
+            VerticalLayout {  
+                spacing: co.spaces.medium;
+                TextLine {
+                    clear_all: true;
+                    enabled: widgets_enabled;
+                    icon: mi.search;
+                    placeholder: "Insert some text";
                 }
-            }
-    
-            Button {
-                text: widgets_enabled ? "Disable widgets" : "Enable widgets";
-                clicked => { widgets_enabled = !widgets_enabled; }
-            }
-    
-            Button {
-                enabled: widgets_enabled;
-                text: "Icon";
-                icon: mi.settings;
-                clicked => { debug("Filled clicked") }
-            }
-    
-            Button {
-                enabled: widgets_enabled;
-                text: "Primary";
-                primary: true;
-                clicked => { debug("Primary clicked") }
-            }
-    
-            IconButton {
-                icon: mi.add;
-            }
-        }
-
-        VerticalLayout {  
-            spacing: co.spaces.medium;
-            TextLine {
-                clear_all: true;
-                enabled: widgets_enabled;
-                icon: mi.search;
-                placeholder: "Insert some text";
             }
         }
     }
