@@ -41,7 +41,7 @@ BaseButton := Rectangle {
         }
     
         i_label := Text {
-            x: i_icon.x + i_icon.width + parent.spacing * root.scale;
+            x: icon == "" ? (parent.width - width) / 2 : i_icon.x + i_icon.width + parent.spacing * root.scale;
             y: (parent.height - height) / 2;
             color: co.brushes.foreground;
             text <=> root.text;
@@ -54,7 +54,7 @@ BaseButton := Rectangle {
         i_state_layer := StateLayer {  
             width: 100%;
             height: 100%;
-            border_radius: i_container.border_radius;
+            border_radius <=> i_container.border_radius;
         }
     }
 
@@ -69,11 +69,11 @@ BaseButton := Rectangle {
 
     states [
         pressed when i_state_layer.pressed : {
-            root.scale: 0.92;
+            root.scale: 0.94;
         }
     ]
 
-    animate scale { duration: co.durations.fast; easing: ease_in_out; }
+    animate scale { duration: co.durations.fast; }
 }
 
 // A bordered Button with a `clicked` callback.
