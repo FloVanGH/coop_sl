@@ -1,7 +1,6 @@
 [workspace]
 members = [
    "examples/gaming",
-   "examples/platform_support",
    "examples/widgets",
    "gaming/pico_engine",
    "gaming/pico_ecs",
@@ -15,7 +14,6 @@ members = [
 
 default-members = [
     "examples/gaming",
-    "examples/platform_support",
     "examples/widgets",
     "gaming/pico_engine",
     "gaming/pico_ecs",

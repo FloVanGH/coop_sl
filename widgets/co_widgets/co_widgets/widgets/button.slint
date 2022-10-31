@@ -88,6 +88,8 @@ export OutlineButton := Rectangle {
 
     width: i_base.width;
     height: i_base.height;
+    accessible-role: button;
+    accessible-label <=> i_base.text;
 
     i_base := BaseButton {  
         text <=> root.text;
@@ -112,6 +114,8 @@ export Button := Rectangle {
 
     width: i_base.width;
     height: i_base.height;
+    accessible-role: button;
+    accessible-label <=> i_base.text;
 
     i_base := BaseButton {  
         text <=> root.text;
