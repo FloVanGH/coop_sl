@@ -10,10 +10,15 @@ export TextLine := Rectangle {
     // Defines a text that is diplayed if text is empty.
     property<string> placeholder: "placeholder";
 
-    property<string> text: "";
+    // The text that is displayed and can changed by text input.
+    property<string> text <=> i_input.text;
+
+    // If set to false the widget is disabled.
+    property<bool> enabled <=> i_input.enabled;
 
     min_width: 168px;
     height: co.sizes.medium;
+    forward-focus: i_input;
 
     i_container := Rectangle {
         width: 100%;
@@ -23,11 +28,13 @@ export TextLine := Rectangle {
         background: co.brushes.surface;
     }
 
-    StateLayer {  
+    i_state_layer := StateLayer {  
+        enabled <=> root.enabled;
         border_radius: i_container.border_radius;
+        has_focus <=> i_input.has_focus;
     }
 
-    HorizontalLayout {  
+    i_layout := HorizontalLayout {  
         padding_left: co.spaces.medium;
         padding_right: co.spaces.medium;
         spacing: co.spaces.small;
@@ -38,32 +45,48 @@ export TextLine := Rectangle {
             icon_size: co.icons.size_medium;
         }
 
-        if (text == "") : Text {
-            text <=> root.placeholder;
-            vertical_alignment: center;
-            color: co.brushes.border;
-            font_size: co.typo.label_medium.size;
-            font_weight: co.typo.label_medium.weight;
-            font_family: co.typo.label_medium.family;
-        }
+        Rectangle {  
+            clip: true;
 
-        // input := TextInput {
-        //     property <length> computed_x;
-        //     x: min(0px, max(parent.width - width, computed_x));
-        //     width: max(parent.width, preferred-width);
-        //     height: 100%;
-        //     color: enabled ? StyleMetrics.textedit-text-color : StyleMetrics.textedit-text-color-disabled;
-        //     cursor-position-changed(cpos) => {
-        //         if (cpos.x + computed_x < StyleMetrics.layout-padding) {
-        //             computed_x = - cpos.x + StyleMetrics.layout-padding;
-        //         } else if (cpos.x + computed_x > parent.width - StyleMetrics.layout-padding) {
-        //             computed_x = parent.width - cpos.x - StyleMetrics.layout-padding;
-        //         }
-        //     }
-        //     accepted => { root.accepted(self.text); }
-        //     edited => { root.edited(self.text); }
-        //     vertical-alignment: center;
-        //     single-line: true;
-        // }
+            i_input := TextInput {
+                property <length> computed_x;
+                property <length> padding-outer: i_layout.padding-left + i_layout.padding-right;
+    
+                x: min(0px, max(parent.width - width, computed_x));
+                width: max(parent.width, preferred-width);
+                height: 100%;
+                color:co.brushes.foreground;
+                vertical-alignment: center;
+                font_size: co.typo.label_medium.size;
+                font_weight: co.typo.label_medium.weight;
+                font_family: co.typo.label_medium.family;
+    
+                cursor-position-changed(cpos) => {
+                    if (cpos.x + computed_x < padding-outer) {
+                        computed_x = - cpos.x + padding-outer;
+                    } else if (cpos.x + computed_x > parent.width - padding-outer) {
+                        computed_x = parent.width - cpos.x - padding-outer;
+                    }
+                }
+            }
+
+            if (text == "") : Text {
+                text <=> root.placeholder;
+                y: (parent.height - height) / 2;
+                color: co.brushes.border;
+                opacity: i_input.opacity;
+                font_size: co.typo.label_medium.size;
+                font_weight: co.typo.label_medium.weight;
+                font_family: co.typo.label_medium.family;
+            }
+        }
     }
+
+    states [
+        disabled when !i_state_layer.enabled : {
+            i_container.opacity: co.opacities.container_disabled;
+            i_input.opacity: co.opacities.content_disabled;
+            i_icon.opacity: co.opacities.content_disabled;
+        }
+    ]
 }

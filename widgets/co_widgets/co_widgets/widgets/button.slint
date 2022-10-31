@@ -59,6 +59,19 @@ BaseButton := Rectangle {
         width: root.width * root.scale;
         height: root.height * root.scale;
         border_radius <=> i_container.border_radius;
+        has_focus <=> i_focus_scope.has_focus;
+    }
+
+    i_focus_scope := FocusScope {
+        width: 0px; // Do not react on clicks
+        enabled <=> root.enabled;
+        key-pressed(event) => {
+            if (event.text == " " || event.text == "\n") {
+                 root.clicked();
+                 return accept;
+            }
+            return reject;
+        }
     }
 
     states [
@@ -138,6 +151,9 @@ export Button := Rectangle {
 
 // A button that only displays an icon.
 export IconButton := Rectangle {
+    // Callback to handle button click.
+    callback clicked <=> i_state_layer.clicked;
+
     // Defines the optional icon of the button.
     property<string> icon <=> i_icon.icon;
 
@@ -161,10 +177,22 @@ export IconButton := Rectangle {
         width: co.sizes.large;
         height: width;
         border_radius: max(width, height) / 2;
+        has_focus <=> i_focus_scope.has_focus;
+    }
+
+    i_focus_scope := FocusScope {
+        width: 0px; // Do not react on clicks
+        enabled <=> root.enabled;
+        key-pressed(event) => {
+            if (event.text == " " || event.text == "\n") {
+                 root.clicked();
+                 return accept;
+            }
+            return reject;
+        }
     }
 
     states [
-     
         disabled when !i_state_layer.enabled : {
             i_icon.opacity: co.opacities.container_disabled;
         }

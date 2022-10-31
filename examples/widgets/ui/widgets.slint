@@ -71,6 +71,7 @@ export Widgets := CoWindow {
         VerticalLayout {  
             spacing: co.spaces.medium;
             TextLine {
+                enabled: widgets_enabled;
                 icon: mi.search;
                 placeholder: "Insert some text";
             }
