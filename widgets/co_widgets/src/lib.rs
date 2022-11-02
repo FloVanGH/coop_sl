@@ -1,26 +1,28 @@
-#![cfg_attr(not(feature = "std"), no_std)]
-
 use std::{env, fs, io, io::Write, path::Path};
 
-/// Generates an include file for the `co_widgets` slint widget library.
-/// Generated file is located on "slint_includes/co_widgets.slint"
-pub fn create_include() -> io::Result<()> {
-    let lib_name = env!("CO_WIDGETS_LIB_NAME");
-    let include_path = env!("CO_WIDGETS_INCLUDE_PATH");
-    let include_file = env!("CO_WIDGETS_INCLUDE_FILE");
-    let include_dir = env::current_dir().unwrap().join("_slint_includes");
+/// Generates a import file for the widget library on the given path e.g. `my_project/my_ui/_my_imports`.
+pub fn generate_import_with_custom_ui_path<P>(ui_path: P) -> io::Result<()>
+where
+    P: AsRef<Path>,
+{
+    let import_path = ui_path.as_ref();
+    let ui_lib_name = env!("UI_LIB_NAME");
+    let ui_lib_path = env!("UI_LIB_PATH");
+    let ui_lib_file = env!("UI_LIB_FILE");
 
-    let export_include_file_content =
-        fs::read_to_string(include_file).and_then(|c| Ok(c.replace(lib_name, include_path)))?;
+    let import_file_content = fs::read_to_string(ui_lib_file)
+        .map(|c| c.replace("from \"", format!("from \"{}/", ui_lib_path).as_str()))?;
 
-    if !include_dir.exists() {
-        fs::create_dir(include_dir.clone())?;
+    if !import_path.exists() {
+        fs::create_dir_all(import_path.clone())?;
     }
 
-    let mut export_include_file =
-        fs::File::create(include_dir.join(Path::new(include_file).file_name().ok_or(
-            io::Error::new(io::ErrorKind::Other, "Cannot read include file name"),
-        )?))?;
+    let mut import_file = fs::File::create(import_path.join(format!("{}.slint", ui_lib_name)))?;
 
-    export_include_file.write_all(export_include_file_content.as_bytes())
+    import_file.write_all(import_file_content.as_bytes())
+}
+
+/// Generates a import file for the widget library on a default ui path `my_project/ui/_imports`.
+pub fn generate_import() -> io::Result<()> {
+    generate_import_with_custom_ui_path(env::current_dir()?.join("ui/_imports"))
 }

@@ -17,4 +17,5 @@ Cargo.lock
 # macos
 .DS_Store
 
-_slint_includes/
+# generated import files
+_imports/

@@ -20,6 +20,7 @@ mcu-board-support = { git = "https://github.com/slint-ui/slint", branch = "flori
 
 [build-dependencies]
 slint-build = { version = "0.3.1" }
+book_flip = { path = "../../widgets/book_flip" }
 co_widgets = { path = "../../widgets/co_widgets" }
 
 

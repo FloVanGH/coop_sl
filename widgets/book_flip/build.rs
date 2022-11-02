@@ -1,7 +1,7 @@
 use std::{env, fs, io, path::*};
 
 fn main() -> io::Result<()> {
-    let ui_lib_name = "co_widgets";
+    let ui_lib_name = "book_flip";
     let ui_lib_path = "ui";
     let ui_lib_file = format!("{}/lib.slint", ui_lib_path);
 

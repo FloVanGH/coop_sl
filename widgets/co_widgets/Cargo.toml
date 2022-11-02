@@ -9,16 +9,5 @@ repository = "https://codeberg.org/flovansl/slint_extensions"
 readme = "README.md"
 build = "build.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded"] }
-
-
 [build-dependencies]
 slint-build = "0.3.1"
-
-[features]
-default = ["std"]
-std = ["slint/default"]
-libm = ["slint/libm"]
