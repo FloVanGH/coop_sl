@@ -5,7 +5,7 @@ pub fn generate_import_with_custom_ui_path<P>(ui_path: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
-    let import_path = ui_path.as_ref();
+    let import_path = ui_path.as_ref().to_path_buf();
     let ui_lib_name = env!("UI_LIB_NAME");
     let ui_lib_path = env!("UI_LIB_PATH");
     let ui_lib_file = env!("UI_LIB_FILE");

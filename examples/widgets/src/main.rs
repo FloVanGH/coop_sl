@@ -1,3 +1,5 @@
+#![allow(clippy::redundant_clone)]
+#![allow(clippy::cmp_owned)]
 #![cfg_attr(feature = "mcu-board-support", no_std)]
 #![cfg_attr(all(feature = "mcu-board-support", not(simulator)), no_main)]
 

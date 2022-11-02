@@ -1,0 +1,29 @@
+pipeline:
+  lint:
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - rustup component add rustfmt
+      - cargo fmt --all -- --check
+      - rustup component add clippy
+      - cargo clippy --all-targets -- -D warnings
+  build_and_test:
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - cargo build
+      - cargo test
+  build_wasm:
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - cd examples/widgets
+      - sed -i "s/#wasm# //" Cargo.toml
+      - wasm-pack build --release --target web

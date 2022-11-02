@@ -2,11 +2,12 @@
 
 This repository contains all my personal extension crates for [Slint](https://slint-ui.com/). It contains additional platforms supports, an experimental game engine, custom widget sets and a custom default widget library. This is not an official channel of Slint.
 
+[![CI](https://ci.codeberg.org/api/badges/flovansl/slint_extensions/status.svg?branch=main)](https://ci.codeberg.org/flovansl/slint_extensions)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 ## crates
 
-* apps
+* apps/
     * **file_nav**: File navigation / explorer **(not yet started)**
 * platform_support/
     * **slint_psp**: Slint support for the PSP gaming console **(in active development)**
@@ -35,4 +36,4 @@ This repository contains all my personal extension crates for [Slint](https://sl
 
  * `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
 or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
-* All stuff of this repository is available under [MIT license](LICENSE)
+* All source code of this repository is available under [MIT license](LICENSE)
