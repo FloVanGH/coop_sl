@@ -1,17 +1,22 @@
 # Slint Extensions examples
 
-## Gaming
+Examples for the crates `pico_engine`, `pico_ecs`, `co_widgets` and `book_flip`.
 
-Example how to use `pico_engine` and `pico_ecs`.
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSE)
 
-## Platform support
+## gaming
 
-Example that can be run on different platforms e.g. `PSP` and `Redox OS`.
+Example how to use `pico_engine` and `pico_ecs`. It can be run on multiple platforms.
 
-# Widgets
+### Run gaming
 
-Example gallery that shows all widgets of `co_widgets` and `book_flip`. 
+* On desktop: from repo root run `cargo run -p gaming`
 
-## Run on pico
+## widgets
 
-```cargo +nightly build -p widgets --no-default-features --features=mcu-board-support/pico-st7789 --target=thumbv6m-none-eabi --release && elf2uf2-rs -d target/thumbv6m-none-eabi/release/widgets```
+Example gallery that shows all widgets of `co_widgets` and `book_flip`. It can be run on multiple platforms.
+
+### Run widgets
+
+* On desktop: from repo root run `cargo run -p widgets`
+* On Raspberry Pi Pico with st7789 display: from repo root run ```cargo +nightly build -p widgets --no-default-features --features=mcu-board-support/pico-st7789 --target=thumbv6m-none-eabi --release && elf2uf2-rs -d target/thumbv6m-none-eabi/release/widgets```
