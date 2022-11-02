@@ -1,6 +1,6 @@
 # slint_extensions
 
-This repository contains all my personal extension crates for [Slint](https://slint-ui.com/). It contains additional platforms supports, an experimental game engine, custom widget sets and a custom default widget library.
+This repository contains all my personal extension crates for [Slint](https://slint-ui.com/). It contains additional platforms supports, an experimental game engine, custom widget sets and a custom default widget library. This is not an official channel of Slint.
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
@@ -24,12 +24,15 @@ This repository contains all my personal extension crates for [Slint](https://sl
 * **gaming**: example of `pico_engine` and `pico_ecs`
 * **widgets**: gallery example showing the widget of `book_flip` and `co_widget`
 
-## notes
+> Check out the [README](examples/README.md) to find out how to run the examples and for more information.
 
-`Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
-or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
-
-## Start with Slint
+## getting start with Slint
 
 * Language documentation: https://github.com/slint-ui/slint/tree/master/docs
 * Getting start: https://slint-ui.com/#tryout
+
+## license
+
+ * `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
+or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
+* All stuff of this repository is available under [MIT license](LICENSE)
