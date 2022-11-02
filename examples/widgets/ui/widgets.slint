@@ -1,4 +1,4 @@
-import { CoWindow, OutlineButton, Button, IconButton, TextLine, KeyboardPage, co, mi } from "../../../widgets/co_widgets/co_widgets/co_widgets.slint";
+import { CoWindow, OutlineButton, Button, IconButton, TextLine, KeyboardPage, co, mi } from "../_slint_includes/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
@@ -77,7 +77,7 @@ export Widgets := CoWindow {
             VerticalLayout {  
                 spacing: co.spaces.medium;
                 TextLine {
-                    clear_all: true;
+                    has_clear: true;
                     enabled: widgets_enabled;
                     icon: mi.search;
                     placeholder: "Insert some text";
@@ -89,3 +89,4 @@ export Widgets := CoWindow {
         }
     }
 }  
+

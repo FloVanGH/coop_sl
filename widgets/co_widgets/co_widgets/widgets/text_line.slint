@@ -54,7 +54,7 @@ export TextLine := Rectangle {
     property<bool> enabled <=> i_input.enabled;
 
     // If set to true a clear all button is displayed.
-    property<bool> clear_all: false;
+    property<bool> has_clear: false;
 
     // If set to true the text cannot be selected or changed by keyboard input.
     property read-only <=> i_input.read-only;
@@ -63,6 +63,7 @@ export TextLine := Rectangle {
 
     // Is emitted after text is changed.
     callback edited <=> i_input.edited;
+    
     callback clicked;
 
     min_width: 168px;
@@ -129,14 +130,14 @@ export TextLine := Rectangle {
                 font_family: co.typo.label_medium.family;
             }
 
-            if(keyboard_open) : TouchArea {  
+            if (keyboard_open) : TouchArea {  
                 width: 100%;
                 height: 100%;
                 clicked => { root.clicked(); }
             }
         }
 
-        if(clear_all) : ClearButton {
+        if (has_clear) : ClearButton {
             enabled: root.enabled;
             y: (parent.height - height) / 2;
             clicked => { text = ""; }

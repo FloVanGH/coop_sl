@@ -16,3 +16,5 @@ Cargo.lock
 
 # macos
 .DS_Store
+
+_slint_includes/
