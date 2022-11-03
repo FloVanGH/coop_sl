@@ -1,5 +1,5 @@
 import { co } from "../co/co.slint";
-import { StateLayer } from "../components/components.slint";
+import { StateLayer, LabelMedium } from "../components/components.slint";
 import { MaterialIcon } from "../assets/icons/material_icon.slint";
 
 // Internal base button.
@@ -42,15 +42,12 @@ BaseButton := Rectangle {
         icon_color <=> root.label_color;
     }
 
-    i_label := Text {
+    i_label := LabelMedium {
         x: icon == "" ? (parent.width - width) / 2 : i_container.x + parent.padding_right + i_icon.width + parent.spacing;
         y: (parent.height - height) / 2;
         color: co.brushes.foreground;
         text <=> root.text;
-        horizontal-alignment: center;
-        font_size: co.typo.label_medium.size;
-        font_weight: co.typo.label_medium.weight;
-        font_family: co.typo.label_medium.family;
+        horizontal_alignment: center;
     }
 
     i_state_layer := StateLayer {  
@@ -160,6 +157,12 @@ export IconButton := Rectangle {
     // If set to false the button is disabled.
     property<bool> enabled <=> i_state_layer.enabled;
 
+    // Defines the size of the icon.
+    property<length> icon_size <=> i_icon.icon_size;
+
+    // Defines the size of the state layer.
+    property<length> state_layer_size <=> i_state_layer.width;
+
     width: co.sizes.medium;
     height: width;
     accessible-role: button;
@@ -198,3 +201,10 @@ export IconButton := Rectangle {
         }
     ]
 }
+
+// A smaller version of the `IconButton`.
+export IconButtonSmall := IconButton {
+    width: co.sizes.small;
+    icon_size: co.icons.size_small;
+    state_layer_size: co.sizes.medium;
+}  

@@ -8,29 +8,31 @@ This repository contains all my personal extension crates for [Slint](https://sl
 ## crates
 
 * apps/
-    * **file_nav**: File navigation / explorer **(not yet started)**
+    * **file_nav**: File navigation / explorer build with Slint **(not yet started)**
+    * **pico_os**: A fake os / desktop environment as fancy showcase build with Slint **(not yet started)**
 * platform_support/
-    * **slint_psp**: Slint support for the PSP gaming console **(in active development)**
-    * **slint_redox**: Slint support for Redox OS **(in active development)**
+    * **slint_psp**: Slint support for the PSP gaming console **(in active development / pre-release)**
+    * **slint_redox**: Slint support for Redox OS **(in active development / pre-release)**
 * gaming/
     * **pico_engine**: experimental engine based on slint with no_std support **(not yet started)**
     * **pico_ecs**: experimental Entity Component System library with support for no_std **(not yet started)**
     * **pico_designer**: experimental map editor for the `pico_engine` **(not yet started)**
 * widgets/
     * **book_flip**: e-book widget for Slint **(not yet started)**
-    * **co_widgets**: custom default widget library for Slint **(in active development)**
+    * **co_widgets**: custom default widget library for Slint **(in active development / pre-release)**
 
 ## examples
 
 * **gaming**: example of `pico_engine` and `pico_ecs`
 * **widgets**: gallery example showing the widget of `book_flip` and `co_widget`
 
-> Check out the [README](examples/README.md) to find out how to run the examples and for more information.
+> Check out the [README](examples/README.md) for more details.
 
 ## getting start with Slint
 
-* Language documentation: https://github.com/slint-ui/slint/tree/master/docs
 * Getting start: https://slint-ui.com/#tryout
+* Language documentation: https://github.com/slint-ui/slint/tree/master/docs
+
 
 ## license
 

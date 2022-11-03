@@ -33,7 +33,7 @@ default = ["slint/default"]
 
 #wasm# [lib]
 #wasm# crate-type = ["cdylib"]
-#wasm# path = "main.rs"
+#wasm# path = "src/main.rs"
 #wasm#
 #wasm# [target.'cfg(target_arch = "wasm32")'.dependencies]
 #wasm# wasm-bindgen = { version = "0.2" }

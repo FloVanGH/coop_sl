@@ -1,4 +1,4 @@
-import { CoWindow, OutlineButton, Button, IconButton, TextLine, KeyboardPage, co, mi } from "_imports/co_widgets.slint";
+import { CoWindow, OutlineButton, Button, IconButton, IconButtonSmall, TextLine, KeyboardPage, co, mi } from "_imports/co_widgets.slint";
 
 export Widgets := CoWindow {
     width: 600px;
@@ -71,6 +71,10 @@ export Widgets := CoWindow {
         
                 IconButton {
                     icon: mi.add;
+                }
+
+                IconButtonSmall {  
+                    icon: mi.close;
                 }
             }
     

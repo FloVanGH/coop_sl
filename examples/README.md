@@ -6,7 +6,7 @@ Examples for the crates `pico_engine`, `pico_ecs`, `co_widgets` and `book_flip`.
 
 ## gaming
 
-Example how to use `pico_engine` and `pico_ecs`. It can be run on multiple platforms.
+Example game for `pico_engine` and `pico_ecs`. It can be run on multiple platforms.
 
 ### Run gaming
 

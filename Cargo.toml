@@ -1,5 +1,7 @@
 [workspace]
 members = [
+   "apps/file_nav",
+   "apps/pico_os",
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",
@@ -13,6 +15,8 @@ members = [
 ]
 
 default-members = [
+   "apps/file_nav",
+   "apps/pico_os",
     "examples/gaming",
     "examples/widgets",
     "gaming/pico_engine",

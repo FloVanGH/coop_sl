@@ -1,0 +1,27 @@
+import { Font } from "../co/typo.slint";
+import { co } from "../co/co.slint";
+
+// Base for labels. Set font settings by font property.
+export BaseLabel := Text {
+    // Defines the font settings.
+    property<Font> font;
+
+    font_family: font.family;
+    font_size: font.size;
+    font_weight: font.weight;
+}
+
+// Label with settings `co.typo.label_small`.
+export LabelSmall := BaseLabel {
+    font: co.typo.label_small;
+}
+
+// Label with settings `co.typo.label_medium`.
+export LabelMedium := BaseLabel {
+    font: co.typo.label_small;
+}
+
+// Label with settings `co.typo.label_large.
+export LabelLarge := BaseLabel {
+    font: co.typo.label_large;
+}
