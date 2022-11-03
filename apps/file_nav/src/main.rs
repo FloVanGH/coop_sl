@@ -1,3 +1,6 @@
+#![allow(clippy::redundant_clone)]
+#![allow(clippy::cmp_owned)]
+
 slint::include_modules!();
 
 fn main() {
