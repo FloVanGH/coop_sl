@@ -1,3 +1,7 @@
+// workaround to get font displayed embedded on the softwarerendrer
+import "../assets/fonts/Roboto-Regular.ttf"; 
+import "../assets/fonts/Roboto-Medium.ttf"; 
+
 import { Font } from "../co/typo.slint";
 import { co } from "../co/co.slint";
 
@@ -6,6 +10,7 @@ export BaseLabel := Text {
     // Defines the font settings.
     property<Font> font;
 
+    color: co.brushes.foreground;
     font_family: font.family;
     font_size: font.size;
     font_weight: font.weight;

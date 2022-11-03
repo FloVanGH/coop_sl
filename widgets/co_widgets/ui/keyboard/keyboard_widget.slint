@@ -1,3 +1,158 @@
-export Keyboard := Rectangle {
+import { TextLine, Button, OutlineButton, RoundButton, RoundOutlineButton } from "../widgets/widgets.slint";
+import { co } from "../co/co.slint";
+import { mi } from "../assets/icons/material_icons.slint";
 
+// Helps to handle keyboard actions that cannot be done at the moment with slint.
+//
+// The adapter need to exported from the app main slint file and the backspace callback must be implemented in code.
+export global KeyboardAdapter := {
+    // Removes the last character of the given string and returns the result.
+    callback backspace(string) -> string;
+}
+
+KeyboardButton := RoundOutlineButton {
+    width: co.settings.minimize ? co.sizes.small : co.sizes.medium;
+}
+
+// A on screen `Keyboard` widget.
+export Keyboard := Rectangle {
+    // The keyboard closes.
+    callback close(string);
+
+    callback key_enter(string);
+    
+    // The text that can be manipulated by the `Keyboard`.
+    property<string> text <=> i_text_line.text;
+
+    // Placeholder of the inner text line.
+    property<string> placeholder <=> i_text_line.placeholder;
+
+    // Icon of the inner text line.
+    property<string> icon <=> i_text_line.icon;
+
+    // If set to `true` the keyboard is in shift mode.
+    property<bool> shift: false;
+
+    property<[{ l: string, u: string }]> row_one : [ 
+        { l: "q", u : "Q" },
+        { l: "w", u : "W" },
+        { l: "e", u : "E" },
+        { l: "r", u : "R" },
+        { l: "t", u : "T" },
+        { l: "y", u : "Y" },
+        { l: "u", u : "U" },
+        { l: "i", u : "I" },
+        { l: "o", u : "O" },
+        { l: "p", u : "P" },       
+    ];
+
+    property<[{ l: string, u: string }]> row_two : [ 
+        { l: "a", u : "A" },
+        { l: "s", u : "S" },
+        { l: "d", u : "D" },
+        { l: "g", u : "G" },
+        { l: "h", u : "H" },
+        { l: "j", u : "J" },
+        { l: "k", u : "K" },
+        { l: "l", u : "L" },
+    ];
+
+    property<[{ l: string, u: string }]> row_three : [ 
+        { l: "z", u : "Z" },
+        { l: "x", u : "X" },
+        { l: "c", u : "C" },
+        { l: "v", u : "V" },
+        { l: "b", u : "B" },
+        { l: "n", u : "N" },
+        { l: "m", u : "M" },
+    ];
+
+    VerticalLayout {  
+       alignment: center;
+        spacing: co.spaces.small;
+        padding: co.spaces.medium;
+
+        Rectangle {
+            height: 2 * co.sizes.large;
+            // display text
+            i_text_line := TextLine {
+                y: (parent.height - height) / 2; 
+                width: 100%;
+                read_only: true;
+            }
+        }
+       
+
+        i_row_one := HorizontalLayout {
+            spacing: co.spaces.small;
+            alignment: center;
+
+            for row in row_one : KeyboardButton {
+                text: root.shift ? row.u : row.l;
+                clicked => { root.key_enter(text); }
+            }
+        }
+        i_row_two := HorizontalLayout {
+            spacing: co.spaces.small;
+            alignment: center;
+
+            for row in row_two : KeyboardButton {
+                text: root.shift ? row.u : row.l;
+                clicked => { root.key_enter(text); }
+            }
+        }
+        i_row_three := HorizontalLayout {
+            spacing: co.spaces.small;
+            alignment: center;
+
+            // shift
+            KeyboardButton {  
+                icon: mi.keyboard-arrow-up;
+                clicked => { root.shift = !root.shift; }
+            }
+
+            for row in row_three : KeyboardButton {
+             
+                text: root.shift ? row.u : row.l;
+                clicked => { root.key_enter(text); }
+            }
+
+            // backspace
+            KeyboardButton {  
+                icon: mi.backspace;
+                clicked => { root.text = KeyboardAdapter.backspace(root.text); }
+            }
+        }
+        i_row_fore := HorizontalLayout {
+            spacing: co.spaces.small;
+            alignment: center;
+
+            // switch keyboard
+            KeyboardButton {
+                icon: mi.calculate;
+                clicked => { root.close(root.text); }
+            }
+
+            // space button
+            Button {  
+                width: 120px;
+                height: co.settings.minimize ? co.sizes.small : co.sizes.medium;
+                text: "";
+                clicked => { root.key_enter(" "); }
+            }
+
+            // enter / close keyboard
+            KeyboardButton {
+                primary: true;
+             
+                icon: mi.keyboard_return;
+                clicked => { root.close(root.text); }
+            }
+        }
+    }
+
+    key_enter(char) => {  
+        root.text = root.text + char;
+        root.shift = false;
+    }
 }

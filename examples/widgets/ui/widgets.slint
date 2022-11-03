@@ -1,16 +1,142 @@
-import { CoWindow, OutlineButton, Button, IconButton, IconButtonSmall, TextLine, KeyboardPage, co, mi } from "_imports/co_widgets.slint";
+import { CoWindow, OutlineButton, Button, RoundButton, RoundOutlineButton,
+    TextLine, KeyboardPage, LabelLarge, KeyboardAdapter, Keyboard, co, mi } from "_imports/co_widgets.slint";
+
+export { KeyboardAdapter, co }
+
+export global settings := {
+    property<bool> keyboard_enabled: false;
+}
+
+Content := Rectangle {
+    callback update_theme;
+    callback open_keyboard;
+
+
+    property<bool> widgets_enabled: true;
+    property<bool> default_primary: true;
+    property<bool> keyboard_open: false;
+
+    GridLayout {  
+        padding: co.spaces.medium;
+        spacing: co.spaces.large;
+
+        VerticalLayout {  
+            spacing: co.spaces.medium;
+    
+            OutlineButton {
+                enabled: widgets_enabled;
+                text: co.dark-theme ? "light" : "dark";
+                icon: co.dark-theme ? mi.lightbulb : mi.nights_stay;
+                clicked => { 
+                    co.dark_theme = !co.dark_theme; 
+                    update_theme();
+                }
+            }
+    
+            OutlineButton {
+                enabled: widgets_enabled;
+                text: "Change primary";
+                clicked => {  
+                    root.default_primary = !root.default_primary;
+                    update_theme();
+                }
+            }
+    
+            Button {
+                text: widgets_enabled ? "Disable widgets" : "Enable widgets";
+                clicked => { widgets_enabled = !widgets_enabled; }
+            }
+    
+            Button {
+                enabled: widgets_enabled;
+                text: "Icon";
+                icon: mi.settings;
+             
+            }
+    
+            Button {
+                enabled: widgets_enabled;
+                text: "Primary";
+                primary: true;
+                clicked => { debug("Primary clicked") }
+            }
+        }
+
+        VerticalLayout {  
+            spacing: co.spaces.medium;
+            
+            TextLine {
+                has_clear: true;
+                enabled: widgets_enabled;
+                icon: mi.search;
+                placeholder: "Insert some text";
+                clickable: settings.keyboard_enabled;
+
+                clicked => { root.open_keyboard(); }
+            }
+
+            RoundButton {
+                enabled: widgets_enabled;
+                icon: mi.add;
+                clicked => { debug_label.text = "RoundButton clicked" }
+            }
+
+            RoundOutlineButton {  
+                enabled: widgets_enabled;
+                text: "A";
+                clicked => { debug_label.text = "RoundOutlineButton clicked" }
+            }
+
+            RoundOutlineButton { 
+                primary: true; 
+                enabled: widgets_enabled;
+                icon: mi.access_alarm;
+                clicked => { debug_label.text = "RoundOutlineButton clicked" }
+            }
+
+            debug_label := LabelLarge {  
+                text: "Debug label";
+            }
+        }
+    }
+}
 
 export Widgets := CoWindow {
     width: 600px;
     height: 400px;
     title: "Widgets gallery";
 
+    callback update_theme;
+
     property<bool> default_primary: true;
     property<brush> current_primary <=> co.accent_color;
     property<brush> current_on_primary <=> co.on_accent_color;
-    property<bool> widgets_enabled: true;
+    property<bool> keyboard_open: false;
+  
 
-    callback update_theme();
+   if(!co.settings.minimize && settings.keyboard_enabled) : KeyboardPage {
+        Content {
+            width: 100%;
+            height: 100%;
+            default_primary <=> root.default_primary;
+            background: root.background;
+            update-theme => { root.update-theme(); }
+            open_keyboard => { parent.open_keyboard("", "", ""); }
+        }
+   }
+
+   if((co.settings.minimize || !settings.keyboard_enabled) && !root.keyboard_open) : Content {
+        width: 100%;
+        height: 100%;
+        default_primary <=> root.default_primary;
+        background: root.background;
+        update-theme => { root.update-theme(); }
+        open_keyboard => { root.keyboard_open = true; }
+    }
+
+    if(co.settings.minimize && settings.keyboard_enabled && root.keyboard_open) : Keyboard {
+        close => { root.keyboard_open = false; }
+    }
 
     update-theme => {  
         if(default_primary) {
@@ -19,77 +145,6 @@ export Widgets := CoWindow {
         } else {
             current_primary = co.dark_theme ? #6750A4 : #D0BCFF;
             current_on_primary = #212121;
-        }
-    }
-
-    keyboard_page := KeyboardPage {  
-        background: root.background;
-
-        GridLayout {  
-            padding: co.spaces.medium;
-            spacing: co.spaces.large;
-    
-            VerticalLayout {  
-                spacing: co.spaces.medium;
-        
-                OutlineButton {
-                    enabled: widgets_enabled;
-                    text: "light / dark";
-                    clicked => { 
-                        co.dark_theme = !co.dark_theme; 
-                        update_theme();
-                    }
-                }
-        
-                OutlineButton {
-                    enabled: widgets_enabled;
-                    text: "Change primary";
-                    clicked => {  
-                        root.default_primary = !root.default_primary;
-                        update_theme();
-                    }
-                }
-        
-                Button {
-                    text: widgets_enabled ? "Disable widgets" : "Enable widgets";
-                    clicked => { widgets_enabled = !widgets_enabled; }
-                }
-        
-                Button {
-                    enabled: widgets_enabled;
-                    text: "Icon";
-                    icon: mi.settings;
-                 
-                }
-        
-                Button {
-                    enabled: widgets_enabled;
-                    text: "Primary";
-                    primary: true;
-                    clicked => { debug("Primary clicked") }
-                }
-        
-                IconButton {
-                    icon: mi.add;
-                }
-
-                IconButtonSmall {  
-                    icon: mi.close;
-                }
-            }
-    
-            VerticalLayout {  
-                spacing: co.spaces.medium;
-                TextLine {
-                    has_clear: true;
-                    enabled: widgets_enabled;
-                    icon: mi.search;
-                    placeholder: "Insert some text";
-                    keyboard_open: true;
-
-                    clicked => { keyboard_page.keyboard_open = true; }
-                }
-            }
         }
     }
 }  

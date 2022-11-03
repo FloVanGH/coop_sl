@@ -1,5 +1,5 @@
 import { co } from "../co/co.slint";
-import { StateLayer } from "../components/components.slint";
+import { FocusBorder } from "../components/components.slint";
 import { MaterialIcon } from "../assets/icons/material_icon.slint";
 import { mi } from "../assets/icons/material_icons.slint";
 
@@ -11,36 +11,31 @@ ClearButton := TouchArea {
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
         icon_size: co.icons.size_small;
-        icon_color: co.brushes.foreground;
+        icon_color: co.brushes.border;
         icon: mi.clear;
-    }
-
-    state_layer := MaterialIcon {
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
-        icon_size:  i_icon.icon_size;
-        icon_color: co.brushes.state;
-        icon: i_icon.icon;
-        opacity: 0;
-
-        animate opacity { duration: co.durations.fast; easing: ease_in_out; }
     }
 
     states [
         pressed when root.pressed : {
-            state_layer.opacity: co.opacities.state_pressed;
+            i_icon.icon_color: co.brushes.foreground.darker(co.state.pressed);
         }
         hover when root.has_hover : {
-            state_layer.opacity: co.opacities.state_hover;
+            i_icon.icon_color: co.brushes.foreground.darker(co.state.hover);
         }
         disabled when !root.enabled : {
-            i_icon.opacity: co.opacities.container_disabled;
+            i_icon.opacity: co.state.container_disabled;
         }
     ]
 }
 
 // A single line text input widget.
 export TextLine := Rectangle {
+    // Is emitted after text is changed.
+    callback edited <=> i_input.edited;
+    
+    // Is emmited if the `TextLine` is clicked and `clickable` is set to `true`.
+    callback clicked;
+
     // Defines the icon that is displayed in front of the text.
     property<string> icon <=> i_icon.icon;
 
@@ -57,98 +52,110 @@ export TextLine := Rectangle {
     property<bool> has_clear: false;
 
     // If set to true the text cannot be selected or changed by keyboard input.
-    property read-only <=> i_input.read-only;
+    property read_only <=> i_input.read-only;
 
-    property<bool> keyboard_open: false;
-
-    // Is emitted after text is changed.
-    callback edited <=> i_input.edited;
-    
-    callback clicked;
+    // If set to `true` the `TextLine` can emmit the  `clicked` callback.
+    property<bool> clickable: co.settings.minimize;
 
     min_width: 168px;
     height: co.sizes.medium;
     forward-focus: i_input;
 
     i_container := Rectangle {
-        width: 100%;
-        height: 100%;
-
         border_radius: co.radius.small;
         background: co.brushes.surface;
-    }
 
-    i_state_layer := StateLayer {  
-        enabled <=> root.enabled;
-        border_radius: i_container.border_radius;
-        has_focus <=> i_input.has_focus;
-    }
-
-    i_layout := HorizontalLayout {  
-        padding_left: co.spaces.medium;
-        padding_right: co.spaces.medium;
-        spacing: co.spaces.small;
-
-        i_icon := MaterialIcon {
-            y: (parent.height - height) / 2;
-            icon_color: co.brushes.foreground;
-            icon_size: co.icons.size_medium;
-        }
-
-        Rectangle {  
-            clip: true;
-
-            i_input := TextInput {
-                property <length> computed_x;
-                property <length> padding-outer: i_layout.padding-left + i_layout.padding-right;
+        i_layout := HorizontalLayout {  
+            padding_left: co.spaces.medium;
+            padding_right: co.spaces.medium;
+            spacing: co.spaces.small;
     
-                x: min(0px, max(parent.width - width, computed_x));
-                width: max(parent.width, preferred-width);
-                height: 100%;
-                color:co.brushes.foreground;
-                vertical-alignment: center;
-                font_size: co.typo.label_medium.size;
-                font_weight: co.typo.label_medium.weight;
-                font_family: co.typo.label_medium.family;
+            i_icon := MaterialIcon {
+                y: (parent.height - height) / 2;
+                icon_color: co.brushes.foreground;
+                icon_size: co.icons.size_medium;
+            }
+     
+            Rectangle {  
+                clip: true;
     
-                cursor-position-changed(cpos) => {
-                    if (cpos.x + computed_x < padding-outer) {
-                        computed_x = - cpos.x + padding-outer;
-                    } else if (cpos.x + computed_x > parent.width - padding-outer) {
-                        computed_x = parent.width - cpos.x - padding-outer;
+                i_input := TextInput {
+                    property <length> computed_x;
+                    property <length> padding-outer: i_layout.padding-left + i_layout.padding-right;
+    
+                    visible: !co.settings.minimize;
+                    x: min(0px, max(parent.width - width, computed_x));
+                    width: max(parent.width, preferred-width);
+                    height: 100%;
+                    color: co.brushes.foreground;
+                    vertical-alignment: center;
+                    font_size: co.typo.label_medium.size;
+                    font_weight: co.typo.label_medium.weight;
+                    font_family: co.typo.label_medium.family;
+        
+                    cursor-position-changed(cpos) => {
+                        if (cpos.x + computed_x < padding-outer) {
+                            computed_x = - cpos.x + padding-outer;
+                        } else if (cpos.x + computed_x > parent.width - padding-outer) {
+                            computed_x = parent.width - cpos.x - padding-outer;
+                        }
+                    }
+                }
+    
+                // helper text to display on embedded platforms
+                if (co.settings.minimize) : Text {
+                    text <=> root.text;
+                    vertical-alignment: center;
+                    y: (parent.height - height) / 2;
+                    color: co.brushes.foreground;
+                    opacity: i_input.opacity;
+                    font_size: co.typo.label_medium.size;
+                    font_weight: co.typo.label_medium.weight;
+                    font_family: co.typo.label_medium.family;
+                }
+    
+                if (text == "") : Text {
+                    text <=> root.placeholder;
+                    y: (parent.height - height) / 2;
+                    color: co.brushes.border;
+                    opacity: i_input.opacity;
+                    font_size: co.typo.label_medium.size;
+                    font_weight: co.typo.label_medium.weight;
+                    font_family: co.typo.label_medium.family;
+                }
+    
+                if (clickable) : TouchArea {  
+                    enabled <=> root.enabled;
+                    width: 100%;
+                    height: 100%;
+                    clicked => { 
+                        root.focus();
+                        root.clicked();
                     }
                 }
             }
-
-            if (text == "") : Text {
-                text <=> root.placeholder;
+    
+            if (has_clear) : ClearButton {
+                enabled: root.enabled;
                 y: (parent.height - height) / 2;
-                color: co.brushes.border;
-                opacity: i_input.opacity;
-                font_size: co.typo.label_medium.size;
-                font_weight: co.typo.label_medium.weight;
-                font_family: co.typo.label_medium.family;
+                clicked => { text = ""; }
             }
-
-            if (keyboard_open) : TouchArea {  
-                width: 100%;
-                height: 100%;
-                clicked => { root.clicked(); }
-            }
-        }
-
-        if (has_clear) : ClearButton {
-            enabled: root.enabled;
-            y: (parent.height - height) / 2;
-            clicked => { text = ""; }
         }
     }
 
+    if(i_input.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
+    }
+
     states [
-        disabled when !i_state_layer.enabled : {
-            i_container.opacity: co.opacities.container_disabled;
-            i_input.opacity: co.opacities.content_disabled;
-            i_icon.opacity: co.opacities.content_disabled;
+        disabled when !root.enabled : {
+            i_container.opacity: co.state.container_disabled;
+            i_input.opacity: co.state.content_disabled;
+            i_icon.opacity: co.state.content_disabled;
         }
     ]
 }

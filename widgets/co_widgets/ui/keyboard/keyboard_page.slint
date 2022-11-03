@@ -3,38 +3,42 @@ import { co } from "../co/co.slint";
 import { Keyboard } from "keyboard_widget.slint";
 
 export KeyboardPage := Rectangle {
+    callback open_keyboard(string, string, string);
+    
     property<bool> keyboard_open: false;
 
-    container := Rectangle {
+    open_keyboard(icon, placeholder, text) => {  
+        i_keyboard.icon = icon;
+        i_keyboard.placeholder = placeholder;
+        i_keyboard.text = text;
+        keyboard_open = true;
+    }
+
+
+    i_container := Rectangle {
         width: 100%;
         height: 100%;
         @children
     }
 
-    Keyboard {
-        y: container.y + container.height;
-        background: co.brushes.surface;
-
-        TouchArea {  
-            width: 100%;
-            height: 100%;
-
-            clicked => {  keyboard_open = false; }
-        }
+    i_keyboard := Keyboard {
+        y: i_container.y + i_container.height;
+      
+        close => { root.keyboard_open = false; }
     }
 
     states [
         keyboard_open when root.keyboard_open : {
-            container.y: -root.height;
+            i_container.y: -root.height;
         }
     ]
 
     transitions [  
         in keyboard_open : {
-            animate container.y { duration: co.durations.fast; }
+            animate i_container.y { duration: co.durations.fast; }
         }
         out keyboard_open : {
-            animate container.y { duration:  co.durations.medium; }
+            animate i_container.y { duration:  co.durations.medium; }
         }
     ]
 }

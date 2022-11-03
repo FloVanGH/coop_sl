@@ -22,13 +22,13 @@ export StateLayer := TouchArea {
 
     states [
         pressed when root.pressed : {
-            overlay.opacity: co.opacities.state_pressed;
+            overlay.opacity: co.state.pressed;
         }
         hover when root.has_hover : {
-            overlay.opacity: co.opacities.state_hover;
+            overlay.opacity: co.state.hover;
         }
         focused when root.has_focus && root.enabled : {
-            overlay.opacity: co.opacities.state_pressed;
+            overlay.opacity: co.state.pressed;
         }
     ]
 }

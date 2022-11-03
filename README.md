@@ -1,6 +1,6 @@
 # slint_extensions
 
-This repository contains all my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps. This is not an official channel of Slint.
+This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps. This is not an official channel of Slint.
 
 [![CI](https://ci.codeberg.org/api/badges/flovansl/slint_extensions/status.svg?branch=main)](https://ci.codeberg.org/flovansl/slint_extensions)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)

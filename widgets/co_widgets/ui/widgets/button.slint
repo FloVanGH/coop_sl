@@ -1,210 +1,287 @@
 import { co } from "../co/co.slint";
-import { StateLayer, LabelMedium } from "../components/components.slint";
+import { FocusBorder, LabelMedium } from "../components/components.slint";
 import { MaterialIcon } from "../assets/icons/material_icon.slint";
+// Base of default buttons.
+export ButtonBase := TouchArea {
+    // Defines the icon of the button.
+    property<string> icon: "";
 
-// Internal base button.
-BaseButton := Rectangle {
-    callback clicked <=> i_state_layer.clicked;
-    property<string> text: "text";
-    property<string> icon <=> i_icon.icon;
-    property<length> container_border_width <=> i_container.border_width;
-    property<brush> container_border_color <=> i_container.border_color;
-    property<brush> container_background <=> i_container.background;
-    property<brush> label_color <=> i_label.color;
+    // Defines the text of the button.
+    property<string> text: "";
+
+    // Defines the color of the icon and text.
+    property<brush> color;
+
+    // Defines the border color.
+    property<brush> border_color;
+
+    // Defines the border width.
+    property<length> border_width;
+
+    // Defines the bacground color.
+    property<brush> background;
+
+    // Defines the size of the icon.
     property<length> icon_size: co.icons.size_small;
-    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.medium * scale;
-    property<float> scale: 1.0;
-    property<bool> enabled <=> i_state_layer.enabled;
 
+    // Defines the space between icon and text.
+    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.small * i_container.scale;
+
+    width: padding_left + (root.icon == "" ? 0px : root.icon_size) + spacing + i_size_helper.width + padding_right;
+    height: co.sizes.medium;
+    accessible-role: button;
     padding_left:  co.spaces.large;
     padding_right: co.spaces.large;
+    forward-focus: i_focus_scope;
 
-    width: padding_left + i_container.icon_width + spacing + i_label.width + padding_right;
-    height: co.sizes.medium;
-
-    i_container := Rectangle {
-        property<length> spacing: root.spacing;
-        property<length> icon_width: root.icon != "" ? root.icon_size : 0px;
+    i_container := Rectangle {  
+        property<float> scale: 1.0;
+        property<length> label_x: root.icon == "" ? padding_left : padding_left + root.icon_size + root.spacing;
 
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
-        width: root.width * root.scale;
-        height: root.height * root.scale;
-        border_radius: co.radius.large * root.scale;
-        padding_left: root.padding_left * root.scale;
-        padding_right: root.padding_right * root.scale;
-    }
+        width: root.width * scale;
+        height: root.height * scale;
+        border_radius: co.radius.large * scale;
+        padding_left: root.padding_left * scale;
+        padding_right: root.padding_right * scale;
+        background: root.background;
+        border_width: root.border_width;
+        border_color: root.border_color;
 
-    i_icon := MaterialIcon {
-        x: i_container.x + parent.padding_right;
-        y: (parent.height - height) / 2;
-        icon_size: root.icon_size;
-        icon_color <=> root.label_color;
-    }
+        if(root.icon != "") : MaterialIcon {
+            x: root.padding_left;
+            y: (parent.height - height) / 2;
+            icon_size: root.icon_size;
+            icon_color: root.color;
+            icon: root.icon; 
+        }
+        
+        if(root.text != "") : Text {
+            color: root.color;
+            x: parent.label_x;
+            y: (parent.height - height) / 2;
+            font_size: co.typo.label_medium.size;
+            font_weight: co.typo.label_medium.weight;
+            font_family: co.typo.label_medium.family;
+            text: root.text;
+        }        
 
-    i_label := LabelMedium {
-        x: icon == "" ? (parent.width - width) / 2 : i_container.x + parent.padding_right + i_icon.width + parent.spacing;
-        y: (parent.height - height) / 2;
-        color: co.brushes.foreground;
-        text <=> root.text;
-        horizontal_alignment: center;
-    }
-
-    i_state_layer := StateLayer {  
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
-        width: root.width * root.scale;
-        height: root.height * root.scale;
-        border_radius <=> i_container.border_radius;
-        has_focus <=> i_focus_scope.has_focus;
-    }
+       i_size_helper := Text {
+            visible: false;
+            x: parent.label_x;
+            y: (parent.height - height) / 2;
+            font_size: co.typo.label_medium.size;
+            font_weight: co.typo.label_medium.weight;
+            font_family: co.typo.label_medium.family;
+            text: root.text;
+        }     
+        
+        states [
+            pressed when root.pressed : {
+                scale: 0.98;
+            }
+        ]
+    }  
 
     i_focus_scope := FocusScope {
         width: 0px; // Do not react on clicks
         enabled <=> root.enabled;
         key-pressed(event) => {
             if (event.text == " " || event.text == "\n") {
-                 root.clicked();
-                 return accept;
+                root.clicked();
+                return accept;
             }
             return reject;
         }
     }
 
-    states [
-        pressed when i_state_layer.pressed : {
-            root.scale: 0.98;
-        }
-        disabled when !i_state_layer.enabled : {
-            i_container.opacity: co.opacities.container_disabled;
-            i_label.opacity: co.opacities.content_disabled;
-            i_icon.opacity: co.opacities.content_disabled;
-        }
-    ]
-
-    animate scale { duration: co.durations.fast; }
-}
-
-// A bordered Button with a `clicked` callback.
-export OutlineButton := Rectangle {
-    // Callback to handle button click.
-    callback clicked <=> i_base.clicked;
-    
-    // Defines the text that is displayed on the button.
-    property<string> text: "text";
-
-    // Defines the optional icon of the button.
-    property<string> icon <=> i_base.icon;
-
-    // If set to false the button is disabled.
-    property<bool> enabled <=> i_base.enabled;
-
-    width <=> i_base.width;
-    height <=> i_base.height;
-    accessible-role: button;
-    accessible-label <=> i_base.text;
-
-    i_base := BaseButton {  
-        text <=> root.text;
-        container_border_width: 1px;
-        container_border_color: co.brushes.border;
+    if(i_focus_scope.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
     }
+
+    animate color { duration: co.durations.fast;  }
+    animate background { duration: co.durations.fast; }
+    animate border_color { duration: co.durations.fast; }
 }
 
-// A filled Button with a `clicked` callback.
-export Button := Rectangle {
-    // Callback to handle button click.
-    callback clicked <=> i_base.clicked;
-    
-    // Defines the text that is displayed on the button.
-    property<string> text: "text";
-
-    // Defines the optional icon of the button.
-    property<string> icon <=> i_base.icon;
-
-    // If set to `true` the background of the button will uses `co.brushes.primary`.
+// Default filled button.
+export Button := ButtonBase {
+    // If set to `true` the background will set to `co.brushes.primary`.
     property<bool> primary: false;
 
-    // If set to false the button is disabled.
-    property<bool> enabled <=> i_base.enabled;
-
-    width <=> i_base.width;
-    height <=> i_base.height;
-    accessible-role: button;
-    accessible-label <=> i_base.text;
-
-    i_base := BaseButton {  
-        text <=> root.text;
-        container_background: root.primary ? co.brushes.primary : co.brushes.surface;
-        label_color: root.primary ? co.brushes.on_primary : co.brushes.foreground;
-    }
+    background: primary ? co.brushes.primary : co.brushes.surface;
+    color: primary ? co.brushes.on_primary : co.brushes.foreground;
 
     states [
-        primary_disabled when !enabled && primary : {
-            i_base.label_color: co.brushes.foreground;
+        disabled when !enabled : {
+            root.background: co.brushes.surface_disabled;
+            root.color: co.brushes.foreground_disabled;
+        }
+        pressed when root.pressed : {
+            root.background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.surface.darker(co.state.pressed);
+            root.color:  primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+        }
+        hover when root.has_hover : {
+            root.background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.surface.darker(co.state.hover);
+            root.color:  primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
         }
     ]
 }
 
-// A button that only displays an icon.
-export IconButton := Rectangle {
-    // Callback to handle button click.
-    callback clicked <=> i_state_layer.clicked;
+export OutlineButton := ButtonBase {
+  // If set to `true` the background will set to `co.brushes.primary`.
+  property<bool> primary: false;
 
-    // Defines the optional icon of the button.
-    property<string> icon <=> i_icon.icon;
+  background: primary ? co.brushes.primary : co.brushes.background;
+  border_width: 1px;
+  color: primary ? co.brushes.on_primary : co.brushes.foreground;
+  border_color: co.brushes.border;
 
-    // If set to false the button is disabled.
-    property<bool> enabled <=> i_state_layer.enabled;
+  states [
+      disabled when !enabled : {
+          root.background: co.brushes.background;
+          root.border_color: co.brushes.border_disabled;
+          root.color: co.brushes.foreground_disabled;
+      }
+      pressed when root.pressed : {
+          background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.background.darker(co.state.pressed);
+          root.border_color: co.brushes.border.darker(co.state.pressed);
+          root.color: primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+      }
+      hover when root.has_hover : {
+          background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.background.darker(co.state.hover);
+          root.border_color: co.brushes.border.darker(co.state.hover);
+          root.color: primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
+      }
+  ]
+}
 
-    // Defines the size of the icon.
-    property<length> icon_size <=> i_icon.icon_size;
+// Base of round buttons.
+export RoundButtonBase := TouchArea {
+    // Defines the icon of the button.
+    property<string> icon: "";
 
-    // Defines the size of the state layer.
-    property<length> state_layer_size <=> i_state_layer.width;
+    // Defines the text of the button.
+    property<string> text: "";
+
+    // Defines the color of the icon and text.
+    property<brush> color;
+
+    // Defines the border color.
+    property<brush> border_color;
+
+    // Defines the border width.
+    property<length> border_width;
+
+    // Defines the bacground color.
+    property<brush> background;
 
     width: co.sizes.medium;
     height: width;
     accessible-role: button;
 
-    i_icon := MaterialIcon {
-       x: (parent.width - width) / 2;
-       y: (parent.height - height) / 2;
-       icon_size: co.icons.size_medium;
-       icon_color: co.brushes.foreground;
-    }
+    i_container := Rectangle {  
+        width: 100%;
+        height: 100%;
+        border_radius:(co.settings.minimize ? co.sizes.small : co.sizes.medium) / 2;
+        background: root.background;
+        border_width: root.border_width;
+        border_color: root.border_color;
 
-    i_state_layer := StateLayer {  
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
-        width: co.sizes.large;
-        height: width;
-        border_radius: max(width, height) / 2;
-        has_focus <=> i_focus_scope.has_focus;
-    }
+        if(root.icon != "") : MaterialIcon {
+            x: (parent.width - width) / 2;
+            y: (parent.height - height) / 2;
+            icon_size: co.icons.size_medium;
+            icon_color: root.color;
+            icon: root.icon; 
+        }
+        
+        if(root.text != "") : Text {
+            color: root.color;
+            x: (parent.width - width) / 2;
+            y: (parent.height - height) / 2;
+            font_size: co.typo.label_medium.size;
+            font_weight: co.typo.label_medium.weight;
+            font_family: co.typo.label_medium.family;
+            text: root.text;
+        }        
+    }  
 
     i_focus_scope := FocusScope {
         width: 0px; // Do not react on clicks
         enabled <=> root.enabled;
         key-pressed(event) => {
             if (event.text == " " || event.text == "\n") {
-                 root.clicked();
-                 return accept;
+                root.clicked();
+                return accept;
             }
             return reject;
         }
     }
 
+    if(i_focus_scope.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
+    }
+
+    animate color { duration: co.durations.fast;  }
+    animate background { duration: co.durations.fast; }
+    animate border_color { duration: co.durations.fast; }
+}
+
+// A round button.
+export RoundButton := RoundButtonBase { 
+    background: co.brushes.background;
+    color: co.brushes.foreground;
+
     states [
-        disabled when !i_state_layer.enabled : {
-            i_icon.opacity: co.opacities.container_disabled;
+        disabled when !enabled : {
+            root.color: co.brushes.foreground_disabled;
+        }
+        pressed when root.pressed : {
+            root.background: co.brushes.background.darker(co.state.pressed);
+            root.color: co.brushes.foreground.darker(co.state.pressed);
+        }
+        hover when root.has_hover : {
+            root.background: co.brushes.background.darker(co.state.hover);
+            root.color: co.brushes.foreground.darker(co.state.hover);
         }
     ]
 }
 
-// A smaller version of the `IconButton`.
-export IconButtonSmall := IconButton {
-    width: co.sizes.small;
-    icon_size: co.icons.size_small;
-    state_layer_size: co.sizes.medium;
-}  
+// A round outline button.
+export RoundOutlineButton := RoundButtonBase {
+    // If set to `true` the background will set to `co.brushes.primary`.
+    property<bool> primary: false;
+
+    background: primary ? co.brushes.primary : co.brushes.background;
+    border_width: 1px;
+    color: primary ? co.brushes.on_primary : co.brushes.foreground;
+    border_color: co.brushes.border;
+
+    states [
+        disabled when !enabled : {
+            root.background: co.brushes.background;
+            root.border_color: co.brushes.border_disabled;
+            root.color: co.brushes.foreground_disabled;
+        }
+        pressed when root.pressed : {
+            background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.background.darker(co.state.pressed);
+            root.border_color: co.brushes.border.darker(co.state.pressed);
+            root.color: primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+        }
+        hover when root.has_hover : {
+            background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.background.darker(co.state.hover);
+            root.border_color: co.brushes.border.darker(co.state.hover);
+            root.color: primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
+        }
+    ]
+}
