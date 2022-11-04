@@ -16,6 +16,7 @@ name = "widgets"
 [dependencies]
 slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0"] }
 mcu-board-support = { git = "https://github.com/slint-ui/slint", branch = "florian/mcu-test", optional = true }
+slint_redox = { path = "../../platform_support/slint_redox", optional = true }
 
 
 [build-dependencies]

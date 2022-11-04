@@ -3,13 +3,13 @@ fn generate_imports() {
     co_widgets::generate_import().unwrap();
 }
 
-#[cfg(not(feature = "mcu-board-support"))]
+#[cfg(all(not(feature = "mcu-board-support"), not(feature = "slint_redox")))]
 fn main() {
     generate_imports();
     slint_build::compile("ui/widgets.slint").unwrap();
 }
 
-#[cfg(feature = "mcu-board-support")]
+#[cfg(any(feature = "mcu-board-support", feature = "slint_redox"))]
 fn main() {
     generate_imports();
     let config = slint_build::CompilerConfiguration::new()
