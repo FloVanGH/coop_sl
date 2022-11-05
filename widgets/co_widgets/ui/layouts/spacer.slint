@@ -1,0 +1,34 @@
+import { co } from "../co/co.slint";
+
+// Fills the remaining spae in a layout.
+export Spacer := Rectangle {}
+
+// Fills vertical space with `co.spaces.small`.
+export VerticalSpacerSmall := Spacer {
+    height: co.spaces.small;
+}
+
+// Fills vertical space with `co.spaces.medium`.
+export VerticalSpacerMedium := Spacer {
+    height: co.spaces.medium;
+}
+
+// Fills vertical space with `co.spaces.large`.
+export VerticalSpacerLarge := Spacer {
+    height: co.spaces.large;
+}
+
+// Fills horizontal space with `co.spaces.small`.
+export HorizontalSpacerSmall := Spacer {
+    width: co.spaces.small;
+}
+
+// Fills horizontal space with `co.spaces.medium`.
+export HorizontalSpacerMedium := Spacer {
+    width: co.spaces.medium;
+}
+
+// Fills horizontal space with `co.spaces.large`.
+export HorizontalSpacerLarge := Spacer {
+    width: co.spaces.large;
+}

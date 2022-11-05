@@ -13,7 +13,7 @@ pub fn init() {
 pub struct RedoxPlatform {
     window: RefCell<Rc<slint::platform::software_renderer::MinimalSoftwareWindow<1>>>,
     orb_window: RefCell<Window>,
-    pointer_position: RefCell<slint::LogicalPosition>,
+    _pointer_position: RefCell<slint::LogicalPosition>,
 }
 
 impl RedoxPlatform {

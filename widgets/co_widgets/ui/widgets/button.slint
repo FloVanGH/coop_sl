@@ -25,68 +25,70 @@ export ButtonBase := TouchArea {
     property<length> icon_size: co.icons.size_small;
 
     // Defines the space between icon and text.
-    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.small * i_container.scale;
+    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.small;
 
-    width: padding_left + (root.icon == "" ? 0px : root.icon_size) + spacing + i_size_helper.width + padding_right;
+    width: (padding_left + (root.icon == "" ? 0px : root.icon_size) + spacing + i_size_helper.width + padding_right);
     height: co.sizes.medium;
     accessible-role: button;
     padding_left:  co.spaces.large;
     padding_right: co.spaces.large;
     forward-focus: i_focus_scope;
 
-    i_container := Rectangle {  
+    i_size_helper := Text {
+        x: 0px;
+        visible: false;
+        font_size: co.typo.label_medium.size;
+        font_weight: co.typo.label_medium.weight;
+        font_family: co.typo.label_medium.family;
+        text: root.text;
+    }
+
+    i_container := Rectangle {
         property<float> scale: 1.0;
-        property<length> label_x: root.icon == "" ? padding_left : padding_left + root.icon_size + root.spacing;
 
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
         width: root.width * scale;
         height: root.height * scale;
-        border_radius: co.radius.large * scale;
-        padding_left: root.padding_left * scale;
-        padding_right: root.padding_right * scale;
         background: root.background;
         border_width: root.border_width;
         border_color: root.border_color;
+        border_radius: co.radius.large * scale;
 
-        if(root.icon != "") : MaterialIcon {
-            x: root.padding_left;
-            y: (parent.height - height) / 2;
-            icon_size: root.icon_size;
-            icon_color: root.color;
-            icon: root.icon; 
-        }
-        
-        if(root.text != "") : Text {
-            color: root.color;
-            x: parent.label_x;
-            y: (parent.height - height) / 2;
-            font_size: co.typo.label_medium.size;
-            font_weight: co.typo.label_medium.weight;
-            font_family: co.typo.label_medium.family;
-            text: root.text;
-        }        
-
-       i_size_helper := Text {
-            visible: false;
-            x: parent.label_x;
-            y: (parent.height - height) / 2;
-            font_size: co.typo.label_medium.size;
-            font_weight: co.typo.label_medium.weight;
-            font_family: co.typo.label_medium.family;
-            text: root.text;
-        }     
-        
         states [
             pressed when root.pressed : {
-                scale: 0.98;
+                scale: 0.96;
             }
         ]
-    }  
+
+        animate scale { duration: co.durations.fast; }
+    }
+
+    HorizontalLayout { 
+        alignment: center;
+        spacing: root.spacing;
+
+        if(root.icon != "") : MaterialIcon {
+            y: (parent.height - height) / 2;
+            icon_size: root.icon_size ;
+            icon_color: root.color;
+            icon: root.icon;
+        }
+
+        if(root.text != "") : Text {
+            vertical-alignment: center;
+            color: root.color;
+            font_size: co.typo.label_medium.size;
+            font_weight: co.typo.label_medium.weight;
+            font_family: co.typo.label_medium.family;
+            text: root.text;
+        }
+    }
 
     i_focus_scope := FocusScope {
         width: 0px; // Do not react on clicks
         enabled <=> root.enabled;
+        
         key-pressed(event) => {
             if (event.text == " " || event.text == "\n") {
                 root.clicked();
@@ -185,7 +187,7 @@ export RoundButtonBase := TouchArea {
     height: width;
     accessible-role: button;
 
-    i_container := Rectangle {  
+    i_container := Rectangle {
         width: 100%;
         height: 100%;
         border_radius:(co.settings.minimize ? co.sizes.small : co.sizes.medium) / 2;
@@ -198,9 +200,9 @@ export RoundButtonBase := TouchArea {
             y: (parent.height - height) / 2;
             icon_size: co.icons.size_medium;
             icon_color: root.color;
-            icon: root.icon; 
+            icon: root.icon;
         }
-        
+
         if(root.text != "") : Text {
             color: root.color;
             x: (parent.width - width) / 2;
@@ -209,8 +211,8 @@ export RoundButtonBase := TouchArea {
             font_weight: co.typo.label_medium.weight;
             font_family: co.typo.label_medium.family;
             text: root.text;
-        }        
-    }  
+        }
+    }
 
     i_focus_scope := FocusScope {
         width: 0px; // Do not react on clicks
@@ -238,7 +240,7 @@ export RoundButtonBase := TouchArea {
 }
 
 // A round button.
-export RoundButton := RoundButtonBase { 
+export RoundButton := RoundButtonBase {
     background: co.brushes.background;
     color: co.brushes.foreground;
 

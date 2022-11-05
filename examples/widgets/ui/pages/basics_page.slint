@@ -1,0 +1,282 @@
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
+    VerticalSpacerMedium, TextLine, mi } from "../_imports/co_widgets.slint";
+
+
+export BasicsPage := Page {
+    // Button
+    Row {
+        RowTitle {
+            text: "Button";
+        }
+    }
+
+    Row {
+        ColumnTitle {  
+            text: "Text";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Icon";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Text+Icon";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Primary";
+        }
+    }
+
+    Row {
+        HorizontalSeparator {
+            colspan: 8; 
+        }
+    }
+
+    Row {
+        Button {
+            text: "Button";
+        }
+
+        Spacer {}
+
+        Button {
+            icon: mi.plus;
+        }
+
+        Spacer {}
+
+        Button {
+            text: "Button";
+            icon: mi.plus;
+        }
+
+        Spacer {}
+
+        Button {
+            primary: true;
+            text: "Primary";
+        }
+    }
+
+    Row {
+        VerticalSpacerMedium {}
+    }
+
+    // OutlineButton
+    Row {
+        RowTitle {
+            text: "OutlineButton";
+        }
+    }  
+
+    Row {
+        ColumnTitle {  
+            text: "Text";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Icon";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Text+Icon";
+        }
+    }
+
+    Row {
+        HorizontalSeparator {
+            colspan: 8; 
+         }
+    }
+
+    Row {
+        OutlineButton {
+            text: "OutlineButton";
+        }
+
+        Spacer {}
+
+        OutlineButton {
+            icon: mi.plus;
+        }
+
+        Spacer {}
+
+        OutlineButton {
+            text: "OutlineButton";
+            icon: mi.plus;
+        }
+    }
+
+    Row {
+        VerticalSpacerMedium {}
+    }
+
+    // RoundButton
+    Row {
+        RowTitle {
+            text: "RoundButton";
+        }
+    }  
+
+    Row {
+        ColumnTitle {  
+            text: "Text";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Icon";
+        }
+    }
+
+    Row {
+        HorizontalSeparator {
+            colspan: 8; 
+         }
+    }
+
+    Row {
+        RoundButton {
+            text: "A";
+        }
+
+        Spacer {}
+
+        RoundButton {
+            icon: mi.plus;
+        }
+    }
+
+    Row {
+        VerticalSpacerMedium {}
+    }
+
+    // RoundOutlineButton
+    Row {
+        RowTitle {
+            text: "RoundOutlineButton";
+        }
+    }  
+
+    Row {
+        ColumnTitle {  
+            text: "Text";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Icon";
+        }
+
+        Spacer {}
+        Spacer {}
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Primary";
+        }
+    }
+
+    Row {
+        HorizontalSeparator {
+            colspan: 8; 
+        }
+    }
+
+    Row {
+        RoundOutlineButton {
+            text: "A";
+        }
+
+        Spacer {}
+
+        RoundOutlineButton {
+            icon: mi.plus;
+        }
+
+        Spacer {}
+        Spacer {}
+        Spacer {}
+
+        RoundOutlineButton {
+            primary: true;
+            icon: mi.plus;
+        }
+    }
+
+    Row {
+        VerticalSpacerMedium {}
+    }
+
+    // TextLine
+    Row {
+        RowTitle {
+            text: "TextLine";
+        }
+    }  
+
+    Row {
+        ColumnTitle {  
+            text: "Empty";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Icon";
+        }
+
+        Spacer {}
+
+        ColumnTitle {  
+            text: "Icon+HasClear";
+        }
+    }
+
+    Row {
+        HorizontalSeparator {
+            colspan: 8; 
+        }
+    }
+
+    Row {
+        TextLine {}
+
+        Spacer {}
+
+        TextLine {
+            icon: mi.search;
+            text: "Hello";
+        }
+
+        Spacer {}
+
+        TextLine {
+            icon: mi.search;
+            has-clear: true;
+            text: "Hello";
+        }
+    }
+
+    Row {
+       Spacer {}
+    }
+}

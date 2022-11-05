@@ -1,0 +1,14 @@
+import { co } from "../_imports/co_widgets.slint";
+
+export global KeyboardManager := {
+    property<bool> keyboard_open: false;
+}
+
+export Page := GridLayout {
+    callback open_keyboard();
+
+    padding: co.spaces.large;
+    spacing: co.spaces.medium;
+
+    open_keyboard => { KeyboardManager.keyboard_open = true; }
+}

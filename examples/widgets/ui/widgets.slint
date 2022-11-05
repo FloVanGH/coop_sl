@@ -1,6 +1,9 @@
 import { CoWindow, OutlineButton, Button, RoundButton, RoundOutlineButton,
     TextLine, KeyboardPage, LabelLarge, KeyboardAdapter, Keyboard, co, mi } from "_imports/co_widgets.slint";
 
+import { BasicsPage } from "pages/basics_page.slint";
+import { KeyboardManager } from "pages/page.slint";
+
 export { KeyboardAdapter, co }
 
 export global settings := {
@@ -101,51 +104,45 @@ Content := Rectangle {
     }
 }
 
+Content := HorizontalLayout {
+    Rectangle {  
+        width: 200px;
+        background: co.dark-theme ? co.brushes.background.brighter(0.2) : co.brushes.background.darker(0.2);
+    }
+
+    BasicsPage {  
+
+    }
+}
+
+
+
 export Widgets := CoWindow {
-    width: 600px;
-    height: 400px;
+    preferred-width: 600px;
+    preferred-height: 400px;
     title: "Widgets gallery";
 
-    callback update_theme;
-
-    property<bool> default_primary: true;
-    property<brush> current_primary <=> co.accent_color;
-    property<brush> current_on_primary <=> co.on_accent_color;
-    property<bool> keyboard_open: false;
+    Content {}
   
+    // if(!co.settings.minimize && settings.keyboard_enabled) : KeyboardPage {
+    //     keyboard_open <=> KeyboardManager.keyboard_open;
+    //     Content {}
+    // }
 
-   if(!co.settings.minimize && settings.keyboard_enabled) : KeyboardPage {
-        Content {
-            width: 100%;
-            height: 100%;
-            default_primary <=> root.default_primary;
-            background: root.background;
-            update-theme => { root.update-theme(); }
-            open_keyboard => { parent.open_keyboard("", "", ""); }
-        }
-   }
+    // if((co.settings.minimize || !settings.keyboard_enabled) && !KeyboardManager.keyboard_open) : Content {}
+   
+    // if(co.settings.minimize && settings.keyboard_enabled && KeyboardManager.keyboard_open) : Keyboard {
+    //     close => { KeyboardManager.keyboard_open = false; }
+    // }
 
-   if((co.settings.minimize || !settings.keyboard_enabled) && !root.keyboard_open) : Content {
-        width: 100%;
-        height: 100%;
-        default_primary <=> root.default_primary;
-        background: root.background;
-        update-theme => { root.update-theme(); }
-        open_keyboard => { root.keyboard_open = true; }
-    }
-
-    if(co.settings.minimize && settings.keyboard_enabled && root.keyboard_open) : Keyboard {
-        close => { root.keyboard_open = false; }
-    }
-
-    update-theme => {  
-        if(default_primary) {
-            current_primary = co.dark_theme ? #01fec5 : #1d9bf2;
-            current_on_primary = co.dark_theme ? #212121 : #dfdfdf;
-        } else {
-            current_primary = co.dark_theme ? #6750A4 : #D0BCFF;
-            current_on_primary = #212121;
-        }
-    }
+//     update-theme => {  
+//         if(default_primary) {
+//             current_primary = co.dark_theme ? #01fec5 : #1d9bf2;
+//             current_on_primary = co.dark_theme ? #212121 : #dfdfdf;
+//         } else {
+//             current_primary = co.dark_theme ? #6750A4 : #D0BCFF;
+//             current_on_primary = #212121;
+//         }
+//     }
 }  
 
