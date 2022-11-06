@@ -2,6 +2,10 @@
 
 This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps. This is not an official channel of Slint.
 
+<a href="https://codeberg.org/morphUI/morph_ui">
+    <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="60">
+</a>
+
 [![CI](https://ci.codeberg.org/api/badges/flovansl/slint_extensions/status.svg?branch=main)](https://ci.codeberg.org/flovansl/slint_extensions)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
@@ -27,6 +31,13 @@ This repository is the home of my personal [Slint](https://slint-ui.com/) projec
 * **widgets**: gallery example showing the widget of `book_flip` and `co_widget`
 
 > Check out the [README](examples/README.md) for more details.
+
+# new to slint?
+
+* getting start: ...
+* Slint language docs: ...
+* Slint examples: ...
+* Slint mattermost: ...
 
 ## getting start with Slint
 
