@@ -1,4 +1,4 @@
-# file_nav
+# van_files
 
 File navigation / explorer build with Slint.
 

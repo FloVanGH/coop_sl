@@ -1,6 +1,7 @@
 [workspace]
 members = [
-   "apps/file_nav",
+   "apps/van_calc",
+   "apps/van_files",
    "apps/pico_os",
    "examples/gaming",
    "examples/widgets",
@@ -12,21 +13,24 @@ members = [
    "widgets/book_flip",
    "widgets/co_widgets",
    "internal/shared",
+   "internal/platforms_support",
 ]
 
 default-members = [
-   "apps/file_nav",
+   "apps/van_calc",
+   "apps/van_files",
    "apps/pico_os",
-    "examples/gaming",
-    "examples/widgets",
-    "gaming/pico_engine",
-    "gaming/pico_ecs",
-    "gaming/pico_designer",
-    "platform_support/slint_psp",
-    "platform_support/slint_redox",
-    "widgets/book_flip",
-    "widgets/co_widgets",
-    "internal/shared",
+   "examples/gaming",
+   "examples/widgets",
+   "gaming/pico_engine",
+   "gaming/pico_ecs",
+   "gaming/pico_designer",
+   "platform_support/slint_psp",
+   "platform_support/slint_redox",
+   "widgets/book_flip",
+   "widgets/co_widgets",
+   "internal/shared",
+   "internal/platforms_support",
 ]
 
 resolver="2"

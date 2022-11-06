@@ -12,8 +12,9 @@ This repository is the home of my personal [Slint](https://slint-ui.com/) projec
 ## crates
 
 * apps/
-    * **file_nav**: File navigation / explorer build with Slint **(not yet started)**
     * **pico_os**: A fake os / desktop environment as fancy showcase build with Slint **(not yet started)**
+    * **van_calc**: Calculator build with Slint **(not yet started)**
+    * **van_files**: File navigation / explorer build with Slint **(not yet started)**
 * platform_support/
     * **slint_psp**: Slint support for the PSP gaming console **(in active development / pre-release)**
     * **slint_redox**: Slint support for Redox OS **(in active development / pre-release)**
