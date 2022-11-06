@@ -2,281 +2,393 @@ import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
-    VerticalSpacerMedium, TextLine, mi } from "../_imports/co_widgets.slint";
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, co } from "../_imports/co_widgets.slint";
 
+import { settings } from "../settings.slint";
 
 export BasicsPage := Page {
-    // Button
-    Row {
-        RowTitle {
-            text: "Button";
-        }
-    }
+    title: "Basics";
 
-    Row {
-        ColumnTitle {  
-            text: "Text";
-        }
-
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Icon";
+    GridLayout {  
+        padding: co.spaces.large;
+        spacing: co.spaces.medium;
+       
+        // Button
+        Row {
+            RowTitle {
+                text: "Button";
+            }
         }
 
-        Spacer {}
+        Row {
+            ColumnTitle {  
+                text: "Text";
+            }
 
-        ColumnTitle {  
-            text: "Text+Icon";
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Text+Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Primary";
+            }
         }
 
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Primary";
-        }
-    }
-
-    Row {
-        HorizontalSeparator {
-            colspan: 8; 
-        }
-    }
-
-    Row {
-        Button {
-            text: "Button";
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
         }
 
-        Spacer {}
+        Row {
+            Button {
+                text: "Button";
+                enabled: settings.widgets_enabled;
+            }
 
-        Button {
-            icon: mi.plus;
+            Spacer {}
+
+            Button {
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Button {
+                text: "Button";
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Button {
+                primary: true;
+                text: "Primary";
+                enabled: settings.widgets_enabled;
+            }
         }
 
-        Spacer {}
-
-        Button {
-            text: "Button";
-            icon: mi.plus;
+        Row {
+            VerticalSpacerMedium {}
         }
 
-        Spacer {}
+        // OutlineButton
+        Row {
+            RowTitle {
+                text: "OutlineButton";
+            }
+        }  
 
-        Button {
-            primary: true;
-            text: "Primary";
-        }
-    }
+        Row {
+            ColumnTitle {  
+                text: "Text";
+            }
 
-    Row {
-        VerticalSpacerMedium {}
-    }
+            Spacer {}
 
-    // OutlineButton
-    Row {
-        RowTitle {
-            text: "OutlineButton";
-        }
-    }  
+            ColumnTitle {  
+                text: "Icon";
+            }
 
-    Row {
-        ColumnTitle {  
-            text: "Text";
-        }
+            Spacer {}
 
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Icon";
+            ColumnTitle {  
+                text: "Text+Icon";
+            }
         }
 
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Text+Icon";
-        }
-    }
-
-    Row {
-        HorizontalSeparator {
-            colspan: 8; 
-         }
-    }
-
-    Row {
-        OutlineButton {
-            text: "OutlineButton";
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
         }
 
-        Spacer {}
+        Row {
+            OutlineButton {
+                text: "OutlineButton";
+                enabled: settings.widgets_enabled;
+            }
 
-        OutlineButton {
-            icon: mi.plus;
+            Spacer {}
+
+            OutlineButton {
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            OutlineButton {
+                text: "OutlineButton";
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
         }
 
-        Spacer {}
-
-        OutlineButton {
-            text: "OutlineButton";
-            icon: mi.plus;
-        }
-    }
-
-    Row {
-        VerticalSpacerMedium {}
-    }
-
-    // RoundButton
-    Row {
-        RowTitle {
-            text: "RoundButton";
-        }
-    }  
-
-    Row {
-        ColumnTitle {  
-            text: "Text";
+        Row {
+            VerticalSpacerMedium {}
         }
 
-        Spacer {}
+        // RoundButton
+        Row {
+            RowTitle {
+                text: "RoundButton";
+            }
+        }  
 
-        ColumnTitle {  
-            text: "Icon";
-        }
-    }
+        Row {
+            ColumnTitle {  
+                text: "Text";
+            }
 
-    Row {
-        HorizontalSeparator {
-            colspan: 8; 
-         }
-    }
+            Spacer {}
 
-    Row {
-        RoundButton {
-            text: "A";
-        }
-
-        Spacer {}
-
-        RoundButton {
-            icon: mi.plus;
-        }
-    }
-
-    Row {
-        VerticalSpacerMedium {}
-    }
-
-    // RoundOutlineButton
-    Row {
-        RowTitle {
-            text: "RoundOutlineButton";
-        }
-    }  
-
-    Row {
-        ColumnTitle {  
-            text: "Text";
+            ColumnTitle {  
+                text: "Icon";
+            }
         }
 
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Icon";
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
         }
 
-        Spacer {}
-        Spacer {}
-        Spacer {}
+        Row {
+            RoundButton {
+                text: "A";
+                enabled: settings.widgets_enabled;
+            }
 
-        ColumnTitle {  
-            text: "Primary";
-        }
-    }
+            Spacer {}
 
-    Row {
-        HorizontalSeparator {
-            colspan: 8; 
-        }
-    }
-
-    Row {
-        RoundOutlineButton {
-            text: "A";
+            RoundButton {
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
         }
 
-        Spacer {}
-
-        RoundOutlineButton {
-            icon: mi.plus;
+        Row {
+            VerticalSpacerMedium {}
         }
 
-        Spacer {}
-        Spacer {}
-        Spacer {}
+        // RoundOutlineButton
+        Row {
+            RowTitle {
+                text: "RoundOutlineButton";
+            }
+        }  
 
-        RoundOutlineButton {
-            primary: true;
-            icon: mi.plus;
-        }
-    }
+        Row {
+            ColumnTitle {  
+                text: "Text";
+            }
 
-    Row {
-        VerticalSpacerMedium {}
-    }
+            Spacer {}
 
-    // TextLine
-    Row {
-        RowTitle {
-            text: "TextLine";
-        }
-    }  
+            ColumnTitle {  
+                text: "Icon";
+            }
 
-    Row {
-        ColumnTitle {  
-            text: "Empty";
-        }
+            Spacer {}
+            Spacer {}
+            Spacer {}
 
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Icon";
+            ColumnTitle {  
+                text: "Primary";
+            }
         }
 
-        Spacer {}
-
-        ColumnTitle {  
-            text: "Icon+HasClear";
-        }
-    }
-
-    Row {
-        HorizontalSeparator {
-            colspan: 8; 
-        }
-    }
-
-    Row {
-        TextLine {}
-
-        Spacer {}
-
-        TextLine {
-            icon: mi.search;
-            text: "Hello";
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
         }
 
-        Spacer {}
+        Row {
+            RoundOutlineButton {
+                text: "A";
+                enabled: settings.widgets_enabled;
+            }
 
-        TextLine {
-            icon: mi.search;
-            has-clear: true;
-            text: "Hello";
+            Spacer {}
+
+            RoundOutlineButton {
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+            Spacer {}
+            Spacer {}
+
+            RoundOutlineButton {
+                primary: true;
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
         }
-    }
 
-    Row {
-       Spacer {}
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // TextLine
+        Row {
+            RowTitle {
+                text: "TextLine";
+            }
+        }  
+
+        Row {
+            ColumnTitle {  
+                text: "Empty";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Icon+HasClear";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
+        }
+
+        Row {
+            TextLine {
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            TextLine {
+                icon: mi.search;
+                text: "Hello";
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            TextLine {
+                icon: mi.search;
+                has-clear: true;
+                text: "Hello";
+                enabled: settings.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        } 
+
+        // Switch
+        Row {
+            RowTitle {
+                text: "Switch";
+            }
+        }  
+
+        Row {
+            ColumnTitle {  
+                text: "No Icons";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Icons";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
+        }
+
+        Row {
+            Switch {
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Switch {  
+                on_icon: mi.check;
+                off_icon: mi.close;
+                enabled: settings.widgets_enabled;
+                selected: true;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        } 
+
+        // CheckBox
+        Row {
+            RowTitle {
+                text: "CheckBox";
+            }
+        }  
+
+        Row {
+            ColumnTitle {  
+                text: "No Text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Text";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
+        }
+
+        Row {
+            CheckBox {
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            CheckBox {  
+                text: "CheckBox";
+                enabled: settings.widgets_enabled;
+                selected: true;
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
     }
 }

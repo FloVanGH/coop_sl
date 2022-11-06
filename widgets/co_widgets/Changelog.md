@@ -3,6 +3,7 @@
 ## Added
 
 * Buttons: `Button`, `OutlineButton`, `RoundButton`, `RoundOutlineButton`
+* Selectables: `Switch`
 * Text input: `TextLine`
 * Layout components: `VerticalSeparator`, `HorizontalSeparator`, `Spacer`, `VerticalSpacerMedium`,
     `VerticalSpacerLarge`, `HorizontalSpacerSmall`, `HorizontalSpacerMedium`, `HorizontalSpacerLarge`

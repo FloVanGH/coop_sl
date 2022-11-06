@@ -36,7 +36,7 @@ impl Default for RedoxPlatform {
 }
 
 impl RedoxPlatform {
-    fn move_pointer(&self, offset: slint::LogicalPosition) {
+    fn _move_pointer(&self, offset: slint::LogicalPosition) {
         if offset.x == 0. && offset.y == 0. {
             return;
         }

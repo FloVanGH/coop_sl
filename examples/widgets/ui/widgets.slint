@@ -1,14 +1,12 @@
 import { CoWindow, OutlineButton, Button, RoundButton, RoundOutlineButton,
     TextLine, KeyboardPage, LabelLarge, KeyboardAdapter, Keyboard, co, mi } from "_imports/co_widgets.slint";
 
-import { BasicsPage } from "pages/basics_page.slint";
+import { BasicsPage, IconPage } from "pages/pages.slint";
 import { KeyboardManager } from "pages/page.slint";
+import { settings } from "settings.slint"; 
 
 export { KeyboardAdapter, co }
-
-export global settings := {
-    property<bool> keyboard_enabled: false;
-}
+export { settings }
 
 Content := Rectangle {
     callback update_theme;
@@ -118,11 +116,12 @@ Content := HorizontalLayout {
 
 
 export Widgets := CoWindow {
-    preferred-width: 600px;
+    preferred-width: 866px;
     preferred-height: 400px;
     title: "Widgets gallery";
 
     Content {}
+    // Content {}
   
     // if(!co.settings.minimize && settings.keyboard_enabled) : KeyboardPage {
     //     keyboard_open <=> KeyboardManager.keyboard_open;

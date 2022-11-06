@@ -2,6 +2,8 @@
 
 The goal with `co_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system.
 
+What the `co` in `co_widgets` stands for: cooperation.
+
 <a href="https://codeberg.org/morphUI/morph_ui">
     <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="40">
 </a>

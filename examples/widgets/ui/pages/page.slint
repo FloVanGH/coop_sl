@@ -1,4 +1,7 @@
-import { co } from "../_imports/co_widgets.slint";
+import { settings } from "../settings.slint"; 
+
+import { HeaderBar, OutlineButton, CheckBox, Switch, co, mi } from "../_imports/co_widgets.slint";
+
 
 export global KeyboardManager := {
     property<bool> keyboard_open: false;
@@ -7,8 +10,44 @@ export global KeyboardManager := {
 export Page := GridLayout {
     callback open_keyboard();
 
-    padding: co.spaces.large;
-    spacing: co.spaces.medium;
-
+    property<string> title <=> i_header_bar.title;
+  
     open_keyboard => { KeyboardManager.keyboard_open = true; }
+
+    Row {
+        i_header_bar := HeaderBar {
+
+            CheckBox {
+                y: (parent.height - height) / 2;
+                // on_icon: mi.keyboard;
+                // off_icon: mi.nights_stay;
+                text: "Keyboard enabled";
+                selected <=> settings.keyboard_enabled;
+            }
+
+            CheckBox {
+                y: (parent.height - height) / 2;
+                // on_icon: mi.keyboard;
+                // off_icon: mi.nights_stay;
+                text: "Widgets enabled";
+                selected <=> settings.widgets_enabled;
+            }
+
+            Switch {
+                y: (parent.height - height) / 2;
+                on_icon: mi.lightbulb;
+                off_icon: mi.nights_stay;
+                selected: !co.dark_theme;
+                selected_changed(selected) => {
+                    co.dark_theme = !selected;
+                }
+            }
+        }
+    }
+
+    Row {
+        Flickable {  
+            @children
+        }    
+    }
 }

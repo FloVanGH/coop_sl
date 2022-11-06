@@ -1,0 +1,231 @@
+import { co } from "../co/co.slint";
+import { LabelSmall, FocusBorder } from "../components/components.slint";
+import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
+
+// Base for selectable widgets like `CheckBox` and `Switch`.
+export SelectableBase := Rectangle {
+    // Will be called after  `selected` has changed.
+    callback selected_changed(bool);
+
+    // If set to `true` the widget is marekd as selected.
+    property<bool> selected: false;
+
+    // If set to `true` if widget is enabled.
+    property<bool> enabled <=> i_touch_area.enabled;
+
+    // If `true` the widget is hovered by a pointer e.g. a mouse cursor.
+    property<bool> has_hover <=> i_touch_area.has_hover;
+
+    // If `true` the widget has focus
+    property<bool> has_focus <=> i_focus_scope.has_focus;
+
+    // If `true` the widget is pressed.
+    property<bool> pressed <=> i_touch_area.pressed;
+
+    forward_focus: i_focus_scope;
+
+    i_touch_area := TouchArea {  
+        clicked => { 
+            root.selected = !root.selected;
+            root.selected_changed(root.selected);
+         }
+    }
+
+    i_focus_scope := FocusScope {
+        width: 0px; // Do not react on clicks
+        enabled <=> root.enabled;
+        
+        key-pressed(event) => {
+            if (event.text == " " || event.text == "\n") {
+                i_touch_area.clicked();
+                return accept;
+            }
+            return reject;
+        }
+    }
+}
+
+// A box that can be toggled on and off.
+export CheckBox := SelectableBase {
+    property<string> text <=> i_label.text;
+
+    width: i_container.width + i_container.spacing + i_label.width;
+    height: co.sizes.extra_small;
+
+    i_container := Rectangle {
+        property<length> spacing: root.text == "" ? 0px : co.spaces.small;
+
+        width: height;
+        height: 100%;
+        border_radius: co.radius.extra_small;
+        border_width: 1px;
+        border_color: co.brushes.border;
+
+        i_icon := MaterialIcon {
+            x: (parent.width - width) / 2;
+            y: (parent.height - height) / 2;
+            icon_color: co.brushes.on_primary;
+            icon: mi.check;
+            opacity: 0;
+
+            animate icon_color { duration: co.durations.fast; }
+            animate opacity { duration: co.durations.fast; }
+        }
+
+        animate background { duration: co.durations.medium; easing: ease-in-out; }
+    } 
+
+    i_label := LabelSmall { 
+        x: i_container.x + i_container.width + i_container.spacing;
+        y: (parent.height - height) / 2;
+    }
+
+    if(root.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: co.radius.small;
+    }
+
+    states [  
+        disabled_selected when !enabled && root.selected : {
+            i_container.background: co.brushes.surface_disabled;
+            i_label.color: co.brushes.foreground_disabled;
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+        disabled when !enabled : {
+            i_container.border_color: co.brushes.border_disabled;
+            i_label.color: co.brushes.foreground_disabled;
+        }
+        pressed_selected when root.pressed && root.selected : {
+            i_container.background: co.brushes.primary.darker(co.state.pressed);
+            i_icon.icon_color: co.brushes.on_primary.darker(co.state.pressed);
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+        hover_selected when root.has_hover && root.selected : {
+            i_container.background: co.brushes.primary.darker(co.state.hover);
+            i_icon.icon_color: co.brushes.on_primary.darker(co.state.hover);
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+        pressed when root.pressed : {
+            i_container. background: co.brushes.background.darker(co.state.pressed);
+            root.border_color: co.brushes.border.darker(co.state.pressed);
+            i_icon.icon_color: co.brushes.foreground.darker(co.state.pressed);
+        }
+        hover when root.has_hover : {
+            i_container.background: co.brushes.background.darker(co.state.hover);
+            root.border_color: co.brushes.border.darker(co.state.hover);
+            i_icon.icon_color: co.brushes.foreground.darker(co.state.hover);
+        }
+        selected when root.selected : {
+            i_container.background: co.brushes.primary;
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+    ]
+}
+
+// Select between on and off state.
+export Switch := SelectableBase {
+    // Describes the icon of the on state.
+    property<string> on_icon;
+
+    // Describes the icon of the off state.
+    property<string> off_icon;
+
+    // Defines the foreground brush.
+    property<brush> foreground: co.brushes.foreground;
+
+    width: height * 2;
+    height: co.sizes.extra_small;
+
+    i_container := Rectangle {
+        property<length> indicator_space: 4px;
+
+        width: 100%;
+        height: 100%;
+        background: co.brushes.surface;
+        border_radius: i_indicator.border_radius + indicator_space / 2;
+
+        if(root.on_icon != "") : MaterialIcon {  
+            x: i_container.indicator_space + (i_indicator.width - width) / 2;
+            y: (parent.height - height) / 2;
+            icon <=> root.on_icon;
+            icon_size: co.icons.size_small;
+            icon_color: root.foreground;
+        }
+    
+        if(root.off_icon != "") : MaterialIcon {  
+            x: root.width - i_container.indicator_space - (i_indicator.width + width) / 2;
+            y: (parent.height - height) / 2;
+            icon <=> root.off_icon;
+            icon_size: co.icons.size_small;
+            icon_color: root.foreground;
+        }
+    
+        i_indicator := Rectangle { 
+            x: i_container.indicator_space;
+            y: (parent.height - height) / 2;
+            width: i_container.height - i_container.indicator_space;
+            height: width;
+            border_radius: max(width, height) / 2;
+            background: co.brushes.foreground;
+    
+            animate x { duration: co.durations.fast; }  
+        }
+
+        animate background { duration: co.durations.fast; }
+    }
+
+    if(root.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
+    }
+
+    states [
+        disabled_selected when !enabled && root.selected : {
+            i_container.background: co.brushes.surface_disabled;
+            foreground: co.brushes.foreground_disabled;
+            i_indicator.background: co.brushes.foreground_disabled;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+        }
+        disabled when !enabled : {
+            i_container.background: co.brushes.surface_disabled;
+            foreground: co.brushes.foreground_disabled;
+            i_indicator.background: co.brushes.foreground_disabled;
+        }
+        pressed_selected when root.pressed && root.selected : {
+            i_container.background: co.brushes.primary.darker(co.state.pressed);
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.background: co.brushes.background;
+            root.foreground: co.brushes.background;
+        }
+        hover_selected when root.has_hover && root.selected : {
+            i_container.background: co.brushes.primary.darker(co.state.hover);
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.background: co.brushes.background;
+            root.foreground: co.brushes.background;
+        }
+        selected when !root.pressed && root.selected : {
+            i_container.background: co.brushes.primary;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.background: co.brushes.background;
+            root.foreground: co.brushes.background;
+        }
+        pressed when root.pressed : {
+            i_container.background: co.brushes.surface.darker(co.state.pressed);
+        }
+        hover when root.has_hover : {
+            i_container.background: co.brushes.surface.darker(co.state.hover);
+        }
+    ]
+
+    animate foreground { duration: co.durations.fast; } 
+}
