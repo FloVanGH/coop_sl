@@ -24,7 +24,7 @@ impl RedoxPlatform {
                 slint::platform::software_renderer::MinimalSoftwareWindow::new(),
             ),
             orb_window: RefCell::new(Window::new(0, 0, 600, 320, "Slint window").unwrap()),
-            pointer_position: RefCell::new(slint::LogicalPosition::default()),
+            _pointer_position: RefCell::new(slint::LogicalPosition::default()),
         }
     }
 }
@@ -41,13 +41,13 @@ impl RedoxPlatform {
             return;
         }
 
-        self.pointer_position.borrow_mut().x += offset.x * 3.;
-        self.pointer_position.borrow_mut().y += offset.y * 3.;
+        self._pointer_position.borrow_mut().x += offset.x * 3.;
+        self._pointer_position.borrow_mut().y += offset.y * 3.;
 
         self.window
             .borrow()
             .dispatch_event(slint::WindowEvent::PointerMoved {
-                position: *self.pointer_position.borrow(),
+                position: *self._pointer_position.borrow(),
             });
     }
 }

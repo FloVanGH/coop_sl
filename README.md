@@ -3,7 +3,7 @@
 This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps. This is not an official channel of Slint.
 
 <a href="https://codeberg.org/morphUI/morph_ui">
-    <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="60">
+    <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="40">
 </a>
 
 [![CI](https://ci.codeberg.org/api/badges/flovansl/slint_extensions/status.svg?branch=main)](https://ci.codeberg.org/flovansl/slint_extensions)
@@ -33,21 +33,17 @@ This repository is the home of my personal [Slint](https://slint-ui.com/) projec
 
 > Check out the [README](examples/README.md) for more details.
 
-# new to slint?
+## new to slint?
 
-* getting start: ...
-* Slint language docs: ...
-* Slint examples: ...
-* Slint mattermost: ...
+Best to start with these sources:
 
-## getting start with Slint
-
-* Getting start: https://slint-ui.com/#tryout
-* Language documentation: https://github.com/slint-ui/slint/tree/master/docs
-
+* getting start: https://slint-ui.com/#tryout
+* Slint language docs: https://github.com/slint-ui/slint/tree/master/docs
+* Slint examples: https://github.com/slint-ui/slint/tree/master/examples
+* Slint chat: https://chat.slint-ui.com/
 
 ## license
 
+* All source code of this repository is available under [MIT license](LICENSE)
  * `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
 or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
-* All source code of this repository is available under [MIT license](LICENSE)

@@ -1,31 +1,110 @@
 # co_widgets
 
-Custom widget library for [Slint](https://slint-ui.com/).
+The goal with `co_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system.
 
 <a href="https://codeberg.org/morphUI/morph_ui">
-    <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="60">
+    <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="40">
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
-# structure
+## how to use
 
-* widgets: ...
+1. Add `co_widgets` as build dependency to your `Cargo.toml`:
 
-# widgets and components
+```
+[dependencies]
+slint = "0.3.1"
 
-* `Button`: ...
+[build-dependencies]
+slint-build = "0.3.1"
+co_widgets = { ... }
+```
 
-# new to slint?
+2. Call `co_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/co_widgets.slint`:
 
-* getting start: ...
-* Slint language docs: ...
-* Slint examples: ...
-* Slint mattermost: ...
+```rust
+fn main() {
+    co_widgets::generate_import().unwrap();
+    slint_build::compile("ui/my_app.slint").unwrap();
+}
+```
+
+3. Add an import to your slint file:
+
+```
+
+import { CoWindow, Button } from "_imports/co_widgets.slint";
+
+export MyApp := CoWindow {
+    preferred-width: 600px;
+    preferred-height: 400px;
+    title: "MyApp";
+
+    Button {
+        text: "Click me";
+    }
+}
+```
 
 ## example
 
 ...
+
+
+## structure
+
+* widgets: ...
+
+## widgets and components
+
+* `Button`: ...
+
+## theming
+
+All theme resources of `co_widgets` like brushes, sizes, spacings and typography can be accessed by using the  `co` global.
+
+### brush example
+
+```
+import { co } from "_imports/co_widgets.slint";
+
+MyRect := Rectangle {
+    background: co.brushes.surface;
+}
+```
+
+### typo example
+
+```
+import { co } from "_imports/co_widgets.slint";
+
+MyText := Text {
+   font_size: co.typo.label_large.size;
+   font_family: co.typo.label_large.family;
+   font_weight: co.typo.label_large.weight;
+}
+```
+
+### spaces
+
+```
+import { co } from "_imports/co_widgets.slint";
+
+MyLayout := HorizontalLayout {
+   spacing: co.spaces.small;
+   padding: co.spaces.medium;
+}
+```
+
+## new to slint?
+
+Best to start with these sources:
+
+* getting start: https://slint-ui.com/#tryout
+* Slint language docs: https://github.com/slint-ui/slint/tree/master/docs
+* Slint examples: https://github.com/slint-ui/slint/tree/master/examples
+* Slint chat: https://chat.slint-ui.com/
 
 ## assets
 
@@ -37,6 +116,6 @@ Custom widget library for [Slint](https://slint-ui.com/).
 
 ## license
 
- * `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
-or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
 * `co_widgets` is available under [MIT license](LICENSE)
+* `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
+or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
