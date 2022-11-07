@@ -1,7 +1,17 @@
 import { co } from "_imports/co_widgets.slint";
 
 export global settings := {
+    callback open_keyboard();
     property<bool> keyboard_enabled: false;
+    property<bool> keyboard_open: false;
     property<bool> widgets_enabled: true;
     // property<bool> dark_theme: true;
+
+    open_keyboard => {  
+        if(!keyboard_enabled) {
+            return;
+        }
+
+        keyboard_open = true;
+    }
 }

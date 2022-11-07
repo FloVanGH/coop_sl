@@ -279,6 +279,9 @@ export BasicsPage := Page {
         Row {
             TextLine {
                 enabled: settings.widgets_enabled;
+                clickable: settings.keyboard-enabled;
+
+                clicked => { settings.open_keyboard(); }
             }
 
             Spacer {}
@@ -287,6 +290,9 @@ export BasicsPage := Page {
                 icon: mi.search;
                 text: "Hello";
                 enabled: settings.widgets_enabled;
+                clickable: settings.keyboard-enabled;
+
+                clicked => { settings.open_keyboard(); }
             }
 
             Spacer {}
@@ -296,6 +302,9 @@ export BasicsPage := Page {
                 has-clear: true;
                 text: "Hello";
                 enabled: settings.widgets_enabled;
+                clickable: settings.keyboard-enabled;
+
+                clicked => { settings.open_keyboard(); }
             }
         }
 

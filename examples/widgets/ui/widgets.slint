@@ -120,7 +120,11 @@ export Widgets := CoWindow {
     preferred-height: 400px;
     title: "Widgets gallery";
 
-    Content {}
+    KeyboardPage {  
+        keyboard_open <=> settings.keyboard_open;
+        Content {}
+    }
+   
     // Content {}
   
     // if(!co.settings.minimize && settings.keyboard_enabled) : KeyboardPage {
