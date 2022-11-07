@@ -69,28 +69,5 @@ export ScrollView := Rectangle {
                 opacity: 0.3;
             }
         ]
-    }
-
-    
-}
-
-import { Button } from "button.slint";
-
-export Test := ScrollView {
-    min-width: 400px;
-    min-height: 400px;
-    vertical_stretch: 0;
-    viewport_width: rect.width;
-    viewport_height: rect.height;
-
-    rect := Rectangle {  
-      
-        width: 400px;
-        height: 800px;
-
-        Button {
-            text: "test";
-            clicked => { text = "Clicked"; }
-        }
-    }
+    }   
 }
