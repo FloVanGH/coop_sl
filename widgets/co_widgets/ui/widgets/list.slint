@@ -1,0 +1,61 @@
+import { co } from "../co/co.slint";
+
+import { ScrollView } from "scroll_view.slint";
+import { SelectableBase } from "selectables.slint";
+import { MaterialIcon } from "../assets/icons/material_icons.slint";
+
+// Model definition of a `Item`.
+export struct ItemModel := {
+    leading_icon: string,
+    text: string,
+    trailing_icon: string,
+}
+
+// Default item delegate (visuell represenation of an `ItemModel`).
+export Item := SelectableBase {
+    property<string> leading_icon;
+    property<string> text;
+    property<string> trailing_icon;
+
+    height: co.sizes.medium;
+
+    HorizontalLayout {  
+        spacing: co.spaces.small;
+
+        if(leading_icon != "") : MaterialIcon {
+            icon: leading_icon;
+        }
+
+        // todo text
+
+        if(trailing_icon != "") : MaterialIcon {
+            icon: trailing_icon;
+        }
+    }
+}
+
+// A non scrollable list with `Item` as default delegate.
+export List := Rectangle {
+    // Defines the list of models.
+    property<[ItemModel]> model;
+
+    VerticalLayout {  
+        for item[index] in model : Item {
+            leading_icon: item.leading_icon;
+            text: item.text;
+            trailing_icon: item.leading_icon;
+        }
+    }
+}
+
+// A scrollable variant of `List`.
+export ListView := Rectangle {
+   // Defines the list of models.
+    property<[ItemModel]> model <=> i_list.model;
+
+    ScrollView {  
+        i_list := List {
+
+        }
+    }
+}
