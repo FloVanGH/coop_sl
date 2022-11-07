@@ -1,0 +1,28 @@
+import { CoWindow, KeyboardPage, KeyboardAdapter, co } from "_imports/co_widgets.slint";
+import { BasicsPage, IconPage } from "pages/pages.slint";
+import { settings } from "settings.slint"; 
+import { CoWindow, KeyboardAdapter, Keyboard, co } from "_imports/co_widgets.slint";
+import { settings } from "settings.slint"; 
+
+export { KeyboardAdapter, co }
+export { settings }
+
+export App := CoWindow {
+    preferred-width: 866px;
+    preferred-height: 400px;
+    title: "Widgets gallery";
+
+    KeyboardPage {
+        keyboard_open <=> settings.keyboard_open;
+        HorizontalLayout {   
+            Rectangle {  
+                width: 200px;
+                background: co.dark-theme ? co.brushes.background.brighter(0.2) : co.brushes.background.darker(0.2);
+            }
+        
+            BasicsPage {}
+        }
+    }
+   
+}  
+

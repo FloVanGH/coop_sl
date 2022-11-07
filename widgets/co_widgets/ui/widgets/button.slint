@@ -226,7 +226,7 @@ export RoundButtonBase := TouchArea {
         }
     }
 
-    if(i_focus_scope.has_focus) : FocusBorder {
+    if(i_focus_scope.has_focus && !co.settings.minimize) : FocusBorder {
         width: root.width + 4px;
         height: root.height + 4px;
         x: (parent.width - width) / 2;

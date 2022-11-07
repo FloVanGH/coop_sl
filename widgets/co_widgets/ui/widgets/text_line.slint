@@ -56,7 +56,7 @@ export TextLine := Rectangle {
     // If set to `true` the `TextLine` can emmit the  `clicked` callback.
     property<bool> clickable: co.settings.minimize;
 
-    min_width: 168px;
+    min_width: !co.settings.minimize ? 168px : 80px;
     height: co.sizes.medium;
     forward-focus: i_input;
 

@@ -1,0 +1,202 @@
+import { PageMinimized } from "page.slint";
+import { RowTitle, ColumnTitle } from "../../pages/titles.slint";
+
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
+    VerticalSpacerSmall, TextLine, CheckBox, Switch, mi, co } from "../../_imports/co_widgets.slint";
+
+import { settings } from "../../settings.slint";
+
+export BasicsPageMinimized := PageMinimized {
+    GridLayout {  
+        padding: co.spaces.large;
+        spacing: co.spaces.medium;
+       
+        // Button
+        Row {
+            RowTitle {
+                text: "Button";
+            }
+        }
+
+        Row {
+            Button {
+                text: "Button";
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Button {
+                primary: true;
+                text: "Primary";
+                enabled: settings.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // OutlineButton
+        Row {
+            RowTitle {
+                text: "OutlineButton";
+            }
+        }
+
+        Row {
+            OutlineButton {
+                text: "OutlineButton";
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            OutlineButton {
+                text: "OutlineButton";
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // RoundButton
+        Row {
+            RowTitle {
+                text: "RoundButton";
+            }
+        }  
+
+        Row {
+            RoundButton {
+                text: "A";
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            RoundButton {
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // RoundOutlineButton
+        Row {
+            RowTitle {
+                text: "RoundOutlineButton";
+            }
+        }  
+
+        Row {
+            RoundOutlineButton {
+                text: "A";
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            RoundOutlineButton {
+                primary: true;
+                icon: mi.plus;
+                enabled: settings.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // TextLine
+        Row {
+            RowTitle {
+                text: "TextLine";
+            }
+        }  
+
+        Row {
+            TextLine {
+                enabled: settings.widgets_enabled;
+                clickable: true;
+
+                clicked => { settings.open_keyboard(); }
+            }
+
+            Spacer {}
+
+            TextLine {
+                icon: mi.search;
+                has-clear: true;
+                text: "Hello";
+                enabled: settings.widgets_enabled;
+                clickable: true;
+
+                clicked => { settings.open_keyboard(); }
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        } 
+
+        // Switch
+        Row {
+            RowTitle {
+                text: "Switch";
+            }
+        }  
+
+        Row {
+            Switch {
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Switch {
+                on_icon: mi.lightbulb;
+                off_icon: mi.nights_stay;
+                selected: !co.dark_theme;
+                selected_changed(selected) => {
+                    co.dark_theme = !selected;
+                }
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        } 
+
+        // CheckBox
+        Row {
+            RowTitle {
+                text: "CheckBox";
+            }
+        }  
+
+        Row {
+            CheckBox {
+                enabled: settings.widgets_enabled;
+            }
+
+            Spacer {}
+
+            CheckBox {
+                text: "Widgets enabled";
+                selected <=> settings.widgets_enabled;
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
+    }
+}

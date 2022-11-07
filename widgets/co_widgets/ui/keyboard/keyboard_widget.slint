@@ -68,7 +68,7 @@ export Keyboard := Rectangle {
     ];
 
     VerticalLayout {  
-       alignment: center;
+        alignment: center;
         spacing: co.spaces.small;
         padding: co.spaces.medium;
 
@@ -77,7 +77,6 @@ export Keyboard := Rectangle {
             // display text
             i_text_line := TextLine {
                 y: (parent.height - height) / 2; 
-                width: 100%;
                 read_only: true;
             }
         }

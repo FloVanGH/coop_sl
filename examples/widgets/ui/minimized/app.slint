@@ -1,0 +1,24 @@
+import { CoWindow, Keyboard, KeyboardAdapter, co } from "../_imports/co_widgets.slint";
+import { BasicsPageMinimized } from "pages/pages.slint";
+import { settings } from "../settings.slint"; 
+
+export { KeyboardAdapter, co }
+export { settings }
+
+export App := CoWindow {
+    title: "Widgets gallery";
+
+    Rectangle {  
+        width: 100%;
+        height: 100%;
+        background: co.brushes.background;
+
+        if(!settings.keyboard_open) : BasicsPageMinimized {}
+    
+        if(settings.keyboard_open) : Keyboard {
+            close(text) => {  
+                settings.keyboard_open = false;
+            }
+        }
+    }
+}

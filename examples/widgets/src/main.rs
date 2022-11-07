@@ -12,32 +12,17 @@ use wasm_bindgen::prelude::*;
 
 slint::include_modules!();
 
-fn ui() -> Widgets {
-    let widgets = Widgets::new();
+fn app() -> App {
+    let app = App::new();
 
     // this need to implemented to handle the backspace on the on screen keyboard.
-    widgets.global::<KeyboardAdapter>().on_backspace(|text| {
+    app.global::<KeyboardAdapter>().on_backspace(|text| {
         let mut text = text.to_string();
         text.pop();
         text.into()
     });
 
-    // enables the on screen keyboard.
-    if cfg!(feature = "keyboard") {
-        widgets.global::<settings>().set_keyboard_enabled(true);
-    }
-
-    // enables minimize by mcu platform support.
-    if cfg!(feature = "mcu-board-support") {
-        // enables keyboard by default because the boards of the platform support has no keys
-        widgets.global::<settings>().set_keyboard_enabled(true);
-        let mut settings = widgets.global::<co>().get_settings();
-        settings.minimize = true;
-
-        widgets.global::<co>().set_settings(settings);
-    }
-
-    widgets
+    app
 }
 
 #[cfg(not(feature = "mcu-board-support"))]
@@ -51,14 +36,22 @@ pub fn main() {
     #[cfg(all(debug_assertions, target_arch = "wasm32"))]
     console_error_panic_hook::set_once();
 
-    ui().run()
+    app().run()
 }
 
 #[cfg(feature = "mcu-board-support")]
 #[mcu_board_support::entry]
 fn main() -> ! {
     mcu_board_support::init();
-    ui().run();
+
+    let app = app();
+
+    app.global::<settings>().set_keyboard_enabled(true);
+    let mut settings = app.global::<co>().get_settings();
+    settings.minimize = true;
+    app.global::<co>().set_settings(settings);
+
+    app.run();
 
     panic!("The MCU demo should not quit")
 }
