@@ -47,6 +47,7 @@ export SelectableBase := Rectangle {
 
 // A box that can be toggled on and off.
 export CheckBox := SelectableBase {
+     // Used to set the optional display text of the check box.
     property<string> text <=> i_label.text;
 
     width: i_container.width + i_container.spacing + i_label.width;

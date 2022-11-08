@@ -33,7 +33,10 @@ impl RedoxPlatform {
                     600,
                     320,
                     "Slint window",
-                    &[orbclient::WindowFlag::Resizable],
+                    &[
+                        orbclient::WindowFlag::Resizable,
+                        orbclient::WindowFlag::Async,
+                    ],
                 )
                 .unwrap(),
             ),
@@ -66,6 +69,21 @@ impl slint::platform::Platform for RedoxPlatform {
         let mut work_buffer = vec![Color(0); width as usize * height as usize];
 
         'events: loop {
+            slint::platform::update_timers_and_animations();
+            self.window.borrow().draw_if_needed(|renderer| {
+                renderer.render(&mut work_buffer, self.window.borrow().size().width as usize);
+
+                unsafe {
+                    core::ptr::copy(
+                        work_buffer.as_ptr(),
+                        self.orb_window.borrow_mut().data_mut().as_mut_ptr() as *mut Color,
+                        work_buffer.len(),
+                    );
+                };
+
+                self.orb_window.borrow_mut().sync();
+            });
+
             for event in self.orb_window.borrow_mut().events() {
                 match event.to_option() {
                     EventOption::Quit(_quit_event) => break 'events,
@@ -155,24 +173,9 @@ impl slint::platform::Platform for RedoxPlatform {
                                 delta_y: scroll.y as f32 * 2.0,
                             });
                     }
-                    event_option => println!("{:?}", event_option),
+                    _ => {}
                 }
             }
-
-            slint::platform::update_timers_and_animations();
-            self.window.borrow().draw_if_needed(|renderer| {
-                renderer.render(&mut work_buffer, width as usize);
-
-                unsafe {
-                    core::ptr::copy(
-                        work_buffer.as_ptr(),
-                        self.orb_window.borrow_mut().data_mut().as_mut_ptr() as *mut Color,
-                        work_buffer.len(),
-                    );
-                };
-
-                self.orb_window.borrow_mut().sync();
-            });
         }
     }
 }
