@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["Florian Blasius <flovanpt@posteo.de>"]
 license = "MIT"
 description = "Custom widget library for Slint"
-repository = "https://codeberg.org/flovansl/slint_extensions"
+repository = "https://codeberg.org/flovansl/co"
 readme = "README.md"
 build = "build.rs"
 

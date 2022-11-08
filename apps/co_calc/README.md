@@ -1,4 +1,4 @@
-# van_calc
+# co_calc
 
 Calculator build with Slint.
 

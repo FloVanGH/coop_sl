@@ -1,8 +1,10 @@
-# slint_extensions
+# co
 
 This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps. This is not an official channel of Slint.
 
-<a href="https://codeberg.org/morphUI/morph_ui">
+What the `co` stands for: cooperation.
+
+<a href="https://codeberg.org/morphUI/morph_ui">coco
     <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="40">
 </a>
 
@@ -12,9 +14,10 @@ This repository is the home of my personal [Slint](https://slint-ui.com/) projec
 ## crates
 
 * apps/
+    * **co_calc**: Calculator build with Slint **(not yet started)**
+    * **co_chat**: A visual Slint prototype of a chat app **(not yet started)**
+    * **co_files**: File navigation / explorer build with Slint **(not yet started)**
     * **pico_os**: A fake os / desktop environment as fancy showcase build with Slint **(not yet started)**
-    * **van_calc**: Calculator build with Slint **(not yet started)**
-    * **van_files**: File navigation / explorer build with Slint **(not yet started)**
 * platform_support/
     * **slint_psp**: Slint support for the PSP gaming console **(in active development / pre-release)**
     * **slint_redox**: Slint support for Redox OS **(in active development / pre-release)**

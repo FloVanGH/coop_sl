@@ -1,7 +1,7 @@
 [workspace]
 members = [
-   "apps/van_calc",
-   "apps/van_files",
+   "apps/co_calc",
+   "apps/co_files",
    "apps/pico_os",
    "examples/gaming",
    "examples/widgets",
@@ -17,8 +17,8 @@ members = [
 ]
 
 default-members = [
-   "apps/van_calc",
-   "apps/van_files",
+   "apps/co_calc",
+   "apps/co_files",
    "apps/pico_os",
    "examples/gaming",
    "examples/widgets",
