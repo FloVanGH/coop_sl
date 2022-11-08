@@ -1,3 +1,5 @@
+#![allow(clippy::redundant_clone)]
+#![allow(clippy::cmp_owned)]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(not(feature = "std"), no_main)]
 

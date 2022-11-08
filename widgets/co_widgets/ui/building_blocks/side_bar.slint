@@ -1,0 +1,14 @@
+import { co } from "../co/co.slint";
+
+// A vertical layout with background.
+export SideBar := Rectangle {
+    background: co.brushes.surface;
+    
+    VerticalLayout {  
+        padding_top: co.spaces.medium;
+        padding_bottom: co.spaces.medium;
+        spacing: co.spaces.large;
+
+        @children
+    }
+}

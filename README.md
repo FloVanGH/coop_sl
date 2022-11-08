@@ -34,6 +34,7 @@ What the `co` stands for: cooperation.
 
 * [gaming](examples/gaming/): example of `pico_engine` and `pico_ecs`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
+    * [Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/)
 
 > Check out the [README](examples/README.md) for more details.
 

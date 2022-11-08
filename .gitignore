@@ -19,3 +19,5 @@ Cargo.lock
 
 # generated import files
 _imports/
+
+pkg/

@@ -1,6 +1,6 @@
 # co_widgets
 
-The goal with `co_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system.
+The goal with `co_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system. The theme is available in a light and a dark variant.
 
 What the `co` in `co_widgets` stands for: cooperation.
 
@@ -14,7 +14,7 @@ What the `co` in `co_widgets` stands for: cooperation.
 
 1. Add `co_widgets` as build dependency to your `Cargo.toml`:
 
-```
+```toml
 [dependencies]
 slint = "0.3.1"
 
@@ -34,8 +34,7 @@ fn main() {
 
 3. Add an import to your slint file:
 
-```
-
+```slint,no-preview
 import { CoWindow, Button } from "_imports/co_widgets.slint";
 
 export MyApp := CoWindow {
@@ -51,16 +50,13 @@ export MyApp := CoWindow {
 
 ## example
 
-...
+[Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/)
 
 
 ## structure
 
 * widgets: ...
 
-## widgets and components
-
-* `Button`: ...
 
 ## theming
 

@@ -1,12 +1,13 @@
 import { co } from "../co/co.slint";
 import { FocusBorder, LabelMedium } from "../components/components.slint";
 import { MaterialIcon } from "../assets/icons/material_icons.slint";
+
 // Base of default buttons.
 export ButtonBase := TouchArea {
-    // Defines the icon of the button.
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
     property<string> icon: "";
 
-    // Defines the text of the button.
+    // Used to set the display text of the button.
     property<string> text: "";
 
     // Defines the color of the icon and text.
@@ -111,9 +112,9 @@ export ButtonBase := TouchArea {
     animate border_color { duration: co.durations.fast; }
 }
 
-// Default filled button.
+// Default button with filled surface. Provides also an variant filled with the `co.brushes.primary` brush, to get it set `primary` to `true`.
 export Button := ButtonBase {
-    // If set to `true` the background will set to `co.brushes.primary`.
+    // If set to  `true` the button will filled with co.brushes.primary`
     property<bool> primary: false;
 
     background: primary ? co.brushes.primary : co.brushes.surface;
@@ -136,39 +137,39 @@ export Button := ButtonBase {
 }
 
 export OutlineButton := ButtonBase {
-  // If set to `true` the background will set to `co.brushes.primary`.
-  property<bool> primary: false;
+    // If set to  `true` the button will filled with co.brushes.primary`
+    property<bool> primary: false;
 
-  background: primary ? co.brushes.primary : co.brushes.background;
-  border_width: 1px;
-  color: primary ? co.brushes.on_primary : co.brushes.foreground;
-  border_color: co.brushes.border;
+    background: primary ? co.brushes.primary : co.brushes.background;
+    border_width: 1px;
+    color: primary ? co.brushes.on_primary : co.brushes.foreground;
+    border_color: co.brushes.border;
 
-  states [
-      disabled when !enabled : {
-          root.background: co.brushes.background;
-          root.border_color: co.brushes.border_disabled;
-          root.color: co.brushes.foreground_disabled;
-      }
-      pressed when root.pressed : {
-          background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.background.darker(co.state.pressed);
-          root.border_color: co.brushes.border.darker(co.state.pressed);
-          root.color: primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
-      }
-      hover when root.has_hover : {
-          background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.background.darker(co.state.hover);
-          root.border_color: co.brushes.border.darker(co.state.hover);
-          root.color: primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
-      }
-  ]
+    states [
+        disabled when !enabled : {
+            root.background: co.brushes.background;
+            root.border_color: co.brushes.border_disabled;
+            root.color: co.brushes.foreground_disabled;
+        }
+        pressed when root.pressed : {
+            background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.background.darker(co.state.pressed);
+            root.border_color: co.brushes.border.darker(co.state.pressed);
+            root.color: primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+        }
+        hover when root.has_hover : {
+            background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.background.darker(co.state.hover);
+            root.border_color: co.brushes.border.darker(co.state.hover);
+            root.color: primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
+        }
+    ]
 }
 
 // Base of round buttons.
 export RoundButtonBase := TouchArea {
-    // Defines the icon of the button.
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
     property<string> icon: "";
 
-    // Defines the text of the button.
+    // Used to set the display text of the button.
     property<string> text: "";
 
     // Defines the color of the icon and text.

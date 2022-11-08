@@ -20,6 +20,8 @@ Example game for `pico_engine` and `pico_ecs`. It can be run on multiple platfor
 
 Example gallery that shows all widgets of `co_widgets` and `book_flip`. It can be run on multiple platforms.
 
+[Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/)
+
 ### Run widgets
 
 * On desktop: from repo root run `cargo run -p widgets`
