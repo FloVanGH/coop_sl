@@ -8,7 +8,7 @@ What the `co` in `co_widgets` stands for: cooperation.
     <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="40">
 </a>
 
-[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE-MIT)
 
 ## how to use
 
@@ -118,6 +118,6 @@ Best to start with these sources:
 
 ## license
 
-* `co_widgets` is available under [MIT license](LICENSE)
+* `co_widgets` is available under [MIT license](LICENSE-MIT)
 * `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
 or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
