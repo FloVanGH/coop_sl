@@ -15,7 +15,7 @@ name = "widgets"
 [dependencies]
 slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0"] }
 mcu-board-support = { git = "https://github.com/slint-ui/slint", branch = "florian/mcu-test", optional = true }
-slint_redox = { path = "../../platform_support/slint_redox", optional = true }
+slint_orbclient = { path = "../../platform_support/slint_orbclient", optional = true }
 
 
 [build-dependencies]
@@ -30,13 +30,13 @@ default = ["slint/default"]
 keyboard = []
 
 # This is commented out by default because we don't want to build it as a library by default
-# The CI has a script that does sed "s/ #wasm#//" to generate the wasm build.
+# The CI has a script that does sed "s/ #wasm# //" to generate the wasm build.
 
- #wasm#[lib]
- #wasm#crate-type = ["cdylib"]
- #wasm#path = "src/main.rs"
+ #wasm# [lib]
+ #wasm# crate-type = ["cdylib"]
+ #wasm# path = "src/main.rs"
 
- #wasm#[target.'cfg(target_arch = "wasm32")'.dependencies]
- #wasm#wasm-bindgen = { version = "0.2" }
- #wasm#web-sys = { version = "0.3", features=["console"] }
- #wasm#console_error_panic_hook = "0.1.5"
+ #wasm# [target.'cfg(target_arch = "wasm32")'.dependencies]
+ #wasm# wasm-bindgen = { version = "0.2" }
+ #wasm# web-sys = { version = "0.3", features=["console"] }
+ #wasm# console_error_panic_hook = "0.1.5"

@@ -21,7 +21,7 @@ What the `co` stands for: cooperation.
     * [co_files](apps/pico_os/): A fake os / desktop environment as fancy showcase build with Slint **(not yet started)**
 * platform_support/
     * [slint_psp](platform_support/slint_psp/): Slint support for the PSP gaming console **(in active development / pre-release)**
-    * [slint_redox](platform_support/slint_redox/): Slint support for Redox OS **(in active development / pre-release)**
+    * [slint_orbclient](platform_support/slint_orbclient/): Slint platform implementation based on [OrbClient](https://gitlab.redox-os.org/redox-os/orbclient), can be run on [Redox](https://redox-os.org/) **(in active development / pre-release)**
 * gaming/
     * [pico_engine](gaming/pico_engine/): experimental engine based on slint with no_std support **(not yet started)**
     * [pico_ecs](gaming/pico_ecs/): experimental Entity Component System library with support for no_std **(not yet started)**

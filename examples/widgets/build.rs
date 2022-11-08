@@ -9,13 +9,13 @@ const APP: &str = "ui/app.slint";
 #[cfg(feature = "mcu-board-support")]
 const APP: &str = "ui/minimize/app.slint";
 
-#[cfg(all(not(feature = "mcu-board-support"), not(feature = "slint_redox")))]
+#[cfg(all(not(feature = "mcu-board-support"), not(feature = "slint_orbclient")))]
 fn main() {
     generate_imports();
     slint_build::compile(APP).unwrap();
 }
 
-#[cfg(any(feature = "mcu-board-support", feature = "slint_redox"))]
+#[cfg(any(feature = "mcu-board-support", feature = "slint_orbclient"))]
 fn main() {
     generate_imports();
     let config = slint_build::CompilerConfiguration::new()

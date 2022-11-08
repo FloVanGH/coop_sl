@@ -5,7 +5,7 @@ pipeline:
       event: [push, pull_request, tag]
       branch: main
     commands:
-      # need for slint_redox build for linux
+      # need for slint_orbclient build for linux
       - apt-get update && apt-get install -y cmake
       - rustup component add rustfmt
       - cargo fmt --all -- --check
@@ -19,6 +19,14 @@ pipeline:
     commands:
       - cargo build
       - cargo test
+  build_redox:
+    image: rust
+    commands:
+      - apt-get update && apt-get install -y -qq build-essential curl fuse libfuse-dev pkg-config qemu-system-x86
+      - rustup default nightly
+      - cargo install redoxer
+      - redoxer toolchain
+      - redoxer build -p widgets --features slint_orbclient
   build_wasm:
     image: rust
     when:
@@ -29,24 +37,20 @@ pipeline:
       - cd examples/widgets
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web
-  # deploy_wasm:
-  #   image: rust
-  #   when:
-  #     event: [push]
-  #     branch: main
-  #   commands:
-  #     - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-  #     - cd examples/widgets
-  #     - sed -i "s/#wasm# //" Cargo.toml
-  #     - wasm-pack build --release --target web
-  #     - mkdir ~/.ssh
-  #     - eval $(ssh-agent -s)
-  #     - echo -n $PRIVATE_SSH_KEY | base64 --decode | tr -d '\r' | ssh-add - > /dev/null
-  #     - ssh-keyscan -t rsa codeberg.org >> ~/.ssh/known_hosts
-  #     - git clone git@codeberg.org:flovansl/pages.git
-  #     - cp -r pkg pages/pkg
-  #     - cp index.html /pages/index.html
-  #     - cd pages
-  #     - git add .
-  #     - git commit -m "deploy widgets example"
-  #     - git push
+  deploy_wasm:
+    image: rust
+    when:
+      event: [push]
+      branch: main
+    commands:
+      - mkdir ~/.ssh
+      - eval $(ssh-agent -s)
+      - echo -n $PRIVATE_SSH_KEY | base64 --decode | tr -d '\r' | ssh-add - > /dev/null
+      - ssh-keyscan -t rsa codeberg.org >> ~/.ssh/known_hosts
+      - git clone git@codeberg.org:flovansl/pages.git
+      - cp -r pkg pages/pkg
+      - cp index.html /pages/index.html
+      - cd pages
+      - git add .
+      - git commit -m "deploy widgets example"
+      - git push

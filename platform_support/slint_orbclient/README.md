@@ -1,4 +1,4 @@
-# slint_redox
+# slint_orbclient
 
 [Slint](https://slint-ui.com/) platform support for Redox.
 

@@ -1,5 +1,5 @@
 [package]
-name = "slint_redox"
+name = "slint_orbclient"
 version = "0.1.0"
 edition = "2021"
 authors = ["Florian Blasius <flovanpt@posteo.de>"]

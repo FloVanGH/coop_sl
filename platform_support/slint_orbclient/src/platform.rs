@@ -7,23 +7,24 @@ use crate::color::*;
 
 use slint::LogicalSize;
 
+/// Initializes the platform.
 pub fn init() {
-    slint::platform::set_platform(Box::new(RedoxPlatform::new())).unwrap();
+    slint::platform::set_platform(Box::new(OrbClientPlatform::new())).unwrap();
 }
 
-/// Describes a `Slint` platform that must be used to run `Slint` on the PSP.
-pub struct RedoxPlatform {
-    window: RefCell<Rc<slint::platform::software_renderer::MinimalSoftwareWindow<1>>>,
+/// Describes a `Slint` platform that is based on `OrbClient` and so can run on also on `Redox OS`
+pub struct OrbClientPlatform {
+    slint_window: RefCell<Rc<slint::platform::software_renderer::MinimalSoftwareWindow<1>>>,
     orb_window: RefCell<Window>,
     button_states: Cell<(bool, bool, bool)>,
     pointer_position: Cell<slint::LogicalPosition>,
 }
 
-impl RedoxPlatform {
+impl OrbClientPlatform {
     /// Returns a new platform object.
     pub fn new() -> Self {
         Self {
-            window: core::cell::RefCell::new(
+            slint_window: core::cell::RefCell::new(
                 slint::platform::software_renderer::MinimalSoftwareWindow::new(),
             ),
             orb_window: RefCell::new(
@@ -46,22 +47,32 @@ impl RedoxPlatform {
     }
 }
 
-impl Default for RedoxPlatform {
+impl Default for OrbClientPlatform {
     fn default() -> Self {
-        RedoxPlatform::new()
+        OrbClientPlatform::new()
     }
 }
 
-impl slint::platform::Platform for RedoxPlatform {
+// todo: event converter with tests
+
+impl slint::platform::Platform for OrbClientPlatform {
     fn create_window_adapter(&self) -> Rc<dyn slint::platform::WindowAdapter> {
-        self.window.borrow().clone()
+        self.slint_window.borrow().clone()
+    }
+
+    fn set_clipboard_text(&self, text: &str) {
+        self.orb_window.borrow_mut().set_clipboard(text);
+    }
+
+    fn clipboard_text(&self) -> Option<String> {
+        Some(self.orb_window.borrow().clipboard())
     }
 
     fn run_event_loop(&self) {
         let width = self.orb_window.borrow().width();
         let height = self.orb_window.borrow().height();
 
-        self.window
+        self.slint_window
             .borrow()
             .as_ref()
             .set_size(slint::PhysicalSize::new(width, height));
@@ -70,8 +81,11 @@ impl slint::platform::Platform for RedoxPlatform {
 
         'events: loop {
             slint::platform::update_timers_and_animations();
-            self.window.borrow().draw_if_needed(|renderer| {
-                renderer.render(&mut work_buffer, self.window.borrow().size().width as usize);
+            self.slint_window.borrow().draw_if_needed(|renderer| {
+                renderer.render(
+                    &mut work_buffer,
+                    self.slint_window.borrow().size().width as usize,
+                );
 
                 unsafe {
                     core::ptr::copy(
@@ -88,7 +102,7 @@ impl slint::platform::Platform for RedoxPlatform {
                 match event.to_option() {
                     EventOption::Quit(_quit_event) => break 'events,
                     EventOption::Resize(resize) => {
-                        self.window
+                        self.slint_window
                             .borrow()
                             .set_size(LogicalSize::new(resize.width as f32, resize.height as f32));
 
@@ -99,24 +113,24 @@ impl slint::platform::Platform for RedoxPlatform {
                     EventOption::Mouse(evt) => {
                         self.pointer_position
                             .set(slint::LogicalPosition::new(evt.x as f32, evt.y as f32));
-                        self.window
-                            .borrow()
-                            .dispatch_event(slint::WindowEvent::PointerMoved {
+                        self.slint_window.borrow().dispatch_event(
+                            slint::WindowEvent::PointerMoved {
                                 position: self.pointer_position.get(),
-                            });
+                            },
+                        );
                     }
 
                     EventOption::Button(button) => {
                         if self.button_states.get().0 != button.left {
                             if button.left {
-                                self.window.borrow().dispatch_event(
+                                self.slint_window.borrow().dispatch_event(
                                     slint::WindowEvent::PointerPressed {
                                         position: self.pointer_position.get(),
                                         button: slint::PointerEventButton::Left,
                                     },
                                 );
                             } else {
-                                self.window.borrow().dispatch_event(
+                                self.slint_window.borrow().dispatch_event(
                                     slint::WindowEvent::PointerReleased {
                                         position: self.pointer_position.get(),
                                         button: slint::PointerEventButton::Left,
@@ -127,14 +141,14 @@ impl slint::platform::Platform for RedoxPlatform {
 
                         if self.button_states.get().1 != button.middle {
                             if button.middle {
-                                self.window.borrow().dispatch_event(
+                                self.slint_window.borrow().dispatch_event(
                                     slint::WindowEvent::PointerPressed {
                                         position: self.pointer_position.get(),
                                         button: slint::PointerEventButton::Middle,
                                     },
                                 );
                             } else {
-                                self.window.borrow().dispatch_event(
+                                self.slint_window.borrow().dispatch_event(
                                     slint::WindowEvent::PointerReleased {
                                         position: self.pointer_position.get(),
                                         button: slint::PointerEventButton::Middle,
@@ -145,14 +159,14 @@ impl slint::platform::Platform for RedoxPlatform {
 
                         if self.button_states.get().2 != button.right {
                             if button.right {
-                                self.window.borrow().dispatch_event(
+                                self.slint_window.borrow().dispatch_event(
                                     slint::WindowEvent::PointerPressed {
                                         position: self.pointer_position.get(),
                                         button: slint::PointerEventButton::Right,
                                     },
                                 );
                             } else {
-                                self.window.borrow().dispatch_event(
+                                self.slint_window.borrow().dispatch_event(
                                     slint::WindowEvent::PointerReleased {
                                         position: self.pointer_position.get(),
                                         button: slint::PointerEventButton::Right,
@@ -165,13 +179,13 @@ impl slint::platform::Platform for RedoxPlatform {
                             .set((button.left, button.middle, button.right));
                     }
                     EventOption::Scroll(scroll) => {
-                        self.window
-                            .borrow()
-                            .dispatch_event(slint::WindowEvent::PointerScrolled {
+                        self.slint_window.borrow().dispatch_event(
+                            slint::WindowEvent::PointerScrolled {
                                 position: self.pointer_position.get(),
                                 delta_x: scroll.x as f32 * 2.0,
                                 delta_y: scroll.y as f32 * 2.0,
-                            });
+                            },
+                        );
                     }
                     _ => {}
                 }
