@@ -1,6 +1,6 @@
 use slint::platform::software_renderer::*;
 
-/// Defines a pixel color that is used to draw to the display buffer of the PSP.
+/// Defines a color that maps to the rgb of `orbclient::Color`.
 ///
 /// `Color` represents a RGBA888 color.
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Default)]
@@ -9,7 +9,7 @@ pub struct Color(pub u32);
 impl Color {
     /// Gets the read value of the color.
     pub fn r(&self) -> u8 {
-        (self.0 & 0x000000FF) as u8
+        ((self.0 & 0x00FF0000) >> 16) as u8
     }
 
     /// Gets the green value of the color.
@@ -19,7 +19,7 @@ impl Color {
 
     /// Gets the blue value of the color.
     pub fn b(&self) -> u8 {
-        ((self.0 & 0x00FF0000) >> 16) as u8
+        (self.0 & 0x000000FF) as u8
     }
 
     /// Gets the alpha channel of the color.
@@ -39,6 +39,6 @@ impl TargetPixel for Color {
     }
 
     fn from_rgb(r: u8, g: u8, b: u8) -> Self {
-        Self(((r) as u32) | ((g as u32) << 8) | ((b as u32) << 16))
+        Self(0xFF000000 | ((r as u32) << 16) | ((g as u32) << 8) | (b as u32))
     }
 }

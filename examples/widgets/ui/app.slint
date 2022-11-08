@@ -10,6 +10,10 @@ export App := CoWindow {
     preferred-width: 900px;
     title: "Widgets gallery";
 
+    Rectangle {  
+        background: co.brushes.background;
+    }
+
     KeyboardPage {
         keyboard_open <=> settings.keyboard_open;
         HorizontalLayout {   
