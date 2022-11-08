@@ -7,7 +7,7 @@ authors = ["Florian Blasius <flovanpt@posteo.de>"]
 license = "MIT"
 description = "Example uusign book_flip and co_widgets"
 publish = false
-repository = "https://codeberg.org/flovansl/co"
+repository = "https://codeberg.org/flovansl/co_sl"
 
 [[bin]]
 path = "src/main.rs"

@@ -6,7 +6,7 @@ authors = ["Florian Blasius <flovanpt@posteo.de>"]
 license = "MIT"
 description = "Example showing pico_engine and pico_ecs"
 publish = false
-repository = "https://codeberg.org/flovansl/co"
+repository = "https://codeberg.org/flovansl/co_sl"
 build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

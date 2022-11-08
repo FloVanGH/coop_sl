@@ -1,15 +1,16 @@
-# co
+# co_sl
 
 This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps. This is not an official channel of Slint.
 
 What the `co` stands for: cooperation.
 
-<a href="https://codeberg.org/morphUI/morph_ui">
-    <img alt="Get it on Codeberg" src="https://pages.codeberg.org/pstorch/get-it-on-blue-on-white.png" height="40">
+<a href="https://codeberg.org/flovansl/co_sl">
+    <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
 </a>
 
-[![CI](https://ci.codeberg.org/api/badges/flovansl/co/status.svg?branch=main)](https://ci.codeberg.org/flovansl/co)
+[![CI](https://ci.codeberg.org/api/badges/flovansl/co_sl/status.svg?branch=main)](https://ci.codeberg.org/flovansl/co_sl)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE-MIT)
+[![GNU GPLv3](https://img.shields.io/badge/license-GPLv3-green.svg)](.LICENSE-GPL3)
 
 ## crates
 
