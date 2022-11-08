@@ -2,7 +2,7 @@ import { co } from "../co/co.slint";
 
 import { ScrollView } from "scroll_view.slint";
 import { SelectableBase } from "selectables.slint";
-import { LabelLarge, LabelMedium } from "../components/components.slint";
+import { LabelLarge, LabelMedium, FocusBorder } from "../components/components.slint";
 import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
 // Model definition of a `Item`.
@@ -29,6 +29,19 @@ Item := TouchArea {
     property<{ parent: int, item: int }> current_item;
 
     height: co.sizes.small;
+    forward-focus: i_focus_scope;
+
+    i_focus_scope := FocusScope {
+        width: 0px; // Do not react on clicks
+       
+        key-pressed(event) => {
+            if (event.text == " " || event.text == "\n") {
+                root.clicked();
+                return accept;
+            }
+            return reject;
+        }
+    }
 
     i_container := Rectangle {
        i_layout := HorizontalLayout {  
@@ -56,6 +69,8 @@ Item := TouchArea {
                 icon_color: root.foreground;
             }
         }
+
+        if(i_focus_scope.has_focus) : FocusBorder {}
     }
 
     states [
@@ -83,6 +98,8 @@ ParentItem := Rectangle {
     property<brush> foreground: co.brushes.foreground;
     property<int> item_index;
     property<{ parent: int, item: int }> current_item;
+
+    forward-focus: i_focus_scope;
 
     VerticalLayout {  
         spacing: co.spaces.medium;
@@ -124,6 +141,20 @@ ParentItem := Rectangle {
                     root.expanded = !root.expanded;
                 }
             }
+
+            i_focus_scope := FocusScope {
+                width: 0px; // Do not react on clicks
+               
+                key-pressed(event) => {
+                    if (event.text == " " || event.text == "\n") {
+                        i_touch_area.clicked();
+                        return accept;
+                    }
+                    return reject;
+                }
+            }
+
+            if(i_focus_scope.has_focus) : FocusBorder {}
 
             animate background { duration: co.durations.fast; }
         }
