@@ -47,8 +47,11 @@ pipeline:
     environment:
       - OUTPUT=target/doc
     commands:
+      # co_widgets doc
       - cargo doc --no-deps -p co_widgets
-        # Git configuration
+      # slint_orbclient doc
+      - cargo doc --no-deps -p slint_orbclient
+      # Git configuration
       - git config --global user.email $MAIL
       - git config --global user.name "Woodpecker CI"
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/

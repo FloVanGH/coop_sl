@@ -9,6 +9,12 @@ What the `co` in `co_widgets` stands for: cooperation.
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE-MIT)
+[![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/snapshots/doc/co_widgets/)
+
+## live preview
+
+Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/).
+
 
 ## how to use
 
@@ -16,11 +22,11 @@ What the `co` in `co_widgets` stands for: cooperation.
 
 ```toml
 [dependencies]
-slint = "0.3.1"
+slint = "0.3"
 
 [build-dependencies]
-slint-build = "0.3.1"
-co_widgets = { ... }
+slint-build = "0.3"
+co_widgets = { git = "https://codeberg.org/flovansl/co_sl" }
 ```
 
 2. Call `co_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/co_widgets.slint`:
@@ -47,11 +53,6 @@ export MyApp := CoWindow {
     }
 }
 ```
-
-## example
-
-[Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/)
-
 
 ## structure
 
