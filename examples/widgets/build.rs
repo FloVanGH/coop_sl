@@ -7,7 +7,7 @@ fn generate_imports() {
 const APP: &str = "ui/app.slint";
 
 #[cfg(feature = "mcu-board-support")]
-const APP: &str = "ui/minimize/app.slint";
+const APP: &str = "ui/minimized/app.slint";
 
 #[cfg(all(not(feature = "mcu-board-support"), not(feature = "slint_orbclient")))]
 fn main() {

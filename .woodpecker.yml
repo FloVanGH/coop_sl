@@ -11,6 +11,7 @@ pipeline:
       - cargo fmt --all -- --check
       - rustup component add clippy
       - cargo clippy --all-targets -- -D warnings
+
   build_and_test:
     image: rust
     when:
@@ -21,6 +22,9 @@ pipeline:
       - cargo test
   build_redox:
     image: rust
+    when:
+      event: [pull_request]
+      branch: main
     commands:
       - apt-get update && apt-get install -y -qq build-essential curl fuse libfuse-dev pkg-config qemu-system-x86
       - rustup default nightly
@@ -28,6 +32,37 @@ pipeline:
       - redoxer toolchain
       - export PKG_CONFIG_SYSROOT_DIR=~/.redoxer/toolchain/bin/x86_64-unkown-redox-gcc
       - redoxer build -p widgets --no-default-features --features slint_orbclient
+
+  deploy_redox:
+    image: rust
+    when:
+      event: [pull]
+      branch: main
+   
+  secrets: [ mail, codeberg_token ]
+    environment:
+      - OUTPUT=target/x86_64-unkown-redox/release/
+   commands:
+      - apt-get update && apt-get install -y -qq build-essential curl fuse libfuse-dev pkg-config qemu-system-x86
+      - rustup default nightly
+      - cargo install redoxer
+      - redoxer toolchain
+      - export PKG_CONFIG_SYSROOT_DIR=~/.redoxer/toolchain/bin/x86_64-unkown-redox-gcc
+      - redoxer build -p widgets --no-default-features --features slint_orbclient --release
+
+       # Git configuration
+      - git config --global user.email $MAIL
+      - git config --global user.name "Woodpecker CI"
+      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+      # Copy build step output to repository folder
+      - mkdir /tmp/pages/snapshots/redox/
+      - cp -a $OUTPUT/widget /tmp/pages/snapshots/redox/
+     
+      # Commit and push all static files with pipeline started timestamp
+      - cd /tmp/pages/
+      - git add .
+      - git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+      - git push   
   build_wasm:
     image: rust
     when:
@@ -90,3 +125,6 @@ pipeline:
       - git add .
       - git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
       - git push
+
+
+# todo: pico build test

@@ -11,10 +11,12 @@ import  { Typo, Font } from "typo.slint";
 import "../assets/fonts/Roboto-Regular.ttf";
 import "../assets/fonts/Roboto-Medium.ttf";
 
+import { StyleMetrics } from "std-widgets.slint";
+
 // Access to the style resources of the `co` theme (dark and light).
 export global co := { 
     // Toggles between light and dark theme.
-    property<bool> dark_theme: true;
+    property<bool> dark_theme: StyleMetrics.dark-color-scheme;
 
     // Defines the accent (primary) brush.
     property<brush> accent_color: dark_theme ? #01fec5 : #1d9bf2;

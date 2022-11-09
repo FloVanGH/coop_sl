@@ -7,6 +7,9 @@ use crate::color::*;
 
 use slint::LogicalSize;
 
+static INITIAL_INSTANT: once_cell::sync::OnceCell<instant::Instant> =
+    once_cell::sync::OnceCell::new();
+
 /// Initializes the platform.
 pub fn init() {
     slint::platform::set_platform(Box::new(OrbClientPlatform::new())).unwrap();
@@ -66,6 +69,11 @@ impl slint::platform::Platform for OrbClientPlatform {
 
     fn clipboard_text(&self) -> Option<String> {
         Some(self.orb_window.borrow().clipboard())
+    }
+
+    fn duration_since_start(&self) -> core::time::Duration {
+        let the_beginning = *INITIAL_INSTANT.get_or_init(instant::Instant::now);
+        instant::Instant::now() - the_beginning
     }
 
     fn run_event_loop(&self) {
