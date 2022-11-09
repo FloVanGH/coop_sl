@@ -1,10 +1,10 @@
 import { CoWindow, KeyboardPage, KeyboardAdapter, ParentItemModel, co } from "_imports/co_widgets.slint";
 import { BasicsPage, TypoPage } from "pages/pages.slint";
-import { settings, Test } from "settings.slint"; 
+import { AppManager } from "app_manager.slint"; 
 import { AppSideBar } from "app_side_bar.slint";
 
 export { KeyboardAdapter, co }
-export { settings }
+export { AppManager }
 
 export App := CoWindow {
     preferred-width: 900px;
@@ -14,8 +14,11 @@ export App := CoWindow {
         background: co.brushes.background;
     }
 
-    KeyboardPage {
-        keyboard_open <=> settings.keyboard_open;
+    keyboard_page := KeyboardPage {
+        keyboard_closed(key, text) => {
+            AppManager.update_text(key, text);
+        } 
+
         HorizontalLayout {   
             i_side_bar := AppSideBar {
                 property <ParentItemModel> widgets: {
@@ -32,12 +35,13 @@ export App := CoWindow {
                         { leading_icon: "", text: "Typography", trailing_icon: ""},
                     ]
                 };
-
-              
+  
                 navigation_items: [widgets, resources];
             }
         
-            if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {}
+            if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {
+                open_keyboard(key, text, placeholder, icon) => { keyboard_page.open-keyboard(key, text, placeholder, icon); }
+            }
             if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : TypoPage {}
         }
     }

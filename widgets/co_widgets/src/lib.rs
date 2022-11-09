@@ -1,8 +1,17 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 /*!
 
 # co_widgets
 
 This crate provides a custom set of widgets for [Slint](https://slint-ui.com) with a custom design (light and dark).
+
+## Component overview
+
+* [Components](docs::components)
+* [Layouts](docs::layouts)
+* [Widgets](docs::widgets)
 
 ## how to use
 
@@ -36,39 +45,6 @@ export MyApp := CoWindow {
     }
 }
 ```
-
-## widgets
-
-### Button
-
-Default button with filled surface. Provides also an variant filled with the `co.brushes.primary` brush, to get it set `primary` to `true`.
-
-##### Example
-
-```slint
-import { CoWindow, Button } from "_imports/co_widgets.slint";
-
-export MyApp := CoWindow {
-    preferred-width: 600px;
-    preferred-height: 400px;
-    title: "MyApp";
-
-    Button {
-        text: "Click me";
-        clicked => { debug("button clicked"); }
-    }
-}
-```
-
-#### Properties
-
-* icon (string): used to set an optional icon on the button. Uses material icons check the `mi` global.
-* text (string): used to set the display text of the button.
-* primary (bool): If set to  `true` the button will filled with co.brushes.primary`.
-
-### Callbacks
-
-* clicked(): will be called after the button is clicked.
 */
 
 use std::{env, fs, io, io::Write, path::Path};
@@ -99,3 +75,6 @@ where
 pub fn generate_import() -> io::Result<()> {
     generate_import_with_custom_ui_path(env::current_dir()?.join("ui/_imports"))
 }
+
+#[cfg(doc)]
+pub mod docs;

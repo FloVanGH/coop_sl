@@ -57,8 +57,10 @@ export TextLine := Rectangle {
     property<bool> clickable: co.settings.minimize;
 
     min_width: !co.settings.minimize ? 168px : 80px;
-    height: co.sizes.medium;
+    min_height: co.sizes.medium;
     forward-focus: i_input;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
 
     i_container := Rectangle {
         border_radius: co.radius.small;

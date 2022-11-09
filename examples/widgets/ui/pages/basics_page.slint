@@ -4,7 +4,7 @@ import { RowTitle, ColumnTitle } from "titles.slint";
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
     VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, co } from "../_imports/co_widgets.slint";
 
-import { settings } from "../settings.slint";
+import { AppManager } from "../app_manager.slint";
 
 export BasicsPage := Page {
     title: "Basics";
@@ -51,32 +51,48 @@ export BasicsPage := Page {
         }
 
         Row {
-            Button {
-                text: "Button";
-                enabled: settings.widgets_enabled;
+            HorizontalLayout {  
+                alignment: start;
+
+                Button {
+                    text: "Button";
+                    enabled: AppManager.widgets_enabled;
+                }
+            }
+          
+            Spacer {}
+
+            HorizontalLayout {  
+                alignment: start;
+
+                Button {
+                    icon: mi.plus;
+                    enabled: AppManager.widgets_enabled;
+                }
             }
 
             Spacer {}
 
-            Button {
-                icon: mi.plus;
-                enabled: settings.widgets_enabled;
+            HorizontalLayout {  
+                alignment: start;
+
+                Button {
+                    text: "Button";
+                    icon: mi.plus;
+                    enabled: AppManager.widgets_enabled;
+                }
             }
 
             Spacer {}
 
-            Button {
-                text: "Button";
-                icon: mi.plus;
-                enabled: settings.widgets_enabled;
-            }
+            HorizontalLayout {  
+                alignment: start;
 
-            Spacer {}
-
-            Button {
-                primary: true;
-                text: "Primary";
-                enabled: settings.widgets_enabled;
+                Button {
+                    primary: true;
+                    text: "Primary";
+                    enabled: AppManager.widgets_enabled;
+                }
             }
         }
 
@@ -116,24 +132,36 @@ export BasicsPage := Page {
         }
 
         Row {
-            OutlineButton {
-                text: "OutlineButton";
-                enabled: settings.widgets_enabled;
+            HorizontalLayout {  
+                alignment: start;
+
+                OutlineButton {
+                    text: "OutlineButton";
+                    enabled: AppManager.widgets_enabled;
+                }
             }
 
             Spacer {}
 
-            OutlineButton {
-                icon: mi.plus;
-                enabled: settings.widgets_enabled;
+            HorizontalLayout {  
+                alignment: start;
+                
+                OutlineButton {
+                    icon: mi.plus;
+                    enabled: AppManager.widgets_enabled;
+                }
             }
 
-            Spacer {}
+            Spacer {} 
 
-            OutlineButton {
-                text: "OutlineButton";
-                icon: mi.plus;
-                enabled: settings.widgets_enabled;
+            HorizontalLayout {  
+                alignment: start;
+
+                OutlineButton {
+                    text: "OutlineButton";
+                    icon: mi.plus;
+                    enabled: AppManager.widgets_enabled;
+                }
             }
         }
 
@@ -169,14 +197,14 @@ export BasicsPage := Page {
         Row {
             RoundButton {
                 text: "A";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
 
             RoundButton {
                 icon: mi.plus;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -220,14 +248,14 @@ export BasicsPage := Page {
         Row {
             RoundOutlineButton {
                 text: "A";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
 
             RoundOutlineButton {
                 icon: mi.plus;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
@@ -237,7 +265,7 @@ export BasicsPage := Page {
             RoundOutlineButton {
                 primary: true;
                 icon: mi.plus;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -278,33 +306,34 @@ export BasicsPage := Page {
 
         Row {
             TextLine {
-                enabled: settings.widgets_enabled;
-                clickable: settings.keyboard-enabled;
+                text <=> AppManager.text_line_one;
+                enabled: AppManager.widgets_enabled;
+                clickable: AppManager.keyboard_enabled;
 
-                clicked => { settings.open_keyboard(); }
+                clicked => { root.open_keyboard("text_line_one", text, placeholder, icon); }
             }
 
             Spacer {}
 
             TextLine {
                 icon: mi.search;
-                text: "Hello";
-                enabled: settings.widgets_enabled;
-                clickable: settings.keyboard-enabled;
+                text <=> AppManager.text_line_two;
+                enabled: AppManager.widgets_enabled;
+                clickable: AppManager.keyboard_enabled;
 
-                clicked => { settings.open_keyboard(); }
+                clicked => { root.open_keyboard("text_line_two", text, placeholder, icon); }
             }
 
             Spacer {}
 
             TextLine {
+                text <=> AppManager.text_line_three;
                 icon: mi.search;
                 has-clear: true;
-                text: "Hello";
-                enabled: settings.widgets_enabled;
-                clickable: settings.keyboard-enabled;
+                enabled: AppManager.widgets_enabled;
+                clickable: AppManager.keyboard_enabled;
 
-                clicked => { settings.open_keyboard(); }
+                clicked => { root.open_keyboard("text_line_three", text, placeholder, icon); }
             }
         }
 
@@ -339,7 +368,7 @@ export BasicsPage := Page {
 
         Row {
             Switch {
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
@@ -347,7 +376,7 @@ export BasicsPage := Page {
             Switch {  
                 on_icon: mi.check;
                 off_icon: mi.close;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
                 selected: true;
             }
         }
@@ -383,14 +412,14 @@ export BasicsPage := Page {
 
         Row {
             CheckBox {
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
 
             CheckBox {  
                 text: "CheckBox";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
                 selected: true;
             }
         }

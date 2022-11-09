@@ -1,11 +1,16 @@
 import { CoWindow, Keyboard, KeyboardAdapter, co } from "../_imports/co_widgets.slint";
 import { BasicsPageMinimized } from "pages/pages.slint";
-import { settings } from "../settings.slint"; 
+import { AppManager } from "../app_manager.slint"; 
 
 export { KeyboardAdapter, co }
-export { settings }
+export { AppManager }
 
 export App := CoWindow {
+    property <bool> keyboard_open: false;
+    property <string> keyboard_text;
+    property <string> keyboard_key;
+    property <string> keyboard_placeholder;
+    property <string> keyboard_icon;
     title: "Widgets gallery";
 
     Rectangle {  
@@ -13,11 +18,25 @@ export App := CoWindow {
         height: 100%;
         background: co.brushes.background;
 
-        if(!settings.keyboard_open) : BasicsPageMinimized {}
+        if(!keyboard_open) : BasicsPageMinimized {
+            open_keyboard(key, text, placeholder, icon) => {    
+                keyboard_text = text;
+                keyboard_key = key;
+                keyboard_placeholder = placeholder;
+                keyboard_icon = icon;
+                keyboard_open = true;
+            }
+        }
     
-        if(settings.keyboard_open) : Keyboard {
-            close(text) => {  
-                settings.keyboard_open = false;
+        if(keyboard_open) : Keyboard {
+            text: root.keyboard_text;
+            icon: root.keyboard_icon;
+            placeholder: root.keyboard_placeholder;
+            key: root.keyboard_key;
+
+            close(key, text) => {  
+                AppManager.update_text(key, text);
+                keyboard_open = false;
             }
         }
     }

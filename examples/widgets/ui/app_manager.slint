@@ -1,0 +1,26 @@
+import { co } from "_imports/co_widgets.slint";
+
+export global AppManager := {
+    callback open_keyboard(string, string, string, string);
+    callback update_text(string, string);
+
+    property<bool> keyboard_enabled: false;
+    property<bool> widgets_enabled: true;
+    property <string> text_line_one;
+    property <string> text_line_two: "hello";
+    property <string> text_line_three: "hello";
+
+    update_text(key, text) => {  
+        if(key == "text_line_one") {
+            text_line_one = text;
+        }
+
+        if(key == "text_line_two") {
+            text_line_two = text;
+        }
+
+        if(key == "text_line_three") {
+            text_line_three = text;
+        }
+    }
+}

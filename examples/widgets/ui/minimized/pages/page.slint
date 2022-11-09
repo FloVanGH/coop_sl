@@ -1,8 +1,10 @@
-import { settings } from "../../settings.slint"; 
+import { AppManager } from "../../app_manager.slint"; 
 
 import { HeaderBar, OutlineButton, CheckBox, Switch, co, mi } from "../../_imports/co_widgets.slint";
 
 export PageMinimized := GridLayout {
+    callback open_keyboard(string, string, string, string);
+    
     Flickable {  
         @children
     }   

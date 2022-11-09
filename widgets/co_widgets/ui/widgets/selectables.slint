@@ -1,22 +1,25 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 import { LabelSmall, FocusBorder } from "../components/components.slint";
 import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
-// Base for selectable widgets like `CheckBox` and `Switch`.
+// `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
 export SelectableBase := Rectangle {
-    // Will be called after  `selected` has changed.
+    // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
     callback selected_changed(bool);
 
-    // If set to `true` the widget is marekd as selected.
+    // If set to `true` the widget is marked as selected.
     property<bool> selected: false;
 
-    // If set to `true` if widget is enabled.
+    // If set to `false` the widget is disabled.
     property<bool> enabled <=> i_touch_area.enabled;
 
-    // If `true` the widget is hovered by a pointer e.g. a mouse cursor.
+    // If set to `true` the widget has pointer hover.
     property<bool> has_hover <=> i_touch_area.has_hover;
 
-    // If `true` the widget has focus
+    // If set to `true` the widget has keyboard focus.
     property<bool> has_focus <=> i_focus_scope.has_focus;
 
     // If `true` the widget is pressed.
@@ -45,41 +48,56 @@ export SelectableBase := Rectangle {
     }
 }
 
-// A box that can be toggled on and off.
+// `CheckBox` represents a selectable check box with a text.
 export CheckBox := SelectableBase {
-     // Used to set the optional display text of the check box.
+    // Defines the label text of the `CheckBox`.
     property<string> text <=> i_label.text;
 
-    width: i_container.width + i_container.spacing + i_label.width;
-    height: co.sizes.extra_small;
+    min_height: co.sizes.extra_small;
+    horizontal-stretch: 0;
+    vertical-stretch: 0;
 
-    i_container := Rectangle {
-        property<length> spacing: root.text == "" ? 0px : co.spaces.small;
+    accessible-label <=> i_label.text;
+    accessible-checkable: true;
+    accessible-checked <=> selected;
+    accessible-role: checkbox;
 
-        width: height;
-        height: 100%;
-        border_radius: co.radius.extra_small;
-        border_width: 1px;
-        border_color: co.brushes.border;
-        background: co.brushes.background;
+    HorizontalLayout {  
+        spacing: co.spaces.small;
 
-        i_icon := MaterialIcon {
-            x: (parent.width - width) / 2;
-            y: (parent.height - height) / 2;
-            icon_color: co.brushes.on_primary;
-            icon: mi.check;
-            opacity: 0;
+        VerticalLayout {  
+            alignment: center;
 
-            animate icon_color { duration: co.durations.fast; }
-            animate opacity { duration: co.durations.fast; }
+            i_container := Rectangle {
+                property<length> spacing: root.text == "" ? 0px : co.spaces.small;
+        
+                width: co.sizes.extra-small;
+                height: co.sizes.extra-small;
+                border_radius: co.radius.extra_small;
+                border_width: 1px;
+                border_color: co.brushes.border;
+                background: co.brushes.background;
+        
+                i_icon := MaterialIcon {
+                    x: (parent.width - width) / 2;
+                    y: (parent.height - height) / 2;
+                    icon_color: co.brushes.on_primary;
+                    icon: mi.check;
+                    opacity: 0;
+        
+                    animate icon_color { duration: co.durations.fast; }
+                    animate opacity { duration: co.durations.fast; }
+                }
+        
+                animate background { duration: co.durations.medium; easing: ease-in-out; }
+            } 
         }
 
-        animate background { duration: co.durations.medium; easing: ease-in-out; }
-    } 
-
-    i_label := LabelSmall { 
-        x: i_container.x + i_container.width + i_container.spacing;
-        y: (parent.height - height) / 2;
+        i_label := LabelSmall { 
+            horizontal_alignment: left;
+            vertical_alignment: center;
+            vertical_stretch: 1;
+        }
     }
 
     if(root.has_focus) : FocusBorder {
@@ -131,7 +149,7 @@ export CheckBox := SelectableBase {
     ]
 }
 
-// Select between on and off state.
+// `Switch` represents a selectable that can be toggled on an off.
 export Switch := SelectableBase {
     // Describes the icon of the on state.
     property<string> on_icon;
@@ -139,22 +157,29 @@ export Switch := SelectableBase {
     // Describes the icon of the off state.
     property<string> off_icon;
 
-    // Defines the foreground brush.
+    // FIXEME: private with new syntax
     property<brush> foreground: co.brushes.foreground;
+
+    // FIXEME: private with new syntax
+    property<length> indicator_space: 4px;
 
     width: height * 2;
     height: co.sizes.extra_small;
+    vertical_stretch: 0;
+    horizontal_stretch: 0;
+
+    accessible-checkable: true;
+    accessible-checked <=> selected;
+    accessible-role: checkbox;
 
     i_container := Rectangle {
-        property<length> indicator_space: 4px;
-
         width: 100%;
         height: 100%;
         background: co.brushes.surface;
         border_radius: i_indicator.border_radius + indicator_space / 2;
 
         if(root.on_icon != "") : MaterialIcon {  
-            x: i_container.indicator_space + (i_indicator.width - width) / 2;
+            x: root.indicator_space + (i_indicator.width - width) / 2;
             y: (parent.height - height) / 2;
             icon <=> root.on_icon;
             icon_size: co.icons.size_small;
@@ -162,7 +187,7 @@ export Switch := SelectableBase {
         }
     
         if(root.off_icon != "") : MaterialIcon {  
-            x: root.width - i_container.indicator_space - (i_indicator.width + width) / 2;
+            x: root.width - root.indicator_space - (i_indicator.width + width) / 2;
             y: (parent.height - height) / 2;
             icon <=> root.off_icon;
             icon_size: co.icons.size_small;
@@ -170,9 +195,9 @@ export Switch := SelectableBase {
         }
     
         i_indicator := Rectangle { 
-            x: i_container.indicator_space;
+            x: root.indicator_space;
             y: (parent.height - height) / 2;
-            width: i_container.height - i_container.indicator_space;
+            width: i_container.height - root.indicator_space;
             height: width;
             border_radius: max(width, height) / 2;
             background: co.brushes.foreground;
@@ -196,7 +221,7 @@ export Switch := SelectableBase {
             i_container.background: co.brushes.surface_disabled;
             foreground: co.brushes.foreground_disabled;
             i_indicator.background: co.brushes.foreground_disabled;
-            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
         }
         disabled when !enabled : {
             i_container.background: co.brushes.surface_disabled;
@@ -205,19 +230,19 @@ export Switch := SelectableBase {
         }
         pressed_selected when root.pressed && root.selected : {
             i_container.background: co.brushes.primary.darker(co.state.pressed);
-            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
             i_indicator.background: co.brushes.background;
             root.foreground: co.brushes.background;
         }
         hover_selected when root.has_hover && root.selected : {
             i_container.background: co.brushes.primary.darker(co.state.hover);
-            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
             i_indicator.background: co.brushes.background;
             root.foreground: co.brushes.background;
         }
         selected when !root.pressed && root.selected : {
             i_container.background: co.brushes.primary;
-            i_indicator.x: i_container.x + i_container.width - i_indicator.width - i_container.indicator_space;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
             i_indicator.background: co.brushes.background;
             root.foreground: co.brushes.background;
         }
@@ -230,4 +255,25 @@ export Switch := SelectableBase {
     ]
 
     animate foreground { duration: co.durations.fast; } 
+}
+
+// Viewer Examples
+
+CheckBoxExample := Rectangle {
+    VerticalLayout {
+        alignment: start;
+        padding: 8px;
+
+        CheckBox {
+            text: "Check me";
+        }
+    }
+}
+
+SwitchExample := Rectangle {
+    VerticalLayout {
+        padding: 8px;
+
+        Switch {}
+    }
 }

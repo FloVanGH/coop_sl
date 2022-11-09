@@ -1,8 +1,9 @@
-import { settings } from "../settings.slint"; 
+import { AppManager } from "../app_manager.slint"; 
 
 import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, co, mi } from "../_imports/co_widgets.slint";
 
 export Page := GridLayout {
+    callback open_keyboard(string, string, string, string);
     property<string> title <=> i_header_bar.title;
     property<bool> keyboard_check_box: true;
     property<bool> disabled_check_box: true;
@@ -12,13 +13,13 @@ export Page := GridLayout {
             if(root.keyboard_check_box) : CheckBox {
                 y: (parent.height - height) / 2;
                 text: "Keyboard enabled";
-                selected <=> settings.keyboard_enabled;
+                selected <=> AppManager.keyboard_enabled;
             }
 
             if(root.disabled_check_box) : CheckBox {
                 y: (parent.height - height) / 2;
                 text: "Widgets enabled";
-                selected <=> settings.widgets_enabled;
+                selected <=> AppManager.widgets_enabled;
             }
 
             Switch {

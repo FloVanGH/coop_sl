@@ -4,7 +4,7 @@ import { RowTitle, ColumnTitle } from "../../pages/titles.slint";
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
     VerticalSpacerSmall, TextLine, CheckBox, Switch, mi, co } from "../../_imports/co_widgets.slint";
 
-import { settings } from "../../settings.slint";
+import { AppManager } from "../../app_manager.slint";
 
 export BasicsPageMinimized := PageMinimized {
     GridLayout {  
@@ -21,7 +21,7 @@ export BasicsPageMinimized := PageMinimized {
         Row {
             Button {
                 text: "Button";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
@@ -29,7 +29,7 @@ export BasicsPageMinimized := PageMinimized {
             Button {
                 primary: true;
                 text: "Primary";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -47,7 +47,7 @@ export BasicsPageMinimized := PageMinimized {
         Row {
             OutlineButton {
                 text: "OutlineButton";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
@@ -55,7 +55,7 @@ export BasicsPageMinimized := PageMinimized {
             OutlineButton {
                 text: "OutlineButton";
                 icon: mi.plus;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -73,14 +73,14 @@ export BasicsPageMinimized := PageMinimized {
         Row {
             RoundButton {
                 text: "A";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
 
             RoundButton {
                 icon: mi.plus;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -98,7 +98,7 @@ export BasicsPageMinimized := PageMinimized {
         Row {
             RoundOutlineButton {
                 text: "A";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
@@ -106,7 +106,7 @@ export BasicsPageMinimized := PageMinimized {
             RoundOutlineButton {
                 primary: true;
                 icon: mi.plus;
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -123,10 +123,11 @@ export BasicsPageMinimized := PageMinimized {
 
         Row {
             TextLine {
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
                 clickable: true;
+                text <=> AppManager.text_line_one;
 
-                clicked => { settings.open_keyboard(); }
+                clicked => { root.open_keyboard("text_line_one", text, placeholder, icon); }
             }
 
             Spacer {}
@@ -134,11 +135,11 @@ export BasicsPageMinimized := PageMinimized {
             TextLine {
                 icon: mi.search;
                 has-clear: true;
-                text: "Hello";
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
                 clickable: true;
+                text <=> AppManager.text_line_two;
 
-                clicked => { settings.open_keyboard(); }
+                clicked => { root.open_keyboard("text_line_two", text, placeholder, icon); }
             }
         }
 
@@ -155,7 +156,7 @@ export BasicsPageMinimized := PageMinimized {
 
         Row {
             Switch {
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
@@ -183,14 +184,14 @@ export BasicsPageMinimized := PageMinimized {
 
         Row {
             CheckBox {
-                enabled: settings.widgets_enabled;
+                enabled: AppManager.widgets_enabled;
             }
 
             Spacer {}
 
             CheckBox {
                 text: "Widgets enabled";
-                selected <=> settings.widgets_enabled;
+                selected <=> AppManager.widgets_enabled;
             }
         }
 

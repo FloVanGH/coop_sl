@@ -7,4 +7,4 @@
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE-MIT)
-[![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/snapshots/doc/co_widgets/)
+[![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/snapshots/docs/co_widgets/)

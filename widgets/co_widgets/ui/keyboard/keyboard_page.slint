@@ -1,29 +1,37 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 
 import { Keyboard } from "keyboard_widget.slint";
 
+// `KeyboardPage` can switch between its children an a `Keyboard`.
 export KeyboardPage := Rectangle {
-    callback open_keyboard(string, string, string);
+    // Opens the keyboard
+    callback open_keyboard(string, string, string, string);
     
+    // Called after keyboard is closed.
+    callback keyboard_closed(string, string);
+
+    // FIXME: private with new syntax
     property<bool> keyboard_open: false;
 
-    open_keyboard(icon, placeholder, text) => {  
-        i_keyboard.icon = icon;
-        i_keyboard.placeholder = placeholder;
-        i_keyboard.text = text;
+    open_keyboard(key, text, placeholder, icon) => {  
         keyboard_open = true;
+        i_keyboard.open(key, text, placeholder, icon);
     }
 
-
     i_container := Rectangle {
-        
         @children
     }
 
     i_keyboard := Keyboard {
         y: i_container.y + i_container.height;
       
-        close => { root.keyboard_open = false; }
+        close(key, text) => { 
+            root.keyboard_open = false;
+            root.keyboard_closed(key, text);
+         }
     }
 
     states [

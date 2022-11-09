@@ -1,8 +1,11 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 import { FocusBorder, LabelMedium } from "../components/components.slint";
 import { MaterialIcon } from "../assets/icons/material_icons.slint";
 
-// Base of default buttons.
+// `ButtonBase` is used as base for buttons that can be clicked.
 export ButtonBase := TouchArea {
     // Used to set an optional icon on the button. Uses material icons check the `mi` global.
     property<string> icon: "";
@@ -25,24 +28,8 @@ export ButtonBase := TouchArea {
     // Defines the size of the icon.
     property<length> icon_size: co.icons.size_small;
 
-    // Defines the space between icon and text.
-    property<length> spacing: root.icon == "" || root.text == "" ? 0px : co.spaces.small;
-
-    width: (padding_left + (root.icon == "" ? 0px : root.icon_size) + spacing + i_size_helper.width + padding_right);
-    height: co.sizes.medium;
-    accessible-role: button;
-    padding_left:  co.spaces.large;
-    padding_right: co.spaces.large;
+    min_height: co.sizes.medium;
     forward_focus: i_focus_scope;
-
-    i_size_helper := Text {
-        x: 0px;
-        visible: false;
-        font_size: co.typo.label_medium.size;
-        font_weight: co.typo.label_medium.weight;
-        font_family: co.typo.label_medium.family;
-        text: root.text;
-    }
 
     i_container := Rectangle {
         property<float> scale: 1.0;
@@ -65,13 +52,15 @@ export ButtonBase := TouchArea {
         animate scale { duration: co.durations.fast; }
     }
 
-    HorizontalLayout { 
+    HorizontalLayout {  
+        spacing: co.spaces.small;
+        padding_left:  co.spaces.large;
+        padding_right: co.spaces.large;
         alignment: center;
-        spacing: root.spacing;
 
         if(root.icon != "") : MaterialIcon {
             y: (parent.height - height) / 2;
-            icon_size: root.icon_size ;
+            icon_size: root.icon_size;
             icon_color: root.color;
             icon: root.icon;
         }
@@ -119,6 +108,8 @@ export Button := ButtonBase {
 
     background: primary ? co.brushes.primary : co.brushes.surface;
     color: primary ? co.brushes.on_primary : co.brushes.foreground;
+    accessible-role: button;
+    accessible-label <=> root.text;
 
     states [
         disabled when !enabled : {
@@ -144,6 +135,8 @@ export OutlineButton := ButtonBase {
     border_width: 1px;
     color: primary ? co.brushes.on_primary : co.brushes.foreground;
     border_color: co.brushes.border;
+    accessible-role: button;
+    accessible-label <=> root.text;
 
     states [
         disabled when !enabled : {
@@ -164,7 +157,7 @@ export OutlineButton := ButtonBase {
     ]
 }
 
-// Base of round buttons.
+// `RoundButtonBase` is used as base for buttons with a round shape.
 export RoundButtonBase := TouchArea {
     // Used to set an optional icon on the button. Uses material icons check the `mi` global.
     property<string> icon: "";
@@ -186,7 +179,6 @@ export RoundButtonBase := TouchArea {
 
     width: co.sizes.medium;
     height: width;
-    accessible-role: button;
 
     i_container := Rectangle {
         width: 100%;
@@ -244,6 +236,7 @@ export RoundButtonBase := TouchArea {
 export RoundButton := RoundButtonBase {
     background: co.brushes.background;
     color: co.brushes.foreground;
+    accessible-role: button;
 
     states [
         disabled when !enabled : {
@@ -269,6 +262,7 @@ export RoundOutlineButton := RoundButtonBase {
     border_width: 1px;
     color: primary ? co.brushes.on_primary : co.brushes.foreground;
     border_color: co.brushes.border;
+    accessible-role: button;
 
     states [
         disabled when !enabled : {
