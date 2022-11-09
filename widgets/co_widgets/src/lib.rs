@@ -19,10 +19,7 @@ co_widgets = { ... }
 
 2. Call `co_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/co_widgets.slint`:
 
-```
-//co_widgets::generate_import().unwrap();
-//slint_build::compile("ui/my_app.slint").unwrap();
-```
+`co_widgets::generate_import().unwrap();`
 
 3. Add an import to your slint file:
 
