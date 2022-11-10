@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 florian blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: MIT
+-->
+
 # co_widgets
 
 The goal with `co_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system. The theme is available in a light and a dark variant.
@@ -108,9 +113,9 @@ Best to start with these sources:
 ## assets
 
 * Roboto
-    * `co_widgets` uses [Roboto](https://fonts.google.com/specimen/Roboto) as default font set. `Roboto` are licensed under [Apache 2.0](co_widgets/assets/fonts/Roboto-LICENSE.txt).
+    * `co_widgets` uses [Roboto](https://fonts.google.com/specimen/Roboto) as default font set. `Roboto` are licensed under Apache 2.0.
 * Material Icons
-    * `co_widgets` uses [Material Icons](https://fonts.google.com/icons) as icon font. The icons are licensed under [Apache 2.0](co_widgets/assets/icons/Material-Icons-LICENSE.txt).
+    * `co_widgets` uses [Material Icons](https://fonts.google.com/icons) as icon font. The icons are licensed under Apache 2.0.
 
 
 ## license

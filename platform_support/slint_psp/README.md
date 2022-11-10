@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: MIT
+-->
+
 # slint_psp
 
 Slint platform support for PSP

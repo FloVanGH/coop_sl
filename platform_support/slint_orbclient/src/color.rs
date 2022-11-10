@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 use slint::platform::software_renderer::*;
 
 /// Defines a color that maps to the rgb of `orbclient::Color`.

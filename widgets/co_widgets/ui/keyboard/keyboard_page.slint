@@ -14,7 +14,7 @@ export KeyboardPage := Rectangle {
     callback keyboard_closed(string, string);
 
     // FIXME: private with new syntax
-    property<bool> keyboard_open: false;
+    property <bool> keyboard_open: false;
 
     open_keyboard(key, text, placeholder, icon) => {  
         keyboard_open = true;

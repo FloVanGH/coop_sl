@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 use std::{env, fs, io, path::*};
 
 fn main() -> io::Result<()> {

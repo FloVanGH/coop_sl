@@ -8,31 +8,31 @@ import { MaterialIcon } from "../assets/icons/material_icons.slint";
 // `ButtonBase` is used as base for buttons that can be clicked.
 export ButtonBase := TouchArea {
     // Used to set an optional icon on the button. Uses material icons check the `mi` global.
-    property<string> icon: "";
+    property <string> icon: "";
 
     // Used to set the display text of the button.
-    property<string> text: "";
+    property <string> text: "";
 
     // Defines the color of the icon and text.
-    property<brush> color;
+    property <brush> color;
 
     // Defines the border color.
-    property<brush> border_color;
+    property <brush> border_color;
 
     // Defines the border width.
-    property<length> border_width;
+    property <length> border_width;
 
     // Defines the bacground color.
-    property<brush> background;
+    property <brush> background;
 
     // Defines the size of the icon.
-    property<length> icon_size: co.icons.size_small;
+    property <length> icon_size: co.icons.size_small;
 
     min_height: co.sizes.medium;
     forward_focus: i_focus_scope;
 
     i_container := Rectangle {
-        property<float> scale: 1.0;
+        property <float> scale: 1.0;
 
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
@@ -104,7 +104,7 @@ export ButtonBase := TouchArea {
 // Default button with filled surface. Provides also an variant filled with the `co.brushes.primary` brush, to get it set `primary` to `true`.
 export Button := ButtonBase {
     // If set to  `true` the button will filled with co.brushes.primary`
-    property<bool> primary: false;
+    property <bool> primary: false;
 
     background: primary ? co.brushes.primary : co.brushes.surface;
     color: primary ? co.brushes.on_primary : co.brushes.foreground;
@@ -129,7 +129,7 @@ export Button := ButtonBase {
 
 export OutlineButton := ButtonBase {
     // If set to  `true` the button will filled with co.brushes.primary`
-    property<bool> primary: false;
+    property <bool> primary: false;
 
     background: primary ? co.brushes.primary : co.brushes.background;
     border_width: 1px;
@@ -160,22 +160,22 @@ export OutlineButton := ButtonBase {
 // `RoundButtonBase` is used as base for buttons with a round shape.
 export RoundButtonBase := TouchArea {
     // Used to set an optional icon on the button. Uses material icons check the `mi` global.
-    property<string> icon: "";
+    property <string> icon: "";
 
     // Used to set the display text of the button.
-    property<string> text: "";
+    property <string> text: "";
 
     // Defines the color of the icon and text.
-    property<brush> color;
+    property <brush> color;
 
     // Defines the border color.
-    property<brush> border_color;
+    property <brush> border_color;
 
     // Defines the border width.
-    property<length> border_width;
+    property <length> border_width;
 
     // Defines the bacground color.
-    property<brush> background;
+    property <brush> background;
 
     width: co.sizes.medium;
     height: width;
@@ -256,7 +256,7 @@ export RoundButton := RoundButtonBase {
 // A round outline button.
 export RoundOutlineButton := RoundButtonBase {
     // If set to `true` the background will set to `co.brushes.primary`.
-    property<bool> primary: false;
+    property <bool> primary: false;
 
     background: primary ? co.brushes.primary : co.brushes.background;
     border_width: 1px;

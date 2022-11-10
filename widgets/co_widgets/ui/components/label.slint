@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 // workaround to get font displayed embedded on the softwarerendrer
 import "../assets/fonts/Roboto-Regular.ttf"; 
 import "../assets/fonts/Roboto-Medium.ttf"; 
@@ -8,7 +11,7 @@ import { co } from "../co/co.slint";
 // Base for labels. Set font settings by font property.
 export BaseLabel := Text {
     // Defines the font settings.
-    property<Font> font;
+    property <Font> font;
 
     color: co.brushes.foreground;
     font_family: font.family;

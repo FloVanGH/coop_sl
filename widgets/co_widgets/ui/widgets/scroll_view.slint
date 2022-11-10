@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 
 ScrollIndicator := Rectangle {
@@ -39,8 +42,8 @@ export ScrollView := Rectangle {
     }
 
     i_ver_scroll := ScrollIndicator {
-        property<length> padding_height: root.height - 2 * co.spaces.small  - i_hor_scroll.height;
-        property<length> max: root.viewport_height - root.height;
+        property <length> padding_height: root.height - 2 * co.spaces.small  - i_hor_scroll.height;
+        property <length> max: root.viewport_height - root.height;
 
         x: parent.width - width - co.spaces.small;
         y:  co.spaces.small + (padding_height - height) * (-root.viewport_y / max);
@@ -55,8 +58,8 @@ export ScrollView := Rectangle {
     }
 
     i_hor_scroll := ScrollIndicator {
-        property<length> padding_width: root.width - 2 * co.spaces.small - i_ver_scroll.width;
-        property<length> max: root.viewport_width - root.width;
+        property <length> padding_width: root.width - 2 * co.spaces.small - i_ver_scroll.width;
+        property <length> max: root.viewport_width - root.width;
 
         x: co.spaces.small + (padding_width - width) * (-root.viewport_x / max);
         y: parent.height - height - co.spaces.small;

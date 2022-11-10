@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: MIT
+-->
+
 # pico_ecs
 
 Experimental Entity Component System library for no_std environments.

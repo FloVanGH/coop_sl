@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: MIT
+-->
+
 # pico_engine
 
 Experimental game engine for Slint

@@ -11,19 +11,19 @@ export SelectableBase := Rectangle {
     callback selected_changed(bool);
 
     // If set to `true` the widget is marked as selected.
-    property<bool> selected: false;
+    property <bool> selected: false;
 
     // If set to `false` the widget is disabled.
-    property<bool> enabled <=> i_touch_area.enabled;
+    property <bool> enabled <=> i_touch_area.enabled;
 
     // If set to `true` the widget has pointer hover.
-    property<bool> has_hover <=> i_touch_area.has_hover;
+    property <bool> has_hover <=> i_touch_area.has_hover;
 
     // If set to `true` the widget has keyboard focus.
-    property<bool> has_focus <=> i_focus_scope.has_focus;
+    property <bool> has_focus <=> i_focus_scope.has_focus;
 
     // If `true` the widget is pressed.
-    property<bool> pressed <=> i_touch_area.pressed;
+    property <bool> pressed <=> i_touch_area.pressed;
 
     forward_focus: i_focus_scope;
 
@@ -51,7 +51,7 @@ export SelectableBase := Rectangle {
 // `CheckBox` represents a selectable check box with a text.
 export CheckBox := SelectableBase {
     // Defines the label text of the `CheckBox`.
-    property<string> text <=> i_label.text;
+    property <string> text <=> i_label.text;
 
     min_height: co.sizes.extra_small;
     horizontal-stretch: 0;
@@ -69,7 +69,7 @@ export CheckBox := SelectableBase {
             alignment: center;
 
             i_container := Rectangle {
-                property<length> spacing: root.text == "" ? 0px : co.spaces.small;
+                property <length> spacing: root.text == "" ? 0px : co.spaces.small;
         
                 width: co.sizes.extra-small;
                 height: co.sizes.extra-small;
@@ -152,16 +152,16 @@ export CheckBox := SelectableBase {
 // `Switch` represents a selectable that can be toggled on an off.
 export Switch := SelectableBase {
     // Describes the icon of the on state.
-    property<string> on_icon;
+    property <string> on_icon;
 
     // Describes the icon of the off state.
-    property<string> off_icon;
+    property <string> off_icon;
 
     // FIXEME: private with new syntax
-    property<brush> foreground: co.brushes.foreground;
+    property <brush> foreground: co.brushes.foreground;
 
     // FIXEME: private with new syntax
-    property<length> indicator_space: 4px;
+    property <length> indicator_space: 4px;
 
     width: height * 2;
     height: co.sizes.extra_small;

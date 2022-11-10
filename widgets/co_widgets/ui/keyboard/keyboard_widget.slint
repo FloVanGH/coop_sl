@@ -44,22 +44,22 @@ export Keyboard := Rectangle {
     callback key_enter(string);
     
     // The text that can be manipulated by the `Keyboard`.
-    property<string> text <=> i_text_line.text;
+    property <string> text <=> i_text_line.text;
 
     // Placeholder of the inner text line.
-    property<string> placeholder <=> i_text_line.placeholder;
+    property <string> placeholder <=> i_text_line.placeholder;
 
     // Icon of the inner text line.
-    property<string> icon <=> i_text_line.icon;
+    property <string> icon <=> i_text_line.icon;
 
     // If set to `true` the keyboard is in shift mode.
-    property<bool> shift;
+    property <bool> shift;
 
     // FIME: private with new syntax
     property <string> key;
 
     // If set to `true` the keyboard will display alternatives keys.
-    property<bool> extra;
+    property <bool> extra;
 
     // Defines the button layout of the keyboard.
     property <KeyboardLayout> layout: {

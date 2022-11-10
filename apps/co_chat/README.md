@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # co_chat
 
 A visual [Slint](https://slint-ui.com/) prototype of a chat app.

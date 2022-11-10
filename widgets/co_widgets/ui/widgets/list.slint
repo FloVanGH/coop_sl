@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 
 import { ScrollView } from "scroll_view.slint";
@@ -20,13 +23,13 @@ export struct ParentItemModel := {
 
 // Default item delegate (visuell represenation of an `ItemModel`.
 Item := TouchArea {
-    property<string> leading_icon;
-    property<string> text;
-    property<string> trailing_icon;
-    property<brush> foreground: co.brushes.foreground;
-    property<int> index;
-    property<int> parent_index;
-    property<{ parent: int, item: int }> current_item;
+    property <string> leading_icon;
+    property <string> text;
+    property <string> trailing_icon;
+    property <brush> foreground: co.brushes.foreground;
+    property <int> index;
+    property <int> parent_index;
+    property <{ parent: int, item: int }> current_item;
 
     height: co.sizes.small;
     forward-focus: i_focus_scope;
@@ -93,11 +96,11 @@ Item := TouchArea {
 
 // Delegate for a `ParentItemModel` it can display a `text` and a list of `ItemModels`.
 ParentItem := Rectangle {
-    property<ParentItemModel> model;
-    property<bool> expanded: true;
-    property<brush> foreground: co.brushes.foreground;
-    property<int> item_index;
-    property<{ parent: int, item: int }> current_item;
+    property <ParentItemModel> model;
+    property <bool> expanded: true;
+    property <brush> foreground: co.brushes.foreground;
+    property <int> item_index;
+    property <{ parent: int, item: int }> current_item;
 
     forward-focus: i_focus_scope;
 
@@ -192,10 +195,10 @@ ParentItem := Rectangle {
 // A non scrollable list with `Item` as default delegate.
 export List := VerticalLayout {
     // Defines the list of models.
-    property<[ParentItemModel]> model;
+    property <[ParentItemModel]> model;
 
     // Defines the current selected item;
-    property<{ parent: int, item: int }> current_item;
+    property <{ parent: int, item: int }> current_item;
   
     spacing: co.spaces.medium;
     
@@ -225,10 +228,10 @@ export List := VerticalLayout {
 // A scrollable variant of `List`.
 export ListView := Rectangle {
    // Defines the list of models.
-    property<[ParentItemModel]> model <=> i_list.model;
+    property <[ParentItemModel]> model <=> i_list.model;
 
      // Defines the current selected item;
-     property<{ parent: int, item: int }> current_item <=> i_list.current_item;
+     property <{ parent: int, item: int }> current_item <=> i_list.current_item;
 
     ScrollView {
         i_list := List {}

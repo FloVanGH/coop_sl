@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: GPL-3.0-only
+-->
+
 # pico_designer
 
 Experimental map editor for the `pico_engine`.

@@ -7,9 +7,9 @@ import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, co, mi } from "
 
 export Page := GridLayout {
     callback open_keyboard(string, string, string, string);
-    property<string> title <=> i_header_bar.title;
-    property<bool> keyboard_check_box: true;
-    property<bool> disabled_check_box: true;
+    property <string> title <=> i_header_bar.title;
+    property <bool> keyboard_check_box: true;
+    property <bool> disabled_check_box: true;
 
     Row {
         i_header_bar := HeaderBar {

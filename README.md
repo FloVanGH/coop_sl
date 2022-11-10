@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 florian blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: MIT
+-->
+
 # co_sl
 
 This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps.

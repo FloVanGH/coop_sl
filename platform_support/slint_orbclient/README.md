@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-License-Identifier: MIT
+-->
+
 # slint_orbclient
 
 [Slint](https://slint-ui.com/) platform support based on [OrbClient](https://gitlab.redox-os.org/redox-os/orbclient). Can be used to run a `Slint` application onf [Redox](https://redox-os.org/).

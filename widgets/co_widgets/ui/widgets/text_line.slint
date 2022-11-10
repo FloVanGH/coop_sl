@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 import { FocusBorder } from "../components/components.slint";
 import { mi, MaterialIcon } from "../assets/icons/material_icons.slint";
@@ -36,25 +39,25 @@ export TextLine := Rectangle {
     callback clicked;
 
     // Defines the icon that is displayed in front of the text.
-    property<string> icon <=> i_icon.icon;
+    property <string> icon <=> i_icon.icon;
 
     // Defines a text that is diplayed if text is empty.
-    property<string> placeholder: "placeholder";
+    property <string> placeholder: "placeholder";
 
     // The text that is displayed and can changed by text input.
-    property<string> text <=> i_input.text;
+    property <string> text <=> i_input.text;
 
     // If set to false the widget is disabled.
-    property<bool> enabled <=> i_input.enabled;
+    property <bool> enabled <=> i_input.enabled;
 
     // If set to true a clear all button is displayed.
-    property<bool> has_clear: false;
+    property <bool> has_clear: false;
 
     // If set to true the text cannot be selected or changed by keyboard input.
     property read_only <=> i_input.read-only;
 
     // If set to `true` the `TextLine` can emmit the  `clicked` callback.
-    property<bool> clickable: co.settings.minimize;
+    property <bool> clickable: co.settings.minimize;
 
     min_width: !co.settings.minimize ? 168px : 80px;
     min_height: co.sizes.medium;

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 use std::{env, fs, io, io::Write, path::Path};
 
 /// Generates a import file for the widget library on the given path e.g. `my_project/my_ui/_my_imports`.

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 import { co } from "../co/co.slint";
 import { TitleLarge } from "../components/components.slint";
 import { Spacer } from "../layouts/layouts.slint";
@@ -5,7 +8,7 @@ import { Spacer } from "../layouts/layouts.slint";
 // A header bar with a title and a content area.
 export HeaderBar := HorizontalLayout {
     // Defines the title text of the header bar
-    property<string> title <=> i_title.text;
+    property <string> title <=> i_title.text;
 
     spacing: co.spaces.medium;
     padding_left: co.spaces.large;

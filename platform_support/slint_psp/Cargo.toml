@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-License-Identifier: MIT
+
 [package]
 name = "slint_psp"
 version = "0.1.0"
