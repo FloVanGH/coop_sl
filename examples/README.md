@@ -1,9 +1,9 @@
 <!--
-SPDX-FileCopyrightText: 2022 Florian Blasius <florvanpt@posteo.de>
+SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 SPDX-License-Identifier: MIT
 -->
 
-# Slint Extensions examples
+# co_sl examples
 
 Examples for the crates `pico_engine`, `pico_ecs`, `co_widgets` and `book_flip`.
 
@@ -25,7 +25,11 @@ Example game for `pico_engine` and `pico_ecs`. It can be run on multiple platfor
 
 Example gallery that shows all widgets of `co_widgets` and `book_flip`. It can be run on multiple platforms.
 
-[Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/)
+## live wasm preview
+
+| Widgets |
+|---------|
+|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/snapshots/widgets/) |
 
 ### Run widgets
 

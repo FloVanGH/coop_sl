@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 # SPDX-License-Identifier: MIT
 
 [workspace]
@@ -11,7 +11,6 @@ members = [
    "gaming/pico_engine",
    "gaming/pico_ecs",
    "gaming/pico_designer",
-   "platform_support/slint_psp",
    "platform_support/slint_orbclient",
    "widgets/book_flip",
    "widgets/co_widgets",
@@ -28,12 +27,16 @@ default-members = [
    "gaming/pico_engine",
    "gaming/pico_ecs",
    "gaming/pico_designer",
-   "platform_support/slint_psp",
    "platform_support/slint_orbclient",
    "widgets/book_flip",
    "widgets/co_widgets",
    "internal/shared",
    "internal/platforms_support",
+]
+
+exclude = [
+ "platform_support/slint_psp",
+ "examples/widgets_psp",
 ]
 
 resolver="2"

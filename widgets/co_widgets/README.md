@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2022 florian blasius <florvanpt@posteo.de>
+SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 SPDX-License-Identifier: MIT
 -->
 
@@ -106,7 +106,7 @@ MyLayout := HorizontalLayout {
 Best to start with these sources:
 
 * getting start: https://slint-ui.com/#tryout
-* Slint language docs: https://github.com/slint-ui/slint/tree/master/docs
+* Slint docs (*Slint lang docs included*): https://docs.rs/slint/latest/slint/
 * Slint examples: https://github.com/slint-ui/slint/tree/master/examples
 * Slint chat: https://chat.slint-ui.com/
 

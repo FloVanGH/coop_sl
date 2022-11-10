@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2022 florian blasius <florvanpt@posteo.de>
+SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 SPDX-License-Identifier: MIT
 -->
 
@@ -39,16 +39,22 @@ What the `co` stands for: cooperation.
 
 * [gaming](examples/gaming/): example of `pico_engine` and `pico_ecs`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
-    * [Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/)
 
 > Check out the [README](examples/README.md) for more details.
+
+### live wasm preview of examples
+
+| Widgets |
+|---------|
+|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/snapshots/widgets/) |
+
 
 ## new to slint?
 
 Best to start with these sources:
 
 * getting start: https://slint-ui.com/#tryout
-* Slint language docs: https://github.com/slint-ui/slint/tree/master/docs
+* Slint docs (*Slint lang docs included*): https://docs.rs/slint/latest/slint/
 * Slint examples: https://github.com/slint-ui/slint/tree/master/examples
 * Slint chat: https://chat.slint-ui.com/
 
@@ -57,3 +63,7 @@ Best to start with these sources:
 * `libs` and `examples` are available under [MIT license](LICENSE-MIT) and `apps` under [GNU GPLv3](LICENSE-GPL3).
  * `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
 or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
+
+## contributions
+
+For contributions check [CONTRIBUTING.md](./CONTRIBUTING.md).

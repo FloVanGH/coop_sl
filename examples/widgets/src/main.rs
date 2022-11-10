@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
 #![allow(clippy::redundant_clone)]
 #![allow(clippy::cmp_owned)]
-#![cfg_attr(feature = "mcu-board-support", no_std)]
-#![cfg_attr(all(feature = "mcu-board-support", not(simulator)), no_main)]
+#![cfg_attr(any(feature = "mcu-board-support", feature = "slint_psp"), no_std)]
+#![cfg_attr(any(feature = "mcu-board-support", feature = "slint_psp"), no_main)]
 
 // #[cfg(feature = "mcu-board-support")]
 extern crate alloc;
@@ -57,4 +57,13 @@ fn main() -> ! {
     app.run();
 
     panic!("The MCU demo should not quit")
+}
+
+#[cfg(feature = "slint_psp")]
+psp::module!("module_widgets", 1, 1);
+
+#[cfg(feature = "slint_psp")]
+fn psp_main() {
+    psp::enable_home_button();
+    psp::dprint!("Hello PSP from rust!");
 }

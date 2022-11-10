@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 # SPDX-License-Identifier: MIT
 
 [package]
 name = "slint_orbclient"
 version = "0.1.0"
 edition = "2021"
-authors = ["Florian Blasius <flovanpt@posteo.de>"]
+authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "Slint platform support for Redox"
 repository = "https://codeberg.org/flovansl/co_sl"

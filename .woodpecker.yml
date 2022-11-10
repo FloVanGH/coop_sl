@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 # SPDX-License-Identifier: MIT
 
 pipeline:
@@ -9,9 +9,11 @@ pipeline:
       branch: main
     commands:
       # need for slint_orbclient build for linux
-      - apt-get update && apt-get install -y cmake reuse
+      - apt-get update && apt-get install -y cmake python3-pip python3-venv
+      - python3 -m pip install --user pipx
+      - export PATH=$PATH:/root/.local/bin
       # check license
-      - reuse lint
+      - pipx run reuse lint
       # check rust fmt
       - rustup component add rustfmt
       - cargo fmt --all -- --check
@@ -49,6 +51,16 @@ pipeline:
       - cd examples/widgets
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web
+  build_psp:
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - rustup default nightly-2022-06-11
+      - cargo install cargo-psp
+      - cd examples/widgets_pwp
+      - cargo psp
   
   # deploy
   deploy_docs:

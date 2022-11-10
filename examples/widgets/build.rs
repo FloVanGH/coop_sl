@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
 fn generate_imports() {
@@ -12,7 +12,7 @@ const APP: &str = "ui/app.slint";
 #[cfg(feature = "mcu-board-support")]
 const APP: &str = "ui/minimized/app.slint";
 
-#[cfg(all(not(feature = "mcu-board-support"), not(feature = "slint_orbclient")))]
+#[cfg(feature = "default")]
 fn main() {
     generate_imports();
     slint_build::compile(APP).unwrap();

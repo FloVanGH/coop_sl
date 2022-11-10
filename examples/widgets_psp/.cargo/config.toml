@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+# Target specific options
+[target.mipsel-sony-psp]
+
+# Pass some extra options to rustc, some of which get passed on to the linker.
+#
+# * linker argument --nmagic turns off page alignment of sections (which saves
+#   flash space)
+# * inline-threshold=5 makes the compiler more aggressive and inlining functions
+rustflags = [
+    "-C", "link-arg=--nmagic",
+    "-C", "inline-threshold=5",
+]

@@ -1,19 +1,22 @@
-# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 # SPDX-License-Identifier: MIT
 
 [package]
 name = "slint_psp"
 version = "0.1.0"
 edition = "2021"
-authors = ["Florian Blasius <flovanpt@posteo.de>"]
+authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "Slint platform support for PSP"
 repository = "https://codeberg.org/flovansl/co_sl"
 readme = "README.md"
 
+
+[lib]
+crate-type = ["lib", "staticlib"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-shared = { path = "../../internal/shared" }
 slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
-#psp = "=0.3.1"
+psp = "=0.3.1"
