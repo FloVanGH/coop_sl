@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: GPL-3.0-only
+
 #![allow(clippy::redundant_clone)]
 #![allow(clippy::cmp_owned)]
 

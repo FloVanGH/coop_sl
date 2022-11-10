@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-License-Identifier: GPL-3.0-only
+
 [package]
 name = "co_chat"
 version = "0.1.0"
