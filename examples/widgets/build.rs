@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 fn generate_imports() {
     book_flip::generate_import().unwrap();
     co_widgets::generate_import().unwrap();

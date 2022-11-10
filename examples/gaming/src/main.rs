@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+// SPDX-License-Identifier: MIT
+
 #![allow(clippy::redundant_clone)]
 #![allow(clippy::cmp_owned)]
 #![cfg_attr(not(feature = "std"), no_std)]

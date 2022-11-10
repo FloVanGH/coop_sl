@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <flovanpt@posteo.de>
+# SPDX-License-Identifier: MIT
+
 # Slint Extensions examples
 
 Examples for the crates `pico_engine`, `pico_ecs`, `co_widgets` and `book_flip`.
