@@ -51,16 +51,17 @@ pipeline:
       - cd examples/widgets
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web
-  build_psp:
-    image: rust
-    when:
-      event: [push, pull_request, tag]
-      branch: main
-    commands:
-      - rustup default nightly-2022-06-11
-      - cargo install --bin cargo-psp --git https://github.com/overdrivenpotato/rust-psp --rev d6a5c5758aa9a8fff9511c48328ffd3cfbd25a18 
-      - cd examples/widgets_psp
-      - cargo psp
+  # build_psp:
+  #   group: build
+  #   image: rust
+  #   when:
+  #     event: [push, pull_request, tag]
+  #     branch: main
+  #   commands:
+  #     - rustup default nightly-2022-06-11
+  #     - cargo install --bin cargo-psp --git https://github.com/overdrivenpotato/rust-psp --rev d6a5c5758aa9a8fff9511c48328ffd3cfbd25a18 
+  #     - cd examples/widgets_psp
+  #     - cargo psp
   
   # deploy
   deploy_docs:
