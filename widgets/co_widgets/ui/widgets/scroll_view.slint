@@ -4,11 +4,11 @@
 import { co } from "../co/co.slint";
 
 ScrollIndicator := Rectangle {
-    border_radius: co.radius.extra_small;
-    background: co.brushes.foreground;
+    border_radius: co.theme.radius.extra_small;
+    background: co.theme.brushes.foreground;
     opacity: 0;
 
-    animate opacity { duration: co.durations.medium; }
+    animate opacity { duration: co.theme.durations.medium; }
 }
 
 // Allows to scroll content that is larger then the given size.
@@ -28,7 +28,7 @@ export ScrollView := Rectangle {
     // If set to `false` the `ScrollView is disabled.
     property <bool> enabled: true;
 
-    min_width: co.sizes.medium;
+    min_width: co.theme.sizes.medium;
     min_height: min_width;
     horizontal_stretch: 1;
     vertical_stretch: 1;
@@ -42,11 +42,11 @@ export ScrollView := Rectangle {
     }
 
     i_ver_scroll := ScrollIndicator {
-        property <length> padding_height: root.height - 2 * co.spaces.small  - i_hor_scroll.height;
+        property <length> padding_height: root.height - 2 * co.theme.spaces.small  - i_hor_scroll.height;
         property <length> max: root.viewport_height - root.height;
 
-        x: parent.width - width - co.spaces.small;
-        y:  co.spaces.small + (padding_height - height) * (-root.viewport_y / max);
+        x: parent.width - width - co.theme.spaces.small;
+        y:  co.theme.spaces.small + (padding_height - height) * (-root.viewport_y / max);
         width: 4px;
         height: max <= 0phx ? 0phx : padding_height * (root.height / root.viewport_height);
 
@@ -58,11 +58,11 @@ export ScrollView := Rectangle {
     }
 
     i_hor_scroll := ScrollIndicator {
-        property <length> padding_width: root.width - 2 * co.spaces.small - i_ver_scroll.width;
+        property <length> padding_width: root.width - 2 * co.theme.spaces.small - i_ver_scroll.width;
         property <length> max: root.viewport_width - root.width;
 
-        x: co.spaces.small + (padding_width - width) * (-root.viewport_x / max);
-        y: parent.height - height - co.spaces.small;
+        x: co.theme.spaces.small + (padding_width - width) * (-root.viewport_x / max);
+        y: parent.height - height - co.theme.spaces.small;
         width: max <= 0phx ? 0phx : padding_width * (root.height / root.viewport_height);
         height: 4px; 
 

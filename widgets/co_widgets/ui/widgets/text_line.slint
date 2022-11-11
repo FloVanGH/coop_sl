@@ -12,20 +12,20 @@ ClearButton := TouchArea {
     i_icon := MaterialIcon {
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
-        icon_size: co.icons.size_small;
-        icon_color: co.brushes.border;
+        icon_size: co.theme.icons.size_small;
+        icon_color: co.theme.brushes.border;
         icon: mi.clear;
     }
 
     states [
         pressed when root.pressed : {
-            i_icon.icon_color: co.brushes.foreground.darker(co.state.pressed);
+            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            i_icon.icon_color: co.brushes.foreground.darker(co.state.hover);
+            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
         disabled when !root.enabled : {
-            i_icon.opacity: co.state.container_disabled;
+            i_icon.opacity: co.theme.states.container_disabled;
         }
     ]
 }
@@ -60,24 +60,24 @@ export TextLine := Rectangle {
     property <bool> clickable: co.settings.minimize;
 
     min_width: !co.settings.minimize ? 168px : 80px;
-    min_height: co.sizes.medium;
+    min_height: co.theme.sizes.medium;
     forward-focus: i_input;
     horizontal-stretch: 1;
     vertical-stretch: 0;
 
     i_container := Rectangle {
-        border_radius: co.radius.small;
-        background: co.brushes.surface;
+        border_radius: co.theme.radius.small;
+        background: co.theme.brushes.surface;
 
         i_layout := HorizontalLayout {  
-            padding_left: co.spaces.medium;
-            padding_right: co.spaces.medium;
-            spacing: co.spaces.small;
+            padding_left: co.theme.spaces.medium;
+            padding_right: co.theme.spaces.medium;
+            spacing: co.theme.spaces.small;
     
             i_icon := MaterialIcon {
                 y: (parent.height - height) / 2;
-                icon_color: co.brushes.foreground;
-                icon_size: co.icons.size_medium;
+                icon_color: co.theme.brushes.foreground;
+                icon_size: co.theme.icons.size_medium;
             }
      
             Rectangle {  
@@ -91,11 +91,11 @@ export TextLine := Rectangle {
                     x: min(0px, max(parent.width - width, computed_x));
                     width: max(parent.width, preferred-width);
                     height: 100%;
-                    color: co.brushes.foreground;
+                    color: co.theme.brushes.foreground;
                     vertical-alignment: center;
-                    font_size: co.typo.label_medium.size;
-                    font_weight: co.typo.label_medium.weight;
-                    font_family: co.typo.label_medium.family;
+                    font_size: co.theme.typo.label_medium.size;
+                    font_weight: co.theme.typo.label_medium.weight;
+                    font_family: co.theme.typo.label_medium.family;
         
                     cursor-position-changed(cpos) => {
                         if (cpos.x + computed_x < padding-outer) {
@@ -111,21 +111,21 @@ export TextLine := Rectangle {
                     text <=> root.text;
                     vertical-alignment: center;
                     y: (parent.height - height) / 2;
-                    color: co.brushes.foreground;
+                    color: co.theme.brushes.foreground;
                     opacity: i_input.opacity;
-                    font_size: co.typo.label_medium.size;
-                    font_weight: co.typo.label_medium.weight;
-                    font_family: co.typo.label_medium.family;
+                    font_size: co.theme.typo.label_medium.size;
+                    font_weight: co.theme.typo.label_medium.weight;
+                    font_family: co.theme.typo.label_medium.family;
                 }
     
                 if (text == "") : Text {
                     text <=> root.placeholder;
                     y: (parent.height - height) / 2;
-                    color: co.brushes.border;
+                    color: co.theme.brushes.border;
                     opacity: i_input.opacity;
-                    font_size: co.typo.label_medium.size;
-                    font_weight: co.typo.label_medium.weight;
-                    font_family: co.typo.label_medium.family;
+                    font_size: co.theme.typo.label_medium.size;
+                    font_weight: co.theme.typo.label_medium.weight;
+                    font_family: co.theme.typo.label_medium.family;
                 }
     
                 if (clickable) : TouchArea {  
@@ -157,9 +157,9 @@ export TextLine := Rectangle {
 
     states [
         disabled when !root.enabled : {
-            i_container.opacity: co.state.container_disabled;
-            i_input.opacity: co.state.content_disabled;
-            i_icon.opacity: co.state.content_disabled;
+            i_container.opacity: co.theme.states.container_disabled;
+            i_input.opacity: co.theme.states.content_disabled;
+            i_icon.opacity: co.theme.states.content_disabled;
         }
     ]
 }

@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import { co } from "../co/co.slint";
-import { LabelSmall, FocusBorder } from "../components/components.slint";
+import { FocusBorder } from "../components/focus_border.slint";
+import { LabelSmall } from "../components/label.slint";
 import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
 // `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
@@ -53,7 +54,7 @@ export CheckBox := SelectableBase {
     // Defines the label text of the `CheckBox`.
     property <string> text <=> i_label.text;
 
-    min_height: co.sizes.extra_small;
+    min_height: co.theme.sizes.extra_small;
     horizontal-stretch: 0;
     vertical-stretch: 0;
 
@@ -63,33 +64,33 @@ export CheckBox := SelectableBase {
     accessible-role: checkbox;
 
     HorizontalLayout {  
-        spacing: co.spaces.small;
+        spacing: co.theme.spaces.small;
 
         VerticalLayout {  
             alignment: center;
 
             i_container := Rectangle {
-                property <length> spacing: root.text == "" ? 0px : co.spaces.small;
+                property <length> spacing: root.text == "" ? 0px : co.theme.spaces.small;
         
-                width: co.sizes.extra-small;
-                height: co.sizes.extra-small;
-                border_radius: co.radius.extra_small;
+                width: co.theme.sizes.extra-small;
+                height: co.theme.sizes.extra-small;
+                border_radius: co.theme.radius.extra_small;
                 border_width: 1px;
-                border_color: co.brushes.border;
-                background: co.brushes.background;
+                border_color: co.theme.brushes.border;
+                background: co.theme.brushes.background;
         
                 i_icon := MaterialIcon {
                     x: (parent.width - width) / 2;
                     y: (parent.height - height) / 2;
-                    icon_color: co.brushes.on_primary;
+                    icon_color: co.theme.brushes.on_primary;
                     icon: mi.check;
                     opacity: 0;
         
-                    animate icon_color { duration: co.durations.fast; }
-                    animate opacity { duration: co.durations.fast; }
+                    animate icon_color { duration: co.theme.durations.fast; }
+                    animate opacity { duration: co.theme.durations.fast; }
                 }
         
-                animate background { duration: co.durations.medium; easing: ease-in-out; }
+                animate background { duration: co.theme.durations.medium; easing: ease-in-out; }
             } 
         }
 
@@ -105,44 +106,44 @@ export CheckBox := SelectableBase {
         height: root.height + 4px;
         x: (parent.width - width) / 2;
         y: (parent.height - height) / 2;
-        border_radius: co.radius.small;
+        border_radius: co.theme.radius.small;
     }
 
     states [  
         disabled_selected when !enabled && root.selected : {
-            i_container.background: co.brushes.surface_disabled;
-            i_label.color: co.brushes.foreground_disabled;
+            i_container.background: co.theme.brushes.surface_disabled;
+            i_label.color: co.theme.brushes.foreground_disabled;
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         disabled when !enabled : {
-            i_container.border_color: co.brushes.border_disabled;
-            i_label.color: co.brushes.foreground_disabled;
+            i_container.border_color: co.theme.brushes.border_disabled;
+            i_label.color: co.theme.brushes.foreground_disabled;
         }
         pressed_selected when root.pressed && root.selected : {
-            i_container.background: co.brushes.primary.darker(co.state.pressed);
-            i_icon.icon_color: co.brushes.on_primary.darker(co.state.pressed);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.states.pressed);
+            i_icon.icon_color: co.theme.brushes.on_primary.darker(co.theme.states.pressed);
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         hover_selected when root.has_hover && root.selected : {
-            i_container.background: co.brushes.primary.darker(co.state.hover);
-            i_icon.icon_color: co.brushes.on_primary.darker(co.state.hover);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.states.hover);
+            i_icon.icon_color: co.theme.brushes.on_primary.darker(co.theme.states.hover);
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         pressed when root.pressed : {
-            i_container. background: co.brushes.background.darker(co.state.pressed);
-            root.border_color: co.brushes.border.darker(co.state.pressed);
-            i_icon.icon_color: co.brushes.foreground.darker(co.state.pressed);
+            i_container. background: co.theme.brushes.background.darker(co.theme.states.pressed);
+            root.border_color: co.theme.brushes.border.darker(co.theme.states.pressed);
+            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            i_container.background: co.brushes.background.darker(co.state.hover);
-            root.border_color: co.brushes.border.darker(co.state.hover);
-            i_icon.icon_color: co.brushes.foreground.darker(co.state.hover);
+            i_container.background: co.theme.brushes.background.darker(co.theme.states.hover);
+            root.border_color: co.theme.brushes.border.darker(co.theme.states.hover);
+            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
         selected when root.selected : {
-            i_container.background: co.brushes.primary;
+            i_container.background: co.theme.brushes.primary;
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
@@ -158,13 +159,13 @@ export Switch := SelectableBase {
     property <string> off_icon;
 
     // FIXEME: private with new syntax
-    property <brush> foreground: co.brushes.foreground;
+    property <brush> foreground: co.theme.brushes.foreground;
 
     // FIXEME: private with new syntax
     property <length> indicator_space: 4px;
 
     width: height * 2;
-    height: co.sizes.extra_small;
+    height: co.theme.sizes.extra_small;
     vertical_stretch: 0;
     horizontal_stretch: 0;
 
@@ -175,14 +176,14 @@ export Switch := SelectableBase {
     i_container := Rectangle {
         width: 100%;
         height: 100%;
-        background: co.brushes.surface;
+        background: co.theme.brushes.surface;
         border_radius: i_indicator.border_radius + indicator_space / 2;
 
         if(root.on_icon != "") : MaterialIcon {  
             x: root.indicator_space + (i_indicator.width - width) / 2;
             y: (parent.height - height) / 2;
             icon <=> root.on_icon;
-            icon_size: co.icons.size_small;
+            icon_size: co.theme.icons.size_small;
             icon_color: root.foreground;
         }
     
@@ -190,7 +191,7 @@ export Switch := SelectableBase {
             x: root.width - root.indicator_space - (i_indicator.width + width) / 2;
             y: (parent.height - height) / 2;
             icon <=> root.off_icon;
-            icon_size: co.icons.size_small;
+            icon_size: co.theme.icons.size_small;
             icon_color: root.foreground;
         }
     
@@ -200,12 +201,12 @@ export Switch := SelectableBase {
             width: i_container.height - root.indicator_space;
             height: width;
             border_radius: max(width, height) / 2;
-            background: co.brushes.foreground;
+            background: co.theme.brushes.foreground;
     
-            animate x { duration: co.durations.fast; }  
+            animate x { duration: co.theme.durations.fast; }  
         }
 
-        animate background { duration: co.durations.fast; }
+        animate background { duration: co.theme.durations.fast; }
     }
 
     if(root.has_focus) : FocusBorder {
@@ -218,43 +219,43 @@ export Switch := SelectableBase {
 
     states [
         disabled_selected when !enabled && root.selected : {
-            i_container.background: co.brushes.surface_disabled;
-            foreground: co.brushes.foreground_disabled;
-            i_indicator.background: co.brushes.foreground_disabled;
+            i_container.background: co.theme.brushes.surface_disabled;
+            foreground: co.theme.brushes.foreground_disabled;
+            i_indicator.background: co.theme.brushes.foreground_disabled;
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
         }
         disabled when !enabled : {
-            i_container.background: co.brushes.surface_disabled;
-            foreground: co.brushes.foreground_disabled;
-            i_indicator.background: co.brushes.foreground_disabled;
+            i_container.background: co.theme.brushes.surface_disabled;
+            foreground: co.theme.brushes.foreground_disabled;
+            i_indicator.background: co.theme.brushes.foreground_disabled;
         }
         pressed_selected when root.pressed && root.selected : {
-            i_container.background: co.brushes.primary.darker(co.state.pressed);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.states.pressed);
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
-            i_indicator.background: co.brushes.background;
-            root.foreground: co.brushes.background;
+            i_indicator.background: co.theme.brushes.background;
+            root.foreground: co.theme.brushes.background;
         }
         hover_selected when root.has_hover && root.selected : {
-            i_container.background: co.brushes.primary.darker(co.state.hover);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.states.hover);
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
-            i_indicator.background: co.brushes.background;
-            root.foreground: co.brushes.background;
+            i_indicator.background: co.theme.brushes.background;
+            root.foreground: co.theme.brushes.background;
         }
         selected when !root.pressed && root.selected : {
-            i_container.background: co.brushes.primary;
+            i_container.background: co.theme.brushes.primary;
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
-            i_indicator.background: co.brushes.background;
-            root.foreground: co.brushes.background;
+            i_indicator.background: co.theme.brushes.background;
+            root.foreground: co.theme.brushes.background;
         }
         pressed when root.pressed : {
-            i_container.background: co.brushes.surface.darker(co.state.pressed);
+            i_container.background: co.theme.brushes.surface.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            i_container.background: co.brushes.surface.darker(co.state.hover);
+            i_container.background: co.theme.brushes.surface.darker(co.theme.states.hover);
         }
     ]
 
-    animate foreground { duration: co.durations.fast; } 
+    animate foreground { duration: co.theme.durations.fast; } 
 }
 
 // Viewer Examples

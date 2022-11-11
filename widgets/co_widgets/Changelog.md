@@ -16,7 +16,7 @@ SPDX-License-Identifier: MIT
     `VerticalSpacerLarge`, `HorizontalSpacerSmall`, `HorizontalSpacerMedium`, `HorizontalSpacerLarge`
 * Keyboard: `Keyboard`, `KeyboardPage`
 * Building blocks: `HeaderBar`, `SideBar`
-* Components: `FocusBorder`, `CoWindow`, `BaseLabel`, `LabelSmall`, `LabelMedium`, `LabelLarge`
+* Components: `FocusBorder`, `CoWindow`, `BaseLabel`, `LabelSmall`, `LabelMedium`, `LabelLarge`, `ThemeWindow`
 * Theming: `co` (main theme source component)
 * Icons: `MaterialIcon`, `mi` (material icon codes)
 

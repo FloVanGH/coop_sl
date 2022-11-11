@@ -13,38 +13,38 @@ export BaseLabel := Text {
     // Defines the font settings.
     property <Font> font;
 
-    color: co.brushes.foreground;
+    color: co.theme.brushes.foreground;
     font_family: font.family;
     font_size: font.size;
     font_weight: font.weight;
 }
 
-// Label with settings `co.typo.label_small`.
+// Label with settings `co.theme.typo.label_small`.
 export LabelSmall := BaseLabel {
-    font: co.typo.label_small;
+    font: co.theme.typo.label_small;
 }
 
-// Label with settings `co.typo.label_medium`.
+// Label with settings `co.theme.typo.label_medium`.
 export LabelMedium := BaseLabel {
-    font: co.typo.label_medium;
+    font: co.theme.typo.label_medium;
 }
 
-// Label with settings `co.typo.label_large.
+// Label with settings `co.theme.typo.label_large.
 export LabelLarge := BaseLabel {
-    font: co.typo.label_large; 
+    font: co.theme.typo.label_large; 
 }
 
-// Title with settings `co.typo.title_small`.
+// Title with settings `co.theme.typo.title_small`.
 export TitleSmall := BaseLabel {
-    font: co.typo.title_small;
+    font: co.theme.typo.title_small;
 }
 
-// Title with settings `co.typo.title_medium`.
+// Title with settings `co.theme.typo.title_medium`.
 export TitleMedium := BaseLabel {
-    font: co.typo.title_medium;
+    font: co.theme.typo.title_medium;
 }
 
-// Title with settings `co.typo.title_large.
+// Title with settings `co.theme.typo.title_large.
 export TitleLarge := BaseLabel {
-    font: co.typo.title_large;
+    font: co.theme.typo.title_large;
 }

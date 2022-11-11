@@ -26,12 +26,12 @@ Item := TouchArea {
     property <string> leading_icon;
     property <string> text;
     property <string> trailing_icon;
-    property <brush> foreground: co.brushes.foreground;
+    property <brush> foreground: co.theme.brushes.foreground;
     property <int> index;
     property <int> parent_index;
     property <{ parent: int, item: int }> current_item;
 
-    height: co.sizes.small;
+    height: co.theme.sizes.small;
     forward-focus: i_focus_scope;
 
     i_focus_scope := FocusScope {
@@ -50,12 +50,12 @@ Item := TouchArea {
        i_layout := HorizontalLayout {  
             padding_left: root.padding_left;
             padding_right: root.padding_right;
-            spacing: co.spaces.small;
+            spacing: co.theme.spaces.small;
     
             if(leading_icon != "") : MaterialIcon {
                 y: (parent.height - height) / 2;
                 icon <=> root.leading_icon;
-                icon_size: co.icons.size_medium;
+                icon_size: co.theme.icons.size_medium;
                 icon_color: root.foreground;
             }
     
@@ -68,7 +68,7 @@ Item := TouchArea {
             if(trailing_icon != "") : MaterialIcon {
                 y: (parent.height - height) / 2;
                 icon <=> root.trailing_icon;
-                icon_size: co.icons.size_medium;
+                icon_size: co.theme.icons.size_medium;
                 icon_color: root.foreground;
             }
         }
@@ -78,48 +78,48 @@ Item := TouchArea {
 
     states [
         pressed when root.pressed : {
-            i_container.background: co.brushes.background.darker(co.state.pressed);
-            foreground: co.brushes.foreground.darker(co.state.pressed);
+            i_container.background: co.theme.brushes.background.darker(co.theme.states.pressed);
+            foreground: co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            i_container.background: co.brushes.background.darker(co.state.hover);
-            foreground: co.brushes.foreground.darker(co.state.hover);
+            i_container.background: co.theme.brushes.background.darker(co.theme.states.hover);
+            foreground: co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
         selected when root.current_item.parent == root.parent_index && root.current_item.item == root.index : {
-            i_container.background: co.brushes.background;
-            foreground: co.brushes.foreground;
+            i_container.background: co.theme.brushes.background;
+            foreground: co.theme.brushes.foreground;
         }
     ]
 
-    animate foreground { duration: co.durations.fast; }
+    animate foreground { duration: co.theme.durations.fast; }
 }
 
 // Delegate for a `ParentItemModel` it can display a `text` and a list of `ItemModels`.
 ParentItem := Rectangle {
     property <ParentItemModel> model;
     property <bool> expanded: true;
-    property <brush> foreground: co.brushes.foreground;
+    property <brush> foreground: co.theme.brushes.foreground;
     property <int> item_index;
     property <{ parent: int, item: int }> current_item;
 
     forward-focus: i_focus_scope;
 
     VerticalLayout {  
-        spacing: co.spaces.medium;
+        spacing: co.theme.spaces.medium;
 
         i_container := Rectangle {
-            height: co.sizes.small;
+            height: co.theme.sizes.small;
 
             i_container_layout := HorizontalLayout {  
-                padding_left: co.spaces.medium;
-                padding_right: co.spaces.medium;
-                spacing: co.spaces.medium;
+                padding_left: co.theme.spaces.medium;
+                padding_right: co.theme.spaces.medium;
+                spacing: co.theme.spaces.medium;
 
                 // The item is expandable if it has items.
                 if(model.items.length > 0) : MaterialIcon {
                     y: (parent.height - height) / 2;
                     icon: mi.arrow_drop_down;
-                    icon_size: co.icons.size_medium;
+                    icon_size: co.theme.icons.size_medium;
                     icon_color: root.foreground;
 
                     states [  
@@ -159,13 +159,13 @@ ParentItem := Rectangle {
 
             if(i_focus_scope.has_focus) : FocusBorder {}
 
-            animate background { duration: co.durations.fast; }
+            animate background { duration: co.theme.durations.fast; }
         }
 
         if(root.expanded) : VerticalLayout {     
             for item[item_index] in model.items : Item {
                 current_item <=> root.current_item;
-                padding_left: i_container_layout.padding_left + i_container_layout.spacing + co.icons.size_medium;
+                padding_left: i_container_layout.padding_left + i_container_layout.spacing + co.theme.icons.size_medium;
                 padding_right: i_container_layout.padding_right;
                 leading_icon: item.leading_icon;
                 text: item.text;
@@ -180,16 +180,16 @@ ParentItem := Rectangle {
 
     states [
         pressed when i_touch_area.pressed : {
-            i_container.background: co.brushes.background.darker(co.state.pressed);
-            foreground: co.brushes.foreground.darker(co.state.pressed);
+            i_container.background: co.theme.brushes.background.darker(co.theme.states.pressed);
+            foreground: co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when i_touch_area.has_hover : {
-            i_container.background: co.brushes.background.darker(co.state.hover);
-            foreground: co.brushes.foreground.darker(co.state.hover);
+            i_container.background: co.theme.brushes.background.darker(co.theme.states.hover);
+            foreground: co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
     ]
 
-    animate foreground { duration: co.durations.fast; }
+    animate foreground { duration: co.theme.durations.fast; }
 }
 
 // A non scrollable list with `Item` as default delegate.
@@ -200,7 +200,7 @@ export List := VerticalLayout {
     // Defines the current selected item;
     property <{ parent: int, item: int }> current_item;
   
-    spacing: co.spaces.medium;
+    spacing: co.theme.spaces.medium;
     
     for parent_item[parent_index] in model : VerticalLayout {   
         if(model.length > 1) : ParentItem {

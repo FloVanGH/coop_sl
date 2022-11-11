@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 import { co } from "../co/co.slint";
-import { FocusBorder, LabelMedium } from "../components/components.slint";
+import { FocusBorder } from "../components/focus_border.slint";
+import { LabelMedium } from "../components/label.slint";
 import { MaterialIcon } from "../assets/icons/material_icons.slint";
 
 // `ButtonBase` is used as base for buttons that can be clicked.
@@ -26,9 +27,9 @@ export ButtonBase := TouchArea {
     property <brush> background;
 
     // Defines the size of the icon.
-    property <length> icon_size: co.icons.size_small;
+    property <length> icon_size: co.theme.icons.size_small;
 
-    min_height: co.sizes.medium;
+    min_height: co.theme.sizes.medium;
     forward_focus: i_focus_scope;
 
     i_container := Rectangle {
@@ -41,7 +42,7 @@ export ButtonBase := TouchArea {
         background: root.background;
         border_width: root.border_width;
         border_color: root.border_color;
-        border_radius: co.radius.large * scale;
+        border_radius: co.theme.radius.large * scale;
 
         states [
             pressed when root.pressed : {
@@ -49,13 +50,13 @@ export ButtonBase := TouchArea {
             }
         ]
 
-        animate scale { duration: co.durations.fast; }
+        animate scale { duration: co.theme.durations.fast; }
     }
 
     HorizontalLayout {  
-        spacing: co.spaces.small;
-        padding_left:  co.spaces.large;
-        padding_right: co.spaces.large;
+        spacing: co.theme.spaces.small;
+        padding_left:  co.theme.spaces.large;
+        padding_right: co.theme.spaces.large;
         alignment: center;
 
         if(root.icon != "") : MaterialIcon {
@@ -68,9 +69,9 @@ export ButtonBase := TouchArea {
         if(root.text != "") : Text {
             vertical-alignment: center;
             color: root.color;
-            font_size: co.typo.label_medium.size;
-            font_weight: co.typo.label_medium.weight;
-            font_family: co.typo.label_medium.family;
+            font_size: co.theme.typo.label_medium.size;
+            font_weight: co.theme.typo.label_medium.weight;
+            font_family: co.theme.typo.label_medium.family;
             text: root.text;
         }
     }
@@ -96,63 +97,63 @@ export ButtonBase := TouchArea {
         border_radius: i_container.border_radius + 2px;
     }
 
-    animate color { duration: co.durations.fast;  }
-    animate background { duration: co.durations.fast; }
-    animate border_color { duration: co.durations.fast; }
+    animate color { duration: co.theme.durations.fast;  }
+    animate background { duration: co.theme.durations.fast; }
+    animate border_color { duration: co.theme.durations.fast; }
 }
 
-// Default button with filled surface. Provides also an variant filled with the `co.brushes.primary` brush, to get it set `primary` to `true`.
+// Default button with filled surface. Provides also an variant filled with the `co.theme.brushes.primary` brush, to get it set `primary` to `true`.
 export Button := ButtonBase {
-    // If set to  `true` the button will filled with co.brushes.primary`
+    // If set to  `true` the button will filled with co.theme.brushes.primary`
     property <bool> primary: false;
 
-    background: primary ? co.brushes.primary : co.brushes.surface;
-    color: primary ? co.brushes.on_primary : co.brushes.foreground;
+    background: primary ? co.theme.brushes.primary : co.theme.brushes.surface;
+    color: primary ? co.theme.brushes.on_primary : co.theme.brushes.foreground;
     accessible-role: button;
     accessible-label <=> root.text;
 
     states [
         disabled when !enabled : {
-            root.background: co.brushes.surface_disabled;
-            root.color: co.brushes.foreground_disabled;
+            root.background: co.theme.brushes.surface_disabled;
+            root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            root.background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.surface.darker(co.state.pressed);
-            root.color:  primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+            root.background: primary ? co.theme.brushes.primary.darker(co.theme.states.pressed) : co.theme.brushes.surface.darker(co.theme.states.pressed);
+            root.color:  primary ? co.theme.brushes.on_primary.darker(co.theme.states.pressed) : co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            root.background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.surface.darker(co.state.hover);
-            root.color:  primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
+            root.background: primary ? co.theme.brushes.primary.darker(co.theme.states.hover) : co.theme.brushes.surface.darker(co.theme.states.hover);
+            root.color:  primary ? co.theme.brushes.on_primary.darker(co.theme.states.hover) : co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
     ]
 }
 
 export OutlineButton := ButtonBase {
-    // If set to  `true` the button will filled with co.brushes.primary`
+    // If set to  `true` the button will filled with co.theme.brushes.primary`
     property <bool> primary: false;
 
-    background: primary ? co.brushes.primary : co.brushes.background;
+    background: primary ? co.theme.brushes.primary : co.theme.brushes.background;
     border_width: 1px;
-    color: primary ? co.brushes.on_primary : co.brushes.foreground;
-    border_color: co.brushes.border;
+    color: primary ? co.theme.brushes.on_primary : co.theme.brushes.foreground;
+    border_color: co.theme.brushes.border;
     accessible-role: button;
     accessible-label <=> root.text;
 
     states [
         disabled when !enabled : {
-            root.background: co.brushes.background;
-            root.border_color: co.brushes.border_disabled;
-            root.color: co.brushes.foreground_disabled;
+            root.background: co.theme.brushes.background;
+            root.border_color: co.theme.brushes.border_disabled;
+            root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.background.darker(co.state.pressed);
-            root.border_color: co.brushes.border.darker(co.state.pressed);
-            root.color: primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.states.pressed) : co.theme.brushes.background.darker(co.theme.states.pressed);
+            root.border_color: co.theme.brushes.border.darker(co.theme.states.pressed);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.pressed) : co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.background.darker(co.state.hover);
-            root.border_color: co.brushes.border.darker(co.state.hover);
-            root.color: primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.states.hover) : co.theme.brushes.background.darker(co.theme.states.hover);
+            root.border_color: co.theme.brushes.border.darker(co.theme.states.hover);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.hover) : co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
     ]
 }
@@ -177,13 +178,13 @@ export RoundButtonBase := TouchArea {
     // Defines the bacground color.
     property <brush> background;
 
-    width: co.sizes.medium;
+    width: co.theme.sizes.medium;
     height: width;
 
     i_container := Rectangle {
         width: 100%;
         height: 100%;
-        border_radius:(co.settings.minimize ? co.sizes.small : co.sizes.medium) / 2;
+        border_radius:(co.settings.minimize ? co.theme.sizes.small : co.theme.sizes.medium) / 2;
         background: root.background;
         border_width: root.border_width;
         border_color: root.border_color;
@@ -191,7 +192,7 @@ export RoundButtonBase := TouchArea {
         if(root.icon != "") : MaterialIcon {
             x: (parent.width - width) / 2;
             y: (parent.height - height) / 2;
-            icon_size: co.icons.size_medium;
+            icon_size: co.theme.icons.size_medium;
             icon_color: root.color;
             icon: root.icon;
         }
@@ -200,9 +201,9 @@ export RoundButtonBase := TouchArea {
             color: root.color;
             x: (parent.width - width) / 2;
             y: (parent.height - height) / 2;
-            font_size: co.typo.label_medium.size;
-            font_weight: co.typo.label_medium.weight;
-            font_family: co.typo.label_medium.family;
+            font_size: co.theme.typo.label_medium.size;
+            font_weight: co.theme.typo.label_medium.weight;
+            font_family: co.theme.typo.label_medium.family;
             text: root.text;
         }
     }
@@ -227,58 +228,58 @@ export RoundButtonBase := TouchArea {
         border_radius: i_container.border_radius + 2px;
     }
 
-    animate color { duration: co.durations.fast;  }
-    animate background { duration: co.durations.fast; }
-    animate border_color { duration: co.durations.fast; }
+    animate color { duration: co.theme.durations.fast;  }
+    animate background { duration: co.theme.durations.fast; }
+    animate border_color { duration: co.theme.durations.fast; }
 }
 
 // A round button.
 export RoundButton := RoundButtonBase {
-    background: co.brushes.background;
-    color: co.brushes.foreground;
+    background: co.theme.brushes.background;
+    color: co.theme.brushes.foreground;
     accessible-role: button;
 
     states [
         disabled when !enabled : {
-            root.color: co.brushes.foreground_disabled;
+            root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            root.background: co.brushes.background.darker(co.state.pressed);
-            root.color: co.brushes.foreground.darker(co.state.pressed);
+            root.background: co.theme.brushes.background.darker(co.theme.states.pressed);
+            root.color: co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            root.background: co.brushes.background.darker(co.state.hover);
-            root.color: co.brushes.foreground.darker(co.state.hover);
+            root.background: co.theme.brushes.background.darker(co.theme.states.hover);
+            root.color: co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
     ]
 }
 
 // A round outline button.
 export RoundOutlineButton := RoundButtonBase {
-    // If set to `true` the background will set to `co.brushes.primary`.
+    // If set to `true` the background will set to `co.theme.brushes.primary`.
     property <bool> primary: false;
 
-    background: primary ? co.brushes.primary : co.brushes.background;
+    background: primary ? co.theme.brushes.primary : co.theme.brushes.background;
     border_width: 1px;
-    color: primary ? co.brushes.on_primary : co.brushes.foreground;
-    border_color: co.brushes.border;
+    color: primary ? co.theme.brushes.on_primary : co.theme.brushes.foreground;
+    border_color: co.theme.brushes.border;
     accessible-role: button;
 
     states [
         disabled when !enabled : {
-            root.background: co.brushes.background;
-            root.border_color: co.brushes.border_disabled;
-            root.color: co.brushes.foreground_disabled;
+            root.background: co.theme.brushes.background;
+            root.border_color: co.theme.brushes.border_disabled;
+            root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            background: primary ? co.brushes.primary.darker(co.state.pressed) : co.brushes.background.darker(co.state.pressed);
-            root.border_color: co.brushes.border.darker(co.state.pressed);
-            root.color: primary ? co.brushes.on_primary.darker(co.state.pressed) : co.brushes.foreground.darker(co.state.pressed);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.states.pressed) : co.theme.brushes.background.darker(co.theme.states.pressed);
+            root.border_color: co.theme.brushes.border.darker(co.theme.states.pressed);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.pressed) : co.theme.brushes.foreground.darker(co.theme.states.pressed);
         }
         hover when root.has_hover : {
-            background: primary ? co.brushes.primary.darker(co.state.hover) : co.brushes.background.darker(co.state.hover);
-            root.border_color: co.brushes.border.darker(co.state.hover);
-            root.color: primary ? co.brushes.on_primary.darker(co.state.hover) : co.brushes.foreground.darker(co.state.hover);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.states.hover) : co.theme.brushes.background.darker(co.theme.states.hover);
+            root.border_color: co.theme.brushes.border.darker(co.theme.states.hover);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.hover) : co.theme.brushes.foreground.darker(co.theme.states.hover);
         }
     ]
 }

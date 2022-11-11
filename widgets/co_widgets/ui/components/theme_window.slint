@@ -1,0 +1,111 @@
+import { CoWindow } from "co_window.slint";
+import { Button } from "../widgets/button.slint";
+import { Switch } from "../widgets/selectables.slint";
+import { co, Theme } from "../co/co.slint";
+
+// `ThemeWindow` provides the possibility to adjust the theming of the `co_widgets`.
+export ThemeWindow := CoWindow {
+    // Can be used to override style defintions of the `co_widgets` theme.
+    property <Theme> theme_override <=> co.theme;
+}
+
+ThemeWindowExample := ThemeWindow {
+    title: "Theme window";
+    width: 600px; 
+    height: 400px;
+
+    theme_override: {
+        brushes : {
+            background: co.dark_theme ? #04dc82: #2d00e1,
+            foreground: co.dark_theme ? #dfdfdf : #2d2d2d,
+            foreground_disabled: co.dark_theme ? #7b7b7b : #a0a0a0,
+            surface: co.dark_theme ? #505050 : #BDBDBD,
+            surface_disabled: co.dark_theme ? #3d3d3d : #d2d2d2,
+            on_surface: co.dark_theme ? #212121 : #dfdfdf,
+            primary: co.accent-color,
+            on_primary: co.on_accent_color,
+            border: co.dark_theme ? #7e7e7e : #505050,
+            border_disabled: co.dark_theme ? #494949 : #c5c5c5,
+            state: #000000,
+        },
+        durations : {
+            slow: 500ms,
+            medium: 250ms,
+            fast: 150ms,
+        },
+        icons : {
+            size_small: 12px,
+            size_medium: 14px,
+            size_large: 16px,
+        },
+        states : {
+            hover: 0.2,
+            pressed: 0.4,
+            container_disabled: 0.38,
+            content_disabled: 0.38,
+        },
+        sizes: {
+            extra_small: 20px,
+            small: 26px,
+            medium: 32px,
+            large: 44px,
+        },
+        radius : {
+            extra_small: 4px,
+            small: 6px,
+            medium: 8px,
+            large: 16px,
+        },
+        spaces: {
+            extra_small: 2px,
+            small: 4px,
+            medium: 8px,
+            large: 16px,
+        },
+        typo: {
+            label_small: {
+                family: "Roboto",
+                size: 12px,
+                weight: 400
+            },
+            label_medium: {
+                family: "Roboto",
+                size: 12px,
+                weight: 500      
+            },
+            label_large: {
+                family: "Roboto",
+                size: 14px,
+                weight: 500
+            },
+            title_small: {
+                family: "Roboto",
+                size: 16px,
+                weight: 500      
+            },
+            title_medium:{
+                family: "Roboto",
+                size: 20px,
+                weight: 500      
+            },
+            title_large: {
+                family: "Roboto",
+                size: 24px,
+                weight: 500      
+            },
+        }
+    };
+
+    VerticalLayout {  
+        padding: co.theme.spaces.medium;
+        spacing: co.theme.spaces.small;
+
+        Button {
+            text: "Click me";
+        }
+
+        Switch {
+            selected <=> co.dark_theme;
+        }
+    }
+}

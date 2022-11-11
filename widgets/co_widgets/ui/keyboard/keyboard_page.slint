@@ -42,10 +42,10 @@ export KeyboardPage := Rectangle {
 
     transitions [  
         in keyboard_open : {
-            animate i_container.y { duration: co.durations.fast; }
+            animate i_container.y { duration: co.theme.durations.fast; }
         }
         out keyboard_open : {
-            animate i_container.y { duration:  co.durations.medium; }
+            animate i_container.y { duration:  co.theme.durations.medium; }
         }
     ]
 }

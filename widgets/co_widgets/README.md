@@ -74,7 +74,7 @@ All theme resources of `co_widgets` like brushes, sizes, spacings and typography
 import { co } from "_imports/co_widgets.slint";
 
 MyRect := Rectangle {
-    background: co.brushes.surface;
+    background: co.theme.brushes.surface;
 }
 ```
 
@@ -84,9 +84,9 @@ MyRect := Rectangle {
 import { co } from "_imports/co_widgets.slint";
 
 MyText := Text {
-   font_size: co.typo.label_large.size;
-   font_family: co.typo.label_large.family;
-   font_weight: co.typo.label_large.weight;
+   font_size: co.theme.typo.label_large.size;
+   font_family: co.theme.typo.label_large.family;
+   font_weight: co.theme.typo.label_large.weight;
 }
 ```
 
@@ -96,8 +96,8 @@ MyText := Text {
 import { co } from "_imports/co_widgets.slint";
 
 MyLayout := HorizontalLayout {
-   spacing: co.spaces.small;
-   padding: co.spaces.medium;
+   spacing: co.theme.spaces.small;
+   padding: co.theme.spaces.medium;
 }
 ```
 

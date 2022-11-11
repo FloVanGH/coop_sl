@@ -10,10 +10,10 @@ export HeaderBar := HorizontalLayout {
     // Defines the title text of the header bar
     property <string> title <=> i_title.text;
 
-    spacing: co.spaces.medium;
-    padding_left: co.spaces.large;
-    padding_right: co.spaces.large;
-    height: co.sizes.large;
+    spacing: co.theme.spaces.medium;
+    padding_left: co.theme.spaces.large;
+    padding_right: co.theme.spaces.large;
+    height: co.theme.sizes.large;
 
     i_title := TitleLarge {  
         text: "title";

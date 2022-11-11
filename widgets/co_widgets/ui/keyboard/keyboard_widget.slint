@@ -14,7 +14,7 @@ export global KeyboardAdapter := {
 }
 
 KeyboardButton := RoundOutlineButton {
-    width: co.settings.minimize ? co.sizes.small : co.sizes.medium;
+    width: co.settings.minimize ? co.theme.sizes.small : co.theme.sizes.medium;
 }
 
 // Defines the model of a key of the `Keyboard`.
@@ -98,12 +98,12 @@ export Keyboard := Rectangle {
 
     VerticalLayout {  
         alignment: center;
-        spacing: co.spaces.small;
-        padding: co.spaces.large;
+        spacing: co.theme.spaces.small;
+        padding: co.theme.spaces.large;
 
 
         VerticalLayout {  
-            min_height: co.sizes.large;
+            min_height: co.theme.sizes.large;
             vertical-stretch: 0;
             alignment: center;
 
@@ -114,7 +114,7 @@ export Keyboard := Rectangle {
         }  
 
         i_row_one := HorizontalLayout {
-            spacing: co.spaces.small;
+            spacing: co.theme.spaces.small;
             alignment: center;
 
             for key in layout.row_one : KeyboardButton {
@@ -123,7 +123,7 @@ export Keyboard := Rectangle {
             }
         }
         i_row_two := HorizontalLayout {
-            spacing: co.spaces.small;
+            spacing: co.theme.spaces.small;
             alignment: center;
 
             for key in layout.row_two : KeyboardButton {
@@ -132,7 +132,7 @@ export Keyboard := Rectangle {
             }
         }
         i_row_three := HorizontalLayout {
-            spacing: co.spaces.small;
+            spacing: co.theme.spaces.small;
             alignment: center;
 
             // shift
@@ -153,7 +153,7 @@ export Keyboard := Rectangle {
             }
         }
         i_row_fore := HorizontalLayout {
-            spacing: co.spaces.small;
+            spacing: co.theme.spaces.small;
             alignment: center;
 
             // switch keyboard
@@ -165,7 +165,7 @@ export Keyboard := Rectangle {
             // space button
             Button {  
                 width: 120px;
-                height: co.settings.minimize ? co.sizes.small : co.sizes.medium;
+                height: co.settings.minimize ? co.theme.sizes.small : co.theme.sizes.medium;
                 text: "";
                 clicked => { root.key_enter(" "); }
             }

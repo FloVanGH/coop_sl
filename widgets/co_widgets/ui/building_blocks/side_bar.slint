@@ -5,12 +5,12 @@ import { co } from "../co/co.slint";
 
 // A vertical layout with background.
 export SideBar := Rectangle {
-    background: co.brushes.surface;
+    background: co.theme.brushes.surface;
     
     VerticalLayout {  
-        padding_top: co.spaces.medium;
-        padding_bottom: co.spaces.medium;
-        spacing: co.spaces.large;
+        padding_top: co.theme.spaces.medium;
+        padding_bottom: co.theme.spaces.medium;
+        spacing: co.theme.spaces.large;
 
         @children
     }

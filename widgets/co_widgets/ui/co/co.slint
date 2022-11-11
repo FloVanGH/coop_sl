@@ -16,6 +16,32 @@ import "../assets/fonts/Roboto-Medium.ttf";
 
 import { StyleMetrics } from "std-widgets.slint";
 
+// `Theme` is used to define a theme for the  `co_widgets`.
+export struct Theme := {
+    // Brush definitions.
+    brushes: Brushes,
+
+    // Animation durations.
+    durations: Durations,
+
+    // Icon sizes.
+    icons: Icons,
+
+    // State values e.g. for using .darker().
+    states: States,
+    // Sizes of components and widgets.
+    sizes: Sizes,
+
+    // Border radius.
+    radius: Radius,
+
+    // Paddings and spaces.
+    spaces: Spaces,
+
+    // Typography settings.
+    typo: Typo,
+}
+
 // Access to the style resources of the `co` theme (dark and light).
 export global co := { 
     // Toggles between light and dark theme.
@@ -30,6 +56,89 @@ export global co := {
     // Additional theme settings.
     property <Settings> settings: {
         minimize: false,
+    };
+
+    // Defines the current theme of the `co_widgets`.
+    property <Theme> theme: {
+        brushes : {
+            background: dark_theme ? #2d2d2d : #dfdfdf,
+            foreground: dark_theme ? #dfdfdf : #2d2d2d,
+            foreground_disabled: dark_theme ? #7b7b7b : #a0a0a0,
+            surface: dark_theme ? #505050 : #BDBDBD,
+            surface_disabled: dark_theme ? #3d3d3d : #d2d2d2,
+            on_surface: dark_theme ? #212121 : #dfdfdf,
+            primary: accent-color,
+            on_primary: on_accent_color,
+            border: dark_theme ? #7e7e7e : #505050,
+            border_disabled: dark_theme ? #494949 : #c5c5c5,
+            state: #000000,
+        },
+        durations : {
+            slow: 500ms,
+            medium: 250ms,
+            fast: 150ms,
+        },
+        icons : {
+            size_small: 12px,
+            size_medium: 14px,
+            size_large: 16px,
+        },
+        states : {
+            hover: 0.2,
+            pressed: 0.4,
+            container_disabled: 0.38,
+            content_disabled: 0.38,
+        },
+        sizes: {
+            extra_small: 20px,
+            small: 26px,
+            medium: 32px,
+            large: 44px,
+        },
+        radius : {
+            extra_small: 4px,
+            small: 6px,
+            medium: 8px,
+            large: 16px,
+        },
+        spaces: {
+            extra_small: 2px,
+            small: 4px,
+            medium: 8px,
+            large: 16px,
+        },
+        typo: {
+            label_small: {
+                family: "Roboto",
+                size: 12px,
+                weight: 400
+            },
+            label_medium: {
+                family: "Roboto",
+                size: 12px,
+                weight: 500      
+            },
+            label_large: {
+                family: "Roboto",
+                size: 14px,
+                weight: 500
+            },
+            title_small: {
+                family: "Roboto",
+                size: 16px,
+                weight: 500      
+            },
+            title_medium:{
+                family: "Roboto",
+                size: 20px,
+                weight: 500      
+            },
+            title_large: {
+                family: "Roboto",
+                size: 24px,
+                weight: 500      
+            },
+        }
     };
 
     // Access the brushes definitions of the `co` theme.
