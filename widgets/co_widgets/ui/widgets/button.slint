@@ -118,12 +118,12 @@ export Button := ButtonBase {
             root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            root.background: primary ? co.theme.brushes.primary.darker(co.theme.states.pressed) : co.theme.brushes.surface.darker(co.theme.states.pressed);
-            root.color:  primary ? co.theme.brushes.on_primary.darker(co.theme.states.pressed) : co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            root.background: primary ? co.theme.brushes.primary.darker(co.theme.state.pressed) : co.theme.brushes.surface.darker(co.theme.state.pressed);
+            root.color:  primary ? co.theme.brushes.on_primary.darker(co.theme.state.pressed) : co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            root.background: primary ? co.theme.brushes.primary.darker(co.theme.states.hover) : co.theme.brushes.surface.darker(co.theme.states.hover);
-            root.color:  primary ? co.theme.brushes.on_primary.darker(co.theme.states.hover) : co.theme.brushes.foreground.darker(co.theme.states.hover);
+            root.background: primary ? co.theme.brushes.primary.darker(co.theme.state.hover) : co.theme.brushes.surface.darker(co.theme.state.hover);
+            root.color:  primary ? co.theme.brushes.on_primary.darker(co.theme.state.hover) : co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
     ]
 }
@@ -146,14 +146,14 @@ export OutlineButton := ButtonBase {
             root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            background: primary ? co.theme.brushes.primary.darker(co.theme.states.pressed) : co.theme.brushes.background.darker(co.theme.states.pressed);
-            root.border_color: co.theme.brushes.border.darker(co.theme.states.pressed);
-            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.pressed) : co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.state.pressed) : co.theme.brushes.background.darker(co.theme.state.pressed);
+            root.border_color: co.theme.brushes.border.darker(co.theme.state.pressed);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.state.pressed) : co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            background: primary ? co.theme.brushes.primary.darker(co.theme.states.hover) : co.theme.brushes.background.darker(co.theme.states.hover);
-            root.border_color: co.theme.brushes.border.darker(co.theme.states.hover);
-            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.hover) : co.theme.brushes.foreground.darker(co.theme.states.hover);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.state.hover) : co.theme.brushes.background.darker(co.theme.state.hover);
+            root.border_color: co.theme.brushes.border.darker(co.theme.state.hover);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.state.hover) : co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
     ]
 }
@@ -244,12 +244,12 @@ export RoundButton := RoundButtonBase {
             root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            root.background: co.theme.brushes.background.darker(co.theme.states.pressed);
-            root.color: co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            root.background: co.theme.brushes.background.darker(co.theme.state.pressed);
+            root.color: co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            root.background: co.theme.brushes.background.darker(co.theme.states.hover);
-            root.color: co.theme.brushes.foreground.darker(co.theme.states.hover);
+            root.background: co.theme.brushes.background.darker(co.theme.state.hover);
+            root.color: co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
     ]
 }
@@ -272,14 +272,14 @@ export RoundOutlineButton := RoundButtonBase {
             root.color: co.theme.brushes.foreground_disabled;
         }
         pressed when root.pressed : {
-            background: primary ? co.theme.brushes.primary.darker(co.theme.states.pressed) : co.theme.brushes.background.darker(co.theme.states.pressed);
-            root.border_color: co.theme.brushes.border.darker(co.theme.states.pressed);
-            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.pressed) : co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.state.pressed) : co.theme.brushes.background.darker(co.theme.state.pressed);
+            root.border_color: co.theme.brushes.border.darker(co.theme.state.pressed);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.state.pressed) : co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            background: primary ? co.theme.brushes.primary.darker(co.theme.states.hover) : co.theme.brushes.background.darker(co.theme.states.hover);
-            root.border_color: co.theme.brushes.border.darker(co.theme.states.hover);
-            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.states.hover) : co.theme.brushes.foreground.darker(co.theme.states.hover);
+            background: primary ? co.theme.brushes.primary.darker(co.theme.state.hover) : co.theme.brushes.background.darker(co.theme.state.hover);
+            root.border_color: co.theme.brushes.border.darker(co.theme.state.hover);
+            root.color: primary ? co.theme.brushes.on_primary.darker(co.theme.state.hover) : co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
     ]
 }

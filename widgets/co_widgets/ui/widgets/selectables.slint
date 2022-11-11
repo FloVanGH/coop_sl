@@ -121,26 +121,26 @@ export CheckBox := SelectableBase {
             i_label.color: co.theme.brushes.foreground_disabled;
         }
         pressed_selected when root.pressed && root.selected : {
-            i_container.background: co.theme.brushes.primary.darker(co.theme.states.pressed);
-            i_icon.icon_color: co.theme.brushes.on_primary.darker(co.theme.states.pressed);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.state.pressed);
+            i_icon.icon_color: co.theme.brushes.on_primary.darker(co.theme.state.pressed);
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         hover_selected when root.has_hover && root.selected : {
-            i_container.background: co.theme.brushes.primary.darker(co.theme.states.hover);
-            i_icon.icon_color: co.theme.brushes.on_primary.darker(co.theme.states.hover);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.state.hover);
+            i_icon.icon_color: co.theme.brushes.on_primary.darker(co.theme.state.hover);
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         pressed when root.pressed : {
-            i_container. background: co.theme.brushes.background.darker(co.theme.states.pressed);
-            root.border_color: co.theme.brushes.border.darker(co.theme.states.pressed);
-            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            i_container. background: co.theme.brushes.background.darker(co.theme.state.pressed);
+            root.border_color: co.theme.brushes.border.darker(co.theme.state.pressed);
+            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            i_container.background: co.theme.brushes.background.darker(co.theme.states.hover);
-            root.border_color: co.theme.brushes.border.darker(co.theme.states.hover);
-            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.states.hover);
+            i_container.background: co.theme.brushes.background.darker(co.theme.state.hover);
+            root.border_color: co.theme.brushes.border.darker(co.theme.state.hover);
+            i_icon.icon_color: co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
         selected when root.selected : {
             i_container.background: co.theme.brushes.primary;
@@ -230,13 +230,13 @@ export Switch := SelectableBase {
             i_indicator.background: co.theme.brushes.foreground_disabled;
         }
         pressed_selected when root.pressed && root.selected : {
-            i_container.background: co.theme.brushes.primary.darker(co.theme.states.pressed);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.state.pressed);
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
             i_indicator.background: co.theme.brushes.background;
             root.foreground: co.theme.brushes.background;
         }
         hover_selected when root.has_hover && root.selected : {
-            i_container.background: co.theme.brushes.primary.darker(co.theme.states.hover);
+            i_container.background: co.theme.brushes.primary.darker(co.theme.state.hover);
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
             i_indicator.background: co.theme.brushes.background;
             root.foreground: co.theme.brushes.background;
@@ -248,10 +248,10 @@ export Switch := SelectableBase {
             root.foreground: co.theme.brushes.background;
         }
         pressed when root.pressed : {
-            i_container.background: co.theme.brushes.surface.darker(co.theme.states.pressed);
+            i_container.background: co.theme.brushes.surface.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            i_container.background: co.theme.brushes.surface.darker(co.theme.states.hover);
+            i_container.background: co.theme.brushes.surface.darker(co.theme.state.hover);
         }
     ]
 

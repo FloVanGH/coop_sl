@@ -19,5 +19,6 @@ SPDX-License-Identifier: MIT
 * Components: `FocusBorder`, `CoWindow`, `BaseLabel`, `LabelSmall`, `LabelMedium`, `LabelLarge`, `ThemeWindow`
 * Theming: `co` (main theme source component)
 * Icons: `MaterialIcon`, `mi` (material icon codes)
+* `Slider`
 * co: `Theme`
 

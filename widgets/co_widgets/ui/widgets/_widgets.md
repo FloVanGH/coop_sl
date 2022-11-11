@@ -104,3 +104,41 @@ Example := Rectangle {
     }
 }
 ```
+
+## `Slider`
+
+`Slider` allow to make selections from a range of values.
+
+### Properties
+
+* **`value`** (**float**): Represents the current value of the slider. Must be a value between 0.0 and 1.0.
+* **`has_focus`** (**bool**): If `true` the widget has keyboard focus.
+* **`enabled`** (**bool**): If set to `false` the widget is disabled.
+
+### Callbacks
+
+* **`value_changed(float)`**: Is called after `value` has changed. The parameter represents the current value.
+
+### Example
+
+```slint
+import { Slider } from "_imports/co_widgets.slint";
+
+Example := Rectangle {
+    width: 100px;
+
+    VerticalLayout {
+        padding: 8px;
+        spacing: 4px;
+
+        Text {
+             text: "\{slider.value}";
+            horizontal_alignment: center;
+        }
+
+        slider := Slider {
+            text: "Check me";
+        }
+    }
+}
+```

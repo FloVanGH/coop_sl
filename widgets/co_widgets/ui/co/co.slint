@@ -28,8 +28,8 @@ export struct Theme := {
     icons: Icons,
 
     // State values e.g. for using .darker().
-    states: States,
-    
+    state: States,
+
     // Sizes of components and widgets.
     sizes: Sizes,
 
@@ -84,19 +84,21 @@ export global co := {
             size_medium: 14px,
             size_large: 16px,
         },
-        states : {
+        state : {
             hover: 0.2,
             pressed: 0.4,
             container_disabled: 0.38,
             content_disabled: 0.38,
         },
         sizes: {
+            extra_extra_small: 4px,
             extra_small: 20px,
             small: 26px,
             medium: 32px,
             large: 44px,
         },
         radius : {
+            extra_extra_small: 2px,
             extra_small: 4px,
             small: 6px,
             medium: 8px,
@@ -140,100 +142,5 @@ export global co := {
                 weight: 500      
             },
         }
-    };
-
-    // Access the brushes definitions of the `co` theme.
-    property <Brushes> brushes : {
-        background: dark_theme ? #2d2d2d : #dfdfdf,
-        foreground: dark_theme ? #dfdfdf : #2d2d2d,
-        foreground_disabled: dark_theme ? #7b7b7b : #a0a0a0,
-        surface: dark_theme ? #505050 : #BDBDBD,
-        surface_disabled: dark_theme ? #3d3d3d : #d2d2d2,
-        on_surface: dark_theme ? #212121 : #dfdfdf,
-        primary: accent-color,
-        on_primary: on_accent_color,
-        border: dark_theme ? #7e7e7e : #505050,
-        border_disabled: dark_theme ? #494949 : #c5c5c5,
-        state: #000000,
-    };
-
-    // Access the animation duration definitions of the `co` theme.
-    property <Durations> durations : {
-        slow: 500ms,
-        medium: 250ms,
-        fast: 150ms,
-    };
-
-     // Access the animation duration definitions of the `co` theme.
-     property <Icons> icons : {
-        size_small: 12px,
-        size_medium: 14px,
-        size_large: 16px,
-    };
-
-    // Access the state definitions of the `co` theme.
-    property <States> state : {
-        hover: 0.2,
-        pressed: 0.4,
-        container_disabled: 0.38,
-        content_disabled: 0.38,
-    };
-
-    // Access the radius definitions of the `co` theme.
-     property <Radius> radius : {
-        extra_small: 4px,
-        small: 6px,
-        medium: 8px,
-        large: 16px,
-    };
-
-    // Access the size definitions of the `co` theme.
-    property <Sizes> sizes: {
-        extra_small: 20px,
-        small: 26px,
-        medium: 32px,
-        large: 44px,
-    };
-
-    // Access the space definitions of the `co` theme.
-    property <Spaces> spaces: {
-        extra_small: 2px,
-        small: 4px,
-        medium: 8px,
-        large: 16px,
-    };
-
-     // Access the space definitions of the  `co` theme.
-     property <Typo> typo: {
-        label_small: {
-            family: "Roboto",
-            size: 12px,
-            weight: 400
-        },
-        label_medium: {
-            family: "Roboto",
-            size: 12px,
-            weight: 500      
-        },
-        label_large: {
-            family: "Roboto",
-            size: 14px,
-            weight: 500
-        },
-        title_small: {
-            family: "Roboto",
-            size: 16px,
-            weight: 500      
-        },
-        title_medium:{
-            family: "Roboto",
-            size: 20px,
-            weight: 500      
-        },
-        title_large: {
-            family: "Roboto",
-            size: 24px,
-            weight: 500      
-        },
     };
 }

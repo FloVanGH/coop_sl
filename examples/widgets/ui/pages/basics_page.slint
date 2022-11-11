@@ -5,7 +5,7 @@ import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
-    VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, co } from "../_imports/co_widgets.slint";
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, mi, co } from "../_imports/co_widgets.slint";
 
 import { AppManager } from "../app_manager.slint";
 
@@ -424,6 +424,26 @@ export BasicsPage := Page {
                 text: "CheckBox";
                 enabled: AppManager.widgets_enabled;
                 selected: true;
+            }
+        }
+
+        // Slider
+        Row {
+            RowTitle {
+                text: "Slider";
+            }
+        }  
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
+        }
+
+        Row {
+            Slider {
+                colspan: 3;
+                enabled: AppManager.widgets_enabled;
             }
         }
 

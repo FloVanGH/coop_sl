@@ -78,12 +78,12 @@ Item := TouchArea {
 
     states [
         pressed when root.pressed : {
-            i_container.background: co.theme.brushes.background.darker(co.theme.states.pressed);
-            foreground: co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            i_container.background: co.theme.brushes.background.darker(co.theme.state.pressed);
+            foreground: co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when root.has_hover : {
-            i_container.background: co.theme.brushes.background.darker(co.theme.states.hover);
-            foreground: co.theme.brushes.foreground.darker(co.theme.states.hover);
+            i_container.background: co.theme.brushes.background.darker(co.theme.state.hover);
+            foreground: co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
         selected when root.current_item.parent == root.parent_index && root.current_item.item == root.index : {
             i_container.background: co.theme.brushes.background;
@@ -180,12 +180,12 @@ ParentItem := Rectangle {
 
     states [
         pressed when i_touch_area.pressed : {
-            i_container.background: co.theme.brushes.background.darker(co.theme.states.pressed);
-            foreground: co.theme.brushes.foreground.darker(co.theme.states.pressed);
+            i_container.background: co.theme.brushes.background.darker(co.theme.state.pressed);
+            foreground: co.theme.brushes.foreground.darker(co.theme.state.pressed);
         }
         hover when i_touch_area.has_hover : {
-            i_container.background: co.theme.brushes.background.darker(co.theme.states.hover);
-            foreground: co.theme.brushes.foreground.darker(co.theme.states.hover);
+            i_container.background: co.theme.brushes.background.darker(co.theme.state.hover);
+            foreground: co.theme.brushes.foreground.darker(co.theme.state.hover);
         }
     ]
 
