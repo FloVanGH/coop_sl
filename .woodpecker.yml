@@ -58,7 +58,7 @@ pipeline:
       branch: main
     commands:
       - rustup default nightly-2022-06-11
-      - cargo install --git https://github.com/overdrivenpotato/rust-psp --rev d6a5c5758aa9a8fff9511c48328ffd3cfbd25a18 --bin cargo-psp
+      - cargo install -p cargo-psp --git https://github.com/overdrivenpotato/rust-psp --rev d6a5c5758aa9a8fff9511c48328ffd3cfbd25a18 
       - cd examples/widgets_psp
       - cargo psp
   
