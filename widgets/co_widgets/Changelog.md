@@ -21,4 +21,4 @@ SPDX-License-Identifier: MIT
 * Icons: `MaterialIcon`, `mi` (material icon codes)
 * `Slider`
 * co: `Theme`
-
+* `ProgressBar`

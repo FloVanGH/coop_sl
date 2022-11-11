@@ -142,3 +142,33 @@ Example := Rectangle {
     }
 }
 ```
+
+## `ProgressBar`
+
+`ProgressBar` informs about current progress of ongoing process.
+
+### Properties
+
+* **`progress`** (**float**): Represents the current progress. Must be a progress between 0.0 and 1.0.
+* **`indeterminate`** (**bool**): If set to `true` the progress bar shows generic progress.
+
+### Example
+
+```slint
+import { ProgressBar } from "_imports/co_widgets.slint";
+
+Example := Rectangle {
+    width: 100px;
+
+    VerticalLayout {
+        padding: 8px;
+
+        ProgressBar {
+            progress: 0.5;
+        }
+        ProgressBar {
+            indeterminate: true;
+        }
+    }
+}
+```
