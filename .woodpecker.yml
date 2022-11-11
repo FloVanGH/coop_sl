@@ -59,7 +59,7 @@ pipeline:
     commands:
       - rustup default nightly-2022-06-11
       - cargo install cargo-psp
-      - cd examples/widgets_pwp
+      - cd examples/widgets_psp
       - cargo psp
   
   # deploy
