@@ -2,9 +2,273 @@
 // SPDX-License-Identifier: MIT
 
 import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import {  LabelSmall, LabelMedium, LabelLarge, TitleSmall, TitleMedium, TitleLarge, Spacer, HorizontalSeparator,
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, co } from "../_imports/co_widgets.slint";
 
 export TypoPage := Page {
     title: "Typography";
     keyboard_check_box: false;
     disabled_check_box: false;
+
+    GridLayout {  
+        padding: co.theme.spaces.large;
+        spacing: co.theme.spaces.medium;
+       
+        // Labels
+        Row {
+            RowTitle {
+                text: "Labels";
+            }
+        }
+
+        Row {
+            ColumnTitle {  
+                text: "Component";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "key";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "font_family";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "font_size";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "font_weight";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 9; 
+            }
+        }
+
+        // LabelSmall
+        Row {
+            LabelSmall {  
+                text: "LabelSmall";
+            }
+
+            Spacer {}
+
+            LabelSmall {  
+                text: "co.theme.typo.label_small";
+            }
+
+            Spacer {}
+
+            LabelSmall {  
+                vertical-alignment: center;
+                text: co.theme.typo.label_small.family;
+            }
+
+            Spacer {}
+
+            LabelSmall { 
+                vertical-alignment: center; 
+                text: "12px";
+            }
+
+            Spacer {}
+
+            LabelSmall {  
+                vertical-alignment: center;
+                text: "\{co.theme.typo.label_small.weight}";
+            }
+        }
+
+        // LabelMedium
+        Row {
+            LabelMedium {  
+                text: "LabelMedium";
+            }
+
+            Spacer {}
+
+            LabelMedium {  
+                text: "co.theme.typo.label_medium";
+            }
+
+            Spacer {}
+
+            LabelMedium { 
+                vertical-alignment: center; 
+                text: co.theme.typo.label_medium.family;
+            }
+
+            Spacer {}
+
+            LabelMedium {  
+                vertical-alignment: center;
+                text: "12px";
+            }
+
+            Spacer {}
+
+            LabelMedium {  
+                vertical-alignment: center;
+                text: "\{co.theme.typo.label_medium.weight}";
+            }
+        }
+
+        // LabelLarge
+        Row {
+            LabelLarge {  
+                text: "LabelLarge";
+            }
+
+            Spacer {}
+
+            LabelLarge {  
+                vertical-alignment: center;
+                text: "co.theme.typo.label_large";
+            }
+
+            Spacer {}
+
+            LabelLarge {  
+                vertical-alignment: center;
+                text: co.theme.typo.label_large.family;
+            }
+
+            Spacer {}
+
+            LabelLarge {  
+                text: "14px";
+            }
+
+            Spacer {}
+
+            LabelLarge {  
+                vertical-alignment: center;
+                text: "\{co.theme.typo.label_large.weight}";
+            }
+        }
+
+        // TitleSmall
+        Row {
+            TitleSmall {  
+                text: "TitleSmall";
+            }
+
+            Spacer {}
+
+            TitleSmall {  
+                vertical-alignment: center;
+                text: "co.theme.typo.title_small";
+            }
+
+            Spacer {}
+
+            TitleSmall {  
+                vertical-alignment: center;
+                text: co.theme.typo.title_small.family;
+            }
+
+            Spacer {}
+
+            TitleSmall {  
+                vertical-alignment: center;
+                text: "16px";
+            }
+
+            Spacer {}
+
+            TitleSmall {  
+                vertical-alignment: center;
+                text: "\{co.theme.typo.title_small.weight}";
+            }
+        }
+
+        // TitleMedium
+        Row {
+            TitleMedium {  
+                text: "TitleMedium";
+            }
+
+            Spacer {}
+
+            TitleMedium {  
+                vertical-alignment: center;
+                text: "co.theme.typo.title_medium";
+            }
+
+            Spacer {}
+
+            TitleMedium { 
+                vertical-alignment: center; 
+                text: co.theme.typo.title_medium.family;
+            }
+
+            Spacer {}
+
+            TitleMedium {  
+                vertical-alignment: center;
+                text: "20px";
+            }
+
+            Spacer {}
+
+            TitleMedium {  
+                vertical-alignment: center;
+                text: "\{co.theme.typo.title_medium.weight}";
+            }
+        }
+
+        // TitleLarge
+        Row {
+            TitleLarge {  
+                text: "TitleLarge";
+            }
+
+            Spacer {}
+
+            TitleLarge {  
+                vertical-alignment: center;
+                text: "co.theme.typo.title_large";
+            }
+
+            Spacer {}
+
+            TitleLarge {  
+                vertical-alignment: center;
+                text: co.theme.typo.title_large.family;
+            }
+
+            Spacer {}
+
+            TitleLarge {  
+                vertical-alignment: center;
+                text: "24px";
+            }
+
+            Spacer {}
+
+            TitleLarge {  
+                vertical-alignment: center;
+                text: "\{co.theme.typo.title_large.weight}";
+            }
+        }
+
+         // Fills the remaining available space
+         Row {
+            Spacer {}
+        }
+    }
 }
