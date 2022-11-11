@@ -7,6 +7,11 @@
     This is only a helper to generate the documentation for the Slint components.
 */
 
+pub mod co {
+    #![doc = include_str!("../ui/co/_co.md")]
+}
+
+
 pub mod components {
     #![doc = include_str!("../ui/components/_components.md")]
 }
