@@ -52,6 +52,7 @@ CheckBox := SelectableBase {
 
 * **`selected`** (**bool**): If set to `true` the widget is marked selected.
 * **`text`** (**string**): Defines the label text of the `CheckBox`.
+* **`enabled`** (**bool**): If set to `false` the widget is disabled.
 
 ### Callbacks
 
@@ -84,6 +85,7 @@ Example := Rectangle {
 * **`selected`** (**bool**): If set to `true` the widget is marked selected.
 * **`on_icon`** (**string**): Describes the icon of the on state.
 * **`off_icon`** (**string**): Describes the icon of the off state.
+* **`enabled`** (**bool**): If set to `false` the widget is disabled.
 
 ### Callbacks
 
@@ -92,7 +94,7 @@ Example := Rectangle {
 ### Example
 
 ```slint
-import { CheckBox } from "_imports/co_widgets.slint";
+import { Switch } from "_imports/co_widgets.slint";
 
 Example := Rectangle {
     width: 100px;
@@ -132,7 +134,7 @@ Example := Rectangle {
         spacing: 4px;
 
         Text {
-             text: "\{slider.value}";
+            text: "\{slider.value}";
             horizontal_alignment: center;
         }
 
