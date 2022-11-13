@@ -139,6 +139,7 @@ pipeline:
     secrets: [ mail, codeberg_token ]
     environment:
       - OUTPUT_WIDGETS=examples/widgets
+      - OUTPUT_PICO_OS=examples/pico_os
       - OUTPUT_CHAT=app/co_chat
     commands:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
@@ -165,6 +166,15 @@ pipeline:
       # # Copy build step output to repository folder
       # - cp -ar pkg/* /tmp/pages/snapshots/widgets/pkg/
       # - cp index.html /tmp/pages/snapshots/widgets/
+
+      # pico example
+      - cd ../../$OUTPUT_PICO_OS
+      - sed -i "s/#wasm# //" Cargo.toml
+      - wasm-pack build --release --target web
+    
+      # Copy build step output to repository folder
+      - cp -ar pkg/* /tmp/pages/snapshots/pico_os/pkg/
+      - cp index.html /tmp/pages/snapshots/pico_os/
      
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/

@@ -21,6 +21,15 @@ Example game for `pico_engine` and `pico_ecs`. It can be run on multiple platfor
 
 * On desktop: from repo root run `cargo run -p gaming`
 
+## pico_os
+
+A fake os / desktop environment as fancy showcase build with Slint.
+
+### Run pico_os
+
+* On desktop: from repo root run `cargo run -p pico_os`
+* On Raspberry Pi Pico with st7789 display: from repo root run ```cargo +nightly build -p pico_os --no-default-features --features=mcu-board-support/pico-st7789 --target=thumbv6m-none-eabi --release && elf2uf2-rs -d target/thumbv6m-none-eabi/release/pico_os```
+
 ## widgets
 
 Example gallery that shows all widgets of `co_widgets` and `book_flip`. It can be run on multiple platforms.

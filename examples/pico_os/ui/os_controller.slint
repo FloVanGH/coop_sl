@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+export global OsController := { 
+    callback login(string, string);
+
+    property <string> user_name: "user";
+    property <string> user_password: "password";
+    property <bool> show_desktop;
+    
+    login(name, password) => { 
+        show_desktop = name == user-name && password == user-password;
+     }
+}

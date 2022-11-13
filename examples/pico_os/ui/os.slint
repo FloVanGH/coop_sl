@@ -1,0 +1,16 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Desktop } from "desktop.slint";
+import { Login } from "login.slint";
+
+import { OsController } from "os_controller.slint";
+
+export Os := Window {
+    title: "pico_os";
+    min_width: 320px;
+    min_height: 240px;
+
+    if(!OsController.show_desktop) : Login {  }
+    if(!OsController.show_desktop) : Desktop {  }
+}

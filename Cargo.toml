@@ -5,7 +5,7 @@
 members = [
    "apps/co_calc",
    "apps/co_files",
-   "apps/pico_os",
+   "examples/pico_os",
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",
@@ -21,7 +21,7 @@ members = [
 default-members = [
    "apps/co_calc",
    "apps/co_files",
-   "apps/pico_os",
+   "examples/pico_os",
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",

@@ -23,7 +23,6 @@ What the `co` stands for: cooperation.
     * [co_calc](apps/co_calc/): Calculator build with Slint **(not yet started)**
     * [co_chat](apps/co_chat/): A visual Slint prototype of a chat app **(not yet started)**
     * [co_files](apps/co_files/): File navigation / explorer build with Slint **(not yet started)**
-    * [pico_os](apps/pico_os/): A fake os / desktop environment as fancy showcase build with Slint **(not yet started)**
 * platform_support/
     * [slint_psp](platform_support/slint_psp/): Slint support for the PSP gaming console **(in active development / pre-release)**
     * [slint_orbclient](platform_support/slint_orbclient/): Slint platform implementation based on [OrbClient](https://gitlab.redox-os.org/redox-os/orbclient), can be run on [Redox](https://redox-os.org/) **(in active development / pre-release)**
@@ -39,6 +38,7 @@ What the `co` stands for: cooperation.
 
 * [gaming](examples/gaming/): example of `pico_engine` and `pico_ecs`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
+* [pico_os](examples/pico_os/): A fake os / desktop environment as fancy showcase build with Slint
 
 > Check out the [README](examples/README.md) for more details.
 
