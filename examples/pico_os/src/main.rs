@@ -12,7 +12,6 @@ fn os() -> Os {
     Os::new()
 }
 
-#[cfg(not(feature = "mcu-board-support"))]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
 fn main() {
     // This provides better error messages in debug mode.
