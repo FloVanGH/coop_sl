@@ -1,0 +1,19 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { co } from "../co/co.slint";
+
+// `PopupBorder` can used to draw boder and background of a `Popup`.
+export PopupBorder := Rectangle {
+    background: co.theme.brushes.background_alt;
+    border_radius: co.theme.radius.medium;
+    border_width: 1px;
+    border_color: co.theme.brushes.border;
+}
+
+// `Popup` is used to show a popup overlay.
+export Popup := PopupWindow {
+    PopupBorder {  
+        @children
+    }
+}

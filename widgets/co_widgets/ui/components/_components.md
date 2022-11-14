@@ -14,3 +14,11 @@ Components are use in context of complexer constructs like `Widgets`.
 ### Properties
 
 * **`theme_override`** (**Theme**): Can be used to override style definitions of the `co_widgets` theme.
+
+## `PopupBorder`
+
+`PopupBorder` can used to draw boder and background of a `Popup`.
+
+## `Popup`
+
+`Popup` is used to show a popup overlay.

@@ -5,7 +5,7 @@ import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
-    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, mi, co } from "../_imports/co_widgets.slint";
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, Popup, LabelSmall, mi, co } from "../_imports/co_widgets.slint";
 
 import { AppManager } from "../app_manager.slint";
 
@@ -502,6 +502,44 @@ export BasicsPage := Page {
             }
 
             Spacer {}
+        }
+
+        // Popup
+        Row {
+            RowTitle {
+                text: "Popup";
+            }
+        }  
+
+        Row {
+            ColumnTitle {  
+                text: "Popup";
+            }
+        }
+
+        Row {
+            HorizontalLayout { 
+                alignment: start;
+
+                i_popup_button := Button {
+                    text: "Open popup";
+                    clicked => { i_popup.show(); }
+                }
+
+                i_popup := Popup {
+                    x: i_popup_button.x;
+                    y: i_popup_button.y - 40px - co.theme.spaces.small;
+                    width: i_popup_button.width;
+                    height: 40px;
+                    
+                    layout := VerticalLayout {  
+                        padding: co.theme.spaces.medium;
+                        LabelSmall {
+                            text: "Popup content";
+                        }
+                    }
+                }
+            }
         }
 
         // Fills the remaining available space
