@@ -38,7 +38,6 @@ What the `co` stands for: cooperation.
 
 * [gaming](examples/gaming/): example of `pico_engine` and `pico_ecs`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
-* [pico_os](examples/pico_os/): A fake os / desktop environment as fancy showcase build with Slint
 
 > Check out the [README](examples/README.md) for more details.
 
