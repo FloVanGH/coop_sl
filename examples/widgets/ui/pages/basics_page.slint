@@ -299,6 +299,12 @@ export BasicsPage := Page {
             ColumnTitle {  
                 text: "Icon+HasClear";
             }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Password";
+            }
         }
 
         Row {
@@ -337,6 +343,14 @@ export BasicsPage := Page {
                 clickable: AppManager.keyboard_enabled;
 
                 clicked => { root.open_keyboard("text_line_three", text, placeholder, icon); }
+            }
+
+            Spacer {}
+
+            TextLine {  
+                placeholder: "Insert a password";
+                input_type: password;
+                text: "password";
             }
         }
 

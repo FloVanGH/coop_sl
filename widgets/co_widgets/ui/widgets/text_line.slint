@@ -59,6 +59,9 @@ export TextLine := Rectangle {
     // If set to `true` the `TextLine` can emmit the  `clicked` callback.
     property <bool> clickable: co.settings.minimize;
 
+    // The text line ca be used as text or password input.
+    property <InputType> input_type <=> i_input.input_type;
+
     min_width: !co.settings.minimize ? 168px : 80px;
     min_height: co.theme.sizes.medium;
     forward-focus: i_input;
