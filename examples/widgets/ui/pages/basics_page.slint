@@ -4,10 +4,11 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, Spacer, HorizontalSeparator,
     VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, Popup, LabelSmall, mi, co } from "../_imports/co_widgets.slint";
 
 import { AppManager } from "../app_manager.slint";
+import { ComboBox } from "../../../../widgets/co_widgets/ui/widgets/widgets.slint";
 
 export BasicsPage := Page {
     title: "Basics";
@@ -358,6 +359,95 @@ export BasicsPage := Page {
             VerticalSpacerMedium {}
         } 
 
+         // ComboBox
+         Row {
+            RowTitle {
+                text: "ComboBox";
+            }
+        }  
+
+        Row {
+            ColumnTitle {  
+                text: "Pre selected";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "Placeholder";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "With icons";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
+            }
+        }
+
+        Row {
+            ComboBox {
+                current_index: 0;
+                model: [
+                    {
+                        text: "Item one"
+                    },
+                    {
+                        text: "Item three"
+                    },
+                    {
+                        text: "Item four"
+                    }
+                ];
+            }
+
+            Spacer {}
+
+            ComboBox {
+                placeholder: "Select an item";
+                model: [
+                    {
+                        text: "Item one"
+                    },
+                    {
+                        text: "Item three"
+                    },
+                    {
+                        text: "Item four"
+                    }
+                ];
+            }
+
+            Spacer {}
+
+            ComboBox {
+                current_index: 0;
+                model: [
+                    {
+                        leading_icon: mi.settings,
+                        text: "Item one"
+                    },
+                    {
+                        leading_icon: mi.print,
+                        text: "Item three"
+                    },
+                    {
+                        leading_icon: mi.preview,
+                        text: "Item four"
+                    }
+                ];
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        } 
+
         // Switch
         Row {
             RowTitle {
@@ -441,6 +531,10 @@ export BasicsPage := Page {
             }
         }
 
+        Row {
+            VerticalSpacerMedium {}
+        }
+
         // Slider
         Row {
             RowTitle {
@@ -460,6 +554,10 @@ export BasicsPage := Page {
                 value: 0.5;
                 enabled: AppManager.widgets_enabled;
             }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
         }
 
         // ProgressBar
@@ -504,6 +602,10 @@ export BasicsPage := Page {
             Spacer {}
         }
 
+        Row {
+            VerticalSpacerMedium {}
+        }
+
         // Popup
         Row {
             RowTitle {
@@ -514,6 +616,12 @@ export BasicsPage := Page {
         Row {
             ColumnTitle {  
                 text: "Popup";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8; 
             }
         }
 

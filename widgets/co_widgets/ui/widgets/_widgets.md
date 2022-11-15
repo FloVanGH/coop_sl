@@ -7,6 +7,53 @@ SPDX-License-Identifier: MIT
 
 This module contains the base set of `co_widgets`.
 
+## `ComboBox`
+
+`ComboBox` enables users to select a value from a list inside of a `Popuup`.
+
+### Properties
+
+
+* **`enabled`** (**bool**): If set to `false` the widget is disabled.
+* **`model`** (**[ItemModel]**): Defines the list model of the combo box.
+* **`current_index`** (**int**):  Defines the index of the current selected item.
+* **`current_item`** (**ItemModel**): Represents the curren selected item. If there is no selection the current item is empty.
+* **`placeholder`** (**string**): Defines a text that is diplayed if no item is selected.
+
+
+### Callbacks
+
+* **`current_changed(int)`**: Is called after current index is changed.
+
+### Example
+
+```slint
+import { CenterLayout, ComboBox } from "_imports/co_widgets.slint";
+
+CenterLayout {
+    width: 200px;
+    height: 400px;
+
+    ComboBox := {
+        width: 200px;
+        placeholder: "Select an item";
+        model: [
+            {
+                text: "Item 1",
+            },
+            {
+                text: "Item 2",
+            },
+            {
+                text: "Item 3",
+            }
+        ];
+
+        current_changed => { debug(current_item.text); }
+    }
+}
+```
+
 ## `SelectableBase`
 
 `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.

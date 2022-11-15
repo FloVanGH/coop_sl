@@ -5,7 +5,7 @@ import { co } from "../co/co.slint";
 
 import { ScrollView } from "scroll_view.slint";
 import { SelectableBase } from "selectables.slint";
-import { LabelLarge, LabelMedium, FocusBorder } from "../components/components.slint";
+import { LabelLarge, FocusBorder } from "../components/components.slint";
 import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
 // Model definition of a `Item`.
@@ -59,10 +59,10 @@ Item := TouchArea {
                 icon_color: root.foreground;
             }
     
-            LabelMedium {  
+            LabelLarge {  
                 text <=> root.text;
                 vertical_alignment: center;
-                color: root.foreground;
+                color: root.foreground;      
             }
     
             if(trailing_icon != "") : MaterialIcon {
@@ -194,6 +194,9 @@ ParentItem := Rectangle {
 
 // A non scrollable list with `Item` as default delegate.
 export List := VerticalLayout {
+    // Will be called after current is changed;
+    callback current_item_changed({ parent: int, item: int });
+
     // Defines the list of models.
     property <[ParentItemModel]> model;
 
@@ -218,8 +221,13 @@ export List := VerticalLayout {
                 index: index;
                 parent-index: 0;
                 current_item: root.current_item;
+                padding_left: co.theme.spaces.medium;
+                padding_right: co.theme.spaces.medium;
 
-                clicked => { root.current_item = { parent: 0, item: index } }
+                clicked => { 
+                    root.current_item = { parent: 0, item: index } ;
+                    root.current_item_changed(root.current-item);
+                }
             }
         }
     }
@@ -227,11 +235,14 @@ export List := VerticalLayout {
 
 // A scrollable variant of `List`.
 export ListView := Rectangle {
-   // Defines the list of models.
+    // Will be called after current is changed;
+    callback current_item_changed <=> i_list.current_item_changed;
+
+    // Defines the list of models.
     property <[ParentItemModel]> model <=> i_list.model;
 
-     // Defines the current selected item;
-     property <{ parent: int, item: int }> current_item <=> i_list.current_item;
+    // Defines the current selected item;
+    property <{ parent: int, item: int }> current_item <=> i_list.current_item;
 
     ScrollView {
         i_list := List {}
