@@ -107,20 +107,24 @@ export ComboBox := Rectangle {
 
         forward_focus: i_popup_focus_scope;
 
-        List {  
-            property <ParentItemModel> inner_model: {
-                text: "",
-                items: root.model,
-            };
+        HorizontalLayout {  
+            padding: 1px;
 
-            model: [ inner_model ];
-            current-item: { parent: 0, item: root.current_index };
-
-            current_item_changed(item) => {  
-                root.current_index = item.item;
-                root.current_changed(root.current_index);
+            List {  
+                property <ParentItemModel> inner_model: {
+                    text: "",
+                    items: root.model,
+                };
+    
+                model: [ inner_model ];
+                current-item: { parent: 0, item: root.current_index };
+    
+                current_item_changed(item) => {  
+                    root.current_index = item.item;
+                    root.current_changed(root.current_index);
+                }
             }
-        }
+        } 
 
         i_popup_focus_scope := FocusScope {
             width: 0px; // Do not react on clicks
