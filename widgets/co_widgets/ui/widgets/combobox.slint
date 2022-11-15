@@ -142,8 +142,8 @@ export ComboBox := Rectangle {
 
     states [
         disabled when !enabled : {
-            root.background: co.theme.brushes.surface_disabled;
-            root.color: co.theme.brushes.foreground_disabled;
+            i_container.background: co.theme.brushes.surface_disabled;
+            i_container.foreground: co.theme.brushes.foreground_disabled;
         }
         pressed when i_touch_area.pressed : {
             i_container.background:  co.theme.brushes.surface.darker(co.theme.state.pressed);

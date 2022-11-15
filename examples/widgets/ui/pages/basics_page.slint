@@ -352,6 +352,7 @@ export BasicsPage := Page {
                 placeholder: "Insert a password";
                 input_type: password;
                 text: "password";
+                enabled: AppManager.widgets_enabled;
             }
         }
 
@@ -392,6 +393,7 @@ export BasicsPage := Page {
 
         Row {
             ComboBox {
+                enabled: AppManager.widgets_enabled;
                 current_index: 0;
                 model: [
                     {
@@ -409,6 +411,7 @@ export BasicsPage := Page {
             Spacer {}
 
             ComboBox {
+                enabled: AppManager.widgets_enabled;
                 placeholder: "Select an item";
                 model: [
                     {
@@ -426,6 +429,7 @@ export BasicsPage := Page {
             Spacer {}
 
             ComboBox {
+                enabled: AppManager.widgets_enabled;
                 current_index: 0;
                 model: [
                     {
