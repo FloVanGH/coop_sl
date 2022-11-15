@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { co } from "../co/co.slint";
+import { FocusBorder } from "../components/focus_border.slint";
 import { mi, MaterialIcon } from "../assets/icons/material_icons.slint";
 import { Popup } from "../components/popup.slint";
 import { LabelLarge } from "../components/label.slint";
@@ -78,21 +79,63 @@ export ComboBox := Rectangle {
         clicked => { i_popup.show(); }
     }
 
+    i_focus_scope := FocusScope {
+        width: 0px; // Do not react on clicks
+        enabled <=> root.enabled;
+        
+        key-pressed(event) => {
+            if ((event.text == " " || event.text == "\n")) {
+                i_touch_area.clicked();
+                return accept;
+            }
+            
+            return reject;
+        }
+    }
+
+    if (i_focus_scope.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
+    }
+
     i_popup := Popup {
         y: i_container.y + i_container.height + co.theme.spaces.small; 
         width: i_container.width;
+
+        forward_focus: i_popup_focus_scope;
 
         List {  
             property <ParentItemModel> inner_model: {
                 text: "",
                 items: root.model,
             };
+
             model: [ inner_model ];
             current-item: { parent: 0, item: root.current_index };
 
             current_item_changed(item) => {  
                 root.current_index = item.item;
                 root.current_changed(root.current_index);
+            }
+        }
+
+        i_popup_focus_scope := FocusScope {
+            width: 0px; // Do not react on clicks
+            enabled <=> root.enabled;
+            
+            key-pressed(event) => {
+                if (event.text == Keys.UpArrow) {
+                    root.current_index = Math.max(root.current_index - 1, 0);
+                    return accept;
+                } else if (event.text == Keys.DownArrow) {
+                    root.current_index = Math.min(root.current_index + 1, root.model.length - 1);
+                    return accept;
+                } 
+                
+                return reject;
             }
         }
     }

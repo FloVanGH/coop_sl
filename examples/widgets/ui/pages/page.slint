@@ -25,15 +25,18 @@ export Page := GridLayout {
                 selected <=> AppManager.widgets_enabled;
             }
 
-            Switch {
-                y: (parent.height - height) / 2;
-                on_icon: mi.lightbulb;
-                off_icon: mi.nights_stay;
-                selected: !co.dark_theme;
-                selected_changed(selected) => {
-                    co.dark_theme = !selected;
+            VerticalLayout {  
+                alignment: center;
+
+                Switch {
+                    on_icon: mi.lightbulb;
+                    off_icon: mi.nights_stay;
+                    selected: !co.dark_theme;
+                    selected_changed(selected) => {
+                        co.dark_theme = !selected;
+                    }
                 }
-            }
+            }    
         }
     }
 
