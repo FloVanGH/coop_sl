@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 // workaround to get font displayed embedded on the softwarerendrer
-import "../assets/fonts/Roboto-Regular.ttf"; 
-import "../assets/fonts/Roboto-Medium.ttf"; 
+// import "../assets/fonts/Roboto-Regular.ttf"; 
+// import "../assets/fonts/Roboto-Medium.ttf"; 
 
 import { Font } from "../co/typo.slint";
 import { co } from "../co/co.slint";
@@ -14,7 +14,7 @@ export BaseLabel := Text {
     property <Font> font;
 
     color: co.theme.brushes.foreground;
-    font_family: font.family;
+    // font_family: font.family;
     font_size: font.size;
     font_weight: font.weight;
 }

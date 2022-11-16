@@ -49,7 +49,7 @@ fn main() -> ! {
 
     let app = app();
 
-    app.global::<settings>().set_keyboard_enabled(true);
+    app.global::<AppManager>().set_keyboard_enabled(true);
     let mut settings = app.global::<co>().get_settings();
     settings.minimize = true;
     app.global::<co>().set_settings(settings);

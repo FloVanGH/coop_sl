@@ -112,8 +112,6 @@ Best to start with these sources:
 
 ## assets
 
-* Roboto
-    * `co_widgets` uses [Roboto](https://fonts.google.com/specimen/Roboto) as default font set. `Roboto` are licensed under Apache 2.0.
 * Material Icons
     * `co_widgets` uses [Material Icons](https://fonts.google.com/icons) as icon font. The icons are licensed under Apache 2.0.
 

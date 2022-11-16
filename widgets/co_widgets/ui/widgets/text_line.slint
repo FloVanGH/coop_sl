@@ -98,7 +98,7 @@ export TextLine := Rectangle {
                     vertical-alignment: center;
                     font_size: co.theme.typo.label_medium.size;
                     font_weight: co.theme.typo.label_medium.weight;
-                    font_family: co.theme.typo.label_medium.family;
+                    // font_family: co.theme.typo.label_medium.family;
         
                     cursor-position-changed(cpos) => {
                         if (cpos.x + computed_x < padding-outer) {
@@ -118,7 +118,7 @@ export TextLine := Rectangle {
                     opacity: i_input.opacity;
                     font_size: co.theme.typo.label_medium.size;
                     font_weight: co.theme.typo.label_medium.weight;
-                    font_family: co.theme.typo.label_medium.family;
+                    // font_family: co.theme.typo.label_medium.family;
                 }
     
                 if (text == "") : Text {
@@ -128,7 +128,7 @@ export TextLine := Rectangle {
                     opacity: i_input.opacity;
                     font_size: co.theme.typo.label_medium.size;
                     font_weight: co.theme.typo.label_medium.weight;
-                    font_family: co.theme.typo.label_medium.family;
+                    // font_family: co.theme.typo.label_medium.family;
                 }
     
                 if (clickable) : TouchArea {  
