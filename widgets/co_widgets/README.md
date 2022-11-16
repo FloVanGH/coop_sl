@@ -85,7 +85,6 @@ import { co } from "_imports/co_widgets.slint";
 
 MyText := Text {
    font_size: co.theme.typo.label_large.size;
-   font_family: co.theme.typo.label_large.family;
    font_weight: co.theme.typo.label_large.weight;
 }
 ```
