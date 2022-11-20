@@ -157,14 +157,14 @@ pipeline:
       - cp -ar pkg/* /tmp/pages/snapshots/widgets/pkg/
       - cp index.html /tmp/pages/snapshots/widgets/
 
-      # # co_chat
-      # - cd ../../$OUTPUT_CHAT
-      # - sed -i "s/#wasm# //" Cargo.toml
-      # - wasm-pack build --release --target web
+      # co_chat
+      - cd ../../$OUTPUT_CHAT
+      - sed -i "s/#wasm# //" Cargo.toml
+      - wasm-pack build --release --target web
     
-      # # Copy build step output to repository folder
-      # - cp -ar pkg/* /tmp/pages/snapshots/widgets/pkg/
-      # - cp index.html /tmp/pages/snapshots/widgets/
+      # Copy build step output to repository folder
+      - cp -ar pkg/* /tmp/pages/snapshots/co_chat/pkg/
+      - cp index.html /tmp/pages/snapshots/co_chat/
      
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
