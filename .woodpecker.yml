@@ -139,7 +139,7 @@ pipeline:
     secrets: [ mail, codeberg_token ]
     environment:
       - OUTPUT_WIDGETS=examples/widgets
-      - OUTPUT_CHAT=app/co_chat
+      - OUTPUT_CHAT=apps/co_chat
     commands:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 

@@ -7,6 +7,12 @@ version = "0.1.0"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
 edition = "2021"
 build = "build.rs"
+publish = false
+repository = "https://codeberg.org/flovansl/co_sl"
+
+[[bin]]
+path = "src/main.rs"
+name = "co_chat"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
