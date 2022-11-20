@@ -4,7 +4,7 @@
 #![allow(clippy::redundant_clone)]
 #![allow(clippy::cmp_owned)]
 
-[cfg(target_arch = "wasm32")]
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
 slint::include_modules!();
