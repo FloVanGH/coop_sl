@@ -28,19 +28,19 @@ pipeline:
     commands:
       - cargo build
       - cargo test
-  build_redox:
-    group: build
-    image: rust
-    when:
-      event: [pull_request]
-      branch: main
-    commands:
-      - apt-get update && apt-get install -y -qq build-essential curl fuse libfuse-dev pkg-config qemu-system-x86
-      - rustup default nightly
-      - cargo install redoxer
-      - redoxer toolchain
-      - export PKG_CONFIG_SYSROOT_DIR=~/.redoxer/toolchain/bin/x86_64-unknown-redox-gcc
-      - redoxer build -p widgets --no-default-features --features slint_orbclient
+  # build_redox:
+  #   group: build
+  #   image: rust
+  #   when:
+  #     event: [pull_request]
+  #     branch: main
+  #   commands:
+  #     - apt-get update && apt-get install -y -qq build-essential curl fuse libfuse-dev pkg-config qemu-system-x86
+  #     - rustup default nightly
+  #     - cargo install redoxer
+  #     - redoxer toolchain
+  #     - export PKG_CONFIG_SYSROOT_DIR=~/.redoxer/toolchain/bin/x86_64-unknown-redox-gcc
+  #     - redoxer build -p widgets --no-default-features --features slint_orbclient
   build_wasm:
     image: rust
     when:
