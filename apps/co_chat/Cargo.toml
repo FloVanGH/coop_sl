@@ -21,6 +21,7 @@ slint = "0.3"
 
 [build-dependencies]
 slint-build = "0.3"
+co_widgets = { path = "../../widgets/co_widgets" }
 
 # This is commented out by default because we don't want to build it as a library by default
 # The CI has a script that does sed "s/ #wasm# //" to generate the wasm build.
