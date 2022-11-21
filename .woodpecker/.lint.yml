@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+pipeline:
+  cargo_fmt:
+    group: lint
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - rustup component add rustfmt
+      - cargo fmt --all -- --check
+  clippy:
+    group: lint
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - apt-get update && apt-get install -y cmake
+      - rustup component add clippy
+      - cargo clippy --all-targets -- -D warnings
+  license:
+    group: lint
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - apt-get update && apt-get install -y python3-pip python3-venv
+      - python3 -m pip install --user pipx
+      - export PATH=$PATH:/root/.local/bin
+      - pipx run reuse lint

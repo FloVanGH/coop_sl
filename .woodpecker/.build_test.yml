@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+pipeline:
+  build_and_test:
+    image: rust
+    when:
+      event: [push, pull_request, tag]
+      branch: main
+    commands:
+      - apt-get update && apt-get install -y cmake
+      - cargo build
+      - cargo test

@@ -3,27 +3,9 @@
 
 import { SideBar, ListView, TextLine, ParentItemModel, co, mi } from "_imports/co_widgets.slint";
 
-export global AppSideBarController := {
+export global AppSideBarBridge := {
     property <string> channel_search;
-    property <ParentItemModel> channels_o: {
-        text: "CHANNELS",
-        items: [
-            { leading_icon: mi.public, text: "Town Square", trailing_icon: ""},
-            { leading_icon: mi.lock, text: "Internal", trailing_icon: ""},
-        ]
-    };
-
-    property <ParentItemModel> direct_messages: {
-        text: "DIRECT MESSAGES",
-        items: [
-            { leading_icon: mi.account-box, text: "Simon", trailing_icon: ""},
-            { leading_icon: mi.account-box, text: "Olivier", trailing_icon: ""},
-            { leading_icon: mi.account-box, text: "Tobias", trailing_icon: ""},
-            { leading_icon: mi.account-box, text: "Auri", trailing_icon: ""},
-        ]
-    };
-
-    property<[ParentItemModel]> channels: [channels_o, direct-messages];
+    property<[ParentItemModel]> channels;
 }
 
 export AppSideBar := SideBar {
@@ -34,13 +16,13 @@ export AppSideBar := SideBar {
         padding: co.theme.spaces.large;
         i_search := TextLine {
             placeholder: "Find channel";
-            text <=> AppSideBarController.channel_search;
+            text <=> AppSideBarBridge.channel_search;
             icon: mi.search;
             has_clear: true;
         }
     }
    
     i_navigation := ListView {      
-        model <=> AppSideBarController.channels;
+        model <=> AppSideBarBridge.channels;
     }
 }

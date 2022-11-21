@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+pipeline:
+  deploy_wasm_widgets:
+    group: wasm
+    image: rust
+    when:
+      event: [push]
+      branch: main
+    secrets: [ mail, codeberg_token ]
+    environment:
+      - OUTPUT=examples/widgets
+    commands:
+      - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      # Git configuration
+      - git config --global user.email $MAIL
+      - git config --global user.name "Woodpecker CI"
+      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+
+      # widgets example
+      - cd $OUTPUT
+      - sed -i "s/#wasm# //" Cargo.toml
+      - wasm-pack build --release --target web
+    
+      # Copy build step output to repository folder
+      - cp -ar pkg/* /tmp/pages/snapshots/widgets/pkg/
+      - cp index.html /tmp/pages/snapshots/widgets/
+     
+      # Commit and push all static files with pipeline started timestamp
+      - cd /tmp/pages/
+      - git add .
+      - |-
+        CHANGES=$(git status --porcelain | wc -l)
+
+        if [ "$CHANGES" -gt "0" ]; then
+          git pull
+          git status
+          git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+          git push
+        fi
+
+  deploy_wasm_co_chat:
+    group: wasm
+    image: rust
+    when:
+      event: [push]
+      branch: main
+    secrets: [ mail, codeberg_token ]
+    environment:
+      - OUTPUT=apps/co_chat
+    commands:
+      - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+      # Git configuration
+      - git config --global user.email $MAIL
+      - git config --global user.name "Woodpecker CI"
+      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+
+      # co_chat
+      - cd $OUTPUT
+      - sed -i "s/#wasm# //" Cargo.toml
+      - wasm-pack build --release --target web
+    
+      # Copy build step output to repository folder
+      - cp -ar pkg/* /tmp/pages/snapshots/co_chat/pkg/
+      - cp index.html /tmp/pages/snapshots/co_chat/
+     
+      # Commit and push all static files with pipeline started timestamp
+      - cd /tmp/pages/
+      - git add .
+      - |-
+        CHANGES=$(git status --porcelain | wc -l)
+
+        if [ "$CHANGES" -gt "0" ]; then
+          git pull
+          git status
+          git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+          git push
+        fi

@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+pipeline:
+  build_wasm:
+    image: rust
+    when:
+      event: [pull_request, tag]
+      branch: main
+    commands:
+      - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+      - cd examples/widgets
+      - sed -i "s/#wasm# //" Cargo.toml
+      - wasm-pack build --release --target web

@@ -1,9 +1,10 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { CoWindow, ParentItemModel, mi } from "_imports/co_widgets.slint";
-import { AppSideBar } from "app_side_bar.slint";
+import { CoWindow, ParentItemModel, ItemModel, mi } from "_imports/co_widgets.slint";
+import { AppSideBarBridge, AppSideBar } from "app_side_bar.slint";
 
+export { AppSideBarBridge, ParentItemModel, ItemModel, mi }
 export App := CoWindow {
     title: "co_chat";
 
