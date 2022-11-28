@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 Experimental Entity Component System library for no_std environments.
 
-<a href="https://codeberg.org/flovansl/co_sl">
+<a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
 </a>
 

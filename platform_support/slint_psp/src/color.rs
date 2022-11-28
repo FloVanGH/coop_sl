@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
+use embedded_graphics::{draw_target::*, geometry::Size, pixelcolor::*, prelude::*, Pixel};
 use slint::platform::software_renderer::*;
 
 /// Defines a pixel color that is used to draw to the display buffer of the PSP.
@@ -43,5 +44,60 @@ impl TargetPixel for Color {
 
     fn from_rgb(r: u8, g: u8, b: u8) -> Self {
         Self(((r) as u32) | ((g as u32) << 8) | ((b as u32) << 16))
+    }
+}
+
+/// Helper frame buffer wrapper to use with embedded-graphics.
+pub struct PspFrameBuffer<'a> {
+    buffer: &'a mut [Color],
+}
+
+impl<'a> PspFrameBuffer<'a> {
+    /// Creates a new buffer.
+    pub fn new(buffer: &'a mut [Color]) -> Self {
+        Self { buffer }
+    }
+
+    fn draw_pixel(&mut self, pixel: Pixel<Rgb888>) -> Result<(), core::convert::Infallible> {
+        let Pixel(coord, color) = pixel;
+
+        if let Ok((x @ 0..=psp::SCREEN_WIDTH, y @ 0..=psp::SCREEN_HEIGHT)) = coord.try_into() {
+            unsafe {
+                let ptr = self
+                    .buffer
+                    .as_mut_ptr()
+                    .offset(x as isize)
+                    .offset((y * psp::BUF_WIDTH) as isize);
+
+                *ptr = Color(
+                    (color.r() as u32) | ((color.g() as u32) << 8) | ((color.b() as u32) << 16),
+                );
+            }
+        }
+
+        Ok(())
+    }
+}
+
+impl<'a> DrawTarget for PspFrameBuffer<'a> {
+    type Color = Rgb888;
+    type Error = alloc::string::String;
+
+    fn draw_iter<I>(&mut self, pixels: I) -> Result<(), Self::Error>
+    where
+        I: IntoIterator<Item = embedded_graphics::Pixel<Self::Color>>,
+    {
+        for p in pixels.into_iter() {
+            self.draw_pixel(p)
+                .map_err(|_| alloc::string::String::new())?;
+        }
+
+        Ok(())
+    }
+}
+
+impl<'a> OriginDimensions for PspFrameBuffer<'a> {
+    fn size(&self) -> Size {
+        Size::new(psp::SCREEN_WIDTH, psp::SCREEN_HEIGHT)
     }
 }

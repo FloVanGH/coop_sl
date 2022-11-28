@@ -8,9 +8,8 @@ edition = "2021"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "Slint platform support for PSP"
-repository = "https://codeberg.org/flovansl/co_sl"
+repository = "https://codeberg.org/flovansl/coop_sl"
 readme = "README.md"
-
 
 [lib]
 crate-type = ["lib", "staticlib"]
@@ -18,5 +17,6 @@ crate-type = ["lib", "staticlib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
+slint = { version = "0.3.2", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
 psp = "=0.3.1"
+embedded-graphics = { version = "0.7.1", features = ["fixed_point"] }

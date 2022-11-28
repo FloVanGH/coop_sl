@@ -1,0 +1,10 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+// `FocusBorder` is a rectangle used to hightly focus state of a widget.
+export FocusBorder := Rectangle {
+    border_width: 1px;
+    border_color: coop.theme.brushes.foreground;
+}

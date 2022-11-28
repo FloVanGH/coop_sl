@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { co } from "_imports/co_widgets.slint";
+import { coop } from "_imports/coop_widgets.slint";
 
 export global AppManager := {
     callback open_keyboard(string, string, string, string);
@@ -14,15 +14,15 @@ export global AppManager := {
     property <string> text_line_three: "hello";
 
     update_text(key, text) => {  
-        if(key == "text_line_one") {
+        if (key == "text_line_one") {
             text_line_one = text;
         }
 
-        if(key == "text_line_two") {
+        if (key == "text_line_two") {
             text_line_two = text;
         }
 
-        if(key == "text_line_three") {
+        if (key == "text_line_three") {
             text_line_three = text;
         }
     }

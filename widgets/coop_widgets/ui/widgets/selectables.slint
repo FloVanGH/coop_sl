@@ -1,0 +1,259 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+import { FocusBorder } from "../components/focus_border.slint";
+import { FocusTouchArea } from "../components/focus_touch_area.slint";
+import { LabelSmall } from "../components/label.slint";
+import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
+
+// `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
+export SelectableBase := FocusTouchArea {
+    // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
+    callback selected_changed(bool);
+
+    // If set to `true` the widget is marked as selected.
+    in-out property <bool> selected: false;
+   
+    clicked => { 
+        root.selected = !root.selected;
+        root.selected_changed(root.selected);
+    }
+}
+
+// `CheckBox` represents a selectable check box with a text.
+export CheckBox := Rectangle {
+    // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
+    callback selected_changed <=> i_base.selected_changed;
+
+    // Defines the label text of the `CheckBox`.
+    in property <string> text <=> i_label.text;
+
+    // If set to false the widget is disabled.
+    in property <bool> enabled <=> i_base.enabled;
+
+    // If set to `true` the widget is marked as selected.
+    in-out property <bool> selected <=> i_base.selected;
+
+    min_height: coop.theme.sizes.extra_small;
+    horizontal-stretch: 0;
+    vertical-stretch: 0;
+
+    accessible-label <=> i_label.text;
+    accessible-checkable: true;
+    accessible-checked <=> selected;
+    accessible-role: checkbox;
+
+    i_base := SelectableBase {  
+        focus_border_radius: coop.theme.radius.extra_small;
+        
+        HorizontalLayout {  
+            spacing: coop.theme.spaces.small;
+    
+            VerticalLayout {  
+                alignment: center;
+    
+                i_container := Rectangle {
+                    property <length> spacing: root.text == "" ? 0px: coop.theme.spaces.small;
+            
+                    width: coop.theme.sizes.extra-small;
+                    height: coop.theme.sizes.extra-small;
+                    border_radius: coop.theme.radius.extra_small;
+                    border_width: 1px;
+                    border_color: coop.theme.brushes.border;
+                    background: coop.theme.brushes.background;
+            
+                    i_icon := MaterialIcon {
+                        x: (parent.width - width) / 2;
+                        y: (parent.height - height) / 2;
+                        icon_color: coop.theme.brushes.on_primary;
+                        icon: mi.check;
+                        opacity: 0;
+            
+                        animate icon_color { duration: coop.theme.durations.fast; }
+                        animate opacity { duration: coop.theme.durations.fast; }
+                    }
+            
+                    animate background { duration: coop.theme.durations.medium; easing: ease-in-out; }
+                } 
+            }
+    
+            i_label := LabelSmall { 
+                horizontal_alignment: left;
+                vertical_alignment: center;
+                vertical_stretch: 1;
+            }
+        }
+    }
+
+    states [  
+        disabled_selected when !enabled && root.selected: {
+            i_container.background: coop.theme.brushes.surface_disabled;
+            i_label.color: coop.theme.brushes.foreground_disabled;
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+        disabled when !enabled: {
+            i_container.border_color: coop.theme.brushes.border_disabled;
+            i_label.color: coop.theme.brushes.foreground_disabled;
+        }
+        pressed_selected when i_base.focus_pressed && root.selected: {
+            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.pressed);
+            i_icon.icon_color: coop.theme.brushes.on_primary.darker(coop.theme.state.pressed);
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+        hover_selected when i_base.has_hover && root.selected: {
+            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.hover);
+            i_icon.icon_color: coop.theme.brushes.on_primary.darker(coop.theme.state.hover);
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+        pressed when i_base.focus_pressed: {
+            i_container. background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            root.border_color: coop.theme.brushes.border.darker(coop.theme.state.pressed);
+            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+        }
+        hover when i_base.has_hover: {
+            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.hover);
+            root.border_color: coop.theme.brushes.border.darker(coop.theme.state.hover);
+            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        }
+        selected when i_base.selected: {
+            i_container.background: coop.theme.brushes.primary;
+            i_container.border_width: 0px;
+            i_icon.opacity: 1;
+        }
+    ]
+}
+
+// `Switch` represents a selectable that can be toggled on an off.
+export Switch := Rectangle {
+    private property <brush> foreground: coop.theme.brushes.foreground;
+    private property <length> indicator_space: 4px;
+
+    // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
+    callback selected_changed <=> i_base.selected_changed;
+
+    // Describes the icon of the on state.
+    in property <string> on_icon;
+
+    // Describes the icon of the off state.
+    in property <string> off_icon;
+    
+    // If set to false the widget is disabled.
+    in property <bool> enabled <=> i_base.enabled;
+ 
+    // If set to `true` the widget is marked as selected.
+    in-out property <bool> selected <=> i_base.selected;
+
+    accessible-checkable: true;
+    accessible-checked <=> selected;
+    accessible-role: checkbox;
+
+    width: height * 2;
+    height: coop.theme.sizes.extra_small;
+    vertical_stretch: 0;
+    horizontal_stretch: 0;
+
+    i_base := SelectableBase {  
+        focus_border_radius: i_container.border_radius;
+
+        i_container := Rectangle {
+            width: 100%;
+            height: 100%;
+            background: coop.theme.brushes.surface;
+            border_radius: i_indicator.border_radius + indicator_space / 2;
+    
+            if(root.on_icon != "") : MaterialIcon {  
+                x: root.indicator_space + (i_indicator.width - width) / 2;
+                y: (parent.height - height) / 2;
+                icon: root.on_icon;
+                icon_size: coop.theme.icons.size_small;
+                icon_color: root.foreground;
+            }
+        
+            if(root.off_icon != "") : MaterialIcon {  
+                x: root.width - root.indicator_space - (i_indicator.width + width) / 2;
+                y: (parent.height - height) / 2;
+                icon: root.off_icon;
+                icon_size: coop.theme.icons.size_small;
+                icon_color: root.foreground;
+            }
+        
+            i_indicator := Rectangle { 
+                x: root.indicator_space;
+                y: (parent.height - height) / 2;
+                width: i_container.height - root.indicator_space;
+                height: width;
+                border_radius: max(width, height) / 2;
+                background: coop.theme.brushes.foreground;
+        
+                animate x { duration: coop.theme.durations.fast; }  
+            }
+    
+            animate background { duration: coop.theme.durations.fast; }
+        }
+    }
+
+    states [
+        disabled_selected when !enabled && root.selected: {
+            i_container.background: coop.theme.brushes.surface_disabled;
+            foreground: coop.theme.brushes.foreground_disabled;
+            i_indicator.background: coop.theme.brushes.foreground_disabled;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
+        }
+        disabled when !enabled: {
+            i_container.background: coop.theme.brushes.surface_disabled;
+            foreground: coop.theme.brushes.foreground_disabled;
+            i_indicator.background: coop.theme.brushes.foreground_disabled;
+        }
+        pressed_selected when i_base.focus_pressed && root.selected: {
+            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.pressed);
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
+            i_indicator.background: coop.theme.brushes.background;
+            root.foreground: coop.theme.brushes.background;
+        }
+        hover_selected when i_base.has_hover && root.selected: {
+            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.hover);
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
+            i_indicator.background: coop.theme.brushes.background;
+            root.foreground: coop.theme.brushes.background;
+        }
+        selected when !i_base.focus_pressed && root.selected: {
+            i_container.background: coop.theme.brushes.primary;
+            i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
+            i_indicator.background: coop.theme.brushes.background;
+            root.foreground: coop.theme.brushes.background;
+        }
+        pressed when i_base.focus_pressed: {
+            i_container.background: coop.theme.brushes.surface.darker(coop.theme.state.pressed);
+        }
+        hover when i_base.has_hover: {
+            i_container.background: coop.theme.brushes.surface.darker(coop.theme.state.hover);
+        }
+    ]
+
+    animate foreground { duration: coop.theme.durations.fast; } 
+}
+
+// Viewer Examples
+
+CheckBoxExample := Rectangle {
+    VerticalLayout {
+        alignment: start;
+        padding: 8px;
+
+        CheckBox {
+            text: "Check me";
+        }
+    }
+}
+
+SwitchExample := Rectangle {
+    VerticalLayout {
+        padding: 8px;
+
+        Switch {}
+    }
+}

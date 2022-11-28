@@ -1,0 +1,16 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+// A vertical visual separator line.
+export VerticalSeparator := Rectangle {
+   width: 1px;
+   background: coop.theme.brushes.border-disabled;
+}
+
+// A horizontal visual separator line.
+export HorizontalSeparator := Rectangle {
+    height: 1px;
+    background: coop.theme.brushes.border-disabled;
+ }

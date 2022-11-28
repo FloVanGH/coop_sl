@@ -9,15 +9,15 @@ authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "Internal shared references"
 publish = false
-repository = "https://codeberg.org/flovansl/co_sl"
+repository = "https://codeberg.org/flovansl/coop_sl"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0"] }
+slint = { version = "0.3.2", default-features = false, features = ["compat-0-3-0"] }
 
 [build-dependencies]
-slint-build = "0.3.1"
+slint-build = "0.3.2"
 
 [features]
 default = ["std"]

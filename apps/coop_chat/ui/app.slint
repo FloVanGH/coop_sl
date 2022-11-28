@@ -1,0 +1,19 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { CoopWindow, ParentItemModel, ItemModel, mi } from "_imports/coop_widgets.slint";
+import { SideBarViewAdapter, SideBarView } from "side_bar_view.slint";
+import { MessageView } from "message_view.slint"; 
+
+export { SideBarViewAdapter, ParentItemModel, ItemModel, mi }
+export App := CoopWindow {
+    title: "coop_chat";
+
+    min-width: 600px;
+    min-height: 400px;
+
+    HorizontalLayout {  
+        SideBarView {}
+        MessageView {}
+    }
+}

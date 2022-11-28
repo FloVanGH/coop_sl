@@ -7,23 +7,23 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
-description = "Example uusign book_flip and co_widgets"
+description = "Example uusign book_flip and coop_widgets"
 publish = false
-repository = "https://codeberg.org/flovansl/co_sl"
+repository = "https://codeberg.org/flovansl/coop_sl"
 
 [[bin]]
 path = "src/main.rs"
 name = "widgets"
 
 [dependencies]
-slint = { version = "0.3.1", default-features = false, features = ["compat-0-3-0"] }
+slint = { version = "0.3.2", default-features = false, features = ["compat-0-3-0"] }
 mcu-board-support = { git = "https://github.com/slint-ui/slint", branch = "florian/mcu-test", optional = true }
 slint_orbclient = { path = "../../platform_support/slint_orbclient", optional = true }
 
 [build-dependencies]
-slint-build = { version = "0.3.1" }
+slint-build = "0.3.2"
 book_flip = { path = "../../widgets/book_flip" }
-co_widgets = { path = "../../widgets/co_widgets" }
+coop_widgets = { path = "../../widgets/coop_widgets" }
 
 [features]
 default = ["slint/default"]

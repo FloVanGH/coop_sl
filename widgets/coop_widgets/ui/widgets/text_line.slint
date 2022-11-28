@@ -1,0 +1,190 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+import { FocusBorder } from "../components/components.slint";
+import { mi, MaterialIcon } from "../assets/icons/material_icons.slint";
+
+ClearButton := TouchArea {
+    width: i_icon.width;
+    height: i_icon.height;
+
+    i_icon := MaterialIcon {
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        icon_size: coop.theme.icons.size_small;
+        icon_color: coop.theme.brushes.border;
+        icon: mi.clear;
+    }
+
+    states [
+        pressed when root.pressed: {
+            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+        }
+        hover when root.has_hover: {
+            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        }
+        disabled when !root.enabled: {
+            i_icon.opacity: coop.theme.state.container_disabled;
+        }
+    ]
+}
+
+// `TextLine` is a single line text input widget.
+export TextLine := Rectangle {
+    private property <length> computed_x;
+    private property <length> padding-outer: i_layout.padding-left + i_layout.padding-right;
+
+    // Is called after text is changed.
+    callback edited <=> i_input.edited;
+    
+    // Is emmicalledted if the `TextLine` is clicked and `clickable` is set to `true`.
+    callback clicked;
+
+    // Defines the icon that is displayed in front of the text.
+    in property <string> icon <=> i_icon.icon;
+
+    // Defines a text that is displayed if text is empty.
+    in property <string> placeholder: "placeholder";
+
+    // If set to true a clear all button is displayed.
+    in property <bool> has_clear: false;
+
+    // If set to `true` the text cannot be selected or changed by keyboard input.
+    in property read_only <=> i_input.read-only;
+
+    // If set to `true` the widget can call the  `clicked` callback.
+    in property <bool> clickable: coop.settings.minimize;
+
+    // The text line ca be used as text or password input.
+    in property <InputType> input_type <=> i_input.input_type;
+
+    // If set to `true` the text line will display an error border.
+    in property <bool> has_error;
+
+    // If set to false the widget is disabled.
+    in property <bool> enabled <=> i_input.enabled;
+
+    // The text that is displayed and can changed by text input.
+    in-out property <string> text <=> i_input.text;
+
+    min_width: !coop.settings.minimize ? 168px: 80px;
+    min_height: coop.theme.sizes.medium;
+    forward-focus: i_input;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+
+    i_container := Rectangle {
+        border_radius: coop.theme.radius.small;
+        background: coop.theme.brushes.surface;
+
+        i_layout := HorizontalLayout {  
+            padding_left: coop.theme.spaces.medium;
+            padding_right: coop.theme.spaces.medium;
+            spacing: coop.theme.spaces.small;
+    
+            i_icon := MaterialIcon {
+                y: (parent.height - height) / 2;
+                icon_color: coop.theme.brushes.foreground;
+                icon_size: coop.theme.icons.size_medium;
+            }
+     
+            Rectangle {  
+                clip: true;
+    
+                i_input := TextInput {
+                    visible: !coop.settings.minimize;
+                    x: min(0px, max(parent.width - width, computed_x));
+                    width: max(parent.width, preferred-width);
+                    height: 100%;
+                    color: coop.theme.brushes.foreground;
+                    vertical-alignment: center;
+                    font_size: coop.theme.typo.label_medium.size;
+                    font_weight: coop.theme.typo.label_medium.weight;
+                    // font_family: coop.theme.typo.label_medium.family;
+        
+                    cursor-position-changed(cpos) => {
+                        if(cpos.x + root.computed_x < root.padding_outer) {
+                            root.computed_x = - cpos.x + root.padding_outer;
+                        } else if(cpos.x + computed_x > parent.width - root.padding_outer) {
+                            root.computed_x = parent.width - cpos.x - root.padding_outer;
+                        }
+                    }
+                } 
+    
+                // helper text to display on embedded platforms
+                if(coop.embedded_helper) : Text {
+                    text <=> root.text;
+                    vertical-alignment: center;
+                    x: min(0px, max(parent.width - width, computed_x));
+                    width: max(parent.width, preferred-width);
+                    y: (parent.height - height) / 2;
+                    color: coop.theme.brushes.foreground;
+                    opacity: i_input.opacity;
+                    font_size: coop.theme.typo.label_medium.size;
+                    font_weight: coop.theme.typo.label_medium.weight;
+                    // font_family: coop.theme.typo.label_medium.family;
+                }
+    
+                if(text == "") : Text {
+                    text <=> root.placeholder;
+                    y: (parent.height - height) / 2;
+                    color: coop.theme.brushes.border;
+                    opacity: i_input.opacity;
+                    font_size: coop.theme.typo.label_medium.size;
+                    font_weight: coop.theme.typo.label_medium.weight;
+                    // font_family: coop.theme.typo.label_medium.family;
+                }
+    
+                if(clickable) : TouchArea {  
+                    enabled <=> root.enabled;
+                    width: 100%;
+                    height: 100%;
+                    clicked => { 
+                        root.focus();
+                        root.clicked();
+                    }
+                }
+            }
+    
+            if(has_clear) : ClearButton {
+                enabled: root.enabled;
+                y: (parent.height - height) / 2;
+                clicked => { text = ""; }
+            }
+        }
+    }
+
+    if(i_input.has_focus || root.has_error) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
+        border_color: !root.has_error ? coop.theme.brushes.foreground : coop.theme.brushes.error;
+    }
+
+    states [
+        disabled when !root.enabled: {
+            i_container.opacity: coop.theme.state.container_disabled;
+            i_input.opacity: coop.theme.state.content_disabled;
+            i_icon.opacity: coop.theme.state.content_disabled;
+        }
+    ]
+}
+
+
+
+Test := Rectangle {
+    width: 600px;
+    height: 400px;
+
+    VerticalLayout {  
+        alignment: center;
+        padding: 16px;
+
+        TextLine {
+            text: "hello";
+        }   
+    }
+}

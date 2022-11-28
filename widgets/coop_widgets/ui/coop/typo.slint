@@ -1,0 +1,32 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+// `Font` defines the typography settings of a text.
+export struct Font := {
+    // Defines the text size.
+    size: length,
+
+    // Defines the font weight.
+    weight: int,
+}
+
+// `Typo` defines the typography settings.
+export struct Typo := {
+    // Defines typo of small labels.
+    label_small: Font,
+
+    // Defines typo of medium labels.
+    label_medium: Font,
+
+    // Defines typo of large labels.
+    label_large: Font,
+
+    // Defines typo of small titles.
+    title_small: Font,
+
+    // Defines typo of medium titles.
+    title_medium: Font,
+
+    // Defines typo of large titles.
+    title_large: Font,
+}

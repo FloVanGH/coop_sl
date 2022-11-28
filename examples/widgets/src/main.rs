@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-#![allow(clippy::redundant_clone)]
-#![allow(clippy::cmp_owned)]
 #![cfg_attr(any(feature = "mcu-board-support", feature = "slint_psp"), no_std)]
 #![cfg_attr(any(feature = "mcu-board-support", feature = "slint_psp"), no_main)]
 
@@ -13,7 +11,12 @@ use alloc::string::ToString;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-slint::include_modules!();
+#[allow(clippy::all)]
+mod generated_code {
+    slint::include_modules!();
+}
+
+pub use generated_code::*;
 
 fn app() -> App {
     let app = App::new();
@@ -25,6 +28,9 @@ fn app() -> App {
         text.into()
     });
 
+    #[cfg(feature = "slint_orbclient")]
+    app.global::<coop>().set_embedded_helper(true);
+
     app
 }
 
@@ -32,7 +38,14 @@ fn app() -> App {
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
 pub fn main() {
     #[cfg(feature = "slint_orbclient")]
-    slint_orbclient::init();
+    slint_orbclient::init_config(
+        slint_orbclient::Config::default()
+            .width(1000)
+            .height(600)
+            .resizable(true)
+            .events_async(true)
+            .title("Widgets gallery"),
+    );
 
     // This provides better error messages in debug mode.
     // It's disabled in release mode so it doesn't bloat up the file size.

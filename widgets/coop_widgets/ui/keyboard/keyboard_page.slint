@@ -1,0 +1,50 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+import { Keyboard } from "keyboard_widget.slint";
+
+// `KeyboardPage` can switch between its children an a `Keyboard`.
+export KeyboardPage := Rectangle {
+    private property <bool> keyboard_open: false;
+
+    // Opens the keyboard.
+    callback open_keyboard(string, string, string, string);
+    
+    // Called after keyboard is closed.
+    callback keyboard_closed(string, string);
+
+    open_keyboard(key, text, placeholder, icon) => {  
+        keyboard_open = true;
+        i_keyboard.open(key, text, placeholder, icon);
+    }
+
+    i_container := Rectangle {
+        @children
+    }
+
+    i_keyboard := Keyboard {
+        y: i_container.y + i_container.height;
+      
+        close(key, text) => { 
+            root.keyboard_open = false;
+            root.keyboard_closed(key, text);
+         }
+    }
+
+    states [
+        keyboard_open when root.keyboard_open: {
+            i_container.y: -root.height;
+        }
+    ]
+
+    transitions [  
+        in keyboard_open: {
+            animate i_container.y { duration: coop.theme.durations.fast; }
+        }
+        out keyboard_open: {
+            animate i_container.y { duration:  coop.theme.durations.medium; }
+        }
+    ]
+}

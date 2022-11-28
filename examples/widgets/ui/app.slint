@@ -1,20 +1,20 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { CoWindow, KeyboardPage, KeyboardAdapter, ParentItemModel, co } from "_imports/co_widgets.slint";
+import { CoopWindow, KeyboardPage, KeyboardAdapter, ParentItemModel, coop } from "_imports/coop_widgets.slint";
 import { BasicsPage, TypoPage } from "pages/pages.slint";
 import { AppManager } from "app_manager.slint"; 
-import { AppSideBar } from "app_side_bar.slint";
+import { SideBarView } from "side_bar_view.slint";
 
-export { KeyboardAdapter, co }
+export { KeyboardAdapter, coop }
 export { AppManager }
 
-export App := CoWindow {
+export App := CoopWindow {
     min-width: 1000px;
     title: "Widgets gallery";
 
     Rectangle {  
-        background: co.theme.brushes.background;
+        background: coop.theme.brushes.background;
     }
 
     keyboard_page := KeyboardPage {
@@ -23,7 +23,7 @@ export App := CoWindow {
         } 
 
         HorizontalLayout {   
-            i_side_bar := AppSideBar {
+            i_side_bar := SideBarView {
                 property <ParentItemModel> widgets: {
                     text: "Widgets",
                     items: [

@@ -8,14 +8,14 @@ edition = "2021"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "Experimental Entity Component System library for no_std enviroments"
-repository = "https://codeberg.org/flovansl/co_sl"
+repository = "https://codeberg.org/flovansl/coop_sl"
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 pico_engine = { path = "../pico_engine" }
-slint = "0.3.1"
+slint = "0.3.2"
 
 # Remove the `#wasm#` to uncomment the wasm build.
 # This is commented out by default because we don't want to build it as a library by default

@@ -3,7 +3,7 @@
 
 import { AppManager } from "../app_manager.slint"; 
 
-import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, co, mi } from "../_imports/co_widgets.slint";
+import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, coop, mi } from "../_imports/coop_widgets.slint";
 
 export Page := GridLayout {
     callback open_keyboard(string, string, string, string);
@@ -31,9 +31,9 @@ export Page := GridLayout {
                 Switch {
                     on_icon: mi.lightbulb;
                     off_icon: mi.nights_stay;
-                    selected: !co.dark_theme;
+                    selected: !coop.dark_theme;
                     selected_changed(selected) => {
-                        co.dark_theme = !selected;
+                        coop.dark_theme = !selected;
                     }
                 }
             }    

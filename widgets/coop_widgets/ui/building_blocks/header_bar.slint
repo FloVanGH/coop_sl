@@ -1,0 +1,28 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+import { TitleLarge } from "../components/components.slint";
+import { Spacer } from "../layouts/layouts.slint";
+
+// `HeaderBar` is a bar with a title and a content area.
+export HeaderBar := HorizontalLayout {
+    // Defines the title text of the header bar.
+    in property <string> title: "title";
+
+    spacing: coop.theme.spaces.medium;
+    padding_left: coop.theme.spaces.large;
+    padding_right: coop.theme.spaces.large;
+    padding_top: coop.theme.spaces.small;
+    padding_bottom: coop.theme.spaces.small;
+    height: coop.theme.sizes.large;
+
+    i_title := TitleLarge {  
+        text: root.title;
+        vertical-alignment: center;
+        horizontal_alignment: left;
+        horizontal_stretch: 1;
+    }
+
+    @children
+}

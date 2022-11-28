@@ -1,0 +1,176 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+import { FocusBorder } from "../components/focus_border.slint";
+import { LabelSmall } from "../components/label.slint";
+import { Switch } from "../widgets/selectables.slint";
+
+// `Slider` allow to make selections from a range of values.
+export Slider := Rectangle {
+    // Is called after `value` has changed. The parameter represents the current value.
+    callback value_changed(float);
+    
+    // If `true` the widget has keyboard focus.
+    out property <bool> has_focus <=> i_focus_scope.has-focus;
+
+    // If set to `false` the widget is disabled.
+    in property <bool> enabled <=> i_touch_area.enabled;
+
+    // Represents the current value of the slider. 
+    //
+    // Must be a value between 0.0 and 1.0.
+    in-out property <float> value: 0.0;
+
+    min-width: coop.theme.sizes.large;
+    min-height: i_thumb.height  ;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+
+    accessible_role: slider;
+    accessible_value: value;
+    accessible_value_minimum: i_touch_area.minimum;
+    accessible_value_maximum: i_touch_area.maximum;
+    accessible_value_step: i_touch_area.step_size;
+
+    i_container := Rectangle {
+        y: (parent.height - height) / 2;
+        width: 100%;
+        height: coop.theme.sizes.extra_extra_small;
+        background: coop.theme.brushes.surface;
+        border_radius: coop.theme.radius.extra_extra_small;
+
+        animate background { duration: coop.theme.durations.fast; }
+    }
+
+    i_track := Rectangle {
+        y: (parent.height - height) / 2;
+        width: parent.width * root.value;
+        height: i_container.height;
+        background: coop.theme.brushes.primary;
+        border_radius: i_container.border_radius;
+
+        animate background { duration: coop.theme.durations.fast; }
+    }
+
+    i_thumb := Rectangle {
+        x:  (root.width - width) * (value - i_touch_area.minimum) / (i_touch_area.maximum - i_touch_area.minimum);
+        y: (parent.height - height) / 2;
+        width: coop.theme.sizes.small;
+        height: width;
+        border_radius: max(width, height) / 2;
+        background: coop.theme.brushes.primary;
+    
+        animate background { duration: coop.theme.durations.fast; }
+    }
+
+    i_thumb_border := Rectangle {
+        x: i_thumb.x + (i_thumb.width - width) / 2;
+        y: (i_thumb.height - height) / 2;
+        width: i_thumb.width + 4px;
+        height: width;
+        border_radius: max(width, height) / 2;
+        border_width: 1px;
+        border_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        opacity: 0;
+
+        animate opacity { duration: coop.theme.durations.fast; }
+    }
+
+    i_touch_area := TouchArea {
+        property <float> pressed_value;
+        property <float> minimum;
+        property <float> maximum: 1.0;
+        property <float> step_size: (maximum - minimum) / 100;
+
+        width: parent.width;
+        height: parent.height;
+       
+        pointer-event(event) => {
+            if(event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                pressed_value = root.value;
+            }
+        }
+
+        moved => {
+            if(enabled && pressed) {
+                value = max(i_touch_area.minimum, min(i_touch_area.maximum,
+                    pressed_value + (i_touch_area.mouse_x - i_touch_area.pressed_x) * (maximum - minimum) / (root.width - i_thumb.width)));
+                root.value_changed(value);
+            }
+        }
+    }
+
+    i_focus_scope := FocusScope {
+        width: 0px;
+        enabled: root.enabled;
+
+        key-pressed(event) => {
+            if(enabled && event.text == Key.RightArrow) {
+                value = Math.min(value + i_touch_area.step_size, i_touch_area.maximum);
+                root.value_changed(value);
+                accept
+            } else if(enabled && event.text == Key.LeftArrow) {
+                value = Math.max(value - i_touch_area.step_size, i_touch_area.minimum);
+                root.value_changed(value);
+                accept
+            } else {
+                reject
+            }
+        }
+    }
+   
+    if(i_focus_scope.has_focus) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        border_radius: i_container.border_radius + 2px;
+    }
+
+    states [
+        disabled when !enabled: {
+            i_container.background: coop.theme.brushes.surface_disabled;
+            i_track.background: coop.theme.brushes.foreground_disabled;
+            i_thumb.background: coop.theme.brushes.foreground_disabled;
+        }
+        pressed when i_touch_area.pressed: {
+            i_thumb.background: coop.theme.brushes.primary.darker(coop.theme.state.pressed);
+            i_thumb_border.border_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_thumb_border.opacity: 1.0;
+        }
+        hover when i_touch_area.has_hover: {
+            i_thumb.background: coop.theme.brushes.primary.darker(coop.theme.state.hover);
+            i_thumb_border.opacity: 1.0;
+        }
+    ]
+}
+
+SliderExample := Rectangle {
+    width: 600px;
+    height: 400px;
+    background: coop.theme.brushes.background;
+
+    VerticalLayout {  
+        padding: coop.theme.spaces.large;
+        spacing: coop.theme.spaces.large;
+        alignment: center;
+
+        HorizontalLayout {  
+            alignment: center;
+            Switch {
+                selected <=> coop.dark-theme;
+            }
+        }
+      
+        LabelSmall { 
+            text: "\{slider.value}";
+            horizontal_alignment: center;
+        }
+        slider := Slider {}
+
+        Slider {
+            enabled: false;
+        }    
+    }
+}

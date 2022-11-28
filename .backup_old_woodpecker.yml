@@ -77,8 +77,8 @@ pipeline:
     environment:
       - OUTPUT=target/doc
     commands:
-      # co_widgets doc
-      - cargo doc --no-deps -p co_widgets
+      # coop_widgets doc
+      - cargo doc --no-deps -p coop_widgets
       # slint_orbclient doc
       - cargo doc --no-deps -p slint_orbclient
       # Git configuration
@@ -142,7 +142,7 @@ pipeline:
     secrets: [ mail, codeberg_token ]
     environment:
       - OUTPUT_WIDGETS=examples/widgets
-      - OUTPUT_CHAT=apps/co_chat
+      - OUTPUT_CHAT=apps/coop_chat
     commands:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
@@ -160,14 +160,14 @@ pipeline:
       - cp -ar pkg/* /tmp/pages/snapshots/widgets/pkg/
       - cp index.html /tmp/pages/snapshots/widgets/
 
-      # co_chat
+      # coop_chat
       - cd ../../$OUTPUT_CHAT
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web
     
       # Copy build step output to repository folder
-      - cp -ar pkg/* /tmp/pages/snapshots/co_chat/pkg/
-      - cp index.html /tmp/pages/snapshots/co_chat/
+      - cp -ar pkg/* /tmp/pages/snapshots/coop_chat/pkg/
+      - cp index.html /tmp/pages/snapshots/coop_chat/
      
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/

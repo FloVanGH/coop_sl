@@ -1,0 +1,50 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+// workaround to get font displayed embedded on the softwarerendrer
+// import "../assets/fonts/Roboto-Regular.ttf"; 
+// import "../assets/fonts/Roboto-Medium.ttf"; 
+
+import { Font } from "../coop/typo.slint";
+import { coop } from "../coop/coop.slint";
+
+// `BaseLabel` represents the base for `coop` labels. Set font settings by font property.
+export BaseLabel := Text {
+    // Defines the font settings.
+    in property <Font> font;
+
+    color: coop.theme.brushes.foreground;
+    // font_family: font.family;
+    font_size: font.size;
+    font_weight: font.weight;
+}
+
+// `LabelSmall` is a label with settings `coop.theme.typo.label_small`.
+export LabelSmall := BaseLabel {
+    font: coop.theme.typo.label_small;
+}
+
+// `LabelMedium` is a label with settings `coop.theme.typo.label_medium`.
+export LabelMedium := BaseLabel {
+    font: coop.theme.typo.label_medium;
+}
+
+// `LabelLarge` is a label with settings `coop.theme.typo.label_large.
+export LabelLarge := BaseLabel {
+    font: coop.theme.typo.label_large; 
+}
+
+// `TitleSmall` is a label with settings `coop.theme.typo.title_small`.
+export TitleSmall := BaseLabel {
+    font: coop.theme.typo.title_small;
+}
+
+// `TitleMedium` is a label with settings `coop.theme.typo.title_medium`.
+export TitleMedium := BaseLabel {
+    font: coop.theme.typo.title_medium;
+}
+
+// `TitleLarge` is a label with settings `coop.theme.typo.title_large.
+export TitleLarge := BaseLabel {
+    font: coop.theme.typo.title_large;
+}

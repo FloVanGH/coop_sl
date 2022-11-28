@@ -3,9 +3,9 @@
 
 [workspace]
 members = [
-   "apps/co_calc",
-   "apps/co_files",
-   "apps/co_chat",
+   "apps/coop_calc",
+   "apps/coop_files",
+   "apps/coop_chat",
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",
@@ -13,15 +13,15 @@ members = [
    "gaming/pico_designer",
    "platform_support/slint_orbclient",
    "widgets/book_flip",
-   "widgets/co_widgets",
+   "widgets/coop_widgets",
    "internal/shared",
    "internal/platforms_support",
 ]
 
 default-members = [
-   "apps/co_calc",
-   "apps/co_files",
-   "apps/co_chat",
+   "apps/coop_calc",
+   "apps/coop_files",
+   "apps/coop_chat",
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",
@@ -29,7 +29,7 @@ default-members = [
    "gaming/pico_designer",
    "platform_support/slint_orbclient",
    "widgets/book_flip",
-   "widgets/co_widgets",
+   "widgets/coop_widgets",
    "internal/shared",
    "internal/platforms_support",
 ]

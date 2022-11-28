@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+// `SideBar` is a bar with vertical arranged children.
+export SideBar := Rectangle {
+    background: coop.theme.brushes.background_alt;
+    
+    VerticalLayout {  
+        padding_top: coop.theme.spaces.medium;
+        padding_bottom: coop.theme.spaces.medium;
+        spacing: coop.theme.spaces.large;
+
+        @children
+    }
+}

@@ -1,0 +1,52 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+// `ProgressBar` informs about current progress of ongoing process.
+export ProgressBar := Rectangle { 
+    // Represents the current progress.
+    //
+    // Must be a progress between 0.0 and 1.0.
+    in property <float> progress: 0.0;
+
+    // If set to `true` the progress bar shows generic progress.
+    in property <bool> indeterminate;
+
+    min-width: coop.theme.sizes.large;
+    height: coop.theme.sizes.extra_extra_small;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+    background: coop.theme.brushes.surface;
+    border_radius: coop.theme.radius.extra_extra_small;
+    clip: true;
+
+    i_track := Rectangle {
+        x: !indeterminate ? 0px: parent.width * mod(animation-tick(), 2s) / 2s;
+        y: (parent.height - height) / 2;
+        width: !indeterminate ?  parent.width * root.progress: root.width / 2;
+        height: 100%;
+        background: coop.theme.brushes.primary;
+        border_radius: root.border_radius;
+    }
+}
+
+ProgressBarExample := Rectangle {
+    width: 600px;
+    height: 400px;
+    background: coop.theme.brushes.background;
+
+    VerticalLayout {  
+        padding: coop.theme.spaces.large;
+        spacing: coop.theme.spaces.large;
+        alignment: center;
+
+        ProgressBar {  
+            progress: 0.5;
+        }
+
+        ProgressBar {  
+            indeterminate: true;
+        }
+    }
+}

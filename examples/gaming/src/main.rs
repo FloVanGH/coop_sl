@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-#![allow(clippy::redundant_clone)]
-#![allow(clippy::cmp_owned)]
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(not(feature = "std"), no_main)]
 
@@ -12,7 +10,12 @@ extern crate alloc;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-slint::include_modules!();
+#[allow(clippy::all)]
+mod generated_code {
+    slint::include_modules!();
+}
+
+pub use generated_code::*;
 
 #[cfg(feature = "std")]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]

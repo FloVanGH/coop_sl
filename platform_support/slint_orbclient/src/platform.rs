@@ -4,52 +4,117 @@
 use std::cell::*;
 use std::rc::*;
 
-use orbclient::{EventOption, Renderer, Window};
+use orbclient::{Renderer, Window};
 
 use crate::color::*;
-
-use slint::LogicalSize;
+use crate::event_reader::*;
 
 static INITIAL_INSTANT: once_cell::sync::OnceCell<instant::Instant> =
     once_cell::sync::OnceCell::new();
 
-/// Initializes the platform.
-pub fn init() {
-    slint::platform::set_platform(Box::new(OrbClientPlatform::new())).unwrap();
+/// Used to configure the platform window.
+#[derive(Clone, Default, Debug)]
+pub struct Config {
+    x: i32,
+    y: i32,
+    width: u32,
+    height: u32,
+    title: String,
+    events_async: bool,
+    resizable: bool,
 }
 
-/// Describes a `Slint` platform that is based on `OrbClient` and so can run on also on `Redox OS`
-pub struct OrbClientPlatform {
-    slint_window: RefCell<Rc<slint::platform::software_renderer::MinimalSoftwareWindow<1>>>,
-    orb_window: RefCell<Window>,
-    button_states: Cell<(bool, bool, bool)>,
-    pointer_position: Cell<slint::LogicalPosition>,
+impl Config {
+    /// Sets the x position of the window.
+    pub fn x(mut self, x: i32) -> Self {
+        self.x = x;
+        self
+    }
+
+    /// Sets the y position of the window.
+    pub fn y(mut self, y: i32) -> Self {
+        self.y = y;
+        self
+    }
+
+    /// Sets the width of the window.
+    pub fn width(mut self, width: u32) -> Self {
+        self.width = width;
+        self
+    }
+
+    /// Sets the width of the window.
+    pub fn height(mut self, height: u32) -> Self {
+        self.height = height;
+        self
+    }
+
+    /// Sets the title of the window.
+    pub fn title(mut self, title: impl Into<String>) -> Self {
+        self.title = title.into();
+        self
+    }
+
+    /// If set to `false` the event reading will blocking the window loop until an events occurs.
+    pub fn events_async(mut self, events_async: bool) -> Self {
+        self.events_async = events_async;
+        self
+    }
+
+    /// If set to `true` the window is resizable.
+    pub fn resizable(mut self, resizable: bool) -> Self {
+        self.resizable = resizable;
+        self
+    }
 }
 
-impl OrbClientPlatform {
-    /// Returns a new platform object.
-    pub fn new() -> Self {
+impl From<Config> for OrbClientPlatform {
+    fn from(config: Config) -> Self {
+        let mut flags = vec![];
+
+        if config.events_async {
+            flags.push(orbclient::WindowFlag::Async);
+        }
+
+        if config.resizable {
+            flags.push(orbclient::WindowFlag::Resizable);
+        }
+
         Self {
             slint_window: core::cell::RefCell::new(
                 slint::platform::software_renderer::MinimalSoftwareWindow::new(),
             ),
             orb_window: RefCell::new(
                 Window::new_flags(
-                    0,
-                    0,
-                    600,
-                    320,
-                    "Slint window",
-                    &[
-                        orbclient::WindowFlag::Resizable,
-                        orbclient::WindowFlag::Async,
-                    ],
+                    config.x,
+                    config.y,
+                    config.width,
+                    config.height,
+                    &config.title,
+                    &flags,
                 )
                 .unwrap(),
             ),
-            pointer_position: Cell::new(slint::LogicalPosition::default()),
-            button_states: Cell::new((false, false, false)),
+            event_reader: EventReader::default(),
         }
+    }
+}
+
+/// Describes a `Slint` platform that is based on `OrbClient` and so can run on also on `Redox OS`.
+pub struct OrbClientPlatform {
+    slint_window: RefCell<Rc<slint::platform::software_renderer::MinimalSoftwareWindow<1>>>,
+    orb_window: RefCell<Window>,
+    event_reader: EventReader,
+}
+
+impl OrbClientPlatform {
+    /// Returns a new platform object.
+    pub fn new() -> Self {
+        Config::default()
+            .width(600)
+            .height(400)
+            .title("Slint orbclient window")
+            .into()
     }
 }
 
@@ -109,96 +174,15 @@ impl slint::platform::Platform for OrbClientPlatform {
                 self.orb_window.borrow_mut().sync();
             });
 
-            for event in self.orb_window.borrow_mut().events() {
-                match event.to_option() {
-                    EventOption::Quit(_quit_event) => break 'events,
-                    EventOption::Resize(resize) => {
-                        self.slint_window
-                            .borrow()
-                            .set_size(LogicalSize::new(resize.width as f32, resize.height as f32));
+            for event in self.event_reader.read(&mut self.orb_window.borrow_mut()) {
+                match event {
+                    Event::WindowEvent(e) => self.slint_window.borrow().dispatch_event(e),
+                    Event::Resize(s) => {
+                        self.slint_window.borrow().set_size(s);
 
-                        work_buffer
-                            .resize(resize.width as usize * resize.height as usize, Color(0));
+                        work_buffer.resize(s.width as usize * s.height as usize, Color(0));
                     }
-
-                    EventOption::Mouse(evt) => {
-                        self.pointer_position
-                            .set(slint::LogicalPosition::new(evt.x as f32, evt.y as f32));
-                        self.slint_window.borrow().dispatch_event(
-                            slint::WindowEvent::PointerMoved {
-                                position: self.pointer_position.get(),
-                            },
-                        );
-                    }
-
-                    EventOption::Button(button) => {
-                        if self.button_states.get().0 != button.left {
-                            if button.left {
-                                self.slint_window.borrow().dispatch_event(
-                                    slint::WindowEvent::PointerPressed {
-                                        position: self.pointer_position.get(),
-                                        button: slint::PointerEventButton::Left,
-                                    },
-                                );
-                            } else {
-                                self.slint_window.borrow().dispatch_event(
-                                    slint::WindowEvent::PointerReleased {
-                                        position: self.pointer_position.get(),
-                                        button: slint::PointerEventButton::Left,
-                                    },
-                                );
-                            }
-                        }
-
-                        if self.button_states.get().1 != button.middle {
-                            if button.middle {
-                                self.slint_window.borrow().dispatch_event(
-                                    slint::WindowEvent::PointerPressed {
-                                        position: self.pointer_position.get(),
-                                        button: slint::PointerEventButton::Middle,
-                                    },
-                                );
-                            } else {
-                                self.slint_window.borrow().dispatch_event(
-                                    slint::WindowEvent::PointerReleased {
-                                        position: self.pointer_position.get(),
-                                        button: slint::PointerEventButton::Middle,
-                                    },
-                                );
-                            }
-                        }
-
-                        if self.button_states.get().2 != button.right {
-                            if button.right {
-                                self.slint_window.borrow().dispatch_event(
-                                    slint::WindowEvent::PointerPressed {
-                                        position: self.pointer_position.get(),
-                                        button: slint::PointerEventButton::Right,
-                                    },
-                                );
-                            } else {
-                                self.slint_window.borrow().dispatch_event(
-                                    slint::WindowEvent::PointerReleased {
-                                        position: self.pointer_position.get(),
-                                        button: slint::PointerEventButton::Right,
-                                    },
-                                );
-                            }
-                        }
-
-                        self.button_states
-                            .set((button.left, button.middle, button.right));
-                    }
-                    EventOption::Scroll(scroll) => {
-                        self.slint_window.borrow().dispatch_event(
-                            slint::WindowEvent::PointerScrolled {
-                                position: self.pointer_position.get(),
-                                delta_x: scroll.x as f32 * 2.0,
-                                delta_y: scroll.y as f32 * 2.0,
-                            },
-                        );
-                    }
-                    _ => {}
+                    Event::Quit => break 'events,
                 }
             }
         }

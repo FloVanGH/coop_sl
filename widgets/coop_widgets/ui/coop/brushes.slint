@@ -1,0 +1,47 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+// `Brushes` provides all brushes referenced by `Theme`.
+export struct Brushes := {
+    // Defines the window background.
+    background: brush,
+
+    // Defines an alternative background e.g. use by `SideBar`.
+    background_alt: brush,
+
+    // Defines the foreground e.g. text color that is used on background.
+    foreground: brush,
+
+    // Defines the foreground if the element is disabled.
+    foreground_disabled: brush,
+
+    // Defines the default background of widgets.
+    surface: brush,
+
+    // Defines the default background of for disabled widgets.
+    surface_disabled: brush,
+
+    // Defines the foreground of elements e.g. text that are shown on a `surface` background.
+    on_surface: brush,
+
+    // Defines the primary (key brush) of the theme.
+    primary: brush,
+
+     // Defines the foreground of elements e.g. text that are shown on a `primary` background.
+    on_primary: brush,
+
+    // Defines the brush of border elements.
+    border: brush,
+
+    // Defines the brush of disabled border elements.
+    border_disabled: brush,
+
+    // Defines the brush of state elements.
+    state: brush,
+
+    // Defines the brush of drop shadows.
+    shadow: brush,
+
+    // Defines the error brush.
+    error: brush,
+}

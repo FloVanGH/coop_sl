@@ -5,14 +5,14 @@ import { PageMinimized } from "page.slint";
 import { RowTitle, ColumnTitle } from "../../pages/titles.slint";
 
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
-    VerticalSpacerSmall, TextLine, CheckBox, Switch, mi, co } from "../../_imports/co_widgets.slint";
+    VerticalSpacerSmall, TextLine, CheckBox, Switch, mi, coop } from "../../_imports/coop_widgets.slint";
 
 import { AppManager } from "../../app_manager.slint";
 
 export BasicsPageMinimized := PageMinimized {
     GridLayout {  
-        padding: co.theme.spaces.large;
-        spacing: co.theme.spaces.medium;
+        padding: coop.theme.spaces.large;
+        spacing: coop.theme.spaces.medium;
        
         // Button
         Row {
@@ -167,9 +167,9 @@ export BasicsPageMinimized := PageMinimized {
             Switch {
                 on_icon: mi.lightbulb;
                 off_icon: mi.nights_stay;
-                selected: !co.dark_theme;
+                selected: !coop.dark_theme;
                 selected_changed(selected) => {
-                    co.dark_theme = !selected;
+                    coop.dark_theme = !selected;
                 }
             }
         }

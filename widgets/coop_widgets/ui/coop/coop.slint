@@ -1,0 +1,152 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import  { Brushes } from "brushes.slint";
+import  { Durations } from "durations.slint";
+import  { Icons } from "icons.slint";
+import  { States } from "states.slint";
+import  { Radius } from "radius.slint";
+import  { Settings } from "settings.slint";
+import  { Sizes } from "sizes.slint";
+import  { Spaces } from "spaces.slint";
+import  { Typo, Font } from "typo.slint";
+
+// import "../assets/fonts/Roboto-Regular.ttf";
+// import "../assets/fonts/Roboto-Medium.ttf";
+
+import { StyleMetrics } from "std-widgets.slint";
+
+// `Theme` is used to define a theme for the  `coop_widgets`.
+export struct Theme := {
+    // Brush definitions.
+    brushes: Brushes,
+
+    // Animation durations.
+    durations: Durations,
+
+    // Icon sizes.
+    icons: Icons,
+
+    // State values e.g. for using .darker().
+    state: States,
+
+    // Sizes of components and widgets.
+    sizes: Sizes,
+
+    // Border radius.
+    radius: Radius,
+
+    // Paddings and spaces.
+    spaces: Spaces,
+
+    // Typography settings.
+    typo: Typo,
+}
+
+// `coop` is used to access to the style resources of the `coop` theme (dark and light).
+export global coop := { 
+    // Toggles between light and dark theme.
+    in-out property <bool> dark_theme: StyleMetrics.dark-color-scheme;
+
+    // Defines the accent (primary) brush.
+    in property <brush> accent_color: dark_theme ? #01fec5: #1d9bf2;
+
+    // Defines the on accent (primary) brush.
+    in property <brush> on_accent_color:  dark_theme ? #212121: #dfdfdf;
+
+    // Additional theme settings.
+    in property <Settings> settings: {
+        minimize: false,
+    };
+
+    // If set to `true` helpers for swr will be activated.
+    in property <bool> embedded_helper;
+
+    // Defines the current theme of the `coop_widgets`.
+    in property <Theme> theme: {
+        brushes: {
+            background: dark_theme ? #2d2d2d: #dfdfdf,
+            background_alt: dark-theme ? #414141: #cbcbcb,
+            foreground: dark_theme ? #dfdfdf: #2d2d2d,
+            foreground_disabled: dark_theme ? #7b7b7b: #a0a0a0,
+            surface: dark_theme ? #505050: #BDBDBD,
+            surface_disabled: dark_theme ? #3d3d3d: #d2d2d2,
+            on_surface: dark_theme ? #212121: #dfdfdf,  
+            primary: accent-color,
+            on_primary: on_accent_color,
+            border: dark_theme ? #7e7e7e: #505050,
+            border_disabled: dark_theme ? #494949: #c5c5c5,
+            state: #000000,
+            shadow: #000000,
+            error: #d50000,
+        },
+        durations: {
+            slow: 500ms,
+            medium: 250ms,
+            fast: 150ms,
+        },
+        icons: {
+            size_small: 12px,
+            size_medium: 14px,
+            size_large: 16px,
+        },
+        state: {
+            hover: 0.2,
+            pressed: 0.4,
+            container_disabled: 0.38,
+            content_disabled: 0.38,
+        },
+        sizes: {
+            extra_extra_small: 4px,
+            extra_small: 20px,
+            small: 26px,
+            medium: 32px,
+            large: 44px,
+        },
+        radius: {
+            extra_extra_small: 2px,
+            extra_small: 4px,
+            small: 6px,
+            medium: 8px,
+            large: 16px,
+        },
+        spaces: {
+            extra_small: 2px,
+            small: 4px,
+            medium: 8px,
+            large: 16px,
+        },
+        typo: {
+            label_small: {
+                // family: "Roboto",
+                size: 12px,
+                weight: 400
+            },
+            label_medium: {
+                // family: "Roboto",
+                size: 12px,
+                weight: 500      
+            },
+            label_large: {
+                // family: "Roboto",
+                size: 14px,
+                weight: 500
+            },
+            title_small: {
+                // family: "Roboto",
+                size: 16px,
+                weight: 500      
+            },
+            title_medium:{
+                // family: "Roboto",
+                size: 20px,
+                weight: 500      
+            },
+            title_large: {
+                // family: "Roboto",
+                size: 24px,
+                weight: 500      
+            },
+        }
+    };
+}

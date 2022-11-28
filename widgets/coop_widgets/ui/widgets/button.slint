@@ -1,0 +1,363 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+import { FocusTouchArea } from "../components/focus_touch_area.slint";
+import { LabelMedium } from "../components/label.slint";
+import { MaterialIcon } from "../assets/icons/material_icons.slint";
+
+// `ButtonBase` is used as base for buttons that can be clicked.
+export ButtonBase := FocusTouchArea {
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
+    in property <string> icon;
+
+    // Used to set the display text of the button.
+    in property <string> text: "text";
+
+    // Defines the text color.
+    in property <brush> text_color;
+
+    // Defines the text color.
+    in property <brush> icon_color;
+
+    // Defines the border color of the widget.
+    in property <brush> border_color;
+
+    // Defines the border width of the widget.
+    in property <length> border_width;
+
+    // Defines background of the widget.
+    in property <brush> background;
+
+    // Defines the size of the icon.
+    in property <length> icon_size: coop.theme.icons.size_small;
+
+    // Used to scale the inner background container e.g. to add an effect by button pressed.
+    in property <float> container_scale: 1.0;
+
+    // Defines the border radius of the button background.
+    in property <length> border_radius: coop.theme.radius.large * container_scale; 
+
+    focus_border_radius: border_radius;
+    padding_left: coop.theme.spaces.large;
+    padding_right: coop.theme.spaces.large;
+
+    i_container := Rectangle {
+        x: (parent.width - width) / 2;
+        y: (parent.height - height) / 2;
+        width: root.width * root.container_scale;
+        height: root.height * root.container_scale;
+        background: root.background;
+        border_width: root.border_width;
+        border_color: root.border_color;
+        border_radius: root.border_radius;
+    }
+
+    HorizontalLayout {  
+        spacing: coop.theme.spaces.small;
+        padding_left: root.padding_right;
+        padding_right: root.padding_right;
+        alignment: center;
+
+        if(root.icon != "") : MaterialIcon {
+            y: (parent.height - height) / 2;
+            icon_size: root.icon_size;
+            icon_color: root.icon_color;
+            icon: root.icon;
+        }
+
+        if(root.text != "") : Text {
+            vertical-alignment: center;
+            color: root.text_color;
+            font_size: coop.theme.typo.label_medium.size;
+            font_weight: coop.theme.typo.label_medium.weight;
+            // font_family: coop.theme.typo.label_medium.family;
+            text: root.text;
+        }
+    }
+}
+
+// `Button` represents the default button with filled surface.
+export Button := Rectangle {
+    // Will be called when the widget is clicked (pressed and then released).
+    callback clicked <=> i_base.clicked;
+
+    // Used to set the display text of the button.
+    in property <string> text: "text";
+
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
+    in property <string> icon;
+
+    // If set to  `true` the button will filled with coop.theme.brushes.primary`
+    in property <bool> primary: false;
+
+    // If set to false the widget is disabled.
+    in-out property <bool> enabled: true;
+
+    accessible-role: button;
+    accessible-label: root.text;
+    min_height: coop.theme.sizes.medium;
+    vertical-stretch: 0;
+    horizontal-stretch: 1;
+
+    i_base := ButtonBase {  
+        enabled: root.enabled;
+        background: root.primary ? coop.theme.brushes.primary: coop.theme.brushes.surface;
+        text_color: root.primary ? coop.theme.brushes.on_primary: coop.theme.brushes.foreground;
+        icon_color: text_color;
+        text: root.text;
+        icon: root.icon;
+
+        animate background { duration: coop.theme.durations.fast; }
+        animate text_color { duration: coop.theme.durations.fast; }
+        animate container_scale { duration: coop.theme.durations.fast; }
+    }
+
+    states [
+        disabled when !enabled: {
+            i_base.background: coop.theme.brushes.surface_disabled;
+            i_base.text_color: coop.theme.brushes.foreground_disabled;
+        }
+        pressed when i_base.focus_pressed: {
+            i_base.background: primary ? coop.theme.brushes.primary.darker(coop.theme.state.pressed) : coop.theme.brushes.surface.darker(coop.theme.state.pressed);
+            i_base.text_color: primary ? coop.theme.brushes.on_primary.darker(coop.theme.state.pressed) : coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_base.container_scale: 0.98;
+        }
+        hover when i_base.has_hover: {
+            i_base.background: primary ? coop.theme.brushes.primary.darker(coop.theme.state.hover) : coop.theme.brushes.surface.darker(coop.theme.state.hover);
+            i_base.text_color:  primary ? coop.theme.brushes.on_primary.darker(coop.theme.state.hover) : coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        }
+    ]
+}
+
+// `OutlineButton` represents a default button with an outline border.
+export OutlineButton := Rectangle {
+    // Will be called when the widget is clicked (pressed and then released).
+    callback clicked <=> i_base.clicked;
+
+    // Used to set the display text of the button.
+    in property <string> text: "text";
+
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
+    in property <string> icon;
+
+    // If set to  `true` the button will filled with coop.theme.brushes.primary`
+    in property <bool> primary: false;
+
+    // If set to false the widget is disabled.
+    in property <bool> enabled: true; 
+
+    accessible-role: button;
+    accessible-label: root.text;
+    min_height: coop.theme.sizes.medium;
+    vertical-stretch: 0;
+    horizontal-stretch: 1;
+
+    i_base := ButtonBase {  
+        enabled: root.enabled;
+        background: primary ? coop.theme.brushes.primary: coop.theme.brushes.background;
+        text_color: primary ? coop.theme.brushes.on_primary: coop.theme.brushes.foreground;
+        icon_color: primary ? coop.theme.brushes.on_primary: coop.theme.brushes.primary;
+        border_width: 1px;
+        border_color: coop.theme.brushes.border;
+        text: root.text;
+        icon: root.icon;
+
+        animate background { duration: coop.theme.durations.fast; }
+        animate text_color { duration: coop.theme.durations.fast; }
+        animate icon_color { duration: coop.theme.durations.fast; }
+        animate border_color { duration: coop.theme.durations.fast; }
+        animate container_scale { duration: coop.theme.durations.fast; }
+    }
+
+    states [
+        disabled when !enabled: {
+            i_base.background: coop.theme.brushes.background;
+            i_base.border_color: coop.theme.brushes.border_disabled;
+            i_base.text_color: coop.theme.brushes.foreground_disabled;
+            i_base.icon_color: coop.theme.brushes.foreground_disabled;
+        }
+        pressed when i_base.focus_pressed: {
+            i_base.background: primary ? coop.theme.brushes.primary.darker(coop.theme.state.pressed) : coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            i_base.border_color: coop.theme.brushes.border.darker(coop.theme.state.pressed);
+            i_base.text_color: primary ? coop.theme.brushes.on_primary.darker(coop.theme.state.pressed) : coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_base.container_scale: 0.98;
+        }
+        hover when i_base.has_hover: {
+            i_base.background: primary ? coop.theme.brushes.primary.darker(coop.theme.state.hover) : coop.theme.brushes.background.darker(coop.theme.state.hover);
+            i_base.border_color: coop.theme.brushes.border.darker(coop.theme.state.hover);
+            i_base.text_color: primary ? coop.theme.brushes.on_primary.darker(coop.theme.state.hover) : coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        }
+    ]
+}
+
+// `RoundButton` represents a round fixed sized button with ether an icon or a single character text.
+export RoundButton := Rectangle {
+    // Will be called when the widget is clicked (pressed and then released).
+    callback clicked <=> i_base.clicked;
+
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
+    in property <string> icon;
+
+    // Used to set the display text of the button.
+    in property <string> text: "";
+
+    // If set to false the widget is disabled.
+    in-out property <bool> enabled: true;
+
+    accessible-role: button;
+    width: coop.theme.sizes.medium;
+    height: width;
+    vertical_stretch: 0;
+    horizontal_stretch: 0;
+
+    i_base := ButtonBase {  
+        enabled: root.enabled;
+        background: coop.theme.brushes.background;
+        text_color: coop.theme.brushes.foreground;
+        icon_color: text_color;
+        padding_left: 0px;
+        padding_right: 0px;
+        icon: root.icon;
+        text: root.icon != "" ? "" : root.text;
+
+        animate background { duration: coop.theme.durations.fast; }
+        animate text_color { duration: coop.theme.durations.fast; }
+    }
+
+    states [
+        disabled when !enabled: {
+            i_base.text_color: coop.theme.brushes.foreground_disabled;
+        }
+        pressed when i_base.focus_pressed: {
+            i_base.background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            i_base.text_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+        }
+        hover when i_base.has_hover: {
+            i_base.background: coop.theme.brushes.background.darker(coop.theme.state.hover);
+            i_base.text_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        }
+    ]
+}
+
+// `RoundOutlineButton` represents a round fixed sized button with ether an icon or a single character text and an outline border.
+export RoundOutlineButton := Rectangle {
+    // Will be called when the widget is clicked (pressed and then released).
+    callback clicked <=> i_base.clicked;
+
+    // Used to set an optional icon on the button. Uses material icons check the `mi` global.
+    in property <string> icon;
+
+    // Used to set the display text of the button.
+    in property <string> text: "";
+
+    // If set to  `true` the button will filled with coop.theme.brushes.primary`
+    in property <bool> primary: false;
+
+    // If set to false the widget is disabled.
+    in-out property <bool> enabled: true;
+
+    accessible-role: button;
+    width: coop.theme.sizes.medium;
+    height: width;
+    vertical_stretch: 0;
+    horizontal_stretch: 0;
+
+    i_base := ButtonBase {  
+        enabled: root.enabled;
+      
+        background: primary ? coop.theme.brushes.primary: coop.theme.brushes.background;
+        border_width: 1px;
+        text_color: primary ? coop.theme.brushes.on_primary: coop.theme.brushes.foreground;
+        icon_color: text_color;
+        border_color: coop.theme.brushes.border;
+        padding_left: 0px;
+        padding_right: 0px;
+        icon: root.icon;
+        text: root.icon != "" ? "" : root.text;
+
+        animate background { duration: coop.theme.durations.fast; }
+        animate text_color { duration: coop.theme.durations.fast; }
+        animate icon_color { duration: coop.theme.durations.fast; }
+        animate border_color { duration: coop.theme.durations.fast; }
+    }
+
+    states [
+        disabled when !enabled: {
+            i_base.background: coop.theme.brushes.background;
+            i_base.border_color: coop.theme.brushes.border_disabled;
+            i_base.text_color: coop.theme.brushes.foreground_disabled;
+        }
+        pressed when i_base.focus_pressed: {
+            i_base.background: primary ? coop.theme.brushes.primary.darker(coop.theme.state.pressed) : coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            i_base.border_color: coop.theme.brushes.border.darker(coop.theme.state.pressed);
+        }
+        hover when i_base.has_hover: {
+            i_base.background: primary ? coop.theme.brushes.primary.darker(coop.theme.state.hover) : coop.theme.brushes.background.darker(coop.theme.state.hover);
+            i_base.border_color: coop.theme.brushes.border.darker(coop.theme.state.hover);
+        }
+    ]
+}
+
+import { CenterLayout } from "../layouts/center_layout.slint";
+
+ButtonTest := Rectangle {
+    width: 400px;
+    height: 400px;
+    background: coop.theme.brushes.background;
+
+    CenterLayout {  
+        padding: 16px;
+
+        VerticalLayout {  
+            spacing: 4px;
+
+            Button {  
+                text: "Click me";
+            }
+
+            Button {  
+                text: "Click me";
+                enabled: false;
+            }
+
+            Button {  
+                text: "Toggle theme";
+                primary: true;
+                clicked => { coop.dark-theme = !coop.dark-theme; }
+            }
+
+            OutlineButton {  
+                text: "Click me";
+            }
+
+            OutlineButton {  
+                text: "Click me";
+                enabled: false;
+            }
+
+            OutlineButton {  
+                text: "Click me";
+                primary: true;
+            }
+
+            RoundButton {  
+                text: "A";
+            }
+
+            RoundButton {  
+                text: "A";
+                enabled: false;
+            }
+
+            RoundOutlineButton {  
+                text: "A";
+            }
+
+            RoundOutlineButton {  
+                text: "A";
+                enabled: false;
+            }
+        }
+    }
+}

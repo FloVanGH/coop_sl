@@ -1,0 +1,37 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+// `Spacer` fills the remaining spae in a layout.
+export Spacer := Rectangle {}
+
+// `VerticalSpacerSmall` fills vertical space with `coop.theme.spaces.small`.
+export VerticalSpacerSmall := Spacer {
+    height: coop.theme.spaces.small;
+}
+
+// `VerticalSpacerMedium` fills vertical space with `coop.theme.spaces.medium`.
+export VerticalSpacerMedium := Spacer {
+    height: coop.theme.spaces.medium;
+}
+
+//  `VerticalSpacerLarge` fills vertical space with `coop.theme.spaces.large`.
+export VerticalSpacerLarge := Spacer {
+    height: coop.theme.spaces.large;
+}
+
+// `HorizontalSpacerSmall` fills horizontal space with `coop.theme.spaces.small`.
+export HorizontalSpacerSmall := Spacer {
+    width: coop.theme.spaces.small;
+}
+
+// `HorizontalSpacerMedium` fills horizontal space with `coop.theme.spaces.medium`.
+export HorizontalSpacerMedium := Spacer {
+    width: coop.theme.spaces.medium;
+}
+
+// `HorizontalSpacerLarge` fills horizontal space with `coop.theme.spaces.large`.
+export HorizontalSpacerLarge := Spacer {
+    width: coop.theme.spaces.large;
+}

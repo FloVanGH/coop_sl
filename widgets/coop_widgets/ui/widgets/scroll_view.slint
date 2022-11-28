@@ -1,0 +1,94 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+ScrollIndicator := Rectangle {
+    border_radius: coop.theme.radius.extra_small;
+    background: coop.theme.brushes.foreground;
+    opacity: 0;
+
+    animate opacity { duration: coop.theme.durations.medium; }
+}
+
+// `ScrollView` allows to scroll content that is larger then the given size.
+export ScrollView := Rectangle {
+    // The width of the content view port.
+    in property <length> viewport_width <=> i_flickable.viewport_width;
+
+    // The height of the content view port.
+    in property <length> viewport_height <=> i_flickable.viewport_height;
+
+    // The current view port content x position.
+    in property <length> viewport_x <=> i_flickable.viewport_x;
+
+    // The current view port content x position.
+    in property <length> viewport_y <=> i_flickable.viewport_y;
+
+    // If set to `false` the widget is disabled.
+    in property <bool> enabled: true;
+
+    min_width: coop.theme.sizes.medium;
+    min_height: min_width;
+    horizontal_stretch: 1;
+    vertical_stretch: 1;
+
+    i_flickable := Flickable {
+        interactive: false;
+        width: 100%;
+        height: 100%;
+
+        @children
+    }
+
+    i_ver_scroll := ScrollIndicator {
+        property <length> padding_height: root.height - 2 * coop.theme.spaces.small  - i_hor_scroll.height;
+        property <length> max: root.viewport_height - root.height;
+
+        x: parent.width - width - coop.theme.spaces.small;
+        y:  coop.theme.spaces.small + (padding_height - height) * (-root.viewport_y / max);
+        width: 4px;
+        height: max <= 0phx ? 0phx: padding_height * (root.height / root.viewport_height);
+
+        states [  
+            visible when root.viewport_height > root.height: {
+                opacity: 0.3;
+            }
+        ]
+    }
+
+    i_hor_scroll := ScrollIndicator {
+        property <length> padding_width: root.width - 2 * coop.theme.spaces.small - i_ver_scroll.width;
+        property <length> max: root.viewport_width - root.width;
+
+        x: coop.theme.spaces.small + (padding_width - width) * (-root.viewport_x / max);
+        y: parent.height - height - coop.theme.spaces.small;
+        width: max <= 0phx ? 0phx: padding_width * (root.height / root.viewport_height);
+        height: 4px; 
+
+        states [  
+            visible when root.viewport_width > root.width: {
+                opacity: 0.3;
+            }
+        ]
+    }   
+}
+
+ScrollViewTest := Rectangle {
+    width: 600px;
+    height: 400px;
+
+    ScrollView {
+        width: 100%;
+        height: 100%;
+
+        VerticalLayout {
+            spacing: 4px;
+
+            for i in [0, 1, 2, 3, 4, 5, 6, 7] : Rectangle {
+                height: 200px;
+                background: black;
+            }
+        }
+     }
+}

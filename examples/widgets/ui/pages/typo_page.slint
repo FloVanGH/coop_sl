@@ -5,7 +5,7 @@ import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import {  LabelSmall, LabelMedium, LabelLarge, TitleSmall, TitleMedium, TitleLarge, Spacer, HorizontalSeparator,
-    VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, co } from "../_imports/co_widgets.slint";
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, coop } from "../_imports/coop_widgets.slint";
 
 export TypoPage := Page {
     title: "Typography";
@@ -13,8 +13,8 @@ export TypoPage := Page {
     disabled_check_box: false;
 
     GridLayout {  
-        padding: co.theme.spaces.large;
-        spacing: co.theme.spaces.medium;
+        padding: coop.theme.spaces.large;
+        spacing: coop.theme.spaces.medium;
        
         // Labels
         Row {
@@ -68,14 +68,14 @@ export TypoPage := Page {
             Spacer {}
 
             LabelSmall {  
-                text: "co.theme.typo.label_small";
+                text: "coop.theme.typo.label_small";
             }
 
             Spacer {}
 
             // LabelSmall {  
             //     vertical-alignment: center;
-            //     text: co.theme.typo.label_small.family;
+            //     text: coop.theme.typo.label_small.family;
             // }
 
             // Spacer {}
@@ -89,7 +89,7 @@ export TypoPage := Page {
 
             LabelSmall {  
                 vertical-alignment: center;
-                text: "\{co.theme.typo.label_small.weight}";
+                text: "\{coop.theme.typo.label_small.weight}";
             }
         }
 
@@ -102,14 +102,14 @@ export TypoPage := Page {
             Spacer {}
 
             LabelMedium {  
-                text: "co.theme.typo.label_medium";
+                text: "coop.theme.typo.label_medium";
             }
 
             Spacer {}
 
             // LabelMedium { 
             //     vertical-alignment: center; 
-            //     text: co.theme.typo.label_medium.family;
+            //     text: coop.theme.typo.label_medium.family;
             // }
 
             // Spacer {}
@@ -123,7 +123,7 @@ export TypoPage := Page {
 
             LabelMedium {  
                 vertical-alignment: center;
-                text: "\{co.theme.typo.label_medium.weight}";
+                text: "\{coop.theme.typo.label_medium.weight}";
             }
         }
 
@@ -137,14 +137,14 @@ export TypoPage := Page {
 
             LabelLarge {  
                 vertical-alignment: center;
-                text: "co.theme.typo.label_large";
+                text: "coop.theme.typo.label_large";
             }
 
             Spacer {}
 
             // LabelLarge {  
             //     vertical-alignment: center;
-            //     text: co.theme.typo.label_large.family;
+            //     text: coop.theme.typo.label_large.family;
             // }
 
             // Spacer {}
@@ -157,7 +157,7 @@ export TypoPage := Page {
 
             LabelLarge {  
                 vertical-alignment: center;
-                text: "\{co.theme.typo.label_large.weight}";
+                text: "\{coop.theme.typo.label_large.weight}";
             }
         }
 
@@ -171,14 +171,14 @@ export TypoPage := Page {
 
             TitleSmall {  
                 vertical-alignment: center;
-                text: "co.theme.typo.title_small";
+                text: "coop.theme.typo.title_small";
             }
 
             Spacer {}
 
             // TitleSmall {  
             //     vertical-alignment: center;
-            //     text: co.theme.typo.title_small.family;
+            //     text: coop.theme.typo.title_small.family;
             // }
 
             // Spacer {}
@@ -192,7 +192,7 @@ export TypoPage := Page {
 
             TitleSmall {  
                 vertical-alignment: center;
-                text: "\{co.theme.typo.title_small.weight}";
+                text: "\{coop.theme.typo.title_small.weight}";
             }
         }
 
@@ -206,14 +206,14 @@ export TypoPage := Page {
 
             TitleMedium {  
                 vertical-alignment: center;
-                text: "co.theme.typo.title_medium";
+                text: "coop.theme.typo.title_medium";
             }
 
             Spacer {}
 
             // TitleMedium { 
             //     vertical-alignment: center; 
-            //     text: co.theme.typo.title_medium.family;
+            //     text: coop.theme.typo.title_medium.family;
             // }
 
             // Spacer {}
@@ -227,7 +227,7 @@ export TypoPage := Page {
 
             TitleMedium {  
                 vertical-alignment: center;
-                text: "\{co.theme.typo.title_medium.weight}";
+                text: "\{coop.theme.typo.title_medium.weight}";
             }
         }
 
@@ -241,14 +241,14 @@ export TypoPage := Page {
 
             TitleLarge {  
                 vertical-alignment: center;
-                text: "co.theme.typo.title_large";
+                text: "coop.theme.typo.title_large";
             }
 
             Spacer {}
 
             // TitleLarge {  
             //     vertical-alignment: center;
-            //     text: co.theme.typo.title_large.family;
+            //     text: coop.theme.typo.title_large.family;
             // }
 
             // Spacer {}
@@ -262,7 +262,7 @@ export TypoPage := Page {
 
             TitleLarge {  
                 vertical-alignment: center;
-                text: "\{co.theme.typo.title_large.weight}";
+                text: "\{coop.theme.typo.title_large.weight}";
             }
         }
 

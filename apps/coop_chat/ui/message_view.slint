@@ -1,0 +1,27 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { HeaderBar, ScrollView } from "_imports/coop_widgets.slint";
+
+export global MessageViewAdapter := {
+    property <string> title: "Internal";
+}
+
+export MessageView := Rectangle {
+    horizontal-stretch: 1;
+
+    VerticalLayout {  
+        i_header := HeaderBar {  
+            title:  MessageViewAdapter.title;
+            vertical-stretch: 0;
+        }
+
+        ScrollView {  
+            vertical-stretch: 1;
+
+            VerticalLayout {  
+
+            }
+        }
+    }
+}

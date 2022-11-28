@@ -1,0 +1,43 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+
+// `PopupBorder` can used to draw border and background of a `Popup`.
+export PopupBorder := Rectangle {
+    background: coop.theme.brushes.background_alt;
+    border_radius: coop.theme.radius.medium;
+    border_width: 1px;
+    border_color: coop.theme.brushes.border;
+    clip: true;
+}
+
+// `Popup` is used to show a popup overlay.
+export Popup := PopupWindow {
+    PopupBorder {  
+        @children
+    }
+}
+
+import { Button } from "../widgets/button.slint";
+
+Example := Rectangle {
+    layout := VerticalLayout {  
+        alignment: center;
+        Button {
+            text: "open popup";
+            clicked => { popup.show() }
+        }
+    }
+   
+    popup := Popup {
+        y: layout.height + layout.y;
+        x: layout.x;
+        width: 60px;
+        height: 20px;
+
+        Text {
+            text: "popup content";
+        }
+    }
+}

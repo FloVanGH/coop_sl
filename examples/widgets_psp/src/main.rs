@@ -6,7 +6,12 @@
 
 extern crate alloc;
 
-slint::include_modules!();
+#[allow(clippy::all)]
+mod generated_code {
+    slint::include_modules!();
+}
+
+pub use generated_code::*;
 
 fn create_slint_app() -> App {
     App::new()
@@ -24,7 +29,7 @@ psp::module!("sample_test", 1, 1);
 fn psp_main() {
     psp::enable_home_button();
 
-    slint_psp::init();
+    slint_psp::init(true);
 
     create_slint_app().run();
 }
