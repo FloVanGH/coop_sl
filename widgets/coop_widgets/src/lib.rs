@@ -9,7 +9,10 @@ This crate provides a custom set of widgets for [Slint](https://slint-ui.com) wi
 
 ## Component overview
 
+* [Building Blocks](docs::building_blocks)
+* [Coop](docs::coop)
 * [Components](docs::components)
+* [Keyboard](docs::keyboard)
 * [Layouts](docs::layouts)
 * [Widgets](docs::widgets)
 
