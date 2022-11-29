@@ -19,7 +19,8 @@ export SideBarView := SideBar {
             placeholder: "Find channel";
             text <=> SideBarViewAdapter.channel_search;
             icon: mi.search;
-            has_clear: true;
+            action_icon: mi.clear;
+            action => { text = ""; }
         }
     }
    
