@@ -298,7 +298,7 @@ export BasicsPage := Page {
             Spacer {}
 
             ColumnTitle {  
-                text: "Icon+HasClear";
+                text: "Icon + Action Icon";
             }
 
             Spacer {}
@@ -328,12 +328,13 @@ export BasicsPage := Page {
             TextLine {
                 text <=> AppManager.text_line-two;
                 icon: mi.format-list-numbered;
-                has-clear: true;
+                action_icon: mi.clear;
                 enabled: AppManager.widgets_enabled;
                 clickable: AppManager.keyboard_enabled;
                 placeholder: "Insert a float";
                 has_error: !text.is_float();
 
+                action => { text = "" }
                 clicked => { root.open_keyboard("text_line", text, placeholder, icon); }
             }
 
@@ -342,10 +343,11 @@ export BasicsPage := Page {
             TextLine {
                 text <=> AppManager.text_line_three;
                 icon: mi.search;
-                has-clear: true;
+                action_icon: mi.clear;
                 enabled: AppManager.widgets_enabled;
                 clickable: AppManager.keyboard_enabled;
 
+                action => { text = "" }
                 clicked => { root.open_keyboard("text_line_three", text, placeholder, icon); }
             }
 

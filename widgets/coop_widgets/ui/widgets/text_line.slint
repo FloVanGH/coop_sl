@@ -5,7 +5,9 @@ import { coop } from "../coop/coop.slint";
 import { FocusBorder } from "../components/components.slint";
 import { mi, MaterialIcon } from "../assets/icons/material_icons.slint";
 
-ClearButton := TouchArea {
+ActionButton := TouchArea {
+    in property <string> icon <=> i_icon.icon;
+
     width: i_icon.width;
     height: i_icon.height;
 
@@ -41,14 +43,17 @@ export TextLine := Rectangle {
     // Is emmicalledted if the `TextLine` is clicked and `clickable` is set to `true`.
     callback clicked;
 
+    // Is called after the action icon is clicked;
+    callback action;
+
     // Defines the icon that is displayed in front of the text.
     in property <string> icon <=> i_icon.icon;
 
     // Defines a text that is displayed if text is empty.
     in property <string> placeholder: "placeholder";
 
-    // If set to true a clear all button is displayed.
-    in property <bool> has_clear: false;
+    // Defines the icon of the action button.
+    in property <string> action_icon;
 
     // If set to `true` the text cannot be selected or changed by keyboard input.
     in property read_only <=> i_input.read-only;
@@ -147,10 +152,11 @@ export TextLine := Rectangle {
                 }
             }
     
-            if(has_clear) : ClearButton {
+            if(root.action_icon != "") : ActionButton {
+                icon: root.action_icon;
                 enabled: root.enabled;
                 y: (parent.height - height) / 2;
-                clicked => { text = ""; }
+                clicked => { root.action(); }
             }
         }
     }

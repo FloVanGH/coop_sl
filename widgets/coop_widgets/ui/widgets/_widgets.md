@@ -584,7 +584,7 @@ export SelectableBase := FocusTouchArea
 ### Example
 
 ```slint
-import { TextLine } from "_imports/coop_widgets.slint";
+import { SelectableBase } from "_imports/coop_widgets.slint";
 
 MySelectable := Rectangle {
     in-out property <bool> selected <=> i_base.selected;
@@ -639,7 +639,7 @@ export TextLine := Rectangle
 
 * **in `icon`** (**string**): Defines the icon that is displayed in front of the text.
 * **in `placeholder`** (**string**): Defines a text that is displayed if text is empty.
-* **in `has_clear`** (**bool**): If set to true a clear all button is displayed.
+* **in `action_icon`** (**string**): Defines the icon of the action button.
 * **in `read_only`** (**bool**): If set to `true` the text cannot be selected or changed by keyboard input.
 * **in `clickable`** (**bool**): If set to `true` the widget can call the  `clicked` callback.
 * **in `input_type`** (**InputType**): The text line ca be used as text or password input.
@@ -652,6 +652,7 @@ export TextLine := Rectangle
 
 * **`edited(string)`**:  Is called after text is changed.
 * **`clicked()`**: Will be called when the widget is clicked (pressed and then released).
+* **`action()`**: Is called after the action icon is clicked;
 
 ### Example
 
