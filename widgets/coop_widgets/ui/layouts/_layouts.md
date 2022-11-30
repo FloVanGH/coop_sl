@@ -30,3 +30,40 @@ Example := Rectangle {
     }
 }
 ```
+
+## `FormElement`
+
+`FormElement` displays an title on its children.
+
+### Properties
+
+* **in `title`** (**string**): Defines the title of the element.
+
+### Example
+
+```slint
+FormElementTest := Rectangle {
+    width: 300px;
+    height: 200px;
+
+    VerticalLayout {  
+        padding: 16px;
+        spacing: 8px;
+
+        alignment: start;
+        FormElement {   
+            title: "Name";
+    
+            TextLine { 
+
+            }
+        }
+
+        FormElement {   
+            title: "Address";
+    
+            TextLine { }
+        }
+    }
+}
+```

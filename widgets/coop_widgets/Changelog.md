@@ -39,6 +39,7 @@ SPDX-License-Identifier: MIT
 ### Layouts
 
 * `CenterLayout`
+* `FormElement`
 * `VerticalSeparator`
 * `HorizontalSeparator`
 * `HorizontalSeparator`
