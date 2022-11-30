@@ -357,7 +357,15 @@ export BasicsPage := Page {
                 placeholder: "Insert a password";
                 input_type: password;
                 text: "password";
+                action_icon: input_type == InputType.password ? mi.visibility : mi.visibility-off;
                 enabled: AppManager.widgets_enabled;
+                action => { 
+                    if(input_type == InputType.password) {
+                        input_type = InputType.text
+                    } else {
+                        input_type = InputType.password;
+                    }
+                }
             }
         }
 
