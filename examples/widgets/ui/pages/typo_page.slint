@@ -4,7 +4,7 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import {  LabelSmall, LabelMedium, LabelLarge, TitleSmall, TitleMedium, TitleLarge, Spacer, HorizontalSeparator,
+import {  LabelSmall, LabelMedium, LabelLarge, LabelError, TitleSmall, TitleMedium, TitleLarge, Spacer, HorizontalSeparator,
     VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, coop } from "../_imports/coop_widgets.slint";
 
 export TypoPage := Page {
@@ -88,6 +88,40 @@ export TypoPage := Page {
             Spacer {}
 
             LabelSmall {  
+                vertical-alignment: center;
+                text: "\{coop.theme.typo.label_small.weight}";
+            }
+        }
+
+        // LabelError
+        Row {
+            LabelError {  
+                text: "LabelError";
+            }
+
+            Spacer {}
+
+            LabelError {  
+                text: "coop.theme.typo.label_small";
+            }
+
+            Spacer {}
+
+            // LabelSmall {  
+            //     vertical-alignment: center;
+            //     text: coop.theme.typo.label_small.family;
+            // }
+
+            // Spacer {}
+
+            LabelError { 
+                vertical-alignment: center; 
+                text: "12px";
+            }
+
+            Spacer {}
+
+            LabelError {  
                 vertical-alignment: center;
                 text: "\{coop.theme.typo.label_small.weight}";
             }
