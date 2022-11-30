@@ -1,2 +1,143 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
+
+
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { Spacer, HorizontalSeparator, ScrollView, List, ListView, coop, GroupItemModel, Switch, HeaderBar, mi } from "../_imports/coop_widgets.slint";
+
+export ListPage := GridLayout {
+    Row {
+        i_header_bar := HeaderBar {
+            title: "Lists";
+            VerticalLayout {  
+                alignment: center;
+
+                Switch {
+                    on_icon: mi.lightbulb;
+                    off_icon: mi.nights_stay;
+                    selected: !coop.dark_theme;
+                    selected_changed(selected) => {
+                        coop.dark_theme = !selected;
+                    }
+                }
+            }    
+        }
+    }
+
+    Row {
+        GridLayout {  
+            padding: coop.theme.spaces.large;
+            spacing: coop.theme.spaces.medium;
+    
+            // Button
+            Row {
+                RowTitle {
+                    text: "Button";
+                }
+            }
+    
+            Row {
+                ColumnTitle {  
+                    text: "List (no scroll)";
+                }
+    
+                Spacer {}
+    
+                ColumnTitle {  
+                    text: "ListView (scrolling)";
+                }
+
+                Spacer {}
+
+                ColumnTitle {  
+                    text: "List with groups";
+                }
+    
+                Spacer {}
+    
+                Spacer {}
+    
+                ColumnTitle {  
+                    text: "ScrollView";
+                }
+            }
+    
+            Row {
+                HorizontalSeparator {
+                    colspan: 8; 
+                }
+            }
+    
+            Row {
+                i_list := List {
+                    property <GroupItemModel> list: {
+                        items: [
+                            { text: "Item 1" },
+                            { text: "Item 2" },
+                            { text: "Item 3" },
+                            { text: "Item 4" },
+                            { text: "Item 5" },
+                            { text: "Item 6" },
+                            { text: "Item 7" },
+                            { text: "Item 8" },
+                        ]
+                    };
+                    model: [list];
+                }
+    
+                Spacer {}
+    
+                ListView {
+                    height: 100px;
+                    model: i_list.model;
+                }
+
+                Spacer {}
+
+                List {
+                    property <GroupItemModel> list_one: {
+                        text: "Group 1",
+                        items: [
+                            { text: "Item 1" },
+                            { text: "Item 2" },
+                            { text: "Item 3" },
+                        ]
+                    };
+                    property <GroupItemModel> list_two: {
+                        text: "Group 2",
+                        items: [
+                            { text: "Item 1" },
+                            { text: "Item 2" },
+                            { text: "Item 3" },
+                        ]
+                    };
+                    property <GroupItemModel> list_three: {
+                        text: "Group 3",
+                        items: [
+                            { text: "Item 1" },
+                            { text: "Item 2" },
+                            { text: "Item 3" },
+                        ]
+                    };
+                    model: [list_one, list_two, list_three];
+                }
+    
+                Spacer {}
+    
+                ScrollView {
+                    height: 100px;
+
+                    VerticalLayout {
+                        spacing: 4px;
+            
+                        for i in [0, 1, 2, 3, 4, 5, 6, 7] : Rectangle {
+                            height: 50px;
+                            background: mod(i, 2) == 0 ? black : gray;
+                        }
+                    }
+                }
+            }
+        }
+    } 
+}

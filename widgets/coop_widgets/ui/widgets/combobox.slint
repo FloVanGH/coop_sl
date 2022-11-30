@@ -5,8 +5,8 @@ import { coop } from "../coop/coop.slint";
 import { FocusBorder } from "../components/focus_border.slint";
 import { mi, MaterialIcon } from "../assets/icons/material_icons.slint";
 import { Popup } from "../components/popup.slint";
-import { LabelLarge } from "../components/label.slint";
-import { List, ParentItemModel, ItemModel } from "../widgets/list.slint";
+import { LargeLabel } from "../components/label.slint";
+import { List, GroupItemModel, ItemModel } from "../widgets/list.slint";
 
 // `ComboBox` enables users to select a value from a list inside of a `Popuup`.
 export ComboBox := Rectangle {
@@ -47,7 +47,7 @@ export ComboBox := Rectangle {
             padding_right: coop.theme.spaces.medium;
             spacing: coop.theme.spaces.small;     
 
-            if(root.current_index >= 0 && root.current_index < model.length) : LabelLarge {  
+            if(root.current_index >= 0 && root.current_index < model.length) : LargeLabel {  
                 vertical-alignment: center;
                 text: root.model[root.current-index].text;
                 color: i_container.foreground;
@@ -55,7 +55,7 @@ export ComboBox := Rectangle {
             }
 
             // placeholder
-            if(root.current_index < 0) : LabelLarge {
+            if(root.current_index < 0) : LargeLabel {
                 text <=> root.placeholder;
                 vertical-alignment: center;
                 color: coop.theme.brushes.border;
@@ -111,7 +111,7 @@ export ComboBox := Rectangle {
             padding: 1px;
 
             List {  
-                property <ParentItemModel> inner_model: {
+                property <GroupItemModel> inner_model: {
                     text: "",
                     items: root.model,
                 };

@@ -4,11 +4,10 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, Spacer, HorizontalSeparator,
-    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, Popup, LabelSmall, mi, coop } from "../_imports/coop_widgets.slint";
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, Spacer, HorizontalSeparator, ComboBox,
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, Popup, SmallLabel, mi, coop } from "../_imports/coop_widgets.slint";
 
 import { AppManager } from "../app_manager.slint";
-import { ComboBox } from "../../../../widgets/coop_widgets/ui/widgets/widgets.slint";
 
 export BasicsPage := Page {
     title: "Basics";
@@ -659,7 +658,7 @@ export BasicsPage := Page {
                     
                     layout := VerticalLayout {  
                         padding: coop.theme.spaces.medium;
-                        LabelSmall {
+                        SmallLabel {
                             text: "Popup content";
                         }
                     }

@@ -3,7 +3,7 @@
 
 import { coop } from "../coop/coop.slint";
 import { FocusBorder } from "../components/focus_border.slint";
-import { LabelSmall } from "../components/label.slint";
+import { SmallLabel } from "../components/label.slint";
 import { Switch } from "../widgets/selectables.slint";
 
 // `Slider` allow to make selections from a range of values.
@@ -163,7 +163,7 @@ SliderExample := Rectangle {
             }
         }
       
-        LabelSmall { 
+        SmallLabel { 
             text: "\{slider.value}";
             horizontal_alignment: center;
         }

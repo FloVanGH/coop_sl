@@ -6,7 +6,7 @@ use std::rc::Rc;
 
 use crate::{
     controller::{ChannelType, SideBarController},
-    mi, App, ItemModel, ParentItemModel, SideBarViewAdapter,
+    mi, App, GroupItemModel, ItemModel, SideBarViewAdapter,
 };
 
 pub struct SideBarViewController {
@@ -54,11 +54,11 @@ impl SideBarViewController {
         }));
 
         let channels = Rc::new(VecModel::default());
-        channels.push(ParentItemModel {
+        channels.push(GroupItemModel {
             text: group_channels_title.into(),
             items: group_channels.into(),
         });
-        channels.push(ParentItemModel {
+        channels.push(GroupItemModel {
             text: direct_channels_title.into(),
             items: direct_channels.into(),
         });

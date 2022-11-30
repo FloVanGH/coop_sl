@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { SideBar, ListView, TextLine, ParentItemModel, coop, mi } from "_imports/coop_widgets.slint";
+import { SideBar, ListView, TextLine, GroupItemModel, coop, mi } from "_imports/coop_widgets.slint";
 
 export global SideBarViewAdapter := {
     property <string> channel_search;
-    property<[ParentItemModel]> channels;
+    property<[GroupItemModel]> channels;
 }
 
 export SideBarView := SideBar {

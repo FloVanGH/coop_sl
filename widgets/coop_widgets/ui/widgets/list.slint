@@ -5,7 +5,7 @@ import { coop } from "../coop/coop.slint";
 
 import { ScrollView } from "scroll_view.slint";
 import { SelectableBase } from "selectables.slint";
-import { LabelLarge, FocusBorder } from "../components/components.slint";
+import { LargeLabel, FocusBorder } from "../components/components.slint";
 import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
 // `ItemModel` represents a list item used by `List` and `ListView`.
@@ -20,8 +20,8 @@ export struct ItemModel := {
     trailing_icon: string,
 }
 
-// `ParentItemModel` represents a list item with list item children used by `List` and `ListView`.
-export struct ParentItemModel := {
+// `GroupItemModel` represents a list item with list item children used by `List` and `ListView`.
+export struct GroupItemModel := {
     // Defines the text of the item.
     text: string,
 
@@ -68,7 +68,7 @@ Item := TouchArea {
                 icon_color: root.foreground;
             }
     
-            LabelLarge {  
+            LargeLabel {  
                 text <=> root.text;
                 vertical_alignment: center;
                 color: root.foreground;      
@@ -103,10 +103,10 @@ Item := TouchArea {
     animate foreground { duration: coop.theme.durations.fast; }
 }
 
-// Delegate for a `ParentItemModel` it can display a `text` and a list of `ItemModels`.
-ParentItem := Rectangle {
+// Delegate for a `GroupItemModel` it can display a `text` and a list of `ItemModels`.
+GroupItem := Rectangle {
     private property <brush> foreground: coop.theme.brushes.foreground;
-    in property <ParentItemModel> model;
+    in property <GroupItemModel> model;
     in property <int> item_index;
     in-out property <{ parent: int, item: int }> current_item;
     in-out property <bool> expanded: true;
@@ -138,7 +138,7 @@ ParentItem := Rectangle {
                     ]
                 }
 
-                LabelLarge  {  
+                LargeLabel  {  
                     color: root.foreground;
                     text: model.text;
                     vertical_alignment: center;
@@ -207,7 +207,7 @@ export List := VerticalLayout {
     callback current_item_changed({ parent: int, item: int });
 
     // Defines the list of models.
-    in property <[ParentItemModel]> model;
+    in property <[GroupItemModel]> model;
 
     // Defines the current selected item.
     in-out property <{ parent: int, item: int }> current_item;
@@ -215,7 +215,7 @@ export List := VerticalLayout {
     spacing: coop.theme.spaces.medium;
     
     for parent_item[parent_index] in model: VerticalLayout {   
-        if(model.length > 1) : ParentItem {
+        if(model.length > 1) : GroupItem {
             model: parent_item;
             item_index: parent_index;
             current_item <=> root.current_item;
@@ -248,7 +248,7 @@ export ListView := Rectangle {
     callback current_item_changed <=> i_list.current_item_changed;
 
     // Defines the list of models.
-    in property <[ParentItemModel]> model <=> i_list.model;
+    in property <[GroupItemModel]> model <=> i_list.model;
 
     // Defines the current selected item;
     in-out property <{ parent: int, item: int }> current_item <=> i_list.current_item;
@@ -265,7 +265,7 @@ ListViewTest := HorizontalLayout {
     width: 600px;
     height: 400px;
 
-    property <ParentItemModel> parent: {
+    property <GroupItemModel> parent: {
         text: "Parent 1",
         items: [
             { leading_icon: mi.add, text: "Item", trailing_icon: ""},
@@ -275,7 +275,7 @@ ListViewTest := HorizontalLayout {
         ]
     };
 
-    property <ParentItemModel> parent_two: {
+    property <GroupItemModel> parent_two: {
         text: "Parent 2",
         items: [
             { leading_icon: "", text: "Item", trailing_icon: ""},
@@ -309,7 +309,7 @@ ListViewTest := HorizontalLayout {
     }
 
     List {
-        property <ParentItemModel> items: {
+        property <GroupItemModel> items: {
             text: "Parent 1",
             items: [
                 { leading_icon: mi.add, text: "Item", trailing_icon: ""},

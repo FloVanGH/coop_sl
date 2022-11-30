@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { SideBar, List, ParentItemModel } from "_imports/coop_widgets.slint";
+import { SideBar, List, GroupItemModel } from "_imports/coop_widgets.slint";
 
 export SideBarView := SideBar {
-    property <[ParentItemModel]> navigation_items <=> i_navigation.model;
+    property <[GroupItemModel]> navigation_items <=> i_navigation.model;
     property <{ parent: int, item: int }> current_item <=> i_navigation.current_item;
 
     width: 200px;

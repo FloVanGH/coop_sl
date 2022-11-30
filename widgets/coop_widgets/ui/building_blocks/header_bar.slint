@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 import { coop } from "../coop/coop.slint";
-import { TitleLarge } from "../components/components.slint";
+import { LargeTitle } from "../components/components.slint";
 import { Spacer } from "../layouts/layouts.slint";
 
 // `HeaderBar` is a bar with a title and a content area.
@@ -17,7 +17,7 @@ export HeaderBar := HorizontalLayout {
     padding_bottom: coop.theme.spaces.small;
     height: coop.theme.sizes.large;
 
-    i_title := TitleLarge {  
+    i_title := LargeTitle {  
         text: root.title;
         vertical-alignment: center;
         horizontal_alignment: left;

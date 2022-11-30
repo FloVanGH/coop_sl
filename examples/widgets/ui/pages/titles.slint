@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { LabelMedium, LabelLarge, coop } from "../_imports/coop_widgets.slint";
+import { MediumLabel, LargeLabel, coop } from "../_imports/coop_widgets.slint";
 
-export RowTitle := LabelLarge {
+export RowTitle := LargeLabel {
     height: 18px;
 }
 
-export ColumnTitle := LabelMedium {
+export ColumnTitle := MediumLabel {
     height: 14px;
     color: coop.theme.brushes.foreground_disabled;
 }

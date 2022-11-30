@@ -84,8 +84,8 @@ MyRect := Rectangle {
 import { coop } from "_imports/coop_widgets.slint";
 
 MyText := Text {
-   font_size: coop.theme.typo.label_large.size;
-   font_weight: coop.theme.typo.label_large.weight;
+   font_size: coop.theme.typo.large_label.size;
+   font_weight: coop.theme.typo.large_label.weight;
 }
 ```
 

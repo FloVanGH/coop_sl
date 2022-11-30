@@ -394,9 +394,9 @@ Example := Example :=  Rectangle {
 * **`text`** (**string**): Defines the text of the item.
 * **`trailing_icon`** (**string**): Defines the icon displayed right of the text.
 
-## struct `ParentItemModel`
+## struct `GroupItemModel`
 
-`ParentItemModel` represents a list item with list item children used by `List` and `ListView`.
+`GroupItemModel` represents a list item with list item children used by `List` and `ListView`.
 
 ### Fields
 
@@ -413,7 +413,7 @@ export List := VerticalLayout
 
 ### Properties
 
-* **in `model`** (**[ParentItemModel]**: Defines the list of models.
+* **in `model`** (**[GroupItemModel]**: Defines the list of models.
 * **in-out `current_item`** (**{ parent: int, item: int }**): Defines the current selected item.
 
 ### Callbacks
@@ -430,7 +430,7 @@ Example := CenterLayout {
     height: 400px;
 
     List {
-        property <ParentItemModel> items: {
+        property <GroupItemModel> items: {
             text: "Parent 1",
             items: [
                 { leading_icon: mi.add, text: "Item", trailing_icon: ""},
@@ -456,7 +456,7 @@ export List := Rectangle
 
 ### Properties
 
-* **in `model`** (**[ParentItemModel]**: Defines the list of models.
+* **in `model`** (**[GroupItemModel]**: Defines the list of models.
 * **in-out `current_item`** (**{ parent: int, item: int }**): Defines the current selected item.
 
 ### Callbacks
@@ -473,7 +473,7 @@ Example := CenterLayout {
     height: 400px;
 
     ListView {
-        property <ParentItemModel> items: {
+        property <GroupItemModel> items: {
             text: "Parent 1",
             items: [
                 { leading_icon: mi.add, text: "Item", trailing_icon: ""},

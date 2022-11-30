@@ -4,7 +4,7 @@
 import { coop } from "../coop/coop.slint";
 import { FocusBorder } from "../components/focus_border.slint";
 import { FocusTouchArea } from "../components/focus_touch_area.slint";
-import { LabelSmall } from "../components/label.slint";
+import { SmallLabel } from "../components/label.slint";
 import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
 // `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
@@ -78,7 +78,7 @@ export CheckBox := Rectangle {
                 } 
             }
     
-            i_label := LabelSmall { 
+            i_label := SmallLabel { 
                 horizontal_alignment: left;
                 vertical_alignment: center;
                 vertical_stretch: 1;

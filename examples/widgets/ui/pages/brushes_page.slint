@@ -1,2 +1,356 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
+
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import {  MediumLabel, Spacer, HorizontalSeparator, coop } from "../_imports/coop_widgets.slint";
+
+BrushRect := Rectangle {
+    width: coop.theme.sizes.small;
+    height: width;
+    border_radius: coop.theme.radius.medium;
+    border_width: 1px;
+    border_color: coop.theme.brushes.border;
+}
+
+export BrushesPage := Page {
+    title: "Brushes";
+    keyboard_check_box: false;
+    disabled_check_box: false;
+
+    GridLayout {  
+        padding: coop.theme.spaces.large;
+        spacing: coop.theme.spaces.medium;
+       
+        // Labels
+        Row {
+            RowTitle {
+                text: "Brushes";
+            }
+        }
+
+        Row {
+            ColumnTitle {  
+                text: "Brush";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "key";
+            }
+
+            Spacer {}
+
+            ColumnTitle {  
+                text: "description";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 9; 
+            }
+        }
+
+        // background
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.background;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.background";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "background brush of the window";
+                vertical_alignment: center;
+            }
+        }
+
+        // background_alt
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.background_alt;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.background_alt";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "alternative background brush";
+                vertical_alignment: center;
+            }
+        }
+
+        // foreground
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.foreground;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.foreground";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "common foreground brush e.g. for text";
+                vertical_alignment: center;
+            }
+        }
+
+        // foreground_disabled
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.foreground_disabled;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.foreground_disabled";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "common foreground for disabled elements";
+                vertical_alignment: center;
+            }
+        }
+
+        // surface
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.surface;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.surface";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "widget surface brush e.g. used by button";
+                vertical_alignment: center;
+            }
+        }
+
+        // surface_disabled
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.surface_disabled;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.surface_disabled";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "widget surface brush of disabled widgets";
+                vertical_alignment: center;
+            }
+        }
+
+        // on_surface
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.on_surface;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.on_surface";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "content elements on surface background";
+                vertical_alignment: center;
+            }
+        }
+
+        // primary
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.primary;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.primary";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "defines the accent brush";
+                vertical_alignment: center;
+            }
+        }
+
+        // on_primary
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.on_primary;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.on_primary";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "content elements on primary background";
+                vertical_alignment: center;
+            }
+        }
+
+        // border
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.border;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.border";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "brush of borders";
+                vertical_alignment: center;
+            }
+        }
+
+        // border_disabled
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.border_disabled;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.border_disabled";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "brush of disabled borders";
+                vertical_alignment: center;
+            }
+        }
+
+        // state
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.state;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.state";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "helper brush for state visualization (used with opactiy)";
+                vertical_alignment: center;
+            }
+        }
+
+        // shadow
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.shadow;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.shadow";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "default drop shadow brush";
+                vertical_alignment: center;
+            }
+        }
+
+        // shadow
+        Row {
+            BrushRect {  
+                background: coop.theme.brushes.error;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "coop.theme.brushes.error";
+                vertical_alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {  
+                text: "brush for error representation elements";
+                vertical_alignment: center;
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
+    }
+}

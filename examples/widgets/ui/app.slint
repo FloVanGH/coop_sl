@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { CoopWindow, KeyboardPage, KeyboardAdapter, ParentItemModel, coop } from "_imports/coop_widgets.slint";
-import { BasicsPage, TypoPage } from "pages/pages.slint";
+import { CoopWindow, KeyboardPage, KeyboardAdapter, GroupItemModel, coop } from "_imports/coop_widgets.slint";
+import { BasicsPage, TypoPage, BrushesPage, ListPage } from "pages/pages.slint";
 import { AppManager } from "app_manager.slint"; 
 import { SideBarView } from "side_bar_view.slint";
 
@@ -13,7 +13,7 @@ export App := CoopWindow {
     min-width: 1000px;
     title: "Widgets gallery";
 
-    Rectangle {  
+    Rectangle {
         background: coop.theme.brushes.background;
     }
 
@@ -24,18 +24,19 @@ export App := CoopWindow {
 
         HorizontalLayout {   
             i_side_bar := SideBarView {
-                property <ParentItemModel> widgets: {
+                property <GroupItemModel> widgets: {
                     text: "Widgets",
                     items: [
-                        { leading_icon: "", text: "Basics", trailing_icon: ""},
+                        { text: "Basics" },
+                        { text: "Lists" },
                     ]
                 };
 
-                property <ParentItemModel> resources: {
+                property <GroupItemModel> resources: {
                     text: "Resources",
                     items: [
-                        // { leading_icon: "", text: "Brushes", trailing_icon: ""},
-                        { leading_icon: "", text: "Typography", trailing_icon: ""},
+                        { text: "Brushes" },
+                        { text: "Typography" },
                     ]
                 };
   
@@ -45,7 +46,9 @@ export App := CoopWindow {
             if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {
                 open_keyboard(key, text, placeholder, icon) => { keyboard_page.open-keyboard(key, text, placeholder, icon); }
             }
-            if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : TypoPage {}
+            if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 1) : ListPage {}
+            if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : BrushesPage {}
+            if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 1) : TypoPage {}
         }
     }
 }  

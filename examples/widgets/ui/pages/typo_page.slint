@@ -4,7 +4,7 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import {  LabelSmall, LabelMedium, LabelLarge, LabelError, TitleSmall, TitleMedium, TitleLarge, Spacer, HorizontalSeparator,
+import {  SmallLabel, MediumLabel, LargeLabel, ErrorLabel, SmallTitle, MediumTitle, LargeTitle, Spacer, HorizontalSeparator,
     VerticalSpacerMedium, TextLine, CheckBox, Switch, mi, coop } from "../_imports/coop_widgets.slint";
 
 export TypoPage := Page {
@@ -59,244 +59,244 @@ export TypoPage := Page {
             }
         }
 
-        // LabelSmall
+        // SmallLabel
         Row {
-            LabelSmall {  
-                text: "LabelSmall";
+            SmallLabel {  
+                text: "SmallLabel";
             }
 
             Spacer {}
 
-            LabelSmall {  
-                text: "coop.theme.typo.label_small";
+            SmallLabel {  
+                text: "coop.theme.typo.small_label";
             }
 
             Spacer {}
 
-            // LabelSmall {  
+            // SmallLabel {  
             //     vertical-alignment: center;
-            //     text: coop.theme.typo.label_small.family;
+            //     text: coop.theme.typo.small_label.family;
             // }
 
             // Spacer {}
 
-            LabelSmall { 
+            SmallLabel { 
                 vertical-alignment: center; 
                 text: "12px";
             }
 
             Spacer {}
 
-            LabelSmall {  
+            SmallLabel {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.label_small.weight}";
+                text: "\{coop.theme.typo.small_label.weight}";
             }
         }
 
-        // LabelError
+        // ErrorLabel
         Row {
-            LabelError {  
-                text: "LabelError";
+            ErrorLabel {  
+                text: "ErrorLabel";
             }
 
             Spacer {}
 
-            LabelError {  
-                text: "coop.theme.typo.label_small";
+            ErrorLabel {  
+                text: "coop.theme.typo.small_label";
             }
 
             Spacer {}
 
-            // LabelSmall {  
+            // SmallLabel {  
             //     vertical-alignment: center;
-            //     text: coop.theme.typo.label_small.family;
+            //     text: coop.theme.typo.small_label.family;
             // }
 
             // Spacer {}
 
-            LabelError { 
+            ErrorLabel { 
                 vertical-alignment: center; 
                 text: "12px";
             }
 
             Spacer {}
 
-            LabelError {  
+            ErrorLabel {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.label_small.weight}";
+                text: "\{coop.theme.typo.small_label.weight}";
             }
         }
 
-        // LabelMedium
+        // MediumLabel
         Row {
-            LabelMedium {  
-                text: "LabelMedium";
+            MediumLabel {  
+                text: "MediumLabel";
             }
 
             Spacer {}
 
-            LabelMedium {  
-                text: "coop.theme.typo.label_medium";
+            MediumLabel {  
+                text: "coop.theme.typo.medium_label";
             }
 
             Spacer {}
 
-            // LabelMedium { 
+            // MediumLabel { 
             //     vertical-alignment: center; 
-            //     text: coop.theme.typo.label_medium.family;
+            //     text: coop.theme.typo.medium_label.family;
             // }
 
             // Spacer {}
 
-            LabelMedium {  
+            MediumLabel {  
                 vertical-alignment: center;
                 text: "12px";
             }
 
             Spacer {}
 
-            LabelMedium {  
+            MediumLabel {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.label_medium.weight}";
+                text: "\{coop.theme.typo.medium_label.weight}";
             }
         }
 
-        // LabelLarge
+        // LargeLabel
         Row {
-            LabelLarge {  
-                text: "LabelLarge";
+            LargeLabel {  
+                text: "LargeLabel";
             }
 
             Spacer {}
 
-            LabelLarge {  
+            LargeLabel {  
                 vertical-alignment: center;
-                text: "coop.theme.typo.label_large";
+                text: "coop.theme.typo.large_label";
             }
 
             Spacer {}
 
-            // LabelLarge {  
+            // LargeLabel {  
             //     vertical-alignment: center;
-            //     text: coop.theme.typo.label_large.family;
+            //     text: coop.theme.typo.large_label.family;
             // }
 
             // Spacer {}
 
-            LabelLarge {  
+            LargeLabel {  
                 text: "14px";
             }
 
             Spacer {}
 
-            LabelLarge {  
+            LargeLabel {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.label_large.weight}";
+                text: "\{coop.theme.typo.large_label.weight}";
             }
         }
 
-        // TitleSmall
+        // SmallTitle
         Row {
-            TitleSmall {  
-                text: "TitleSmall";
+            SmallTitle {  
+                text: "SmallTitle";
             }
 
             Spacer {}
 
-            TitleSmall {  
+            SmallTitle {  
                 vertical-alignment: center;
-                text: "coop.theme.typo.title_small";
+                text: "coop.theme.typo.small_title";
             }
 
             Spacer {}
 
-            // TitleSmall {  
+            // SmallTitle {  
             //     vertical-alignment: center;
-            //     text: coop.theme.typo.title_small.family;
+            //     text: coop.theme.typo.small_title.family;
             // }
 
             // Spacer {}
 
-            TitleSmall {  
+            SmallTitle {  
                 vertical-alignment: center;
                 text: "16px";
             }
 
             Spacer {}
 
-            TitleSmall {  
+            SmallTitle {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.title_small.weight}";
+                text: "\{coop.theme.typo.small_title.weight}";
             }
         }
 
-        // TitleMedium
+        // MediumTitle
         Row {
-            TitleMedium {  
-                text: "TitleMedium";
+            MediumTitle {  
+                text: "MediumTitle";
             }
 
             Spacer {}
 
-            TitleMedium {  
+            MediumTitle {  
                 vertical-alignment: center;
-                text: "coop.theme.typo.title_medium";
+                text: "coop.theme.typo.medium_title";
             }
 
             Spacer {}
 
-            // TitleMedium { 
+            // MediumTitle { 
             //     vertical-alignment: center; 
-            //     text: coop.theme.typo.title_medium.family;
+            //     text: coop.theme.typo.medium_title.family;
             // }
 
             // Spacer {}
 
-            TitleMedium {  
+            MediumTitle {  
                 vertical-alignment: center;
                 text: "20px";
             }
 
             Spacer {}
 
-            TitleMedium {  
+            MediumTitle {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.title_medium.weight}";
+                text: "\{coop.theme.typo.medium_title.weight}";
             }
         }
 
-        // TitleLarge
+        // LargeTitle
         Row {
-            TitleLarge {  
-                text: "TitleLarge";
+            LargeTitle {  
+                text: "LargeTitle";
             }
 
             Spacer {}
 
-            TitleLarge {  
+            LargeTitle {  
                 vertical-alignment: center;
-                text: "coop.theme.typo.title_large";
+                text: "coop.theme.typo.large_title";
             }
 
             Spacer {}
 
-            // TitleLarge {  
+            // LargeTitle {  
             //     vertical-alignment: center;
-            //     text: coop.theme.typo.title_large.family;
+            //     text: coop.theme.typo.large_title.family;
             // }
 
             // Spacer {}
 
-            TitleLarge {  
+            LargeTitle {  
                 vertical-alignment: center;
                 text: "24px";
             }
 
             Spacer {}
 
-            TitleLarge {  
+            LargeTitle {  
                 vertical-alignment: center;
-                text: "\{coop.theme.typo.title_large.weight}";
+                text: "\{coop.theme.typo.large_title.weight}";
             }
         }
 

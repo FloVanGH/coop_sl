@@ -104,9 +104,9 @@ export TextLine := Rectangle {
                     height: 100%;
                     color: coop.theme.brushes.foreground;
                     vertical-alignment: center;
-                    font_size: coop.theme.typo.label_medium.size;
-                    font_weight: coop.theme.typo.label_medium.weight;
-                    // font_family: coop.theme.typo.label_medium.family;
+                    font_size: coop.theme.typo.medium_label.size;
+                    font_weight: coop.theme.typo.medium_label.weight;
+                    // font_family: coop.theme.typo.medium_label.family;
         
                     cursor-position-changed(cpos) => {
                         if(cpos.x + root.computed_x < root.padding_outer) {
@@ -126,9 +126,9 @@ export TextLine := Rectangle {
                     y: (parent.height - height) / 2;
                     color: coop.theme.brushes.foreground;
                     opacity: i_input.opacity;
-                    font_size: coop.theme.typo.label_medium.size;
-                    font_weight: coop.theme.typo.label_medium.weight;
-                    // font_family: coop.theme.typo.label_medium.family;
+                    font_size: coop.theme.typo.medium_label.size;
+                    font_weight: coop.theme.typo.medium_label.weight;
+                    // font_family: coop.theme.typo.medium_label.family;
                 }
     
                 if(text == "") : Text {
@@ -136,9 +136,9 @@ export TextLine := Rectangle {
                     y: (parent.height - height) / 2;
                     color: coop.theme.brushes.border;
                     opacity: i_input.opacity;
-                    font_size: coop.theme.typo.label_medium.size;
-                    font_weight: coop.theme.typo.label_medium.weight;
-                    // font_family: coop.theme.typo.label_medium.family;
+                    font_size: coop.theme.typo.medium_label.size;
+                    font_weight: coop.theme.typo.medium_label.weight;
+                    // font_family: coop.theme.typo.medium_label.family;
                 }
     
                 if(clickable) : TouchArea {  

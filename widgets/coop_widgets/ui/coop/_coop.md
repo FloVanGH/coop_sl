@@ -109,12 +109,12 @@ Theme and style definitions of the `coop_widgets`.
 
 ### Properties
 
-* **`label_small`** (**Font**): Defines typo of small labels.
-* **`label_medium`** (**Font**): Defines typo of medium labels.
-* **`label_large`** (**Font**): Defines typo of large labels.
-* **`title_small`** (**Font**): Defines typo of small titles.
-* **`title_medium`** (**Font**): Defines typo of medium titles.
-* **`title_large`** (**Font**): Defines typo of large titles.
+* **`small_label`** (**Font**): Defines typo of small labels.
+* **`medium_label`** (**Font**): Defines typo of medium labels.
+* **`large_label`** (**Font**): Defines typo of large labels.
+* **`small_title`** (**Font**): Defines typo of small titles.
+* **`medium_title`** (**Font**): Defines typo of medium titles.
+* **`large_title`** (**Font**): Defines typo of large titles.
 
 ## struct `Theme`
 

@@ -65,141 +65,141 @@ import { BaseLabel } from "_imports/coop_widgets.slint"
 MyLabel := BaseLabel {}
 ```
 
-## `LabelSmall`
+## `SmallLabel`
 
-`LabelSmall` is a label with settings `coop.theme.typo.label_small`.
+`SmallLabel` is a label with settings `coop.theme.typo.small_label`.
 
 ```slint
-export LabelSmall := BaseLabel
+export SmallLabel := BaseLabel
 ```
 
 ### Example
 
 ```slint
-import { LabelSmall } from "_imports/coop_widgets.slint"
+import { SmallLabel } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    LabelSmall {
+    SmallLabel {
         text: "Hello";
     }
 }
 ```
 
-## `LabelMedium`
+## `MediumLabel`
 
-`LabelMedium` is a label with settings `coop.theme.typo.label_medium`.
+`MediumLabel` is a label with settings `coop.theme.typo.medium_label`.
 
 ```slint
-export LabelMedium := BaseLabel
+export MediumLabel := BaseLabel
 ```
 
 ### Example
 
 ```slint
-import { LabelMedium } from "_imports/coop_widgets.slint"
+import { MediumLabel } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    LabelMedium {
+    MediumLabel {
         text: "Hello";
     }
 }
 ```
 
-## `LabelLarge`
+## `LargeLabel`
 
-`LabelLarge` is a label with settings `coop.theme.typo.label_large`.
+`LargeLabel` is a label with settings `coop.theme.typo.large_label`.
 
 ```slint
-export LabelLarge := BaseLabel
+export LargeLabel := BaseLabel
 ```
 
 ### Example
 
 ```slint
-import { LabelLarge } from "_imports/coop_widgets.slint"
+import { LargeLabel } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    LabelLarge {
+    LargeLabel {
         text: "Hello";
     }
 }
 ```
 
-## `LabelLarge`
+## `LargeLabel`
 
-`LabelError` is a `LabelError` displayed with error text color.
+`ErrorLabel` is a `ErrorLabel` displayed with error text color.
 
 ```slint
-export LabelLarge := LabelSmall
+export LargeLabel := SmallLabel
 ```
 
 ### Example
 
 ```slint
-import { LabelError } from "_imports/coop_widgets.slint"
+import { ErrorLabel } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    LabelError {
+    ErrorLabel {
         text: "Hello";
     }
 }
 ```
 
-## `TitleSmall`
+## `SmallTitle`
 
-`TitleSmall` is a Title with settings `coop.theme.typo.title_small`.
+`SmallTitle` is a Title with settings `coop.theme.typo.small_title`.
 
 ```slint
-export TitleSmall := BaseTitle
+export SmallTitle := BaseTitle
 ```
 
 ### Example
 
 ```slint
-import { TitleSmall } from "_imports/coop_widgets.slint"
+import { SmallTitle } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    TitleSmall {
+    SmallTitle {
         text: "Hello";
     }
 }
 ```
 
-## `TitleMedium`
+## `MediumTitle`
 
-`TitleMedium` is a Title with settings `coop.theme.typo.title_medium`.
+`MediumTitle` is a Title with settings `coop.theme.typo.medium_title`.
 
 ```slint
-export TitleMedium := BaseTitle
+export MediumTitle := BaseTitle
 ```
 
 ### Example
 
 ```slint
-import { TitleMedium } from "_imports/coop_widgets.slint"
+import { MediumTitle } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    TitleMedium {
+    MediumTitle {
         text: "Hello";
     }
 }
 ```
 
-## `TitleLarge`
+## `LargeTitle`
 
-`TitleLarge` is a Title with settings `coop.theme.typo.title_large`.
+`LargeTitle` is a Title with settings `coop.theme.typo.large_title`.
 
 ```slint
-export TitleMedium := BaseTitle
+export MediumTitle := BaseTitle
 ```
 
 ### Example
 
 ```slint
-import { TitleLarge } from "_imports/coop_widgets.slint"
+import { LargeTitle } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
-    TitleMedium {
+    MediumTitle {
         text: "Hello";
     }
 }
@@ -216,7 +216,7 @@ export PopupBorder := Rectangle
 ### Example
 
 ```slint
-import { TitleMedium } from "_imports/coop_widgets.slint"
+import { MediumTitle } from "_imports/coop_widgets.slint"
 
 Example := Rectangle {
     PopupBorder {
