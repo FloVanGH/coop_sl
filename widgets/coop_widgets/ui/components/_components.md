@@ -125,6 +125,26 @@ Example := Rectangle {
 }
 ```
 
+## `LabelLarge`
+
+`LabelError` is a `LabelError` displayed with error text color.
+
+```slint
+export LabelLarge := LabelSmall
+```
+
+### Example
+
+```slint
+import { LabelError } from "_imports/coop_widgets.slint"
+
+Example := Rectangle {
+    LabelError {
+        text: "Hello";
+    }
+}
+```
+
 ## `TitleSmall`
 
 `TitleSmall` is a Title with settings `coop.theme.typo.title_small`.

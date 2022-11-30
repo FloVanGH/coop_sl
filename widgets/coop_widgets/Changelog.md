@@ -24,6 +24,7 @@ SPDX-License-Identifier: MIT
 * `LabelSmall`
 * `LabelMedium`
 * `LabelLarge`
+* `LabelError`
 * `TitleSmall`
 * `TitleMedium`
 * `TitleLarge`
