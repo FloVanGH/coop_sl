@@ -2,19 +2,21 @@
 # SPDX-License-Identifier: MIT
 
 [package]
-name = "slint_orbclient"
+name = "coop_client"
 version = "0.1.0"
 edition = "2021"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
-description = "Slint platform support for Redox"
-repository = "https://codeberg.org/flovansl/coop_sl"
+description = "Client library that can be used to make an app work with coop_server."
+repository = "https://codeberg.org/flovansl/co_sl"
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint =  { version = "0.3.2", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "libm"] }
-orbclient = { version = "0.3" }
-once_cell = "1.16.0"
-instant = "0.1"
+coop_protocol = { path = "../coop_protocol", default-features = false }
+tokio = { version = "1", features = ["full"] }
+log = "0.4"
+env_logger = "0.9"
+tokio-unix-ipc = "0.3"
+ipc-rpc = "1.2"

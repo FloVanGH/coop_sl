@@ -21,14 +21,19 @@ What the `coop` stands for: cooperation.
 
 * apps/
     * [coop_calc](apps/coop_calc/): Calculator build with Slint **(not yet started)**
-    * [coop_chat](apps/coop_chat/): A visual Slint prototype of a chat app **(not yet started)**
-    * [coop_files](apps/coop_files/): File navigation / explorer build with Slint **(not yet started)**
+    * [coop_chat](apps/coop_chat/): A visual Slint prototype of a chat app **(in active development / prototyping)**
+    * [coop_files](apps/coop_files/): File navigation / explorer build with Slint **(not yet started)** 
+* display/
+    * **About:** [coop_display](display/README.md) is an experimental frame buffer based display server that can be used e.g. to render a standalone app inside of a Slint app.
+    *  [coop_client](display/coop_client/): Client library that can be used to make an app work with `coop_server` **(in active development / prototyping)**
+    *  [coop_server](display/coop_server/): Server part of the display server, can handle multiple `coop_client` apps **(in active development / prototyping)**
+    *  [coop_protocol](display/coop_protocol/): Protocol enums and structs used for communication between `coop_client` and `coop_server` apps **(in active development / prototyping)**
+   
 * platform_support/
-    * [slint_psp](platform_support/slint_psp/): Slint support for the PSP gaming console **(in active development / pre-release)**
+    * [slint_coop](platform_support/slint_coop/): Slint platform implementation based on `coop_client` **(in active development / prototyping)**
     * [slint_orbclient](platform_support/slint_orbclient/): Slint platform implementation based on [OrbClient](https://gitlab.redox-os.org/redox-os/orbclient), can be run on [Redox](https://redox-os.org/) **(in active development / pre-release)**
 * gaming/
     * [pico_engine](gaming/pico_engine/): experimental engine based on slint with no_std support **(not yet started)**
-    * [pico_ecs](gaming/pico_ecs/): experimental Entity Component System library with support for no_std **(not yet started)**
     * [pico_designer](gaming/pico_designer/): experimental map editor for the `pico_engine` **(not yet started)**
 * widgets/
     * [book_flip](widgets/book_flip/): e-book widget for Slint **(not yet started)**
@@ -36,7 +41,8 @@ What the `coop` stands for: cooperation.
 
 ## examples
 
-* [gaming](examples/gaming/): example of `pico_engine` and `pico_ecs`
+* [desktop](examples/desktop/): experimental example desktop environment based on `coop_display` and Slint
+* [gaming](examples/gaming/): example of `pico_engine`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
 
 > Check out the [README](examples/README.md) for more details.

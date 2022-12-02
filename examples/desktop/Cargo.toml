@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+[package]
+name = "desktop"
+version = "0.1.0"
+authors = ["Florian Blasius <co_sl@tutanoto.com>"]
+edition = "2021"
+build = "build.rs"
+publish = false
+
+[[bin]]
+path = "src/main.rs"
+name = "desktop"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+slint = "0.3.2"
+coop_protocol = { path = "../../display/coop_protocol" }
+coop_server = { path = "../../display/coop_server", features = ["slint"] }
+tokio = { version = "1", features = ["full"] }
+
+[build-dependencies]
+slint-build = "0.3.2"
+coop_widgets = { path = "../../widgets/coop_widgets" }

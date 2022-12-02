@@ -81,6 +81,14 @@ pipeline:
       - cargo doc --no-deps -p coop_widgets
       # slint_orbclient doc
       - cargo doc --no-deps -p slint_orbclient
+      # coop_client
+      - cargo doc --no-deps -p coop_client
+      # coop_protocol
+      - cargo doc --no-deps -p coop_protocol
+      # slint_coop
+      - cargo doc --no-deps -p slint_coop
+      # slint_coop
+      - cargo doc --no-deps -p co_lend_server
       # Git configuration
       - git config --global user.email $MAIL
       - git config --global user.name "Woodpecker CI"

@@ -17,11 +17,16 @@ name = "coop_chat"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = "0.3.2"
+slint = { version = "0.3.2", default-features = false, features = ["compat-0-3-0"] }
+slint_orbclient = { path = "../../platform_support/slint_orbclient", optional = true }
+slint_coop = { path = "../../platform_support/slint_coop", optional = true }
 
 [build-dependencies]
 slint-build = "0.3.2"
 coop_widgets = { path = "../../widgets/coop_widgets" }
+
+[features]
+default = ["slint/default"]
 
 # This is commented out by default because we don't want to build it as a library by default
 # The CI has a script that does sed "s/ #wasm# //" to generate the wasm build.

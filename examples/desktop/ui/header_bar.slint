@@ -1,0 +1,92 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Spacer, Popup, SmallLabel, Switch,  MaterialIcon, CenterLayout, coop, mi } from "_imports/coop_widgets.slint";
+
+export HeaderBarButton := TouchArea {
+    property <string> icon <=> i_icon.icon;
+
+    width: height;
+    vertical_stretch: 1;
+    horizontal_stretch: 0;
+
+    i_container := Rectangle {
+        border_radius: max(width, height) / 2;
+        CenterLayout {  
+            i_icon := MaterialIcon {  
+                icon_color: coop.theme.brushes.foreground;
+                icon_size: coop.theme.icons.size_small;
+            }
+        }
+    }
+
+    states [
+        pressed when root.pressed : {
+            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+        }    
+    ]
+}
+
+export HeaderBar := Rectangle {
+    callback logout();// <=> i_logout_button.clicked;
+
+    min_width: 100px;
+    height: coop.theme.sizes.small;
+    background: coop.theme.brushes.background-alt;
+    vertical-stretch: 0;
+
+    GridLayout {  
+        padding_left: coop.theme.spaces.medium;
+        padding_right: coop.theme.spaces.medium;
+        padding_top: 2px;
+        padding_bottom: 2px;
+
+        Text {  
+            col: 2;
+        }
+      
+        HorizontalLayout {  
+            col: 3;
+            spacing: coop.theme.spaces.small;
+
+            @children
+        }
+    }
+
+    Rectangle {
+        y: parent.height - height;
+        height: 1px;
+        background: coop.theme.brushes.border;
+    }
+
+    i_menu := Popup {  
+        x: root.width - 200px - coop.theme.spaces.medium;
+        y: root.height + coop.theme.spaces.medium;
+       
+        width: 200px;
+        opacity: 0.0;
+       
+        GridLayout {  
+            padding: coop.theme.spaces.small;
+            Row {
+                SmallLabel {  
+                    vertical_alignment: center;
+                    text: "Window tilling";
+                }
+
+                Switch {}
+            }
+
+        }
+    }
+}
+
+HeaderBarExampel := Rectangle {
+    width: 600px;
+    height: 400px;
+
+    HeaderBar {  
+
+    }
+}

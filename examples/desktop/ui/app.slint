@@ -1,0 +1,130 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+
+
+import { HeaderBarButton, HeaderBar } from "header_bar.slint";
+import { WindowModel, DisplayView, DisplayViewAdapter } from "display/display.slint";
+import { Launcher } from "launcher.slint";
+import { PopupBorder, coop, SmallLabel, RoundButton, mi } from "_imports/coop_widgets.slint";
+import { Login } from "login.slint";
+
+export { WindowModel, DisplayViewAdapter }
+ 
+export Desktop := Window {
+    title: "desktop example";
+    width: 1020px;
+    height: 720px;
+
+    private property <bool> logged_in;
+
+    if(!logged_in) : Login {  
+        login(user, password) => {  
+            logged_in = user == "user" && password == "password";
+            logged_in
+        }
+    }
+
+    if(logged_in) : Rectangle { 
+        VerticalLayout {  
+            i_header_bar := HeaderBar { 
+                HeaderBarButton {  
+                    y: (parent.height - height) / 2;
+                    icon: mi.arrow-drop-down;
+    
+                    clicked => { i_menu.open = true; }
+                }
+               }
+        
+            i_wm := DisplayView {
+    
+            }
+    
+            Launcher {  
+                front_path: DisplayViewAdapter.front_path;
+                open(path) => {  
+                    i_wm.open(path);
+                }
+                vertical-stretch: 0;
+    
+                entries: [
+                    {
+                        path: "target/debug/widgets",
+                        icon: mi.dashboard,
+                    },
+                    {
+                        path: "target/debug/coop_chat",
+                        icon: mi.chat,
+                    }
+                ];
+            }
+        }
+      
+        TouchArea {  
+            visible: i_menu.open;
+            pointer_event(e) => {  
+                if(mouse_x >= i_menu.x && mouse_x <= i_menu.x + i_menu.width && mouse_y >= i_menu.y && mouse_y <= i_menu.y + i_menu.height) {
+                    return;
+                }
+                if (e.kind == PointerEventKind.down) {
+                    i_menu.open = false;
+                }
+            }
+    
+            i_menu := VerticalLayout {
+                property <bool> open;
+                alignment: start;  
+                x: root.width - width - coop.theme.spaces.small;
+                y: i_header_bar.height + coop.theme.spaces.small;
+               
+                width: 200px;
+                opacity: 0.0;
+        
+                PopupBorder {  
+                    TouchArea {  
+                        
+                    }
+                    layout := GridLayout {  
+                        padding: coop.theme.spaces.medium;
+                        spacing: coop.theme.spaces.medium;
+                        // Row {
+                        //     SmallLabel {  
+                        //         vertical_alignment: center;
+                        //         text: "Window tilling";
+                        //     }
+        
+                        //     Switch {
+                        //         selected_changed(selected) => {  
+                        //            i_window_manager.window_tilling = selected;
+                        //         }
+                        //     }
+                        // }
+            
+                        Row {
+                            SmallLabel {  
+                                vertical_alignment: center;
+                                text: "Logout";
+                            }
+        
+                            i_logout_button := RoundButton {
+                                icon: mi.log-out;
+                                clicked => {  
+                                    root.logged_in = false;
+                                    i_menu.open = false;
+                                }
+                            }
+                        }
+                    }
+                }
+        
+                states [  
+                    open when i_menu.open : {
+                        opacity: 1.0;
+                    }
+                ]
+        
+                animate opacity { duration: coop.theme.durations.fast; }
+            }
+        }
+     }
+}

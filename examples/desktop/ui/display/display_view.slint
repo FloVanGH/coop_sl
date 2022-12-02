@@ -1,0 +1,92 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { WindowModel } from "window_model.slint";
+import { WindowView } from "window_view.slint";
+import { Button } from "../_imports/coop_widgets.slint";
+
+export global DisplayViewAdapter := {
+    callback open(string);
+
+    callback pointer_event(string, length, length, PointerEvent);
+
+    callback key_pressed_event(string, KeyEvent);
+
+    callback key_released_event(string, KeyEvent);
+
+    callback bring_to_front(string);
+
+    callback close(string);
+
+    callback close_all();
+
+    // property WindowModel front_window: 
+
+    property <[WindowModel]> window_models;
+
+    property <string> front_key: window_models.length - 1 >= 0 ? window-models[window_models.length - 1].key : "";
+
+    property <string> front_path: window_models.length - 1 >= 0 ? window-models[window_models.length - 1].path : "";
+}
+
+// `DisplayView` draws and handles windows.
+export DisplayView := Rectangle {
+    // Open a window with the given binary path.
+    callback open <=> DisplayViewAdapter.open;
+
+    // Closes the given window.
+    callback close <=> DisplayViewAdapter.close;
+
+    // Resizes the given window to the given size.
+    callback resize(WindowModel, length, length);
+
+    // Sends a pointer event to the client.
+    callback pointer_event <=> DisplayViewAdapter.pointer_event;
+
+    callback key_pressed_event <=> DisplayViewAdapter.key_pressed_event;
+
+    callback key_released_event <=> DisplayViewAdapter.key_released_event;
+
+    callback bring_to_front <=> DisplayViewAdapter.bring_to_front;
+
+    // The list of window window_models.
+    property <[WindowModel]> window_models <=> DisplayViewAdapter.window_models;
+
+    Rectangle {  
+        for client[index] in window_models : WindowView {
+            x: client.x;
+            y: client.y;
+            inner_width: client.width;
+            inner_height: client.height;
+            buffer: client.buffer;
+            title: client.title;
+
+            bring_to_front => {  
+                root.bring_to_front(client.key);
+            }
+
+            pointer_event(x, y, e) => {  
+                root.pointer_event(client.key, x, y, e);
+            }
+
+            key_pressed_event(e) => {  
+                root.key_pressed_event(client.key, e);
+                accept
+            }
+
+            key_released_event(e) => {  
+                root.key_released_event(client.key, e);
+                accept
+            }
+
+            move(x, y) => {  
+                client.x = max(0px, min(x, root.width - width));
+                client.y = max(0px, min(y, root.height - height));
+            }
+
+            close => {  
+                root.close(client.key);
+            }
+        }
+    }
+} 

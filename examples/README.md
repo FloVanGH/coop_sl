@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # co_sl examples
 
-Examples for the crates `pico_engine`, `pico_ecs`, `coop_widgets` and `book_flip`.
+Examples for the crates `pico_engine`, `coop_widgets` and `book_flip`.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
@@ -13,9 +13,20 @@ Examples for the crates `pico_engine`, `pico_ecs`, `coop_widgets` and `book_flip
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../LICENSES/MIT.txt)
 
+## desktop
+
+Experimental example desktop environment based on `coop_display` and Slint.
+
+### Run desktop
+
+* Desktop example needs `widgets` and `coop_chat` to be build first with `slint_coop` features
+* Build widgets: `cargo build -p widgets --no-default-features --features=slint_coop`
+* Build coop_chat: `cargo build -p coop_chat --no-default-features --features=slint_coop`
+* Run desktop:  `cargo run -p desktop`
+
 ## gaming
 
-Example game for `pico_engine` and `pico_ecs`. It can be run on multiple platforms.
+Example game for `pico_engine`. It can be run on multiple platforms.
 
 ### Run gaming
 

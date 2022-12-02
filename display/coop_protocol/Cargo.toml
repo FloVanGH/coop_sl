@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+[package]
+name = "coop_protocol"
+version = "0.1.0"
+edition = "2021"
+authors = ["Florian Blasius <co_sl@tutanota.com>"]
+license = "MIT"
+description = "Protocol enums and structs used for communication between coop_client and coop_server."
+repository = "https://codeberg.org/flovansl/co_sl"
+readme = "README.md"
+
+[dependencies]
+schemars = "0.8"
+serde = "1.0"
+tokio-unix-ipc = "0.3"

@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+[package]
+name = "slint_coop"
+version = "0.1.0"
+edition = "2021"
+authors = ["Florian Blasius <co_sl@tutanota.com>"]
+license = "MIT"
+description = "Slint platform implementation based on `coop_client`"
+repository = "https://codeberg.org/flovansl/co_sl"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+slint = { version = "0.3", default-features = false, features = ["compat-0-3-0", "unsafe-single-threaded", "std"]}
+coop_client = { path = "../../display/coop_client" }
+coop_protocol = { path = "../../display/coop_protocol" }

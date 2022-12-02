@@ -6,11 +6,15 @@ members = [
    "apps/coop_calc",
    "apps/coop_files",
    "apps/coop_chat",
+   "display/coop_client",
+   "display/coop_protocol",
+   "display/coop_server",
+   "examples/desktop",
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",
-   "gaming/pico_ecs",
    "gaming/pico_designer",
+    "platform_support/slint_coop",
    "platform_support/slint_orbclient",
    "widgets/book_flip",
    "widgets/coop_widgets",
@@ -25,7 +29,6 @@ default-members = [
    "examples/gaming",
    "examples/widgets",
    "gaming/pico_engine",
-   "gaming/pico_ecs",
    "gaming/pico_designer",
    "platform_support/slint_orbclient",
    "widgets/book_flip",
@@ -35,7 +38,6 @@ default-members = [
 ]
 
 exclude = [
- "platform_support/slint_psp",
  "examples/widgets_psp",
 ]
 

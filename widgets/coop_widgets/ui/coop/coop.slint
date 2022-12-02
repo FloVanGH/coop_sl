@@ -48,6 +48,9 @@ export global coop := {
     // Toggles between light and dark theme.
     in-out property <bool> dark_theme: StyleMetrics.dark-color-scheme;
 
+    // If set to `true` the animations will be skipped.
+    property <bool> skip_animations;
+
     // Defines the accent (primary) brush.
     in property <brush> accent_color: dark_theme ? #01fec5: #1d9bf2;
 
@@ -80,10 +83,10 @@ export global coop := {
             shadow: #000000,
             error: #EF5350,
         },
-        durations: {
-            slow: 500ms,
-            medium: 250ms,
-            fast: 150ms,
+        durations : {
+            slow: skip-animations ? 0ms : 500ms,
+            medium: skip-animations ? 0ms : 250ms,
+            fast: skip-animations ? 0ms : 150ms,
         },
         icons: {
             size_small: 12px,

@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+// `WindowModel` defines a model that is used to process list of windows by window manager.
+export struct WindowModel := {
+    key: string,
+    path: string,
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+    title: string,
+    buffer: image,
+}

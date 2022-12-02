@@ -18,7 +18,11 @@ fn main() {
     slint_build::compile(APP).unwrap();
 }
 
-#[cfg(any(feature = "mcu-board-support", feature = "slint_orbclient"))]
+#[cfg(any(
+    feature = "mcu-board-support",
+    feature = "slint_orbclient",
+    feature = "slint_coop"
+))]
 fn main() {
     generate_imports();
     let config = slint_build::CompilerConfiguration::new()

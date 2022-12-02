@@ -24,6 +24,19 @@ pub fn main() {
     #[cfg(all(debug_assertions, target_arch = "wasm32"))]
     console_error_panic_hook::set_once();
 
+    #[cfg(feature = "slint_orbclient")]
+    slint_orbclient::init_config(
+        slint_orbclient::Config::default()
+            .width(1000)
+            .height(600)
+            .resizable(true)
+            .events_async(true)
+            .title("coop_chat"),
+    );
+
+    #[cfg(feature = "slint_coop")]
+    slint_coop::init_config(600., 400., "coop_chat");
+
     let app = App::new();
 
     let _side_bar_view_controller =

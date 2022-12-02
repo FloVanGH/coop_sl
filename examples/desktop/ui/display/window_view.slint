@@ -1,0 +1,133 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { SmallTitle, RoundButton, Spacer, coop, mi } from "../_imports/coop_widgets.slint";
+
+WindowButton := RoundButton {
+    height: coop.theme.sizes.extra-small;
+    width: coop.theme.sizes.extra-small;
+    horizontal-stretch: 0;
+}
+
+// `WindowView` represents a frame buffer based window that is drawn and handeld by `DisplayView`.
+export WindowView := Rectangle {
+    // Received when a button was pressed or released on the window.
+    callback pointer_event(length, length, PointerEvent);
+
+    // Recived when key is pressed.
+    callback key_pressed_event <=> i_focus_scope.key_pressed;
+
+    // Recived when key is released.
+    callback key_released_event <=> i_focus_scope.key_released;
+
+    // Called when the window wants to be moved.
+    callback move(length, length);
+
+    // Request to close the window.accessible-delegate-focus.
+    callback close <=> i_close_button.clicked;
+
+    // Request to show the window on front.
+    callback bring_to_front <=> i_header_touch_area.clicked;
+
+    // Reference to the frame buffer.
+    property <image> buffer <=> i_canvas.source;
+
+    // Defines the width of the window without border.
+    property <length> inner_width;
+    
+    // Defines the height of the window without border.
+    property <length> inner_height;
+
+    // Gets the current mouse x position on the window.
+    property <length> mouse_x: i_pointer.mouse_x;
+
+    // Gets the current mouse y position on the window.
+    property <length> mouse_y: i_pointer.mouse_y;
+
+    // Defines the window title.
+    property <string> title <=> i_title.text;
+
+    // privates
+    property <length> header_height: coop.theme.sizes.small;
+    property <length> window_padding: 1px;
+
+    width: inner_width + 2 * window_padding;
+    height: header_height + inner_height + window_padding;
+    border-radius: coop.theme.radius.small;
+    background: coop.theme.brushes.background-alt; 
+    clip: true;
+
+    i_header := Rectangle {  
+        width: 100%;
+        height: root.header_height;
+
+        // header move touch area
+        i_header_touch_area := TouchArea {
+            moved => {
+                if (pressed) {
+                    root.move(root.x + mouse_x - pressed_x, root.y + mouse_y - pressed_y);
+                }
+            }
+        }
+
+        HorizontalLayout {  
+            padding-left: coop.theme.spaces.small;
+            padding-right: coop.theme.spaces.small;
+
+            Spacer {}
+
+            i_title := SmallTitle {  
+                vertical-alignment: center;
+                horizontal-alignment: center;
+                color: white;
+            }
+
+            Spacer {}
+
+            i_close_button := WindowButton {  
+                y: (parent.height - height) / 2;
+                icon: mi.close;
+            }
+        }
+
+        Rectangle {
+            width: 100%;
+            y: parent.height - height;
+            height: 1px;
+            background: coop.theme.brushes.border;
+        }
+    }
+
+    i_inner := Rectangle {
+        x: root.window_padding;
+        y: i_header.height;
+        width: root.inner-width;
+        height: root.inner-height;
+        background: coop.theme.brushes.background;
+        border_radius: root.border_radius - 1px;
+
+        Rectangle {  
+            width: 100%;
+            height: parent.border_radius;
+            background: root.background;
+        }
+
+        // window touch area.
+        i_pointer := TouchArea {
+            clicked => { i_focus_scope.focus(); }
+            pointer_event(event) => {  
+                root.pointer-event(mouse_x, mouse_y, event);
+            }
+        }
+
+        i_focus_scope := FocusScope {
+            width: 0px;
+        }
+
+        i_canvas := Image {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
