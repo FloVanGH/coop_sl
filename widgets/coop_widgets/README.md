@@ -14,6 +14,7 @@ What the `coop` in `coop_widgets` stands for: cooperation.
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSES/MIT.txt)
+[![GNU GPLv3](https://img.shields.io/badge/license-GPLv3-green.svg)](../../LICENSES/GPL-3.0-only.txt)
 [![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/snapshots/coop_sl/docs/coop_widgets/)
 
 ## live preview
@@ -117,6 +118,11 @@ Best to start with these sources:
 
 ## license
 
-* `coop_widgets` is available under [MIT license](LICENSE-MIT)
-* `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
+The source code of the `coop_widgets` is available under the terms of MIT license.
+(See [LICENSE-MIT](LICENSE-MIT) for details.)
+
+However, because of the use of GPL dependencies, `coop_widgets`, as a whole, is licensed
+under the terms of the GPLv3 (See [LICENSE-GPL](LICENSE-GPL))
+
+`Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
 or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
