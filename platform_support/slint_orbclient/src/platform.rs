@@ -15,25 +15,27 @@ static INITIAL_INSTANT: once_cell::sync::OnceCell<instant::Instant> =
 /// Used to configure the platform window.
 #[derive(Clone, Default, Debug)]
 pub struct Config {
-    x: i32,
-    y: i32,
+    x: Option<i32>,
+    y: Option<i32>,
     width: u32,
     height: u32,
     title: String,
     events_async: bool,
     resizable: bool,
+    borderless: bool,
+    uncloseable: bool,
 }
 
 impl Config {
     /// Sets the x position of the window.
     pub fn x(mut self, x: i32) -> Self {
-        self.x = x;
+        self.x = Some(x);
         self
     }
 
     /// Sets the y position of the window.
     pub fn y(mut self, y: i32) -> Self {
-        self.y = y;
+        self.y = Some(y);
         self
     }
 
@@ -66,6 +68,18 @@ impl Config {
         self.resizable = resizable;
         self
     }
+
+    /// If set to `true` the window is borderless.
+    pub fn borderless(mut self, borderless: bool) -> Self {
+        self.borderless = borderless;
+        self
+    }
+
+    /// If set to `true` the window is uncloseable.
+    pub fn uncloseable(mut self, uncloseable: bool) -> Self {
+        self.uncloseable = uncloseable;
+        self
+    }
 }
 
 impl From<Config> for OrbClientPlatform {
@@ -80,20 +94,35 @@ impl From<Config> for OrbClientPlatform {
             flags.push(orbclient::WindowFlag::Resizable);
         }
 
+        if config.borderless {
+            flags.push(orbclient::WindowFlag::Borderless);
+        }
+
+        if config.uncloseable {
+            flags.push(orbclient::WindowFlag::Unclosable);
+        }
+
+        let x = if let Some(x) = config.x {
+            x
+        } else {
+            // center window horizontal if no x is set.
+            orbclient::get_display_size().map_or(0, |s| (s.0 - config.width) / 2) as i32
+        };
+
+        let y = if let Some(y) = config.y {
+            y
+        } else {
+            // center window horizontal if no x is set.
+            orbclient::get_display_size().map_or(0, |s| (s.1 - config.height) / 2) as i32
+        };
+
         Self {
             slint_window: core::cell::RefCell::new(
                 slint::platform::software_renderer::MinimalSoftwareWindow::new(),
             ),
             orb_window: RefCell::new(
-                Window::new_flags(
-                    config.x,
-                    config.y,
-                    config.width,
-                    config.height,
-                    &config.title,
-                    &flags,
-                )
-                .unwrap(),
+                Window::new_flags(x, y, config.width, config.height, &config.title, &flags)
+                    .unwrap(),
             ),
             event_reader: EventReader::default(),
         }
