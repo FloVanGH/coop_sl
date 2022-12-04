@@ -17,6 +17,7 @@ export CoopWindow := Window
 ### Properties
 
 * **`accent_color`** (**brush**): Defines the accent color of the theme.
+* **`on_accent_color`** (**brush**): Defines the on accent color of the theme.
 
 ## Example 
 
