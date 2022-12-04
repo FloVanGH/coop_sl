@@ -16,6 +16,7 @@ export CoopWindow := Window
 ```
 ### Properties
 
+* **`dark_theme`** (**bool**): Set to `true` to use the dark theme.
 * **`accent_color`** (**brush**): Defines the accent color of the theme.
 * **`on_accent_color`** (**brush**): Defines the on accent color of the theme.
 
