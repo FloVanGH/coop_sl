@@ -29,8 +29,8 @@ pipeline:
       - |-
         CHANGES=$(git status --porcelain | wc -l)
 
+        git pull
         if [ "$CHANGES" -gt "0" ]; then
-          git pull
           git status
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
@@ -62,8 +62,8 @@ pipeline:
       - |-
         CHANGES=$(git status --porcelain | wc -l)
 
+        git pull
         if [ "$CHANGES" -gt "0" ]; then
-          git pull
           git status
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
@@ -94,8 +94,8 @@ pipeline:
       - |-
         CHANGES=$(git status --porcelain | wc -l)
 
+        git pull
         if [ "$CHANGES" -gt "0" ]; then
-          git pull
           git status
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
@@ -126,8 +126,8 @@ pipeline:
       - |-
         CHANGES=$(git status --porcelain | wc -l)
 
+        git pull
         if [ "$CHANGES" -gt "0" ]; then
-          git pull
           git status
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
@@ -158,8 +158,8 @@ pipeline:
       - |-
         CHANGES=$(git status --porcelain | wc -l)
 
+        git pull
         if [ "$CHANGES" -gt "0" ]; then
-          git pull
           git status
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
@@ -190,8 +190,8 @@ pipeline:
       - |-
         CHANGES=$(git status --porcelain | wc -l)
 
+        git pull
         if [ "$CHANGES" -gt "0" ]; then
-          git pull
           git status
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
