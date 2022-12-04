@@ -5,5 +5,6 @@ import { coop } from "../coop/coop.slint";
 
 // `CoopWindow` is a default window that uses the background of the `coop` theme.
 export CoopWindow := Window {
+    in-out property <brush> accent_color <=> coop.accent_color;
     background: coop.theme.brushes.background;
 }

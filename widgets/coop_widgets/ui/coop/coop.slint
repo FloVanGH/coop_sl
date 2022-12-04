@@ -52,10 +52,10 @@ export global coop := {
     property <bool> skip_animations;
 
     // Defines the accent (primary) brush.
-    in property <brush> accent_color: dark_theme ? #01fec5: #1d9bf2;
+    in-out property <brush> accent_color: dark_theme ? #01fec5: #1d9bf2;
 
     // Defines the on accent (primary) brush.
-    in property <brush> on_accent_color:  dark_theme ? #212121: #dfdfdf;
+    in-out property <brush> on_accent_color:  dark_theme ? #212121: #dfdfdf;
 
     // Additional theme settings.
     in property <Settings> settings: {
@@ -75,8 +75,8 @@ export global coop := {
             surface: dark_theme ? #505050: #BDBDBD,
             surface_disabled: dark_theme ? #3d3d3d: #d2d2d2,
             on_surface: dark_theme ? #212121: #dfdfdf,  
-            primary: accent-color,
-            on_primary: on_accent_color,
+            primary: root.accent_color,
+            on_primary: root.on_accent_color,
             border: dark_theme ? #7e7e7e: #505050,
             border_disabled: dark_theme ? #494949: #c5c5c5,
             state: #000000,

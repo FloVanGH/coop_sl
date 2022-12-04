@@ -12,8 +12,11 @@ Components are use in context of complexer constructs like `Widgets`.
 `CoopWindow` is a default window that uses the background of the `coop` theme.
 
 ```slint
-export FocusTouchArea := Window
+export CoopWindow := Window
 ```
+### Properties
+
+* **`accent_color`** (**brush**): Defines the accent color of the theme.
 
 ## Example 
 
