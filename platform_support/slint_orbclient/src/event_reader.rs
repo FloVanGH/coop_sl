@@ -130,8 +130,9 @@ impl EventReader {
             orbclient::EventOption::Scroll(e) => Some(
                 slint::platform::WindowEvent::PointerScrolled {
                     position: self.pointer_position.get(),
-                    delta_x: e.x as f32,
-                    delta_y: e.y as f32,
+                    // scrolling from orbclient is slow, this makes it faster
+                    delta_x: e.x as f32 * 6.,
+                    delta_y: e.y as f32 * 6.,
                 }
                 .into(),
             ),

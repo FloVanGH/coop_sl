@@ -20,38 +20,51 @@ export BaseLabel := Text {
 }
 
 // `SmallLabel` is a label with settings `coop.theme.typo.small_label`.
-export SmallLabel := BaseLabel {
-    font: coop.theme.typo.small_label;
+export SmallLabel := Text {
+    // font: coop.theme.typo.small_label;
+    font_size: 12px;
+    font_weight: 400;
 }
 
 // `MediumLabel` is a label with settings `coop.theme.typo.medium_label`.
-export MediumLabel := BaseLabel {
-    font: coop.theme.typo.medium_label;
+export MediumLabel := Text {
+    // font: coop.theme.typo.medium_label;
+    font_size: 12px;
+    font_weight: 500;
 }
 
 // `LargeLabel` is a label with settings `coop.theme.typo.large_label.
-export LargeLabel := BaseLabel {
-    font: coop.theme.typo.large_label; 
+export LargeLabel := Text {
+    //font: coop.theme.typo.large_label; 
+    font_size: 14px;
+    font_weight: 500;
 }
 
 // `ErrorLabel` is a `ErrorLabel` displayed with error text color.
-export ErrorLabel := BaseLabel {
-    font: coop.theme.typo.small_label;
+export ErrorLabel := Text {
+    // font: coop.theme.typo.small_label;
+    font_size: 12px;
+    font_weight: 400;
     color: coop.theme.brushes.error;
 }
 
 
 // `SmallTitle` is a label with settings `coop.theme.typo.small_title`.
-export SmallTitle := BaseLabel {
-    font: coop.theme.typo.small_title;
+export SmallTitle := Text {
+    // font: coop.theme.typo.small_title;
+    font_size: 16px;
+    font_weight: 500;
 }
 
 // `MediumTitle` is a label with settings `coop.theme.typo.medium_title`.
-export MediumTitle := BaseLabel {
-    font: coop.theme.typo.medium_title;
+export MediumTitle := Text {
+    // font: coop.theme.typo.medium_title;
+    font_size: 20px;
+    font_weight: 500;
 }
 
 // `LargeTitle` is a label with settings `coop.theme.typo.large_title.
-export LargeTitle := BaseLabel {
-    font: coop.theme.typo.large_title;
+export LargeTitle := Text {
+    font_size: 24px;
+    font_weight: 500;
 }
