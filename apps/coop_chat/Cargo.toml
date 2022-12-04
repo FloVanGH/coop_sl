@@ -18,7 +18,7 @@ name = "coop_chat"
 
 [dependencies]
 slint = { version = "0.3.2", default-features = false, features = ["compat-0-3-0"] }
-slint_orbclient = { path = "../../platform_support/slint_orbclient", optional = true }
+slint_orbclient = { version = "0.1", optional = true }
 slint_coop = { path = "../../platform_support/slint_coop", optional = true }
 
 [build-dependencies]
