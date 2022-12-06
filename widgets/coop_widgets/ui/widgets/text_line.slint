@@ -46,6 +46,12 @@ export TextLine := Rectangle {
     // Is called after the action icon is clicked;
     callback action;
 
+    // Focus the inner input.
+    callback focus_input();
+
+    //  Emitted when enter key is pressed.
+    callback accepted <=> i_input.accepted;
+
     // Defines the icon that is displayed in front of the text.
     in property <string> icon <=> i_icon.icon;
 
@@ -78,6 +84,10 @@ export TextLine := Rectangle {
     forward-focus: i_input;
     horizontal-stretch: 1;
     vertical-stretch: 0;
+
+    focus-input => {  
+        i_input.focus();
+    }
 
     i_container := Rectangle {
         border_radius: coop.theme.radius.small;

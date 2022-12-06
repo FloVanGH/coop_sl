@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Spacer, HorizontalSeparator, ScrollView, List, ListView, coop, GroupItemModel, Switch, HeaderBar, mi } from "../_imports/coop_widgets.slint";
+import { Spacer, TableView, Cell, HorizontalSeparator, ScrollView, List, ListView, coop, GroupItemModel, Switch, HeaderBar, mi } 
+    from "../_imports/coop_widgets.slint";
 
 export ListPage := GridLayout {
     Row {
@@ -30,10 +30,10 @@ export ListPage := GridLayout {
             padding: coop.theme.spaces.large;
             spacing: coop.theme.spaces.medium;
     
-            // Button
+            // Lists
             Row {
                 RowTitle {
-                    text: "Button";
+                    text: "Lists";
                 }
             }
     
@@ -79,8 +79,6 @@ export ListPage := GridLayout {
                             { text: "Item 4" },
                             { text: "Item 5" },
                             { text: "Item 6" },
-                            { text: "Item 7" },
-                            { text: "Item 8" },
                         ]
                     };
                     model: [list];
@@ -101,7 +99,6 @@ export ListPage := GridLayout {
                         items: [
                             { text: "Item 1" },
                             { text: "Item 2" },
-                            { text: "Item 3" },
                         ]
                     };
                     property <GroupItemModel> list_two: {
@@ -109,18 +106,9 @@ export ListPage := GridLayout {
                         items: [
                             { text: "Item 1" },
                             { text: "Item 2" },
-                            { text: "Item 3" },
                         ]
                     };
-                    property <GroupItemModel> list_three: {
-                        text: "Group 3",
-                        items: [
-                            { text: "Item 1" },
-                            { text: "Item 2" },
-                            { text: "Item 3" },
-                        ]
-                    };
-                    model: [list_one, list_two, list_three];
+                    model: [list_one, list_two];
                 }
     
                 Spacer {}
@@ -136,6 +124,66 @@ export ListPage := GridLayout {
                             background: mod(i, 2) == 0 ? black : gray;
                         }
                     }
+                }
+            }
+
+             // TableView
+             Row {
+                RowTitle {
+                    text: "TableView";
+                }
+            }
+
+            Row {
+                HorizontalSeparator {
+                    colspan: 8; 
+                }
+            }
+
+            Row {
+                TableView {
+                    colspan: 8; 
+                    private property <int> current_row: -1;
+            
+                    property <[Cell]> first_row: [
+                        { value: mi.folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
+                    ];
+            
+                    property <[Cell]> second_row: [
+                        { value: mi.article, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+                    ];
+            
+                    property <[Cell]> third_row: [
+                        { value: mi.article, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+                    ];
+
+                    accepted(row, cell, text) => {
+                        rows[row][cell].editable = false;
+                        rows[row][cell].value = text;
+                        current_row = -1;
+                    }
+            
+                    row_clicked(index) => {     
+                        if(current_row != -1) {
+                            rows[current_row][1].editable = false;
+                        }
+            
+                        current_row = index;
+                        // column 1 is name
+                        rows[index][1].editable = true;
+                    }
+                    columns: [
+                        { min_width: 32px },
+                        { header: "Name", horizontal_stretch: 2 },
+                        { header: "Date Modified", horizontal_stretch: 1 },
+                        { header: "Size", horizontal_stretch: 1 },
+                        { header: "Kind", horizontal_stretch: 1 },
+                    ];
+                    rows: [
+                        first_row,
+                        second_row,
+                        third_row
+                    ];
                 }
             }
         }

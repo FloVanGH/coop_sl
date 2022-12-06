@@ -1,0 +1,222 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { coop } from "../coop/coop.slint";
+import { MediumLabel } from "../components/label.slint";
+import { ScrollView } from "../widgets/scroll_view.slint";
+import { TextLine } from "../widgets/text_line.slint";
+import { Spacer } from "../layouts/spacer.slint";
+import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
+
+// `Column` defines a column with header for the `TableViewView`.
+export struct Column := {
+    // Defines the header text of the column.
+    header: string,
+
+    // Defines the minimum width of the column.
+    min_width: length,
+
+    // Defines the horizontal stretch of the column.
+    horizontal_stretch: int,
+}
+
+// `Cell` defines a single cell in the `TableView`.
+export struct Cell := {
+    // Defines the type of the cell, 0 is text and 1 is icon.
+    type: int,
+
+    // Defines the value of the string, type is depending on the `type` property.
+    value: string,
+
+    // If `type` is 0 and `edititable` is `true` a `TextLine` will be displayed to change the text.
+    editable: bool,
+
+    // If set to `true` the content of the cell will displayed in the `primary` brush.
+    highlighted: bool,
+}
+
+CellTemplate := Rectangle {
+    callback accepted(string);
+
+    in-out property <Cell> cell;
+
+    vertical_stretch: 0;
+                  
+    if(cell.type == 0 && !cell.editable) : MediumLabel {  
+        width: 90%;
+        height: 100%;
+        text: cell.value;
+        vertical-alignment: center;
+        color: cell.highlighted ? coop.theme.brushes.primary : coop.theme.brushes.foreground;
+    }
+
+    if(cell.type == 0 && cell.editable) : TextLine {  
+        y: (parent.height - height) / 2;
+        width: 90%;
+        height: 80%;
+        text: cell.value;
+        accepted => {
+            root.accepted(text);
+        }
+        init => { 
+            focus_input(); 
+        }
+    }
+
+    if(cell.type == 1) : MaterialIcon {  
+        y: (parent.height - height) / 2;
+        icon: cell.value;
+        icon_color: cell.highlighted ? coop.theme.brushes.primary : coop.theme.brushes.foreground;
+        icon_size: coop.theme.icons.size_medium;
+    }
+}
+
+RowTemplate := Rectangle {
+    callback pointer_event <=> i_touch_area.pointer_event;
+    callback clicked <=> i_touch_area.clicked;
+    callback accepted(int, string);
+
+    private property <brush> foreground: coop.theme.brushes.foreground;
+    in property <int> index;
+    in property <[Cell]> cell_row;
+    in property <length> cell_height: coop.theme.sizes.medium;
+    in property <[Column]> columns;
+
+    i_touch_area := TouchArea {}
+
+    HorizontalLayout {
+        padding_left: coop.theme.spaces.large;
+        padding_right: coop.theme.spaces.large;
+        for cell[index] in cell_row : CellTemplate {
+            horizontal_stretch: root.columns[index].horizontal_stretch;
+            min_width: root.columns[index].min_width;
+            cell: cell;
+            accepted(text) => {  
+                root.accepted(index, text);
+            }
+        }
+    }
+
+    states [
+        pressed when i_touch_area.pressed: {
+            background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
+        }
+        hover when i_touch_area.has_hover: {
+            background: coop.theme.brushes.background.darker(coop.theme.state.hover);
+        }
+    ]
+}
+
+// `TableView` is used to display data in columns and rows.
+export TableView := Rectangle {
+    // Received when a button was pressed or released on a row.
+    callback row_pointer_event(PointerEvent, int);
+
+    // Emitted when clicked on a row (the mouse is pressed, then released on this element).
+    callback row_clicked(int);
+
+    // Emitted when enter key on cell is pressed.
+    callback accepted(int, int, string);
+
+    // Defines the columns and column headers.
+    in property <[Column]> columns;
+
+    // Defines the rows and cells of the table.
+    in property <[[Cell]]> rows;
+
+    // Defines the height of the header row.
+    in property <length> header_height: coop.theme.sizes.medium;
+
+    // Defines the height of all cells.
+    in property <length> cell_height: coop.theme.sizes.medium;
+
+    VerticalLayout {  
+        HorizontalLayout {  
+            vertical_stretch: 0;
+            padding_left: coop.theme.spaces.large;
+            padding_right: coop.theme.spaces.large;
+
+            for column in columns : Rectangle {
+                min_width: column.min_width;
+                height: root.header_height;
+                horizontal_stretch: column.horizontal_stretch;
+
+                MediumLabel {  
+                    height: 100%;
+                    text: column.header;
+                    vertical-alignment: center;
+                }
+            }
+        }
+
+        ScrollView {
+            vertical_stretch: 1;
+
+            VerticalLayout {  
+                for row[index] in rows : RowTemplate {
+                    columns: root.columns;
+                    height: root.cell_height;
+                    cell_row: row;
+
+                    pointer_event(e) => { 
+                        root.row_pointer_event(e, index);
+                    }
+
+                    clicked => { 
+                        root.row_clicked(index);
+                    }
+
+                    accepted(cell_index, text) => {
+                        root.accepted(index, cell_index, text);
+                    }
+                }
+    
+                Spacer {}
+            }
+        }  
+    }
+}
+
+TableViewTest := Rectangle {
+    preferred_width: 600px;
+    preferred_height: 400px;
+
+    TableView {
+        private property <int> current_row: -1;
+
+        property <[Cell]> first_row: [
+            { value: mi.folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
+        ];
+
+        property <[Cell]> second_row: [
+            { value: mi.article, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+        ];
+
+        property <[Cell]> third_row: [
+            { value: mi.article, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+        ];
+
+        row_clicked(index) => {  
+
+            if(current_row != -1) {
+                rows[current_row][1].editable = false;
+            }
+
+            current_row = index;
+            // column 1 is name
+            rows[index][1].editable = true;
+        }
+        columns: [
+            { min_width: 32px },
+            { header: "Name", horizontal_stretch: 2 },
+            { header: "Date Modified", horizontal_stretch: 1 },
+            { header: "Size", horizontal_stretch: 1 },
+            { header: "Kind", horizontal_stretch: 1 },
+        ];
+        rows: [
+            first_row,
+            second_row,
+            third_row
+        ];
+    }
+}

@@ -352,9 +352,9 @@ Example := Rectangle {
 
 ### Properties
 
-* **`value`** (**float**): Represents the current value of the slider. Must be a value between 0.0 and 1.0.
-* **`has_focus`** (**bool**): If `true` the widget has keyboard focus.
-* **`enabled`** (**bool**): If set to `false` the widget is disabled.
+* **in-out `value`** (**float**): Represents the current value of the slider. Must be a value between 0.0 and 1.0.
+* **out `has_focus`** (**bool**): If `true` the widget has keyboard focus.
+* **in `enabled`** (**bool**): If set to `false` the widget is disabled.
 
 ### Callbacks
 
@@ -380,6 +380,98 @@ Example := Example :=  Rectangle {
         slider := Slider {
             text: "Check me";
         }
+    }
+}
+```
+
+## struct `Column`
+
+`Column` defines a column with header for the `TableViewView`.
+
+### Properties
+
+* **`header`** (**string**): Defines the header text of the column.
+* **`min_width`** (**length**): Defines the horizontal stretch of the column.
+* **`horizontal_stretch`** (**int**): Defines the horizontal stretch of the column.
+
+## struct `Cell`
+
+`Cell` defines a single cell in the `TableView`.
+
+### Properties
+
+* **`type`** (**int**): Defines the type of the cell, 0 is text and 1 is icon.
+    type: int,
+* **`value`** (**string**): Defines the value of the string, type is depending on the `type` property.
+* **`editable`** (**bool**): If `type` is 0 and `edititable` is `true` a `TextLine` will be displayed to change the text.
+* **`highlighted`** (**bool**): If set to `true` the content of the cell will displayed in the `primary` brush.
+
+## `TableView`
+
+`TableView` is used to display data in columns and rows.
+
+```slint
+export TableView := Rectangle
+```
+
+### Properties
+
+* **in `columns`** (**[Column]**): Defines the columns and column headers.
+* **in `rows`** (**[[Cell]]**): Defines the rows and cells of the table.
+* **in `header_height`** (**[[length]]**): Defines the height of the header row.
+* **in `cell_height`** (**[[length]]**): Defines the height of all cells.
+
+### Callbacks
+
+* **`row_pointer_event(PointerEvent, int)`**: Received when a button was pressed or released on a row.
+* **`row_clicked(int)`**: Emitted when clicked on a row (the mouse is pressed, then released on this element).
+* **`accepted()`**: Emitted when enter key on a cell is pressed.
+
+### Example
+
+```slint
+import { TableView, Cell } from "_imports/coop_widgets.slint";
+
+TableViewTest := Rectangle {
+    preferred_width: 600px;
+    preferred_height: 400px;
+
+    property <[Cell]> first_row: [
+        { value: mi.folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
+    ];
+
+    property <[Cell]> second_row: [
+        { value: mi.article, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+    ];
+
+    property <[Cell]> third_row: [
+        { value: mi.article, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+    ];
+
+    TableView {
+        private property <int> current_row: -1;
+        row_clicked(index) => {  
+
+            if(current_row != -1) {
+                rows[current_row][1].editable = false;
+            }
+
+            current_row = index;
+            // column 1 is name
+            rows[index][1].editable = true;
+        }
+        columns: [
+            { min_width: 32px },
+            { header: "Name", horizontal_stretch: 2 },
+            { header: "Date Modified", horizontal_stretch: 1 },
+            { header: "Size", horizontal_stretch: 1 },
+            { header: "Kind", horizontal_stretch: 1 },
+        ];
+        rows: [
+            first_row,
+            second_row,
+            third_row
+        ];
     }
 }
 ```
@@ -653,6 +745,8 @@ export TextLine := Rectangle
 * **`edited(string)`**:  Is called after text is changed.
 * **`clicked()`**: Will be called when the widget is clicked (pressed and then released).
 * **`action()`**: Is called after the action icon is clicked;
+* **`focus_input()`**: Focus the inner input.
+* **`accepted()`**: Emitted when enter key is pressed.
 
 ### Example
 

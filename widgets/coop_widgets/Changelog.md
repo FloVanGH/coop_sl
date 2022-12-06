@@ -68,4 +68,5 @@ SPDX-License-Identifier: MIT
 * `CheckBox`
 * `Switch`
 * `Slider`
+* `TableView`
 * `TextLine`
