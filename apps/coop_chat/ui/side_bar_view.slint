@@ -9,13 +9,16 @@ export global SideBarViewAdapter := {
 }
 
 export SideBarView := SideBar {
-    width: 200px;
-    height: 100%;
-    horizontal-stretch: 0;
+    // width: 200px;
+    // height: 100%;
+    // horizontal-stretch: 0;
 
     HorizontalLayout {  
-        padding: coop.theme.spaces.large;
+        padding_left: coop.theme.spaces.large;
+        padding_right: coop.theme.spaces.large;
+        padding_bottom: coop.theme.spaces.large;
         i_search := TextLine {
+            min_width: 20px;
             placeholder: "Find channel";
             text <=> SideBarViewAdapter.channel_search;
             icon: mi.search;

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { CoopWindow, KeyboardPage, KeyboardAdapter, GroupItemModel, coop } from "_imports/coop_widgets.slint";
+import { CoopWindow, KeyboardPage, KeyboardAdapter, GroupItemModel, coop, mi } from "_imports/coop_widgets.slint";
 import { BasicsPage, TypoPage, BrushesPage, ListPage } from "pages/pages.slint";
 import { AppManager } from "app_manager.slint"; 
 import { SideBarView } from "side_bar_view.slint";
@@ -10,7 +10,7 @@ export { KeyboardAdapter, coop }
 export { AppManager }
 
 export App := CoopWindow {
-    min-width: 1000px;
+    min_width: 800px;
     title: "Widgets gallery";
 
     Rectangle {
@@ -22,33 +22,41 @@ export App := CoopWindow {
             AppManager.update_text(key, text);
         } 
 
-        HorizontalLayout {   
+        GridLayout {   
+            Rectangle {  
+                col: 1;
+
+                if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {
+                    open_keyboard(key, text, placeholder, icon) => { keyboard_page.open-keyboard(key, text, placeholder, icon); }
+                }
+                if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 1) : ListPage {}
+                if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : BrushesPage {}
+                if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 1) : TypoPage {}
+            }
             i_side_bar := SideBarView {
+                col: 0;
+                parent_width: root.width;
+                title: "Gallery";
+                responsive: true;
+
                 property <GroupItemModel> widgets: {
                     text: "Widgets",
                     items: [
-                        { text: "Basics" },
-                        { text: "Lists" },
+                        { leading_icon: mi.widgets, text: "Basics" },
+                        { leading_icon: mi.list, text: "Lists" },
                     ]
                 };
 
                 property <GroupItemModel> resources: {
                     text: "Resources",
                     items: [
-                        { text: "Brushes" },
-                        { text: "Typography" },
+                        { leading_icon: mi.brush, text: "Brushes" },
+                        { leading_icon: mi.font_download, text: "Typography" },
                     ]
                 };
   
                 navigation_items: [widgets, resources];
             }
-        
-            if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {
-                open_keyboard(key, text, placeholder, icon) => { keyboard_page.open-keyboard(key, text, placeholder, icon); }
-            }
-            if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 1) : ListPage {}
-            if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : BrushesPage {}
-            if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 1) : TypoPage {}
         }
     }
 }  

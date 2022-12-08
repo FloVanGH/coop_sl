@@ -7,8 +7,11 @@ export SideBarView := SideBar {
     property <[GroupItemModel]> navigation_items <=> i_navigation.model;
     property <{ parent: int, item: int }> current_item <=> i_navigation.current_item;
 
-    width: 200px;
-    height: 100%;
+    i_navigation := List {
+        vertical-stretch: 1;
 
-    i_navigation := List {}
+        current_item_changed => {  
+            root.expanded = false;
+        }
+    }
 }

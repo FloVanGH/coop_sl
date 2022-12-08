@@ -1,17 +1,142 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
+import { RoundButton } from "../widgets/button.slint";
+import { MediumTitle } from "../components/label.slint";
+import { Spacer } from "../layouts/spacer.slint";
 import { coop } from "../coop/coop.slint";
+import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
 
 // `SideBar` is a bar with vertical arranged children.
 export SideBar := Rectangle {
-    background: coop.theme.brushes.background_alt;
-    
-    VerticalLayout {  
-        padding_top: coop.theme.spaces.medium;
-        padding_bottom: coop.theme.spaces.medium;
-        spacing: coop.theme.spaces.large;
+    private property <bool> on_break_point: responsive && parent_width < break_point;
 
-        @children
+    // Describes the title of the sidebar.
+    in property <string> title;
+
+    // Defines the parent width as reference fot the break point.
+    in property <length> parent_width;
+
+    // If the `paren_width` is less then the break_point the layout of the side bar will switch.
+    in property <length> break_point: 1100px;
+
+    // If set to `true` the sidebar will draw over the content.
+    in-out property <bool> expanded;
+
+    // If set to `true` the layout flips by reaching the break point.
+    in property <bool> responsive;
+
+    width: on-break-point ? coop.theme.sizes.medium + 2 * coop.theme.spaces.medium : 160px;
+    // background: coop.theme.brushes.background_alt;
+    horizontal_stretch: 0;
+
+    if (!expanded) : Rectangle {  
+        width: 100%;
+        height: width;
+        background: coop.theme.brushes.background_alt;
+
+        i_open := RoundButton {
+            x: coop.theme.spaces.medium;
+            y: coop.theme.spaces.medium;
+            visible: root.on_break_point;
+            icon: mi.menu;
+            icon_background: coop.theme.brushes.background_alt;
+            clicked => {  
+                root.expanded = !root.expanded;
+            }
+        }
+    }
+
+    if (expanded && on_break_point) : Rectangle {
+        width: parent-width;
+        height: 100%;
+        background: #00000040;
+
+        TouchArea {
+            clicked => { root.expanded = false; }
+        }
+    }
+
+    i_content := Rectangle {
+        x: 0px;
+        width: 160px;
+        background: coop.theme.brushes.background_alt;
+        clip: true;
+
+        VerticalLayout {  
+            padding_top: coop.theme.spaces.medium;
+            padding_bottom: coop.theme.spaces.medium;
+            spacing: coop.theme.spaces.medium;
+            alignment: start;
+    
+            if(root.on_break_point || root.title != "") : HorizontalLayout {  
+                padding_left: coop.theme.spaces.medium;
+                padding_right: coop.theme.spaces.medium;
+                spacing: coop.theme.spaces.large;
+                vertical_stretch: 0;
+              
+                if(root.on_break_point) : RoundButton {
+                    icon: mi.menu;
+                    icon_background: coop.theme.brushes.background_alt;
+                    clicked => {  
+                        root.expanded = !root.expanded;
+                    }
+                }
+    
+                if(root.title != "") : MediumTitle {
+                    text: root.title;
+                    vertical_alignment: center;
+                    horizontal_alignment: root.on_break_point ? left : center;
+                }
+            }
+    
+            @children
+
+            Spacer {}
+        }
+    }
+    
+    states [
+        expanded when expanded: {
+            i_content.x: 0;
+
+            in {
+                animate i_content.x { duration: coop.theme.durations.fast; }
+            }
+
+            out {
+                animate i_content.x { duration: coop.theme.durations.fast; }
+            }
+        }
+        on_break_point when on_break_point: {
+            i_content.x: - i_content.width;
+        }
+    ]
+}
+
+SideBarTest := Rectangle {
+    min_width: 900px;
+    height: 400px;
+    background: coop.theme.brushes.background;
+
+    GridLayout {  
+        Rectangle {  
+            col: 1;
+            min_width: 200px;
+            horizontal_stretch: 1;
+
+            Text {
+                text: "content";
+            }
+        }
+
+        i_side_bar := SideBar { 
+            responsive: true;
+            col: 0;
+            height: 100%;
+            title: "My App";
+
+            parent_width: parent.width;
+        }   
     }
 }

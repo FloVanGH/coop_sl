@@ -30,7 +30,7 @@ export ButtonBase := FocusTouchArea {
     in property <brush> background;
 
     // Defines the size of the icon.
-    in property <length> icon_size: coop.theme.icons.size_small;
+    in property <length> icon_size: coop.theme.icons.size_medium;
 
     // Used to scale the inner background container e.g. to add an effect by button pressed.
     in property <float> container_scale: 1.0;
@@ -205,6 +205,9 @@ export RoundButton := Rectangle {
     // If set to false the widget is disabled.
     in-out property <bool> enabled: true;
 
+    // Defines the round background.
+    in-out property <brush> icon_background: coop.theme.brushes.background;
+
     accessible-role: button;
     width: coop.theme.sizes.medium;
     height: width;
@@ -213,7 +216,7 @@ export RoundButton := Rectangle {
 
     i_base := ButtonBase {  
         enabled: root.enabled;
-        background: coop.theme.brushes.background;
+        background: root.icon_background;
         text_color: coop.theme.brushes.foreground;
         icon_color: text_color;
         padding_left: 0px;
@@ -221,7 +224,6 @@ export RoundButton := Rectangle {
         icon: root.icon;
         text: root.icon != "" ? "" : root.text;
 
-        animate background { duration: coop.theme.durations.fast; }
         animate text_color { duration: coop.theme.durations.fast; }
     }
 
@@ -230,14 +232,16 @@ export RoundButton := Rectangle {
             i_base.text_color: coop.theme.brushes.foreground_disabled;
         }
         pressed when i_base.focus_pressed: {
-            i_base.background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            i_base.background: root.icon_background.darker(coop.theme.state.pressed);
             i_base.text_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
         }
         hover when i_base.has_hover: {
-            i_base.background: coop.theme.brushes.background.darker(coop.theme.state.hover);
+            i_base.background: root.icon_background.darker(coop.theme.state.hover);
             i_base.text_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
         }
     ]
+
+    animate icon_background { duration: coop.theme.durations.fast; }
 }
 
 // `RoundOutlineButton` represents a round fixed sized button with ether an icon or a single character text and an outline border.

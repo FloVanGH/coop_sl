@@ -129,6 +129,7 @@ export RoundButton := Rectangle
 * **in `text`** (**string**): Used to set the display text of the button.
 * **in `icon`** (**string**): Used to set an optional icon on the button. Uses material icons check the `mi` global.
 * **in `enabled`** (**bool**): If set to `false` the widget is disabled.
+* **in-out `icon_background`** (**brush**): Defines the round background.
 
 ### Callbacks
 

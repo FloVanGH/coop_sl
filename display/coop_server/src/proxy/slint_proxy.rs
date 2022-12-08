@@ -54,6 +54,11 @@ impl SlintProxy {
         self.proxy.send_key_pressed_event(key, event.text);
     }
 
+    /// Sends a resize event.‚
+    pub fn send_resize_event(&self, key: SharedString, width: f32, height: f32) {
+        self.proxy.send_resize_event(key, width, height);
+    }
+
     /// Closes the client with the given key.
     pub fn close_client(&self, key: impl Into<String>) {
         self.proxy.close_client(key);

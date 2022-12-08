@@ -6,14 +6,22 @@ import { SideBarViewAdapter, SideBarView } from "side_bar_view.slint";
 import { MessageView } from "message_view.slint"; 
 
 export { SideBarViewAdapter, GroupItemModel, ItemModel, mi }
+
 export App := CoopWindow {
     title: "coop_chat";
 
     min-width: 600px;
     min-height: 400px;
 
-    HorizontalLayout {  
-        SideBarView {}
-        MessageView {}
+    GridLayout { 
+       
+        MessageView {
+            col: 1;
+        }
+        SideBarView {
+            col: 0;
+            responsive: true;
+            parent_width: root.width;
+        }
     }
 }
