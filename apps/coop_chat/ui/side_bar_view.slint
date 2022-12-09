@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { SideBar, ListView, TextLine, GroupItemModel, coop, mi } from "_imports/coop_widgets.slint";
+import { SideBar, List, TextLine, GroupItemModel, coop, mi } from "_imports/coop_widgets.slint";
 
 export global SideBarViewAdapter := {
     property <string> channel_search;
@@ -9,10 +9,6 @@ export global SideBarViewAdapter := {
 }
 
 export SideBarView := SideBar {
-    // width: 200px;
-    // height: 100%;
-    // horizontal-stretch: 0;
-
     HorizontalLayout {  
         padding_left: coop.theme.spaces.large;
         padding_right: coop.theme.spaces.large;
@@ -27,7 +23,11 @@ export SideBarView := SideBar {
         }
     }
    
-    i_navigation := ListView {      
+    i_navigation := List {      
         model <=> SideBarViewAdapter.channels;
+
+        current_item_changed => {  
+            root.expanded = false;
+        }
     }
 }

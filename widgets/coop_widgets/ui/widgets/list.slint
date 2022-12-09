@@ -105,6 +105,8 @@ Item := TouchArea {
 
 // Delegate for a `GroupItemModel` it can display a `text` and a list of `ItemModels`.
 GroupItem := Rectangle {
+    callback current_item_changed({ parent: int, item: int });
+
     private property <brush> foreground: coop.theme.brushes.foreground;
     in property <GroupItemModel> model;
     in property <int> item_index;
@@ -157,7 +159,7 @@ GroupItem := Rectangle {
             i_focus_scope := FocusScope {
                 width: 0px; // Do not react on clicks
                
-                key-pressed(event) => {
+                key_pressed(event) => {
                     if(event.text == " " || event.text == "\n") {
                         i_touch_area.clicked();
                         return accept;
@@ -182,7 +184,10 @@ GroupItem := Rectangle {
                 index: item_index;
                 parent_index: root.item_index;
 
-                clicked => { root.current_item = { parent: root.item_index, item: item_index }; }
+                clicked => { 
+                    root.current_item = { parent: root.item_index, item: item_index };
+                    root.current_item_changed(root.current_item);
+                }
             }
         }     
     }
@@ -219,6 +224,10 @@ export List := VerticalLayout {
             model: parent_item;
             item_index: parent_index;
             current_item <=> root.current_item;
+
+            current_item_changed(item) => {  
+                root.current_item_changed(item);
+            }
         }
 
         // Only one parent item.
@@ -234,8 +243,8 @@ export List := VerticalLayout {
                 padding_right: coop.theme.spaces.medium;
 
                 clicked => { 
-                    root.current_item = { parent: 0, item: index } ;
-                    root.current_item_changed(root.current-item);
+                    root.current_item = { parent: 0, item: index };
+                    root.current_item_changed(root.current_item);
                 }
             }
         }
@@ -245,7 +254,7 @@ export List := VerticalLayout {
 // `ListView` is a scrollable variant of `List`.
 export ListView := Rectangle {
     // Will be called after current is changed;
-    callback current_item_changed <=> i_list.current_item_changed;
+     callback current_item_changed({ parent: int, item: int });
 
     // Defines the list of models.
     in property <[GroupItemModel]> model <=> i_list.model;

@@ -9,9 +9,8 @@ export SideBarView := SideBar {
 
     i_navigation := List {
         vertical-stretch: 1;
-
-        current_item_changed => {  
+        current-item-changed => { 
             root.expanded = false;
-        }
+         }
     }
 }
