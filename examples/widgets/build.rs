@@ -3,7 +3,7 @@
 
 fn generate_imports() {
     book_flip::generate_import().unwrap();
-    coop_widgets::generate_import().unwrap();
+    // coop_widgets::generate_import().unwrap();
 }
 
 #[cfg(not(feature = "mcu-board-support"))]
