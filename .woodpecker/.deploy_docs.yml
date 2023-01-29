@@ -34,7 +34,7 @@ pipeline:
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
         fi
-
+    failure: ignore
   deploy_docs_coop_client:
     group: docs
     image: rust
@@ -67,6 +67,7 @@ pipeline:
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
         fi
+    failure: ignore
   deploy_docs_book_flip:
     group: docs
     image: rust
@@ -99,6 +100,7 @@ pipeline:
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
         fi
+    failure: ignore
   deploy_docs_coop_protocol:
     group: docs
     image: rust
@@ -131,6 +133,7 @@ pipeline:
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
         fi
+    failure: ignore
   deploy_docs_coop_server:
     group: docs
     image: rust
@@ -163,6 +166,7 @@ pipeline:
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
         fi
+    failure: ignore
   deploy_docs_slint_coop:
     group: docs
     image: rust
@@ -195,3 +199,4 @@ pipeline:
           git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
           git push
         fi
+    failure: ignore
