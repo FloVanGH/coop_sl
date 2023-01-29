@@ -5,7 +5,7 @@
 import { FocusBorder } from "../components/focus_border.slint";
 
 // `FocusTouchArea` is a touch area with a focus border.
-export FocusTouchArea := TouchArea {
+export component FocusTouchArea inherits TouchArea {
     private property <bool> enter_pressed;
 
     // Defines the border radius of the focus border.
@@ -20,6 +20,7 @@ export FocusTouchArea := TouchArea {
     forward_focus: i_focus_scope;
 
     i_focus_scope := FocusScope {
+        x:0;
         width: 0px; // Do not react on clicks
         enabled <=> root.enabled;
         
@@ -44,8 +45,8 @@ export FocusTouchArea := TouchArea {
     if(i_focus_scope.has_focus) : FocusBorder {
         width: root.width + 4px;
         height: root.height + 4px;
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
         border_radius: root.focus_border_radius + 2px;
     }
 }

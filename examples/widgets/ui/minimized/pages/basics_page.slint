@@ -5,14 +5,14 @@ import { PageMinimized } from "page.slint";
 import { RowTitle, ColumnTitle } from "../../pages/titles.slint";
 
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
-    VerticalSpacerSmall, TextLine, CheckBox, Switch, mi, coop } from "../../_imports/coop_widgets.slint";
+    VerticalSpacerSmall, TextLine, CheckBox, Switch, Theme, Icons } from "../../_imports/coop_widgets.slint";
 
 import { AppManager } from "../../app_manager.slint";
 
-export BasicsPageMinimized := PageMinimized {
+export component BasicsPageMinimized inherits PageMinimized {
     GridLayout {  
-        padding: coop.theme.spaces.large;
-        spacing: coop.theme.spaces.medium;
+        padding: Theme.spaces.large;
+        spacing: Theme.spaces.medium;
        
         // Button
         Row {
@@ -57,7 +57,7 @@ export BasicsPageMinimized := PageMinimized {
 
             OutlineButton {
                 text: "OutlineButton";
-                icon: mi.plus;
+                icon: Icons.fa_var_plus;
                 enabled: AppManager.widgets_enabled;
             }
         }
@@ -82,7 +82,7 @@ export BasicsPageMinimized := PageMinimized {
             Spacer {}
 
             RoundButton {
-                icon: mi.plus;
+                icon: Icons.fa_var_plus;
                 enabled: AppManager.widgets_enabled;
             }
         }
@@ -108,7 +108,7 @@ export BasicsPageMinimized := PageMinimized {
 
             RoundOutlineButton {
                 primary: true;
-                icon: mi.plus;
+                icon: Icons.fa_var_plus;
                 enabled: AppManager.widgets_enabled;
             }
         }
@@ -130,19 +130,19 @@ export BasicsPageMinimized := PageMinimized {
                 clickable: true;
                 text <=> AppManager.text_line_one;
 
-                clicked => { root.open_keyboard("text_line_one", text, placeholder, icon); }
+                clicked => { root.open_keyboard("text_line_one", self.text, self.placeholder, self.icon); }
             }
 
             Spacer {}
 
             TextLine {
-                icon: mi.search;
-                has-clear: true;
+                text: mi.search;
+                has-clear: true; 
                 enabled: AppManager.widgets_enabled;
                 clickable: true;
                 text <=> AppManager.text_line_two;
 
-                clicked => { root.open_keyboard("text_line_two", text, placeholder, icon); }
+                clicked => { root.open_keyboard("text_line_two", self.text, self.placeholder, self.icon); }
             }
         }
 
@@ -167,9 +167,9 @@ export BasicsPageMinimized := PageMinimized {
             Switch {
                 on_icon: mi.lightbulb;
                 off_icon: mi.nights_stay;
-                selected: !coop.dark_theme;
+                selected: !Theme.dark;
                 selected_changed(selected) => {
-                    coop.dark_theme = !selected;
+                    Theme.dark = !self.selected;
                 }
             }
         }

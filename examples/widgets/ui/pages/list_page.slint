@@ -3,10 +3,10 @@
 
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Spacer, TableView, Cell, HorizontalSeparator, ScrollView, List, ListView, coop, GroupItemModel, Switch, HeaderBar, mi } 
+import { Spacer, TableView, Cell, HorizontalSeparator, ScrollView, List, ListView, Theme, Icons, GroupItemModel, Switch, HeaderBar } 
     from "../_imports/coop_widgets.slint";
 
-export ListPage := GridLayout {
+export component ListPage inherits GridLayout {
     Row {
         i_header_bar := HeaderBar {
             title: "Lists";
@@ -14,11 +14,11 @@ export ListPage := GridLayout {
                 alignment: center;
 
                 Switch {
-                    on_icon: mi.lightbulb;
-                    off_icon: mi.nights_stay;
-                    selected: !coop.dark_theme;
+                    on_icon: Icons.fa_var_lightbulb_o;
+                    off_icon: Icons.fa_var_moon;
+                    selected: !Theme.dark;
                     selected_changed(selected) => {
-                        coop.dark_theme = !selected;
+                        Theme.dark = !self.selected;
                     }
                 }
             }    
@@ -27,8 +27,8 @@ export ListPage := GridLayout {
 
     Row {
         GridLayout {  
-            padding: coop.theme.spaces.large;
-            spacing: coop.theme.spaces.medium;
+            padding: Theme.spaces.large;
+            spacing: Theme.spaces.medium;
     
             // Lists
             Row {
@@ -79,7 +79,7 @@ export ListPage := GridLayout {
                             { text: "Item 6" },
                         ]
                     };
-                    model: [list];
+                    model: [self.list];
                 }
     
                 Spacer {}
@@ -95,7 +95,7 @@ export ListPage := GridLayout {
                     property <GroupItemModel> list_one: {
                         text: "Group 1",
                         items: [
-                            { text: "Item 1" },
+                            { text: "Item 1", highlighted: true },
                             { text: "Item 2" },
                         ]
                     };
@@ -106,7 +106,7 @@ export ListPage := GridLayout {
                             { text: "Item 2" },
                         ]
                     };
-                    model: [list_one, list_two];
+                    model: [self.list_one, self.list_two];
                 }
     
                 Spacer {}
@@ -144,31 +144,31 @@ export ListPage := GridLayout {
                     private property <int> current_row: -1;
             
                     property <[Cell]> first_row: [
-                        { value: mi.folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
+                        { value: Icons.fa_var_folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
                     ];
             
                     property <[Cell]> second_row: [
-                        { value: mi.article, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+                        { value: Icons.fa_var_file, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
                     ];
             
                     property <[Cell]> third_row: [
-                        { value: mi.article, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+                        { value: Icons.fa_var_file, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
                     ];
 
                     accepted(row, cell, text) => {
-                        rows[row][cell].editable = false;
-                        rows[row][cell].value = text;
-                        current_row = -1;
+                        self.rows[self.row][cell].editable = false;
+                        self.rows[self.row][cell].value = text;
+                        self.current_row = -1;
                     }
             
                     row_clicked(index) => {     
-                        if(current_row != -1) {
-                            rows[current_row][1].editable = false;
+                        if(self.current_row != -1) {
+                            self.rows[self.current_row][1].editable = false;
                         }
             
-                        current_row = index;
+                        self.current_row = index;
                         // column 1 is name
-                        rows[index][1].editable = true;
+                        self.rows[index][1].editable = true;
                     }
                     columns: [
                         { min_width: 32px },
@@ -178,9 +178,9 @@ export ListPage := GridLayout {
                         { header: "Kind", horizontal_stretch: 1 },
                     ];
                     rows: [
-                        first_row,
-                        second_row,
-                        third_row
+                        self.first_row,
+                        self.second_row,
+                        self.third_row
                     ];
                 }
             }

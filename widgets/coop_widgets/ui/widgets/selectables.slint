@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme, Icons } from "../coop/theme.slint";
 import { FocusBorder } from "../components/focus_border.slint";
 import { FocusTouchArea } from "../components/focus_touch_area.slint";
 import { SmallLabel } from "../components/label.slint";
-import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
+import { Icon } from "../components/icon.slint";
 
 // `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
-export SelectableBase := FocusTouchArea {
+export component SelectableBase inherits FocusTouchArea {
     // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
     callback selected_changed(bool);
 
@@ -22,7 +22,7 @@ export SelectableBase := FocusTouchArea {
 }
 
 // `CheckBox` represents a selectable check box with a text.
-export CheckBox := Rectangle {
+export component CheckBox inherits Rectangle {
     // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
     callback selected_changed <=> i_base.selected_changed;
 
@@ -35,46 +35,46 @@ export CheckBox := Rectangle {
     // If set to `true` the widget is marked as selected.
     in-out property <bool> selected <=> i_base.selected;
 
-    min_height: coop.theme.sizes.extra_small;
+    min_height: Theme.sizes.extra_small;
     horizontal-stretch: 0;
     vertical-stretch: 0;
 
     accessible-label <=> i_label.text;
     accessible-checkable: true;
-    accessible-checked <=> selected;
+    accessible-checked <=> root.selected;
     accessible-role: checkbox;
 
     i_base := SelectableBase {  
-        focus_border_radius: coop.theme.radius.extra_small;
+        focus_border_radius: Theme.radius.extra_small;
         
         HorizontalLayout {  
-            spacing: coop.theme.spaces.small;
+            spacing: Theme.spaces.small;
     
             VerticalLayout {  
                 alignment: center;
     
                 i_container := Rectangle {
-                    property <length> spacing: root.text == "" ? 0px: coop.theme.spaces.small;
+                    property <length> spacing: root.text == "" ? 0px: Theme.spaces.small;
             
-                    width: coop.theme.sizes.extra-small;
-                    height: coop.theme.sizes.extra-small;
-                    border_radius: coop.theme.radius.extra_small;
+                    width: Theme.sizes.extra-small;
+                    height: Theme.sizes.extra-small;
+                    border_radius: Theme.radius.extra_small;
                     border_width: 1px;
-                    border_color: coop.theme.brushes.border;
-                    background: coop.theme.brushes.background;
+                    border_color: Theme.brushes.border;
+                    background: Theme.brushes.background;
             
-                    i_icon := MaterialIcon {
-                        x: (parent.width - width) / 2;
-                        y: (parent.height - height) / 2;
-                        icon_color: coop.theme.brushes.on_primary;
-                        icon: mi.check;
+                    i_icon := Icon {
+                        horizontal_alignment: center;
+                        vertical_alignment: center;
+                        color: Theme.brushes.on_primary;
+                        text: Icons.fa_var_check;
                         opacity: 0;
             
-                        animate icon_color { duration: coop.theme.durations.fast; }
-                        animate opacity { duration: coop.theme.durations.fast; }
+                        animate color { duration: Theme.durations.fast; }
+                        animate opacity { duration: Theme.durations.fast; }
                     }
             
-                    animate background { duration: coop.theme.durations.medium; easing: ease-in-out; }
+                    animate background { duration: Theme.durations.medium; easing: ease-in-out; }
                 } 
             }
     
@@ -87,40 +87,40 @@ export CheckBox := Rectangle {
     }
 
     states [  
-        disabled_selected when !enabled && root.selected: {
-            i_container.background: coop.theme.brushes.surface_disabled;
-            i_label.color: coop.theme.brushes.foreground_disabled;
+        disabled_selected when !root.enabled && root.selected: {
+            i_container.background: Theme.brushes.surface_disabled;
+            i_label.color: Theme.brushes.foreground_disabled;
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
-        disabled when !enabled: {
-            i_container.border_color: coop.theme.brushes.border_disabled;
-            i_label.color: coop.theme.brushes.foreground_disabled;
+        disabled when !root.enabled: {
+            i_container.border_color: Theme.brushes.border_disabled;
+            i_label.color: Theme.brushes.foreground_disabled;
         }
         pressed_selected when i_base.focus_pressed && root.selected: {
-            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.pressed);
-            i_icon.icon_color: coop.theme.brushes.on_primary.darker(coop.theme.state.pressed);
+            i_container.background: Theme.brushes.primary.darker(Theme.state.pressed);
+            i_icon.color: Theme.brushes.on_primary.darker(Theme.state.pressed);
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         hover_selected when i_base.has_hover && root.selected: {
-            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.hover);
-            i_icon.icon_color: coop.theme.brushes.on_primary.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.primary.darker(Theme.state.hover);
+            i_icon.color: Theme.brushes.on_primary.darker(Theme.state.hover);
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
         pressed when i_base.focus_pressed: {
-            i_container. background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
-            root.border_color: coop.theme.brushes.border.darker(coop.theme.state.pressed);
-            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_container. background: Theme.brushes.background.darker(Theme.state.pressed);
+            root.border_color: Theme.brushes.border.darker(Theme.state.pressed);
+            i_icon.color: Theme.brushes.foreground.darker(Theme.state.pressed);
         }
         hover when i_base.has_hover: {
-            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.hover);
-            root.border_color: coop.theme.brushes.border.darker(coop.theme.state.hover);
-            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.background.darker(Theme.state.hover);
+            root.border_color: Theme.brushes.border.darker(Theme.state.hover);
+            i_icon.color: Theme.brushes.foreground.darker(Theme.state.hover);
         }
         selected when i_base.selected: {
-            i_container.background: coop.theme.brushes.primary;
+            i_container.background: Theme.brushes.primary;
             i_container.border_width: 0px;
             i_icon.opacity: 1;
         }
@@ -128,8 +128,8 @@ export CheckBox := Rectangle {
 }
 
 // `Switch` represents a selectable that can be toggled on an off.
-export Switch := Rectangle {
-    private property <brush> foreground: coop.theme.brushes.foreground;
+export component Switch inherits Rectangle {
+    private property <brush> foreground: Theme.brushes.foreground;
     private property <length> indicator_space: 4px;
 
     // Is called after `selected` has changed. The parameter represents the current parameter of `selected`.
@@ -148,11 +148,11 @@ export Switch := Rectangle {
     in-out property <bool> selected <=> i_base.selected;
 
     accessible-checkable: true;
-    accessible-checked <=> selected;
+    accessible-checked <=> root.selected;
     accessible-role: checkbox;
 
-    width: height * 2;
-    height: coop.theme.sizes.extra_small;
+    width: root.height * 2;
+    height: Theme.sizes.extra_small;
     vertical_stretch: 0;
     horizontal_stretch: 0;
 
@@ -162,84 +162,84 @@ export Switch := Rectangle {
         i_container := Rectangle {
             width: 100%;
             height: 100%;
-            background: coop.theme.brushes.surface;
-            border_radius: i_indicator.border_radius + indicator_space / 2;
+            background: Theme.brushes.surface;
+            border_radius: i_indicator.border_radius + root.indicator_space / 2;
     
-            if(root.on_icon != "") : MaterialIcon {  
-                x: root.indicator_space + (i_indicator.width - width) / 2;
-                y: (parent.height - height) / 2;
-                icon: root.on_icon;
-                icon_size: coop.theme.icons.size_small;
-                icon_color: root.foreground;
+            if(root.on_icon != "") : Icon {  
+                x: root.indicator_space + (i_indicator.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                text: root.on_icon;
+                font_size:  Theme.icon.size.small;
+                color: root.foreground;
             }
         
-            if(root.off_icon != "") : MaterialIcon {  
-                x: root.width - root.indicator_space - (i_indicator.width + width) / 2;
-                y: (parent.height - height) / 2;
-                icon: root.off_icon;
-                icon_size: coop.theme.icons.size_small;
-                icon_color: root.foreground;
+            if(root.off_icon != "") : Icon {  
+                x: root.width - root.indicator_space - (i_indicator.width + self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                text: root.off_icon;
+                font_size:  Theme.icon.size.small;
+                color: root.foreground;
             }
         
             i_indicator := Rectangle { 
                 x: root.indicator_space;
-                y: (parent.height - height) / 2;
+                y: (parent.height - self.height) / 2;
                 width: i_container.height - root.indicator_space;
-                height: width;
-                border_radius: max(width, height) / 2;
-                background: coop.theme.brushes.foreground;
+                height: self.width;
+                border_radius: max(self.width, self.height) / 2;
+                background: Theme.brushes.foreground;
         
-                animate x { duration: coop.theme.durations.fast; }  
+                animate x { duration: Theme.durations.fast; }  
             }
     
-            animate background { duration: coop.theme.durations.fast; }
+            animate background { duration: Theme.durations.fast; }
         }
     }
 
     states [
-        disabled_selected when !enabled && root.selected: {
-            i_container.background: coop.theme.brushes.surface_disabled;
-            foreground: coop.theme.brushes.foreground_disabled;
-            i_indicator.background: coop.theme.brushes.foreground_disabled;
+        disabled_selected when !root.enabled && root.selected: {
+            i_container.background: Theme.brushes.surface_disabled;
+            foreground: Theme.brushes.foreground_disabled;
+            i_indicator.background: Theme.brushes.foreground_disabled;
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
         }
-        disabled when !enabled: {
-            i_container.background: coop.theme.brushes.surface_disabled;
-            foreground: coop.theme.brushes.foreground_disabled;
-            i_indicator.background: coop.theme.brushes.foreground_disabled;
+        disabled when !root.enabled: {
+            i_container.background: Theme.brushes.surface_disabled;
+            foreground: Theme.brushes.foreground_disabled;
+            i_indicator.background: Theme.brushes.foreground_disabled;
         }
         pressed_selected when i_base.focus_pressed && root.selected: {
-            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.pressed);
+            i_container.background: Theme.brushes.primary.darker(Theme.state.pressed);
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
-            i_indicator.background: coop.theme.brushes.background;
-            root.foreground: coop.theme.brushes.background;
+            i_indicator.background: Theme.brushes.background;
+            root.foreground: Theme.brushes.background;
         }
         hover_selected when i_base.has_hover && root.selected: {
-            i_container.background: coop.theme.brushes.primary.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.primary.darker(Theme.state.hover);
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
-            i_indicator.background: coop.theme.brushes.background;
-            root.foreground: coop.theme.brushes.background;
+            i_indicator.background: Theme.brushes.background;
+            root.foreground: Theme.brushes.background;
         }
         selected when !i_base.focus_pressed && root.selected: {
-            i_container.background: coop.theme.brushes.primary;
+            i_container.background: Theme.brushes.primary;
             i_indicator.x: i_container.x + i_container.width - i_indicator.width - root.indicator_space;
-            i_indicator.background: coop.theme.brushes.background;
-            root.foreground: coop.theme.brushes.background;
+            i_indicator.background: Theme.brushes.background;
+            root.foreground: Theme.brushes.background;
         }
         pressed when i_base.focus_pressed: {
-            i_container.background: coop.theme.brushes.surface.darker(coop.theme.state.pressed);
+            i_container.background: Theme.brushes.surface.darker(Theme.state.pressed);
         }
         hover when i_base.has_hover: {
-            i_container.background: coop.theme.brushes.surface.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.surface.darker(Theme.state.hover);
         }
     ]
 
-    animate foreground { duration: coop.theme.durations.fast; } 
+    animate foreground { duration: Theme.durations.fast; } 
 }
 
 // Viewer Examples
 
-CheckBoxExample := Rectangle {
+component CheckBoxExample inherits Rectangle {
     VerticalLayout {
         alignment: start;
         padding: 8px;
@@ -250,7 +250,7 @@ CheckBoxExample := Rectangle {
     }
 }
 
-SwitchExample := Rectangle {
+component SwitchExample inherits Rectangle {
     VerticalLayout {
         padding: 8px;
 

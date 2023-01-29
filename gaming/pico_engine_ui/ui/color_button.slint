@@ -1,0 +1,24 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Theme } from "_imports/coop_widgets.slint";
+
+export component ColorButton {
+    callback clicked <=> i_touch_area.clicked;
+    in property <brush> color <=> i_container.background;
+    in property <bool> selected;
+
+    height: self.width;
+
+    i_container := Rectangle {   
+        border_width: 2px;
+    }
+
+    i_touch_area := TouchArea {}
+
+    states [
+        selected when selected : {
+            i_container.border_color: Theme.brushes.primary;
+        }
+    ]
+}

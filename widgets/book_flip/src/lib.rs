@@ -1,6 +1,14 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
+/*!
+
+# book_flip
+
+This crates provides custom widgets to create ebook reader like applications.
+
+*/
+
 use std::{env, fs, io, io::Write, path::Path};
 
 /// Generates a import file for the widget library on the given path e.g. `my_project/my_ui/_my_imports`.
@@ -14,13 +22,13 @@ where
     let ui_lib_file = env!("UI_LIB_FILE");
 
     let import_file_content = fs::read_to_string(ui_lib_file)
-        .map(|c| c.replace("from \"", format!("from \"{}/", ui_lib_path).as_str()))?;
+        .map(|c| c.replace("from \"", format!("from \"{ui_lib_path}/").as_str()))?;
 
     if !import_path.exists() {
         fs::create_dir_all(import_path.clone())?;
     }
 
-    let mut import_file = fs::File::create(import_path.join(format!("{}.slint", ui_lib_name)))?;
+    let mut import_file = fs::File::create(import_path.join(format!("{ui_lib_name}.slint")))?;
 
     import_file.write_all(import_file_content.as_bytes())
 }
@@ -29,3 +37,6 @@ where
 pub fn generate_import() -> io::Result<()> {
     generate_import_with_custom_ui_path(env::current_dir()?.join("ui/_imports"))
 }
+
+#[cfg(doc)]
+pub mod docs;

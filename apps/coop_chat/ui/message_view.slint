@@ -3,11 +3,11 @@
 
 import { HeaderBar, ScrollView } from "_imports/coop_widgets.slint";
 
-export global MessageViewAdapter := {
-    property <string> title: "Internal";
+export global MessageViewAdapter  {
+    in-out property <string> title: "Internal";
 }
 
-export MessageView := Rectangle {
+export component MessageView inherits Rectangle {
     horizontal-stretch: 1;
 
     VerticalLayout {  

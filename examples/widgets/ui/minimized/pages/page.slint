@@ -3,9 +3,9 @@
 
 import { AppManager } from "../../app_manager.slint"; 
 
-import { HeaderBar, OutlineButton, CheckBox, Switch, coop, mi } from "../../_imports/coop_widgets.slint";
+import { HeaderBar, OutlineButton, CheckBox, Switch, Theme } from "../../_imports/coop_widgets.slint";
 
-export PageMinimized := GridLayout {
+export component PageMinimized inherits GridLayout {
     callback open_keyboard(string, string, string, string);
     
     Flickable {  

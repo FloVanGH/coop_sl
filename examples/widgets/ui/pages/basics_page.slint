@@ -5,17 +5,17 @@ import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, Spacer, HorizontalSeparator, ComboBox,
-    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, Popup, SmallLabel, mi, coop } from "../_imports/coop_widgets.slint";
+    VerticalSpacerMedium, TextLine, CheckBox, Switch, Slider, ProgressBar, Popup, SmallLabel, Theme, Icons } from "../_imports/coop_widgets.slint";
 
 import { AppManager } from "../app_manager.slint";
 
-export BasicsPage := Page {
+export component BasicsPage inherits Page {
     title: "Basics";
 
     GridLayout {  
-        padding: coop.theme.spaces.large;
-        spacing: coop.theme.spaces.medium;
-       
+        padding: Theme.spaces.large;
+        spacing: Theme.spaces.medium;
+    
         // Button
         Row {
             RowTitle {
@@ -69,7 +69,7 @@ export BasicsPage := Page {
                 alignment: start;
 
                 Button {
-                    icon: mi.plus;
+                    icon: Icons.fa_var_plus;
                     enabled: AppManager.widgets_enabled;
                 }
             }
@@ -81,7 +81,7 @@ export BasicsPage := Page {
 
                 Button {
                     text: "Button";
-                    icon: mi.plus;
+                    icon: Icons.fa_var_plus;
                     enabled: AppManager.widgets_enabled;
                 }
             }
@@ -150,7 +150,7 @@ export BasicsPage := Page {
                 alignment: start;
                 
                 OutlineButton {
-                    icon: mi.plus;
+                    icon: Icons.fa_var_plus;
                     enabled: AppManager.widgets_enabled;
                 }
             }
@@ -162,7 +162,7 @@ export BasicsPage := Page {
 
                 OutlineButton {
                     text: "OutlineButton";
-                    icon: mi.plus;
+                    icon: Icons.fa_var_plus;
                     enabled: AppManager.widgets_enabled;
                 }
             }
@@ -206,7 +206,7 @@ export BasicsPage := Page {
             Spacer {}
 
             RoundButton {
-                icon: mi.plus;
+                icon: Icons.fa_var_plus;
                 enabled: AppManager.widgets_enabled;
             }
         }
@@ -257,7 +257,7 @@ export BasicsPage := Page {
             Spacer {}
 
             RoundOutlineButton {
-                icon: mi.plus;
+                icon: Icons.fa_var_plus;
                 enabled: AppManager.widgets_enabled;
             }
 
@@ -267,7 +267,7 @@ export BasicsPage := Page {
 
             RoundOutlineButton {
                 primary: true;
-                icon: mi.plus;
+                icon: Icons.fa_var_plus;
                 enabled: AppManager.widgets_enabled;
             }
         }
@@ -319,35 +319,35 @@ export BasicsPage := Page {
                 enabled: AppManager.widgets_enabled;
                 clickable: AppManager.keyboard_enabled;
 
-                clicked => { root.open_keyboard("text_line_one", text, placeholder, icon); }
+                clicked => { root.open_keyboard("text_line_one", self.text, self.placeholder, self.icon); }
             }
 
             Spacer {}
 
-            TextLine {
+            TextLine { 
                 text <=> AppManager.text_line-two;
-                icon: mi.format-list-numbered;
-                action_icon: mi.clear;
+                icon: Icons.fa_var_list;
+                action_icon: Icons.fa_var_remove;
                 enabled: AppManager.widgets_enabled;
                 clickable: AppManager.keyboard_enabled;
                 placeholder: "Insert a float";
-                has_error: !text.is_float();
+                has_error: !self.text.is_float();
 
-                action => { text = "" }
-                clicked => { root.open_keyboard("text_line", text, placeholder, icon); }
+                action => { self.text = "" }
+                clicked => { root.open_keyboard("text_line", self.text, self.placeholder, self.icon); }
             }
 
             Spacer {}
 
             TextLine {
                 text <=> AppManager.text_line_three;
-                icon: mi.search;
-                action_icon: mi.clear;
+                icon: Icons.fa_var_search;
+                action_icon: Icons.fa_var_remove;
                 enabled: AppManager.widgets_enabled;
                 clickable: AppManager.keyboard_enabled;
 
-                action => { text = "" }
-                clicked => { root.open_keyboard("text_line_three", text, placeholder, icon); }
+                action => { self.text = "" }
+                clicked => { root.open_keyboard("text_line_three", self.text, self.placeholder, self.icon); }
             }
 
             Spacer {}
@@ -356,13 +356,13 @@ export BasicsPage := Page {
                 placeholder: "Insert a password";
                 input_type: password;
                 text: "password";
-                action_icon: input_type == InputType.password ? mi.visibility : mi.visibility-off;
+                action_icon: self.input_type == InputType.password ? Icons.fa_var_eye : Icons.fa_var_eye_slash;
                 enabled: AppManager.widgets_enabled;
                 action => { 
-                    if(input_type == InputType.password) {
-                        input_type = InputType.text
+                    if(self.input_type == InputType.password) {
+                        self.input_type = InputType.text
                     } else {
-                        input_type = InputType.password;
+                        self.input_type = InputType.password;
                     }
                 }
             }
@@ -445,15 +445,15 @@ export BasicsPage := Page {
                 current_index: 0;
                 model: [
                     {
-                        leading_icon: mi.settings,
+                        leading_icon: Icons.fa_var_wrench,
                         text: "Item one"
                     },
                     {
-                        leading_icon: mi.print,
+                        leading_icon: Icons.fa_var_print,
                         text: "Item three"
                     },
                     {
-                        leading_icon: mi.preview,
+                        leading_icon: Icons.fa_var_calculator,
                         text: "Item four"
                     }
                 ];
@@ -497,8 +497,8 @@ export BasicsPage := Page {
             Spacer {}
 
             Switch {  
-                on_icon: mi.check;
-                off_icon: mi.close;
+                on_icon: Icons.fa_var_check;
+                off_icon: Icons.fa_var_remove;
                 enabled: AppManager.widgets_enabled;
                 selected: true;
             }
@@ -652,12 +652,12 @@ export BasicsPage := Page {
 
                 i_popup := Popup {
                     x: i_popup_button.x;
-                    y: i_popup_button.y - 40px - coop.theme.spaces.small;
+                    y: i_popup_button.y - 40px - Theme.spaces.small;
                     width: i_popup_button.width;
                     height: 40px;
                     
                     layout := VerticalLayout {  
-                        padding: coop.theme.spaces.medium;
+                        padding: Theme.spaces.medium;
                         SmallLabel {
                             text: "Popup content";
                         }

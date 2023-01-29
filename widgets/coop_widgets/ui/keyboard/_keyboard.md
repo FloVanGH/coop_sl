@@ -9,10 +9,6 @@ This module contains all components for the on screen keyboard.
 
 ## `KeyboardPage`
 
-```slint
-export KeyboardPage := Rectangle
-```
-
 ### Callbacks
 
 * **`open_keyboard(string, string, string, string)`**: Opens the keyboard.
@@ -48,10 +44,6 @@ export KeyboardPage := Rectangle
 * **`row_three`** (**[KeyModel]**):Third row of keys.
 
 ## `Keyboard`
-
-```slint
-export Keyboard := Rectangle
-```
 
 `Keyboard` represent an on screen keyboard.
 

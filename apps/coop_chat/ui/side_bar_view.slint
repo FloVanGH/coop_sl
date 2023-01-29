@@ -1,25 +1,25 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { SideBar, List, TextLine, GroupItemModel, coop, mi } from "_imports/coop_widgets.slint";
+import { SideBar, List, TextLine, GroupItemModel, Theme, Icons } from "_imports/coop_widgets.slint";
 
-export global SideBarViewAdapter := {
-    property <string> channel_search;
-    property<[GroupItemModel]> channels;
+export global SideBarViewAdapter  {
+    in-out property <string> channel_search;
+    in-out property<[GroupItemModel]> channels;
 }
 
-export SideBarView := SideBar {
+export component SideBarView inherits SideBar {
     HorizontalLayout {  
-        padding_left: coop.theme.spaces.large;
-        padding_right: coop.theme.spaces.large;
-        padding_bottom: coop.theme.spaces.large;
+        padding_left: Theme.spaces.large;
+        padding_right: Theme.spaces.large;
+        padding_bottom: Theme.spaces.large;
         i_search := TextLine {
             min_width: 20px;
             placeholder: "Find channel";
             text <=> SideBarViewAdapter.channel_search;
-            icon: mi.search;
-            action_icon: mi.clear;
-            action => { text = ""; }
+            icon: Icons.fa_var_search;
+            action_icon: Icons.fa_var_remove;
+            action => { self.text = ""; }
         }
     }
    

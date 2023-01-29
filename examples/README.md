@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # co_sl examples
 
-Examples for the crates `pico_engine`, `coop_widgets` and `book_flip`.
+Examples for the crates `pico_engine_ui`, `coop_widgets` and `book_flip`.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
@@ -26,7 +26,7 @@ Experimental example desktop environment based on `coop_display` and Slint.
 
 ## gaming
 
-Example game for `pico_engine`. It can be run on multiple platforms.
+Example game for `pico_engine_ui`. It can be run on multiple platforms.
 
 ### Run gaming
 
@@ -54,5 +54,4 @@ Example gallery that shows all widgets of `coop_widgets` and `book_flip`. It can
 ### Run widgets
 
 * On desktop: from repo root run `cargo run -p widgets`
-* With OrbClient: from repo root run `cargo run -p widgets --no-default-features --features=slint_orbclient`
 * On Raspberry Pi Pico with st7789 display: from repo root run ```cargo +nightly build -p widgets --no-default-features --features=mcu-board-support/pico-st7789 --target=thumbv6m-none-eabi --release && elf2uf2-rs -d target/thumbv6m-none-eabi/release/widgets```

@@ -5,7 +5,7 @@ import { WindowModel } from "window_model.slint";
 import { WindowView } from "window_view.slint";
 import { Button } from "../_imports/coop_widgets.slint";
 
-export global DisplayViewAdapter := {
+export global DisplayViewAdapter  {
     callback open(string);
 
     callback pointer_event(string, length, length, PointerEvent);
@@ -22,15 +22,15 @@ export global DisplayViewAdapter := {
 
     // property WindowModel front_window: 
 
-    property <[WindowModel]> window_models;
+    in-out property <[WindowModel]> window_models;
 
-    property <string> front_key: window_models.length - 1 >= 0 ? window-models[window_models.length - 1].key : "";
+    in-out property <string> front_key: root.window_models.length - 1 >= 0 ? root.window-models[root.window_models.length - 1].key : "";
 
-    property <string> front_path: window_models.length - 1 >= 0 ? window-models[window_models.length - 1].path : "";
+    in-out property <string> front_path: root.window_models.length - 1 >= 0 ? root.window-models[root.window_models.length - 1].path : "";
 }
 
 // `DisplayView` draws and handles windows.
-export DisplayView := Rectangle {
+export component DisplayView inherits Rectangle {
     // Open a window with the given binary path.
     callback open <=> DisplayViewAdapter.open;
 
@@ -50,10 +50,10 @@ export DisplayView := Rectangle {
     callback bring_to_front <=> DisplayViewAdapter.bring_to_front;
 
     // The list of window window_models.
-    property <[WindowModel]> window_models <=> DisplayViewAdapter.window_models;
+    in-out property <[WindowModel]> window_models <=> DisplayViewAdapter.window_models;
 
     Rectangle {  
-        for client[index] in window_models : WindowView {
+        for client[index] in root.window_models : WindowView {
             x: client.x;
             y: client.y;
             inner_width: client.width;
@@ -66,7 +66,7 @@ export DisplayView := Rectangle {
             }
 
             pointer_event(x, y, e) => {  
-                root.pointer_event(client.key, x, y, e);
+                root.pointer_event(client.key, self.x, self.y, e);
             }
 
             key_pressed_event(e) => {  
@@ -80,8 +80,8 @@ export DisplayView := Rectangle {
             }
 
             move(x, y) => {  
-                client.x = max(0px, min(x, root.width - width));
-                client.y = max(0px, min(y, root.height - height));
+                client.x = max(0px, min(self.x, root.width - self.width));
+                client.y = max(0px, min(self.y, root.height - self.height));
             }
 
             close => {  

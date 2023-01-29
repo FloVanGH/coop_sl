@@ -1,19 +1,19 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme } from "../coop/theme.slint";
 
 // `PopupBorder` can used to draw border and background of a `Popup`.
-export PopupBorder := Rectangle {
-    background: coop.theme.brushes.background;
-    border_radius: coop.theme.radius.medium;
+export component PopupBorder inherits Rectangle {
+    background: Theme.brushes.background;
+    border_radius: Theme.radius.medium;
     border_width: 1px;
-    border_color: coop.theme.brushes.border;
+    border_color: Theme.brushes.border;
     clip: true;
 }
 
 // `Popup` is used to show a popup overlay.
-export Popup := PopupWindow {
+export component Popup inherits PopupWindow {
     PopupBorder {  
         @children
     }
@@ -21,7 +21,7 @@ export Popup := PopupWindow {
 
 import { Button } from "../widgets/button.slint";
 
-Example := Rectangle {
+component Example inherits Rectangle {
     layout := VerticalLayout {  
         alignment: center;
         Button {
@@ -37,6 +37,7 @@ Example := Rectangle {
         height: 20px;
 
         Text {
+            x:0;y:0;
             text: "popup content";
         }
     }

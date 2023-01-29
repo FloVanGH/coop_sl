@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme } from "../coop/theme.slint";
 import { FocusBorder } from "../components/focus_border.slint";
 import { SmallLabel } from "../components/label.slint";
 import { Switch } from "../widgets/selectables.slint";
 
 // `Slider` allow to make selections from a range of values.
-export Slider := Rectangle {
+export component Slider {
     // Is called after `value` has changed. The parameter represents the current value.
     callback value_changed(float);
     
@@ -22,97 +22,99 @@ export Slider := Rectangle {
     // Must be a value between 0.0 and 1.0.
     in-out property <float> value: 0.0;
 
-    min-width: coop.theme.sizes.large;
+    min-width: Theme.sizes.large;
     min-height: i_thumb.height  ;
     horizontal-stretch: 1;
     vertical-stretch: 0;
 
     accessible_role: slider;
-    accessible_value: value;
+    accessible_value: root.value;
     accessible_value_minimum: i_touch_area.minimum;
     accessible_value_maximum: i_touch_area.maximum;
     accessible_value_step: i_touch_area.step_size;
 
     i_container := Rectangle {
-        y: (parent.height - height) / 2;
+        y: (parent.height - self.height) / 2;
         width: 100%;
-        height: coop.theme.sizes.extra_extra_small;
-        background: coop.theme.brushes.surface;
-        border_radius: coop.theme.radius.extra_extra_small;
+        height: Theme.sizes.extra_extra_small;
+        background: Theme.brushes.surface;
+        border_radius: Theme.radius.extra_extra_small;
 
-        animate background { duration: coop.theme.durations.fast; }
+        animate background { duration: Theme.durations.fast; }
     }
 
     i_track := Rectangle {
-        y: (parent.height - height) / 2;
+        x:0;
+        y: (parent.height - self.height) / 2;
         width: parent.width * root.value;
         height: i_container.height;
-        background: coop.theme.brushes.primary;
+        background: Theme.brushes.primary;
         border_radius: i_container.border_radius;
 
-        animate background { duration: coop.theme.durations.fast; }
+        animate background { duration: Theme.durations.fast; }
     }
 
     i_thumb := Rectangle {
-        x:  (root.width - width) * (value - i_touch_area.minimum) / (i_touch_area.maximum - i_touch_area.minimum);
-        y: (parent.height - height) / 2;
-        width: coop.theme.sizes.small;
-        height: width;
-        border_radius: max(width, height) / 2;
-        background: coop.theme.brushes.primary;
+        x:  (root.width - self.width) * (root.value - i_touch_area.minimum) / (i_touch_area.maximum - i_touch_area.minimum);
+        y: (parent.height - self.height) / 2;
+        width: Theme.sizes.small;
+        height: self.width;
+        border_radius: max(self.width, self.height) / 2;
+        background: Theme.brushes.primary;
     
-        animate background { duration: coop.theme.durations.fast; }
+        animate background { duration: Theme.durations.fast; }
     }
 
     i_thumb_border := Rectangle {
-        x: i_thumb.x + (i_thumb.width - width) / 2;
-        y: (i_thumb.height - height) / 2;
+        x: i_thumb.x + (i_thumb.width - self.width) / 2;
+        y: (i_thumb.height - self.height) / 2;
         width: i_thumb.width + 4px;
-        height: width;
-        border_radius: max(width, height) / 2;
+        height: self.width;
+        border_radius: max(self.width, self.height) / 2;
         border_width: 1px;
-        border_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+        border_color: Theme.brushes.foreground.darker(Theme.state.hover);
         opacity: 0;
 
-        animate opacity { duration: coop.theme.durations.fast; }
+        animate opacity { duration: Theme.durations.fast; }
     }
 
     i_touch_area := TouchArea {
         property <float> pressed_value;
         property <float> minimum;
         property <float> maximum: 1.0;
-        property <float> step_size: (maximum - minimum) / 100;
+        property <float> step_size: (self.maximum - self.minimum) / 100;
 
         width: parent.width;
         height: parent.height;
        
         pointer-event(event) => {
             if(event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
-                pressed_value = root.value;
+                self.pressed_value = root.value;
             }
         }
 
         moved => {
-            if(enabled && pressed) {
-                value = max(i_touch_area.minimum, min(i_touch_area.maximum,
-                    pressed_value + (i_touch_area.mouse_x - i_touch_area.pressed_x) * (maximum - minimum) / (root.width - i_thumb.width)));
-                root.value_changed(value);
+            if(self.enabled && self.pressed) {
+                root.value = max(i_touch_area.minimum, min(i_touch_area.maximum,
+                    self.pressed_value + (i_touch_area.mouse_x - i_touch_area.pressed_x) * (self.maximum - self.minimum) / (root.width - i_thumb.width)));
+                root.value_changed(root.value);
             }
         }
     }
 
     i_focus_scope := FocusScope {
+        x:0;
         width: 0px;
         enabled: root.enabled;
 
         key-pressed(event) => {
-            if(enabled && event.text == Key.RightArrow) {
-                value = Math.min(value + i_touch_area.step_size, i_touch_area.maximum);
-                root.value_changed(value);
+            if(self.enabled && event.text == Key.RightArrow) {
+                root.value = Math.min(root.value + i_touch_area.step_size, i_touch_area.maximum);
+                root.value_changed(root.value);
                 accept
-            } else if(enabled && event.text == Key.LeftArrow) {
-                value = Math.max(value - i_touch_area.step_size, i_touch_area.minimum);
-                root.value_changed(value);
+            } else if(self.enabled && event.text == Key.LeftArrow) {
+                root.value = Math.max(root.value - i_touch_area.step_size, i_touch_area.minimum);
+                root.value_changed(root.value);
                 accept
             } else {
                 reject
@@ -123,43 +125,43 @@ export Slider := Rectangle {
     if(i_focus_scope.has_focus) : FocusBorder {
         width: root.width + 4px;
         height: root.height + 4px;
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
         border_radius: i_container.border_radius + 2px;
     }
 
     states [
-        disabled when !enabled: {
-            i_container.background: coop.theme.brushes.surface_disabled;
-            i_track.background: coop.theme.brushes.foreground_disabled;
-            i_thumb.background: coop.theme.brushes.foreground_disabled;
+        disabled when !root.enabled: {
+            i_container.background: Theme.brushes.surface_disabled;
+            i_track.background: Theme.brushes.foreground_disabled;
+            i_thumb.background: Theme.brushes.foreground_disabled;
         }
         pressed when i_touch_area.pressed: {
-            i_thumb.background: coop.theme.brushes.primary.darker(coop.theme.state.pressed);
-            i_thumb_border.border_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_thumb.background: Theme.brushes.primary.darker(Theme.state.pressed);
+            i_thumb_border.border_color: Theme.brushes.foreground.darker(Theme.state.pressed);
             i_thumb_border.opacity: 1.0;
         }
         hover when i_touch_area.has_hover: {
-            i_thumb.background: coop.theme.brushes.primary.darker(coop.theme.state.hover);
+            i_thumb.background: Theme.brushes.primary.darker(Theme.state.hover);
             i_thumb_border.opacity: 1.0;
         }
     ]
 }
 
-SliderExample := Rectangle {
+component SliderExample inherits Rectangle {
     width: 600px;
     height: 400px;
-    background: coop.theme.brushes.background;
+    background: Theme.brushes.background;
 
     VerticalLayout {  
-        padding: coop.theme.spaces.large;
-        spacing: coop.theme.spaces.large;
+        padding: Theme.spaces.large;
+        spacing: Theme.spaces.large;
         alignment: center;
 
         HorizontalLayout {  
             alignment: center;
             Switch {
-                selected <=> coop.dark-theme;
+                selected <=> Theme.dark;
             }
         }
       

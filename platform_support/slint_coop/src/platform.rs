@@ -10,22 +10,22 @@ use crate::Color;
 
 /// Initializes the platform.
 pub fn init() {
-    slint::platform::set_platform(Box::new(CoopPlatform::default())).unwrap();
+    slint::platform::set_platform(Box::new(ThemePlatform::default())).unwrap();
 }
 
 /// Initializes the platform with a configuration.
 pub fn init_config(width: f32, height: f32, title: impl Into<String>) {
-    slint::platform::set_platform(Box::new(CoopPlatform::new(width, height, title.into())))
+    slint::platform::set_platform(Box::new(ThemePlatform::new(width, height, title.into())))
         .unwrap();
 }
 
 /// Slint platform implementation based on `coop_client`.
-pub struct CoopPlatform {
+pub struct ThemePlatform {
     slint_window: RefCell<Rc<renderer::MinimalSoftwareWindow<1>>>,
     coop_window: RefCell<coop_client::Window>,
 }
 
-impl CoopPlatform {
+impl ThemePlatform {
     /// Returns a new platform object.
     pub fn new(width: f32, height: f32, title: String) -> Self {
         Self {
@@ -35,15 +35,15 @@ impl CoopPlatform {
     }
 }
 
-impl Default for CoopPlatform {
+impl Default for ThemePlatform {
     fn default() -> Self {
-        CoopPlatform::new(0., 0., String::default())
+        ThemePlatform::new(0., 0., String::default())
     }
 }
 
 // todo: event converter with tests
 
-impl slint::platform::Platform for CoopPlatform {
+impl slint::platform::Platform for ThemePlatform {
     fn create_window_adapter(&self) -> Rc<dyn slint::platform::WindowAdapter> {
         self.slint_window.borrow().clone()
     }

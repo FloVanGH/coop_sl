@@ -1,20 +1,20 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { CoopWindow, KeyboardPage, KeyboardAdapter, GroupItemModel, coop, mi } from "_imports/coop_widgets.slint";
-import { BasicsPage, TypoPage, BrushesPage, ListPage } from "pages/pages.slint";
+import { CoopWindow, KeyboardPage, KeyboardAdapter, GroupItemModel, Theme, Icons } from "_imports/coop_widgets.slint";
+import { BasicsPage, TypoPage, BrushesPage, ListPage, BookFlipPage } from "pages/pages.slint";
 import { AppManager } from "app_manager.slint"; 
 import { SideBarView } from "side_bar_view.slint";
 
-export { KeyboardAdapter, coop }
-export { AppManager }
+export { KeyboardAdapter, Theme }
+export { AppManager } 
 
-export App := CoopWindow {
+export component App inherits CoopWindow {
     min_width: 800px;
     title: "Widgets gallery";
 
     Rectangle {
-        background: coop.theme.brushes.background;
+        background: Theme.brushes.background;
     }
 
     keyboard_page := KeyboardPage {
@@ -27,9 +27,10 @@ export App := CoopWindow {
                 col: 1;
 
                 if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {
-                    open_keyboard(key, text, placeholder, icon) => { keyboard_page.open-keyboard(key, text, placeholder, icon); }
-                }
+                    open_keyboard(key, text, placeholder, icon) => { keyboard_page.open_keyboard(key, text, placeholder, icon); }
+                } 
                 if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 1) : ListPage {}
+                if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 2) : BookFlipPage {}
                 if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : BrushesPage {}
                 if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 1) : TypoPage {}
             }
@@ -42,20 +43,21 @@ export App := CoopWindow {
                 property <GroupItemModel> widgets: {
                     text: "Widgets",
                     items: [
-                        { leading_icon: mi.widgets, text: "Basics" },
-                        { leading_icon: mi.list, text: "Lists" },
+                        { leading_icon: Icons.fa_var_tachometer, text: "Basics" },
+                        { leading_icon: Icons.fa_var_list, text: "Lists" },
+                        { leading_icon: Icons.fa_var_book, text: "Book flip" },
                     ]
                 };
 
                 property <GroupItemModel> resources: {
                     text: "Resources",
                     items: [
-                        { leading_icon: mi.brush, text: "Brushes" },
-                        { leading_icon: mi.font_download, text: "Typography" },
+                        { leading_icon: Icons.fa_var_paint_brush, text: "Brushes" },
+                        { leading_icon: Icons.fa_var_pencil, text: "Typography" },
                     ]
                 };
   
-                navigation_items: [widgets, resources];
+                navigation_items: [self.widgets, self.resources];
             }
         }
     }

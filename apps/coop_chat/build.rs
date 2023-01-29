@@ -7,7 +7,7 @@ fn main() {
     slint_build::compile("ui/app.slint").unwrap();
 }
 
-#[cfg(any(feature = "slint_orbclient", feature = "slint_coop"))]
+#[cfg(any(target_os = "redox", feature = "slint_coop"))]
 fn main() {
     coop_widgets::generate_import().unwrap();
     let config = slint_build::CompilerConfiguration::new()

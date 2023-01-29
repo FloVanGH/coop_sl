@@ -1,0 +1,148 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import  { Brushes } from "brush.slint";
+import  { Duration } from "duration.slint";
+import  { IconSet } from "icon.slint";
+import  { States } from "state.slint"; 
+import  { Radius } from "radius.slint";
+import  { Settings } from "settings.slint";
+import  { Sizes } from "size.slint";
+import  { Space } from "space.slint";
+import  { Typo, Font } from "typo.slint";
+
+import { Icons } from "icons.slint";
+
+export { Icons, Brushes }
+
+// import "../assets/fonts/Roboto-Regular.ttf";
+// import "../assets/fonts/Roboto-Medium.ttf";
+import "../assets/icons/forkawesome-webfont.ttf";
+
+import { StyleMetrics } from "std-widgets.slint";
+
+// `Theme` is used to access to the style resources of the `Theme` theme (dark and light).
+export global Theme  { 
+    // Toggles between light and dark theme.
+    in-out property <bool> dark: StyleMetrics.dark-color-scheme;
+
+    // If set to `true` the animations will be skipped.
+    in-out property <bool> skip_animations;
+
+    // Defines the accent (primary) brush.
+    in-out property <brush> accent_color: root.dark ? #01fec5: #1d9bf2;
+
+    // Defines the on accent (primary) brush.
+    in-out property <brush> on_accent_color:  root.dark ? #212121: #dfdfdf;
+
+    // Additional theme settings.
+    in property <Settings> settings: {
+        minimize: false,
+    };
+
+    // If set to `true` helpers for swr will be activated.
+    in property <bool> embedded_helper;
+
+    // Defines the brushes of the of the theme.
+    in-out property <Brushes> brushes: {
+        background: root.dark ? #2d2d2d: #dfdfdf,
+        background_alt: root.dark ? #414141: #cbcbcb,
+        foreground: root.dark ? #dfdfdf: #2d2d2d,
+        foreground_disabled: root.dark ? #7b7b7b: #a0a0a0,
+        surface: root.dark ? #505050: #BDBDBD,
+        surface_disabled: root.dark ? #3d3d3d: #d2d2d2,
+        on_surface: root.dark ? #212121: #dfdfdf,  
+        primary: root.accent_color,
+        on_primary: root.on_accent_color,
+        border: root.dark ? #7e7e7e: #505050,
+        border_disabled: root.dark ? #494949: #c5c5c5,
+        state: #000000,
+        shadow: #000000,
+        error: #EF5350,
+    };
+
+    // Defines the animation durations of the theme.
+    in property <Duration> durations: {
+        slow: root.skip-animations ? 0ms : 500ms,
+        medium: root.skip-animations ? 0ms : 250ms,
+        fast: root.skip-animations ? 0ms : 150ms,
+    };
+
+    // Defines icon settings and icon unicodes from `ForkAwesome` v 1.2.0.
+    in property <IconSet> icon: {
+        size: {
+            small: 12px,
+            medium: 14px,
+            large: 16px,
+        },
+        font_family: "forkawesome",
+    };
+
+    // Define state opactiy values.
+    in property <States> state: {
+        hover: 0.2,
+        pressed: 0.4,
+        container_disabled: 0.38,
+        content_disabled: 0.38,
+    };
+
+    // Defines widget sizes.
+    in property <Sizes> sizes: {
+        extra_extra_small: 4px,
+        extra_small: 20px,
+        small: 26px,
+        medium: 32px,
+        large: 44px,
+    };
+
+    // Defines paddings and spacings.
+    in property <Space> spaces: {
+        extra_small: 2px,
+        small: 4px,
+        medium: 8px,
+        large: 16px,
+    };
+
+    // Defines border radius.
+    in property <Radius> radius: {
+        extra_extra_small: 2px,
+        extra_small: 4px,
+        small: 6px,
+        medium: 8px,
+        large: 16px,
+    };
+
+    // Defines the typography settings.
+    in property <Typo> typo: {
+        small_label: {
+            // family: "Roboto",
+            size: 12px,
+            weight: 400
+        },
+        medium_label: {
+            // family: "Roboto",
+            size: 12px,
+            weight: 500      
+        },
+        large_label: {
+            // family: "Roboto",
+            size: 14px,
+            weight: 500
+        },
+        small_title: {
+            // family: "Roboto",
+            size: 16px,
+            weight: 500      
+        },
+        medium_title:{
+            // family: "Roboto",
+            size: 20px,
+            weight: 500      
+        },
+        large_title: {
+            // family: "Roboto",
+            size: 24px,
+            weight: 500      
+        },
+    };
+}

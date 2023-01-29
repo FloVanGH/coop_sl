@@ -3,24 +3,24 @@
 
 import { AppManager } from "../app_manager.slint"; 
 
-import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, coop, mi } from "../_imports/coop_widgets.slint";
+import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Theme, Icons } from "../_imports/coop_widgets.slint";
 
-export Page := GridLayout {
+export component Page inherits GridLayout {
     callback open_keyboard(string, string, string, string);
-    property <string> title <=> i_header_bar.title;
-    property <bool> keyboard_check_box: true;
-    property <bool> disabled_check_box: true;
+    in-out property <string> title <=> i_header_bar.title;
+    in-out property <bool> keyboard_check_box: true;
+    in-out property <bool> disabled_check_box: true;
 
     Row {
         i_header_bar := HeaderBar {
             if(root.keyboard_check_box) : CheckBox {
-                y: (parent.height - height) / 2;
+                y: (parent.height - self.height) / 2;
                 text: "Keyboard enabled";
                 selected <=> AppManager.keyboard_enabled;
             }
 
             if(root.disabled_check_box) : CheckBox {
-                y: (parent.height - height) / 2;
+                y: (parent.height - self.height) / 2;
                 text: "Widgets enabled";
                 selected <=> AppManager.widgets_enabled;
             }
@@ -29,11 +29,11 @@ export Page := GridLayout {
                 alignment: center;
 
                 Switch {
-                    on_icon: mi.lightbulb;
-                    off_icon: mi.nights_stay;
-                    selected: !coop.dark_theme;
+                    on_icon: Icons.fa_var_lightbulb_o;
+                    off_icon: Icons.fa_var_moon;
+                    selected: !Theme.dark;
                     selected_changed(selected) => {
-                        coop.dark_theme = !selected;
+                        Theme.dark = !self.selected;
                     }
                 }
             }    

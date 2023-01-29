@@ -1,29 +1,29 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "_imports/coop_widgets.slint";
+import { Theme } from "_imports/coop_widgets.slint";
 
-export global AppManager := {
+export global AppManager  {
     callback open_keyboard(string, string, string, string);
     callback update_text(string, string);
 
-    property <bool> keyboard_enabled: false;
-    property <bool> widgets_enabled: true;
-    property <string> text_line_one;
-    property <string> text_line_two: "hello";
-    property <string> text_line_three: "hello";
+    in-out property <bool> keyboard_enabled: false;
+    in-out property <bool> widgets_enabled: true;
+    in-out property <string> text_line_one;
+    in-out property <string> text_line_two: "hello";
+    in-out property <string> text_line_three: "hello";
 
     update_text(key, text) => {  
         if (key == "text_line_one") {
-            text_line_one = text;
+            root.text_line_one = text;
         }
 
         if (key == "text_line_two") {
-            text_line_two = text;
+            root.text_line_two = text;
         }
 
         if (key == "text_line_three") {
-            text_line_three = text;
+            root.text_line_three = text;
         }
     }
 }

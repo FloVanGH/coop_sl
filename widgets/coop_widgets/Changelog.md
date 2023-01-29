@@ -12,9 +12,9 @@ SPDX-License-Identifier: MIT
 * `SideBar`
 * `HeaderBar`
 
-### coop
+### Theme
 
-* `coop` global
+* `Theme` global
 
 ### Components
 

@@ -28,9 +28,9 @@ Theme and style definitions of the `coop_widgets`.
 * **`shadow`** (**brush**): Defines the brush of drop shadows.
 * **`error`** (**brush**): Defines the error brush.
 
-### struct `Durations`
+### struct `Duration`
 
-`Durations` provides all animation duration of `Theme`.
+`Duration` provides all animation duration of `Theme`.
 
 ### Properties
 
@@ -123,7 +123,7 @@ Theme and style definitions of the `coop_widgets`.
 ### Properties
 
 * **`brushes`** (**Brushes**): Brush definitions.
-* **`durations`** (**Durations**): Animation durations.
+* **`durations`** (**Duration**): Animation durations.
 * **`icons`** (**Icons**): Icon sizes.
 * **`states`** (**States**): State values e.g. for using .darker().
 * **`sizes`** (**Sizes**): Sizes of components and widgets.
@@ -131,13 +131,13 @@ Theme and style definitions of the `coop_widgets`.
 * **`spaces`** (**Spaces**): Paddings and spaces.
 * **`typo`** (**Typo**): Typography settings.
 
-## global `coop`
+## global `Theme`
 
-`coop` is used to access to the style resources of the `coop` theme (dark and light).
+`Theme` is used to access to the style resources of the `Theme` theme (dark and light).
 
 ### Properties
 
-* **in-out `dark_theme`** (**bool**): Toggles between light and dark theme.
+* **in-out `dark`** (**bool**): Toggles between light and dark theme.
 * **in `accent_color`** (**brush**): Defines the accent (primary) brush.
 * **in `on_accent_color`** (**brush**): Defines the on accent (primary) brush.
 * **`embedded_helper`** (**bool**): If set to `true` helpers for swr will be activated.

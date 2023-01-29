@@ -55,9 +55,9 @@ impl SlintProxy {
     }
 
     /// Sends a resize event.‚
-    pub fn send_resize_event(&self, key: SharedString, width: f32, height: f32) {
-        self.proxy.send_resize_event(key, width, height);
-    }
+    // pub fn send_resize_event(&self, key: SharedString, width: f32, height: f32) {
+    //     self.proxy.send_resize_event(key, width, height);
+    // }
 
     /// Closes the client with the given key.
     pub fn close_client(&self, key: impl Into<String>) {

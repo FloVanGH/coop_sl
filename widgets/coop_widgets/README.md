@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 The goal with `coop_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system. The theme is available in a light and a dark variant.
 
-What the `coop` in `coop_widgets` stands for: cooperation.
+What the `Coop` in `coop_widgets` stands for: cooperation.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
@@ -27,11 +27,10 @@ Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/).
 
 ```toml
 [dependencies]
-slint = "0.3.2"
+slint = { version = "0.3.4" }
 
 [build-dependencies]
-slint-build = "0.3.2"
-coop_widgets = { git = "https://codeberg.org/flovansl/coop_sl" }
+slint-build = { version = "0.3.4" }coop_widgets = { git = "https://codeberg.org/flovansl/coop_sl" }
 ```
 
 2. Call `coop_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/coop_widgets.slint`:
@@ -66,37 +65,37 @@ export MyApp := CoopWindow {
 
 ## theming
 
-All theme resources of `coop_widgets` like brushes, sizes, spacings and typography can be accessed by using the  `coop` global.
+All theme resources of `coop_widgets` like brushes, sizes, spacings and typography can be accessed by using the  `Coop` global.
 
 ### brush example
 
 ```
-import { coop } from "_imports/coop_widgets.slint";
+import { Coop } from "_imports/coop_widgets.slint";
 
 MyRect := Rectangle {
-    background: coop.theme.brushes.surface;
+    background: Coop.brush.surface;
 }
 ```
 
 ### typo example
 
 ```
-import { coop } from "_imports/coop_widgets.slint";
+import { Coop } from "_imports/coop_widgets.slint";
 
 MyText := Text {
-   font_size: coop.theme.typo.large_label.size;
-   font_weight: coop.theme.typo.large_label.weight;
+   font_size: Coop.typo.large_label.size;
+   font_weight: Coop.typo.large_label.weight;
 }
 ```
 
 ### spaces
 
 ```
-import { coop } from "_imports/coop_widgets.slint";
+import { Coop } from "_imports/coop_widgets.slint";
 
 MyLayout := HorizontalLayout {
-   spacing: coop.theme.spaces.small;
-   padding: coop.theme.spaces.medium;
+   spacing: Coop.space.small;
+   padding: Coop.space.medium;
 }
 ```
 
@@ -111,8 +110,8 @@ Best to start with these sources:
 
 ## assets
 
-* Material Icons
-    * `coop_widgets` uses [Material Icons](https://fonts.google.com/icons) as icon font. The icons are licensed under Apache 2.0.
+* ForkAwesome
+    * `coop_widgets` uses [ForkAwesome](https://forkaweso.me/Fork-Awesome/) as icon font. The icons are licensed under MIT.
 
 
 ## license

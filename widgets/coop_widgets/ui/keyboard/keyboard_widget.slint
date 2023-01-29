@@ -2,23 +2,22 @@
 // SPDX-License-Identifier: MIT
 
 import { TextLine, Button, OutlineButton, RoundButton, RoundOutlineButton } from "../widgets/widgets.slint";
-import { coop } from "../coop/coop.slint";
-import { mi } from "../assets/icons/material_icons.slint";
+import { Theme, Icons } from "../coop/theme.slint";
 
 // `KeyboardAdapter` helps to handle keyboard actions that cannot be done at the moment with slint.
 //
 // The adapter need to exported from the app main slint file and the backspace callback must be implemented in code.
-export global KeyboardAdapter := {
+export global KeyboardAdapter  {
     // Removes the last character of the given string and returns the result.
-    callback backspace(string) -> string;
+    pure callback backspace(string) -> string;
 }
 
-KeyboardButton := RoundOutlineButton {
-    width: coop.settings.minimize ? coop.theme.sizes.small: coop.theme.sizes.medium;
+component KeyboardButton inherits RoundOutlineButton {
+    width: Theme.settings.minimize ? Theme.sizes.small: Theme.sizes.medium;
 }
 
 // `KeyModel` Defines the model of a key of the `Keyboard`.
-export struct KeyModel := {
+export struct KeyModel  {
     // Character lower case.
     l: string, 
 
@@ -33,7 +32,7 @@ export struct KeyModel := {
 }
 
 // `KeyboardLayout` is used to define a button layout for the  `Keyboard`.
-export struct KeyboardLayout := {
+export struct KeyboardLayout  {
     // First row of keys.
     row_one:  [KeyModel],
 
@@ -45,7 +44,7 @@ export struct KeyboardLayout := {
 }
 
 // `Keyboard` represent an on screen keyboard.
-export Keyboard := Rectangle {
+export component Keyboard {
     private property <bool> shift;
     private property <string> key;
     private property <bool> extra;
@@ -105,12 +104,12 @@ export Keyboard := Rectangle {
 
     VerticalLayout {  
         alignment: center;
-        spacing: coop.theme.spaces.small;
-        padding: coop.theme.spaces.large;
+        spacing: Theme.spaces.small;
+        padding: Theme.spaces.large;
 
 
         VerticalLayout {  
-            min_height: coop.theme.sizes.large;
+            min_height: Theme.sizes.large;
             vertical-stretch: 0;
             alignment: center;
 
@@ -120,58 +119,58 @@ export Keyboard := Rectangle {
         }  
 
         i_row_one := HorizontalLayout {
-            spacing: coop.theme.spaces.small;
+            spacing: Theme.spaces.small;
             alignment: center;
 
-            for key in layout.row_one: KeyboardButton {
+            for key in root.layout.row_one: KeyboardButton {
                 text: root.extra ? root.shift ? key.a_u: key.a_l: root.shift ? key.u: key.l;
-                clicked => { root.key_enter(text); }
+                clicked => { root.key_enter(self.text); }
             }
         }
         i_row_two := HorizontalLayout {
-            spacing: coop.theme.spaces.small;
+            spacing: Theme.spaces.small;
             alignment: center;
 
-            for key in layout.row_two: KeyboardButton {
+            for key in root.layout.row_two: KeyboardButton {
                 text: root.extra ? root.shift ? key.a_u: key.a_l: root.shift ? key.u: key.l;
-                clicked => { root.key_enter(text); }
+                clicked => { root.key_enter(self.text); }
             }
         }
         i_row_three := HorizontalLayout {
-            spacing: coop.theme.spaces.small;
+            spacing: Theme.spaces.small;
             alignment: center;
 
             // shift
             KeyboardButton {  
-                icon: mi.keyboard-arrow-up;
+                icon: Icons.fa_var_arrow_up;
                 clicked => { root.shift = !root.shift; }
             }
 
-            for key in layout.row_three: KeyboardButton {
+            for key in root.layout.row_three: KeyboardButton {
                 text: root.extra ? root.shift ? key.a_u: key.a_l: root.shift ? key.u: key.l;
-                clicked => { root.key_enter(text); }
+                clicked => { root.key_enter(self.text); }
             }
 
             // backspace
             KeyboardButton {  
-                icon: mi.backspace;
+                icon: Icons.fa_var_arrow_left;
                 clicked => { root.text = KeyboardAdapter.backspace(root.text); }
             }
         }
         i_row_fore := HorizontalLayout {
-            spacing: coop.theme.spaces.small;
+            spacing: Theme.spaces.small;
             alignment: center;
 
             // switch keyboard
             KeyboardButton {
-                icon: mi.calculate;
+                icon: Icons.fa_var_calculator;
                 clicked => { root.extra = !root.extra; }
             }
 
             // space button
             Button {  
                 width: 120px;
-                height: coop.settings.minimize ? coop.theme.sizes.small: coop.theme.sizes.medium;
+                height: Theme.settings.minimize ? Theme.sizes.small: Theme.sizes.medium;
                 text: "";
                 clicked => { root.key_enter(" "); }
             }
@@ -180,17 +179,17 @@ export Keyboard := Rectangle {
             KeyboardButton {
                 primary: true;
              
-                icon: mi.keyboard_return;
+                icon: Icons.fa_var_arrow_circle_down;
                 clicked => { root.close(root.key, root.text); }
             }
         }
     }
 
     open(key, text, placeholder, icon) => {  
-        root.key = key;
-        root.text = text;
-        root.placeholder = placeholder;
-        root.icon = icon;
+        root.key = root.key;
+        root.text = root.text;
+        root.placeholder = root.placeholder;
+        root.icon = root.icon;
     }
 
     key_enter(char) => {  

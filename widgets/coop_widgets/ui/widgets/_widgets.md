@@ -9,15 +9,15 @@ This module contains the base set of `coop_widgets`.
 
 ## `ButtonBase`
 
+`ButtonBase` is used as base for buttons that can be clicked.
+
 ```slint
-export ButtonBase := FocusTouchArea
+export component ButtonBase inherits FocusTouchArea
 ```
 
-`ButtonBase` is used as base for buttons that can be clicked.
-f
 ### Properties
 
-* **in `icon`** (**string**): Used to set an optional icon on the button. Uses material icons check the `mi` global.
+* **in `icon`** (**string**): Used to set an optional icon on the button. .
 * **in `text`** (**string**): Used to set the display text of the button.
 * **in `text_color`** (**brush**): Defines the text color.
 * **in `icon_color`** (**brush**): Defines the icon color.
@@ -33,32 +33,28 @@ f
 ```slint
 import { ButtonBase } from "_imports/coop_widgets.slint";
 
-export MyButton := Example :=  Rectangle {
+export component MyButton {
     in property <string> text: "text";
     in property <string> icon;
 
-    i_base := ButtonBase {
+    i_base inherits ButtonBase {
         background: black;
         foreground: white;
         text: root.text;
-        icon: root.icon;
+        text: root.icon;
     }
 }
 ```
 
 ## `Button`
 
-```slint
-export Button := Rectangle
-```
-
 `Button` represents the default button with filled surface.
 
 ### Properties
 
 * **in `text`** (**string**): Used to set the display text of the button.
-* **in `icon`** (**string**): Used to set an optional icon on the button. Uses material icons check the `mi` global.
-* **in `primary`** (**bool**): If set to  `true` the button will filled with coop.theme.brushes.primary`.
+* **in `icon`** (**string**): Used to set an optional icon on the button. .
+* **in `primary`** (**bool**): If set to  `true` the button will filled with Theme.brushes.primary`.
 * **in `enabled`** (**bool**): If set to `false` the widget is disabled.
 
 ### Callbacks
@@ -70,7 +66,7 @@ export Button := Rectangle
 ```slint
 import { CenterLayout, Button } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 600px;
     height: 400px;
 
@@ -83,17 +79,13 @@ Example := CenterLayout {
 
 ## `OutlineButton`
 
-```slint
-export OutlineButton := Rectangle
-```
-
 `OutlineButton` represents a default button with an outline border.
 
 ### Properties
 
 * **in `text`** (**string**): Used to set the display text of the button.
-* **in `icon`** (**string**): Used to set an optional icon on the button. Uses material icons check the `mi` global.
-* **in `primary`** (**bool**): If set to  `true` the button will filled with coop.theme.brushes.primary`.
+* **in `icon`** (**string**): Used to set an optional icon on the button. .
+* **in `primary`** (**bool**): If set to  `true` the button will filled with Theme.brushes.primary`.
 * **in `enabled`** (**bool**): If set to `false` the widget is disabled.
 
 ### Callbacks
@@ -105,7 +97,7 @@ export OutlineButton := Rectangle
 ```slint
 import { CenterLayout, Button } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 600px;
     height: 400px;
 
@@ -118,16 +110,12 @@ Example := CenterLayout {
 
 ## `RoundButton`
 
-```slint
-export RoundButton := Rectangle
-```
-
 `RoundButton` represents a round fixed sized button with ether an icon or a single character text.
 
 ### Properties
 
 * **in `text`** (**string**): Used to set the display text of the button.
-* **in `icon`** (**string**): Used to set an optional icon on the button. Uses material icons check the `mi` global.
+* **in `icon`** (**string**): Used to set an optional icon on the button. .
 * **in `enabled`** (**bool**): If set to `false` the widget is disabled.
 * **in-out `icon_background`** (**brush**): Defines the round background.
 
@@ -140,12 +128,12 @@ export RoundButton := Rectangle
 ```slint
 import { CenterLayout, Button, mi } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 600px;
     height: 400px;
 
     RoundButton {
-        icon: mi.settings;
+        text: Icons.fa_var_wrench;
         clicked => { debug("Clicked"); }
     }
 }
@@ -153,17 +141,13 @@ Example := CenterLayout {
 
 ## `ButtonOutline`
 
-```slint
-export ButtonOutline := Rectangle
-```
-
 `RoundOutlineButton` represents a round fixed sized button with ether an icon or a single character text and an outline border.
 
 ### Properties
 
 * **in `text`** (**string**): Used to set the display text of the button.
-* **in `icon`** (**string**): Used to set an optional icon on the button. Uses material icons check the `mi` global.
-* **in `primary`** (**bool**): If set to  `true` the button will filled with coop.theme.brushes.primary`.
+* **in `icon`** (**string**): Used to set an optional icon on the button. .
+* **in `primary`** (**bool**): If set to  `true` the button will filled with Theme.brushes.primary`.
 * **in `enabled`** (**bool**): If set to `false` the widget is disabled.
 
 ### Callbacks
@@ -175,12 +159,12 @@ export ButtonOutline := Rectangle
 ```slint
 import { CenterLayout, Button, mi } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 600px;
     height: 400px;
 
     ButtonOutline {
-        text: mi.settings;
+        text: Icons.fa_var_wrench;
         clicked => { debug("Clicked"); }
     }
 }
@@ -189,10 +173,6 @@ Example := CenterLayout {
 ## `ComboBox`
 
 `ComboBox` enables users to select a value from a list inside of a `Popup`.
-
-```slint
-export ComboBox := Rectangle
-```
 
 ### Properties
 
@@ -211,11 +191,11 @@ export ComboBox := Rectangle
 ```slint
 import { CenterLayout, ComboBox } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 200px;
     height: 400px;
 
-    ComboBox := {
+    ComboBox inherits {
         width: 200px;
         placeholder: "Select an item";
         model: [
@@ -240,7 +220,7 @@ Example := CenterLayout {
 `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
 
 ```slint
-export SelectableBase := FocusTouchArea
+export component SelectableBase inherits FocusTouchArea
 ```
 
 ### Properties
@@ -260,8 +240,8 @@ export SelectableBase := FocusTouchArea
 ```slint
 import { SelectableBase } from "_imports/coop_widgets.slint";
 
-CheckBox := SelectableBase {
-    i_container := Example :=  Rectangle {
+CheckBox inherits SelectableBase {
+    i_container inherits Example inherits  Rectangle {
         width: 20px;
         height: 20px;
         border_width: 1px;
@@ -280,10 +260,6 @@ CheckBox := SelectableBase {
 
 `CheckBox` represents a selectable check box with a text.
 
-```slint
-export CheckBox := Rectangle
-```
-
 ### Properties
 
 * **in `selected`** (**bool**): If set to `true` the widget is marked selected.
@@ -299,7 +275,7 @@ export CheckBox := Rectangle
 ```slint
 import { CheckBox } from "_imports/coop_widgets.slint";
 
-Example := Rectangle {
+Example inherits Rectangle {
     width: 100px;
 
     VerticalLayout {
@@ -315,10 +291,6 @@ Example := Rectangle {
 ## `Switch`
 
 `Switch` represents a selectable that can be toggled on an off.
-
-```slint
-export Switch := Rectangle
-```
 
 ### Properties
 
@@ -336,7 +308,7 @@ export Switch := Rectangle
 ```slint
 import { Switch } from "_imports/coop_widgets.slint";
 
-Example := Rectangle {
+Example inherits Rectangle {
     width: 100px;
 
     VerticalLayout {
@@ -366,7 +338,7 @@ Example := Rectangle {
 ```slint
 import { Slider } from "_imports/coop_widgets.slint";
 
-Example := Example :=  Rectangle {
+Example inherits Example inherits  Rectangle {
     width: 100px;
 
     VerticalLayout {
@@ -378,7 +350,7 @@ Example := Example :=  Rectangle {
             horizontal_alignment: center;
         }
 
-        slider := Slider {
+        slider inherits Slider {
             text: "Check me";
         }
     }
@@ -412,7 +384,7 @@ Example := Example :=  Rectangle {
 `TableView` is used to display data in columns and rows.
 
 ```slint
-export TableView := Rectangle
+export component TableView inherits Rectangle
 ```
 
 ### Properties
@@ -433,7 +405,7 @@ export TableView := Rectangle
 ```slint
 import { TableView, Cell } from "_imports/coop_widgets.slint";
 
-TableViewTest := Rectangle {
+TableViewTest inherits Rectangle {
     preferred_width: 600px;
     preferred_height: 400px;
 
@@ -501,7 +473,7 @@ TableViewTest := Rectangle {
 `List` is a non scrollable list with a default item delegate.
 
 ```slint
-export List := VerticalLayout
+export component List inherits VerticalLayout
 ```
 
 ### Properties
@@ -518,7 +490,7 @@ export List := VerticalLayout
 ```slint
 import { CenterLayout, List } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 600px;
     height: 400px;
 
@@ -543,10 +515,6 @@ Example := CenterLayout {
 
 `ListView` is a scrollable variant of `List`.
 
-```slint
-export List := Rectangle
-```
-
 ### Properties
 
 * **in `model`** (**[GroupItemModel]**: Defines the list of models.
@@ -561,7 +529,7 @@ export List := Rectangle
 ```slint
 import { CenterLayout, ListView } from "_imports/coop_widgets.slint";
 
-Example := CenterLayout {
+Example inherits CenterLayout {
     width: 600px;
     height: 400px;
 
@@ -586,10 +554,6 @@ Example := CenterLayout {
 
 `ProgressBar` informs about current progress of ongoing process.
 
-```slint
-export ProgressBar := Rectangle
-```
-
 ### Properties
 
 * **in `progress`** (**float**): Represents the current progress. Must be a progress between 0.0 and 1.0.
@@ -600,7 +564,7 @@ export ProgressBar := Rectangle
 ```slint
 import { ProgressBar } from "_imports/coop_widgets.slint";
 
-Example :=  Rectangle {
+Example inherits  Rectangle {
     width: 100px;
 
     VerticalLayout {
@@ -620,10 +584,6 @@ Example :=  Rectangle {
 
 `ScrollView` allows to scroll content that is larger then the given size.
 
-```slint
-export ScrollView := Rectangle
-```
-
 ### Properties
 
 * **in `viewport_width`** (**length**: The width of the content view port.
@@ -638,7 +598,7 @@ selected.
 ```slint
 import { ScrollView } from "_imports/coop_widgets.slint";
 
-Example :=  Rectangle {
+Example inherits  Rectangle {
     width: 600px;
     height: 400px;
 
@@ -663,7 +623,7 @@ Example :=  Rectangle {
 `SelectableBase` is used as base for widgets that can be clicked and toggle between states `unselected` and `selected`.
 
 ```slint
-export SelectableBase := FocusTouchArea
+export component SelectableBase inherits FocusTouchArea
 ```
 
 ### Properties
@@ -679,19 +639,15 @@ export SelectableBase := FocusTouchArea
 ```slint
 import { SelectableBase } from "_imports/coop_widgets.slint";
 
-MySelectable := Rectangle {
+MySelectable inherits Rectangle {
     in-out property <bool> selected <=> i_base.selected;
-    i_base := SelectableBase {}
+    i_base inherits SelectableBase {}
 }
 ```
 
 ## `Slider`
 
 `Slider` allow to make selections from a range of values.
-
-```slint
-export Slider := Rectangle
-```
 
 ### Properties
 
@@ -708,7 +664,7 @@ export Slider := Rectangle
 ```slint
 import { Slider } from "_imports/coop_widgets.slint";
 
-Example :=  Rectangle {
+Example inherits  Rectangle {
     width: 600px;
     height: 400px;
 
@@ -723,10 +679,6 @@ Example :=  Rectangle {
 ## `TextLine`
 
 `TextLine` is a single line text input widget.
-
-```slint
-export TextLine := Rectangle
-```
 
 ### Properties
 
@@ -754,7 +706,7 @@ export TextLine := Rectangle
 ```slint
 import { TextLine } from "_imports/coop_widgets.slint";
 
-Example :=  Rectangle {
+Example inherits  Rectangle {
     width: 600px;
     height: 400px;
 

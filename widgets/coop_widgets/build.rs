@@ -6,7 +6,7 @@ use std::{env, fs, io, path::*};
 fn main() -> io::Result<()> {
     let ui_lib_name = "coop_widgets";
     let ui_lib_path = "ui";
-    let ui_lib_file = format!("{}/lib.slint", ui_lib_path);
+    let ui_lib_file = format!("{ui_lib_path}/lib.slint");
 
     let manifest_path = Path::new(
         &env::var_os("CARGO_MANIFEST_DIR")
@@ -25,7 +25,7 @@ fn main() -> io::Result<()> {
         manifest_path.join(ui_lib_file).as_path().display()
     );
 
-    println!("cargo:rustc-env=UI_LIB_NAME={}", ui_lib_name);
+    println!("cargo:rustc-env=UI_LIB_NAME={ui_lib_name}");
 
     Ok(())
 }

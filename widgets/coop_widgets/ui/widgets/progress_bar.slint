@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme } from "../coop/theme.slint";
 
 // `ProgressBar` informs about current progress of ongoing process.
-export ProgressBar := Rectangle { 
+export component ProgressBar inherits Rectangle { 
     // Represents the current progress.
     //
     // Must be a progress between 0.0 and 1.0.
@@ -13,32 +13,32 @@ export ProgressBar := Rectangle {
     // If set to `true` the progress bar shows generic progress.
     in property <bool> indeterminate;
 
-    min-width: coop.theme.sizes.large;
-    height: coop.theme.sizes.extra_extra_small;
+    min-width: Theme.sizes.large;
+    height: Theme.sizes.extra_extra_small;
     horizontal-stretch: 1;
     vertical-stretch: 0;
-    background: coop.theme.brushes.surface;
-    border_radius: coop.theme.radius.extra_extra_small;
+    background: Theme.brushes.surface;
+    border_radius: Theme.radius.extra_extra_small;
     clip: true;
 
     i_track := Rectangle {
-        x: !indeterminate ? 0px: parent.width * mod(animation-tick(), 2s) / 2s;
-        y: (parent.height - height) / 2;
-        width: !indeterminate ?  parent.width * root.progress: root.width / 2;
+        x: !root.indeterminate ? 0px: parent.width * mod(animation-tick(), 2s) / 2s;
+        y: (parent.height - self.height) / 2;
+        width: !root.indeterminate ?  parent.width * root.progress: root.width / 2;
         height: 100%;
-        background: coop.theme.brushes.primary;
+        background: Theme.brushes.primary;
         border_radius: root.border_radius;
     }
 }
 
-ProgressBarExample := Rectangle {
+component ProgressBarExample inherits Rectangle {
     width: 600px;
     height: 400px;
-    background: coop.theme.brushes.background;
+    background: Theme.brushes.background;
 
     VerticalLayout {  
-        padding: coop.theme.spaces.large;
-        spacing: coop.theme.spaces.large;
+        padding: Theme.spaces.large;
+        spacing: Theme.spaces.large;
         alignment: center;
 
         ProgressBar {  

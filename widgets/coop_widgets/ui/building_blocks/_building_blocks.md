@@ -11,10 +11,6 @@ This module contains stuff like header bar and side bar.
 
 `SideBar` is a bar with vertical arranged children.
 
-```slint
-export SideBar := Rectangle
-```
-
 ### Properties
 
 * **in `title`** (**string**): Describes the title of the sidebar.
@@ -31,7 +27,7 @@ import { SideBar } from "_imports/coop_widgets.slint";
 SideBarTest := Rectangle {
     min_width: 900px;
     height: 400px;
-    background: coop.theme.brushes.background;
+    background: Theme.brushes.background;
 
     GridLayout {  
         Rectangle {  

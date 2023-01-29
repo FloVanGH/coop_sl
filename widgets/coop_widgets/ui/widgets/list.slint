@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme, Icons } from "../coop/theme.slint";
 
 import { ScrollView } from "scroll_view.slint";
 import { SelectableBase } from "selectables.slint";
 import { LargeLabel, FocusBorder } from "../components/components.slint";
-import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
+import { Icon } from "../components/icon.slint";
 
 // `ItemModel` represents a list item used by `List` and `ListView`.
-export struct ItemModel := {
+export struct ItemModel  {
     // Defines the icon displayed left of the text.
     leading_icon: string,
 
@@ -18,10 +18,13 @@ export struct ItemModel := {
 
     // Defines the icon displayed right of the text.
     trailing_icon: string,
+
+    // If set to `true` the item will be displayed in a highlight color.
+    highlighted: bool,
 }
 
 // `GroupItemModel` represents a list item with list item children used by `List` and `ListView`.
-export struct GroupItemModel := {
+export struct GroupItemModel  {
     // Defines the text of the item.
     text: string,
 
@@ -30,9 +33,11 @@ export struct GroupItemModel := {
 }
 
 // Default item delegate (visuell represenation of an `ItemModel`.
-Item := TouchArea {
-    private property <brush> foreground: coop.theme.brushes.foreground;
+component Item inherits TouchArea {
+    private property <brush> foreground: Theme.brushes.foreground;
+    private property <brush> icon_color: highlighted ? Theme.brushes.primary : Theme.brushes.foreground;
 
+    in property <bool> highlighted;
     in property <string> leading_icon;
     in property <string> text;
     in property <string> trailing_icon;
@@ -40,10 +45,11 @@ Item := TouchArea {
     in property <int> parent_index;
     in property <{ parent: int, item: int }> current_item;
     
-    height: coop.theme.sizes.small;
+    height: Theme.sizes.small;
     forward-focus: i_focus_scope;
 
     i_focus_scope := FocusScope {
+        x:0;
         width: 0px; // Do not react on clicks
        
         key-pressed(event) => {
@@ -59,26 +65,27 @@ Item := TouchArea {
        i_layout := HorizontalLayout {  
             padding_left: root.padding_left;
             padding_right: root.padding_right;
-            spacing: coop.theme.spaces.large;
+            spacing: Theme.spaces.large;
     
-            if(leading_icon != "") : MaterialIcon {
-                y: (parent.height - height) / 2;
-                icon: root.leading_icon;
-                icon_size: coop.theme.icons.size_large;
-                icon_color: root.foreground;
+            if(root.leading_icon != "") : Icon {
+                text: root.leading_icon;
+                color: root.icon_color;
+                vertical_alignment: center;
+                horizontal_alignment: left;
             }
     
             LargeLabel {  
                 text <=> root.text;
                 vertical_alignment: center;
+                horizontal_alignment: left;
                 color: root.foreground;      
+                horizontal_stretch: 1;
             }
     
-            if(trailing_icon != "") : MaterialIcon {
-                y: (parent.height - height) / 2;
-                icon: root.trailing_icon;
-                icon_size: coop.theme.icons.size_large;
-                icon_color: root.foreground;
+            if(root.trailing_icon != "") : Icon {
+                text: root.trailing_icon;
+                color: root.foreground;
+                vertical_alignment: center;
             }
         }
 
@@ -87,27 +94,28 @@ Item := TouchArea {
 
     states [
         pressed when root.pressed: {
-            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
-            foreground: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_container.background: Theme.brushes.background.darker(Theme.state.pressed);
+            foreground: Theme.brushes.foreground.darker(Theme.state.pressed);
+            icon_color: highlighted ? Theme.brushes.primary.darker(Theme.state.pressed) : Theme.brushes.foreground.darker(Theme.state.pressed);
         }
         hover when root.has_hover: {
-            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.hover);
-            foreground: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.background.darker(Theme.state.hover);
+            foreground: Theme.brushes.foreground.darker(Theme.state.hover);
+            icon_color: highlighted ? Theme.brushes.primary.darker(Theme.state.hover) : Theme.brushes.foreground.darker(Theme.state.hover);
         }
         selected when root.current_item.parent == root.parent_index && root.current_item.item == root.index: {
-            i_container.background: coop.theme.brushes.background;
-            foreground: coop.theme.brushes.foreground;
+            i_container.background: Theme.brushes.background;
         }
     ]
 
-    animate foreground { duration: coop.theme.durations.fast; }
+    animate foreground { duration: Theme.durations.fast; }
 }
 
 // Delegate for a `GroupItemModel` it can display a `text` and a list of `ItemModels`.
-GroupItem := Rectangle {
+component GroupItem {
     callback current_item_changed({ parent: int, item: int });
 
-    private property <brush> foreground: coop.theme.brushes.foreground;
+    private property <brush> foreground: Theme.brushes.foreground;
     in property <GroupItemModel> model;
     in property <int> item_index;
     in-out property <{ parent: int, item: int }> current_item;
@@ -116,34 +124,37 @@ GroupItem := Rectangle {
     forward-focus: i_focus_scope;
 
     VerticalLayout {  
-        spacing: coop.theme.spaces.medium;
+        spacing: Theme.spaces.medium;
 
         i_container := Rectangle {
-            height: coop.theme.sizes.small;
+            height: Theme.sizes.small;
 
             i_container_layout := HorizontalLayout {  
-                padding_left: coop.theme.spaces.medium;
-                padding_right: coop.theme.spaces.medium;
-                spacing: coop.theme.spaces.medium;
+                padding_left: Theme.spaces.medium;
+                padding_right: Theme.spaces.medium;
+                spacing: Theme.spaces.medium;
 
                 // The item is expandable if it has items.
-                if(model.items.length > 0) : MaterialIcon {
-                    y: (parent.height - height) / 2;
-                    icon: mi.arrow_drop_down;
-                    icon_size: coop.theme.icons.size_medium;
-                    icon_color: root.foreground;
+                if(root.model.items.length > 0) : Icon {
+                    y: (parent.height - self.height) / 2;
+                    text: Icons.fa_var_chevron_down;
+                    color: root.foreground;
+                    vertical_alignment: center;
+                    horizontal_alignment: left;
 
                     states [  
                         collapsed when !root.expanded: {
-                            icon: mi.arrow-right;
+                            text: Icons.fa_var_chevron_right;
                         }
                     ]
                 }
 
                 LargeLabel  {  
                     color: root.foreground;
-                    text: model.text;
+                    text: root.model.text;
                     vertical_alignment: center;
+                    horizontal_alignment: left;
+                    horizontal_stretch: 1;
                 }
             }
 
@@ -157,6 +168,7 @@ GroupItem := Rectangle {
             }
 
             i_focus_scope := FocusScope {
+                x:0;
                 width: 0px; // Do not react on clicks
                
                 key_pressed(event) => {
@@ -170,15 +182,16 @@ GroupItem := Rectangle {
 
             if(i_focus_scope.has_focus) : FocusBorder {}
 
-            animate background { duration: coop.theme.durations.fast; }
+            animate background { duration: Theme.durations.fast; }
         }
 
         if(root.expanded) : VerticalLayout {     
-            for item[item_index] in model.items: Item {
+            for item[item_index] in root.model.items: Item {
                 current_item <=> root.current_item;
-                padding_left: i_container_layout.padding_left + i_container_layout.spacing + coop.theme.icons.size_medium;
+                padding_left: i_container_layout.padding_left + i_container_layout.spacing + Theme.icon.size.medium;
                 padding_right: i_container_layout.padding_right;
                 leading_icon: item.leading_icon;
+                highlighted: item.highlighted;
                 text: item.text;
                 trailing_icon: item.trailing_icon;
                 index: item_index;
@@ -194,20 +207,20 @@ GroupItem := Rectangle {
 
     states [
         pressed when i_touch_area.pressed: {
-            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
-            foreground: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_container.background: Theme.brushes.background.darker(Theme.state.pressed);
+            foreground: Theme.brushes.foreground.darker(Theme.state.pressed);
         }
         hover when i_touch_area.has_hover: {
-            i_container.background: coop.theme.brushes.background.darker(coop.theme.state.hover);
-            foreground: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.background.darker(Theme.state.hover);
+            foreground: Theme.brushes.foreground.darker(Theme.state.hover);
         }
     ]
 
-    animate foreground { duration: coop.theme.durations.fast; }
+    animate foreground { duration: Theme.durations.fast; }
 }
 
 // `List` is a non scrollable list with a default item delegate.
-export List := VerticalLayout {
+export component List inherits VerticalLayout {
     // Will be called after current is changed.
     callback current_item_changed({ parent: int, item: int });
 
@@ -217,10 +230,10 @@ export List := VerticalLayout {
     // Defines the current selected item.
     in-out property <{ parent: int, item: int }> current_item;
   
-    spacing: coop.theme.spaces.medium;
+    spacing: Theme.spaces.medium;
     
-    for parent_item[parent_index] in model: VerticalLayout {   
-        if(model.length > 1) : GroupItem {
+    for parent_item[parent_index] in root.model: VerticalLayout {   
+        if(root.model.length > 1) : GroupItem {
             model: parent_item;
             item_index: parent_index;
             current_item <=> root.current_item;
@@ -231,16 +244,17 @@ export List := VerticalLayout {
         }
 
         // Only one parent item.
-        if(model.length == 1) : VerticalLayout {
+        if(root.model.length == 1) : VerticalLayout {
             for item[index] in parent_item.items: Item {
                 leading_icon: item.leading_icon;
                 text: item.text;
                 trailing_icon: item.trailing_icon;
+                highlighted: item.highlighted;
                 index: index;
                 parent_index: 0;
                 current_item: root.current_item;
-                padding_left: coop.theme.spaces.medium;
-                padding_right: coop.theme.spaces.medium;
+                padding_left: Theme.spaces.medium;
+                padding_right: Theme.spaces.medium;
 
                 clicked => { 
                     root.current_item = { parent: 0, item: index };
@@ -252,7 +266,7 @@ export List := VerticalLayout {
 }
 
 // `ListView` is a scrollable variant of `List`.
-export ListView := Rectangle {
+export component ListView {
     // Will be called after current is changed;
      callback current_item_changed({ parent: int, item: int });
 
@@ -268,23 +282,23 @@ export ListView := Rectangle {
 }
 
 // This is an internal test to check with preview.
-ListViewTest := HorizontalLayout {
+component ListViewTest inherits HorizontalLayout {
     padding: 16px;
     spacing: 8px;
     width: 600px;
     height: 400px;
 
-    property <GroupItemModel> parent: {
+    in-out property <GroupItemModel> parent: {
         text: "Parent 1",
         items: [
-            { leading_icon: mi.add, text: "Item", trailing_icon: ""},
+            { leading_icon: Icons.fa_var_plus, text: "Item", trailing_icon: ""},
             { leading_icon: "", text: "Item", trailing_icon: ""},
             { leading_icon: "", text: "Item", trailing_icon: ""},
             { leading_icon: "", text: "Item", trailing_icon: ""},
         ]
     };
 
-    property <GroupItemModel> parent_two: {
+    in-out property <GroupItemModel> parent_two: {
         text: "Parent 2",
         items: [
             { leading_icon: "", text: "Item", trailing_icon: ""},
@@ -321,14 +335,14 @@ ListViewTest := HorizontalLayout {
         property <GroupItemModel> items: {
             text: "Parent 1",
             items: [
-                { leading_icon: mi.add, text: "Item", trailing_icon: ""},
+                { leading_icon: Icons.fa_var_plus, text: "Item", trailing_icon: ""},
                 { leading_icon: "", text: "Item", trailing_icon: ""},
                 { leading_icon: "", text: "Item", trailing_icon: ""},
                 { leading_icon: "", text: "Item", trailing_icon: ""},
             ]
         };
         model: [
-            items
+            self.items
         ];
      }
 }

@@ -9,14 +9,14 @@ Components are use in context of complexer constructs like `Widgets`.
 
 ## `CoopWindow`
 
-`CoopWindow` is a default window that uses the background of the `coop` theme.
+`CoopWindow` is a default window that uses the background of the `Theme` theme.
 
 ```slint
 export CoopWindow := Window
 ```
 ### Properties
 
-* **`dark_theme`** (**bool**): Set to `true` to use the dark theme.
+* **`dark`** (**bool**): Set to `true` to use the dark theme.
 * **`accent_color`** (**brush**): Defines the accent color of the theme.
 * **`on_accent_color`** (**brush**): Defines the on accent color of the theme.
 
@@ -56,7 +56,7 @@ MyWidget := Rectangle {
 
 ## `BaseLabel`
 
-`BaseLabel` represents the base for `coop` labels. Set font settings by font property.
+`BaseLabel` represents the base for `Theme` labels. Set font settings by font property.
 
 ```slint
 export BaseLabel := Text
@@ -72,7 +72,7 @@ MyLabel := BaseLabel {}
 
 ## `SmallLabel`
 
-`SmallLabel` is a label with settings `coop.theme.typo.small_label`.
+`SmallLabel` is a label with settings `Theme.typo.small_label`.
 
 ```slint
 export SmallLabel := BaseLabel
@@ -92,7 +92,7 @@ Example := Rectangle {
 
 ## `MediumLabel`
 
-`MediumLabel` is a label with settings `coop.theme.typo.medium_label`.
+`MediumLabel` is a label with settings `Theme.typo.medium_label`.
 
 ```slint
 export MediumLabel := BaseLabel
@@ -112,7 +112,7 @@ Example := Rectangle {
 
 ## `LargeLabel`
 
-`LargeLabel` is a label with settings `coop.theme.typo.large_label`.
+`LargeLabel` is a label with settings `Theme.typo.large_label`.
 
 ```slint
 export LargeLabel := BaseLabel
@@ -152,7 +152,7 @@ Example := Rectangle {
 
 ## `SmallTitle`
 
-`SmallTitle` is a Title with settings `coop.theme.typo.small_title`.
+`SmallTitle` is a Title with settings `Theme.typo.small_title`.
 
 ```slint
 export SmallTitle := BaseTitle
@@ -172,7 +172,7 @@ Example := Rectangle {
 
 ## `MediumTitle`
 
-`MediumTitle` is a Title with settings `coop.theme.typo.medium_title`.
+`MediumTitle` is a Title with settings `Theme.typo.medium_title`.
 
 ```slint
 export MediumTitle := BaseTitle
@@ -192,7 +192,7 @@ Example := Rectangle {
 
 ## `LargeTitle`
 
-`LargeTitle` is a Title with settings `coop.theme.typo.large_title`.
+`LargeTitle` is a Title with settings `Theme.typo.large_title`.
 
 ```slint
 export MediumTitle := BaseTitle
@@ -266,10 +266,30 @@ Example := Rectangle {
 }
 ```
 
-## `ThemeWindow`
+## `Icon`
 
-`ThemeWindow` provides the possibility to adjust the theming of the `coop_widgets`.
+`Icon` is a text component that uses the `ForkAwesome` font.
+
+```slint
+export Icon := Text
+```
+
+### Example
+
+```slint
+import { Icon, Theme } from "_imports/coop_widgets.slint"
+
+Example := Rectangle {
+    Icon {
+        text: Icons.fa_var_address_card;
+    }
+}
+```
+
+## `CoopWindow`
+
+`CoopWindow` provides the possibility to adjust the theming of the `coop_widgets`.
 
 ### Properties
 
-* **in `theme_override`** (**Theme**): Can be used to override style definitions of the `coop_widgets` theme.
+* **in `coop_override`** (**Theme**): Can be used to override style definitions of the `coop_widgets` theme.

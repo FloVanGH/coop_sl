@@ -1,21 +1,21 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Button, TextLine, CenterLayout, LargeTitle, ErrorLabel, FormElement, PopupBorder, coop } from "_imports/coop_widgets.slint";
+import { Button, TextLine, CenterLayout, LargeTitle, ErrorLabel, FormElement, PopupBorder, Theme } from "_imports/coop_widgets.slint";
 
-export Login := Rectangle {
-    callback login(string, string) -> bool;
+export component Login inherits Rectangle {
+    pure callback login(string, string) -> bool;
 
-    property <image> logo <=> i_logo.source;
-    property <bool> login_error;
+    in-out property <image> logo <=> i_logo.source;
+    in-out property <bool> login_error;
 
-    background: coop.theme.brushes.background;
+    background: Theme.brushes.background;
 
     CenterLayout {  
         PopupBorder {  
             i_layout := VerticalLayout {  
-                padding: coop.theme.spaces.large;
-                spacing: coop.theme.spaces.large;
+                padding: Theme.spaces.large;
+                spacing: Theme.spaces.large;
 
                 i_logo := Image {  
                     max_width: 100px;

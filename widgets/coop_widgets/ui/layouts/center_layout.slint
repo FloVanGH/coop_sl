@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 // `CenterLayout` aligns its child vertical and horizontal center.
-export CenterLayout := VerticalLayout {
+export component CenterLayout inherits VerticalLayout {
     alignment: center;
 
     HorizontalLayout {  
@@ -13,7 +13,7 @@ export CenterLayout := VerticalLayout {
 }
 
 // Example for the viewer.
-Example := Rectangle {
+component Example inherits Rectangle {
     width: 400px;
     height: 400px;
     background: red;

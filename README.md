@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 This repository is the home of my personal [Slint](https://slint-ui.com/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps.
 
-What the `coop` stands for: cooperation.
+What the `Coop` stands for: cooperation.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
@@ -20,28 +20,25 @@ What the `coop` stands for: cooperation.
 ## crates
 
 * apps/
-    * [coop_calc](apps/coop_calc/): Calculator build with Slint **(not yet started)**
     * [coop_chat](apps/coop_chat/): A visual Slint prototype of a chat app **(in active development / prototyping)**
-    * [coop_files](apps/coop_files/): File navigation / explorer build with Slint **(not yet started)** 
 * display/
     * **About:** [coop_display](display/README.md) is an experimental frame buffer based display server that can be used e.g. to render a standalone app inside of a Slint app.
     *  [coop_client](display/coop_client/): Client library that can be used to make an app work with `coop_server` **(in active development / prototyping)**
     *  [coop_server](display/coop_server/): Server part of the display server, can handle multiple `coop_client` apps **(in active development / prototyping)**
     *  [coop_protocol](display/coop_protocol/): Protocol enums and structs used for communication between `coop_client` and `coop_server` apps **(in active development / prototyping)**
-   
 * platform_support/
     * [slint_coop](platform_support/slint_coop/): Slint platform implementation based on `coop_client` **(in active development / prototyping)**
 * gaming/
-    * [pico_engine](gaming/pico_engine/): experimental engine based on slint with no_std support **(not yet started)**
-    * [pico_designer](gaming/pico_designer/): experimental map editor for the `pico_engine` **(not yet started)**
+    * [pico_engine_ui](gaming/pico_engine_ui/): experimental engine based on slint with no_std support **(in active development / prototyping)**
+    * [pico_engine_rs](gaming/pico_engine_ui/): rust components of the pico_engine **(in active development / prototyping)**
 * widgets/
-    * [book_flip](widgets/book_flip/): e-book widget for Slint **(not yet started)**
+    * [book_flip](widgets/book_flip/): e-book widget for Slint **(in active development / prototyping)**
     * [coop_widgets](widgets/coop_widgets/): custom default widget library for Slint **(in active development / pre-release)**
 
 ## examples
 
 * [desktop](examples/desktop/): experimental example desktop environment based on `coop_display` and Slint
-* [gaming](examples/gaming/): example of `pico_engine`
+* [gaming](examples/gaming/): example of `pico_engine_ui`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
 
 > Check out the [README](examples/README.md) for more details.

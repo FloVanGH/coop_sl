@@ -13,4 +13,4 @@ readme = "README.md"
 build = "build.rs"
 
 [build-dependencies]
-slint-build = "0.3.2"
+slint-build = { version = "0.3.4" }

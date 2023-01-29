@@ -4,24 +4,24 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import {  MediumLabel, Spacer, HorizontalSeparator, coop } from "../_imports/coop_widgets.slint";
+import {  MediumLabel, Spacer, HorizontalSeparator, Theme } from "../_imports/coop_widgets.slint";
 
-BrushRect := Rectangle {
-    width: coop.theme.sizes.small;
-    height: width;
-    border_radius: coop.theme.radius.medium;
+component BrushRect inherits Rectangle {
+    width: Theme.sizes.small;
+    height: root.width;
+    border_radius: Theme.radius.medium;
     border_width: 1px;
-    border_color: coop.theme.brushes.border;
+    border_color: Theme.brushes.border;
 }
 
-export BrushesPage := Page {
+export component BrushesPage inherits Page {
     title: "Brushes";
     keyboard_check_box: false;
     disabled_check_box: false;
 
     GridLayout {  
-        padding: coop.theme.spaces.large;
-        spacing: coop.theme.spaces.medium;
+        padding: Theme.spaces.large;
+        spacing: Theme.spaces.medium;
        
         // Labels
         Row {
@@ -57,13 +57,13 @@ export BrushesPage := Page {
         // background
         Row {
             BrushRect {  
-                background: coop.theme.brushes.background;
+                background: Theme.brushes.background;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.background";
+                text: "Theme.brushes.background";
                 vertical_alignment: center;
             }
 
@@ -78,13 +78,13 @@ export BrushesPage := Page {
         // background_alt
         Row {
             BrushRect {  
-                background: coop.theme.brushes.background_alt;
+                background: Theme.brushes.background_alt;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.background_alt";
+                text: "Theme.brushes.background_alt";
                 vertical_alignment: center;
             }
 
@@ -99,13 +99,13 @@ export BrushesPage := Page {
         // foreground
         Row {
             BrushRect {  
-                background: coop.theme.brushes.foreground;
+                background: Theme.brushes.foreground;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.foreground";
+                text: "Theme.brushes.foreground";
                 vertical_alignment: center;
             }
 
@@ -120,13 +120,13 @@ export BrushesPage := Page {
         // foreground_disabled
         Row {
             BrushRect {  
-                background: coop.theme.brushes.foreground_disabled;
+                background: Theme.brushes.foreground_disabled;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.foreground_disabled";
+                text: "Theme.brushes.foreground_disabled";
                 vertical_alignment: center;
             }
 
@@ -141,13 +141,13 @@ export BrushesPage := Page {
         // surface
         Row {
             BrushRect {  
-                background: coop.theme.brushes.surface;
+                background: Theme.brushes.surface;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.surface";
+                text: "Theme.brushes.surface";
                 vertical_alignment: center;
             }
 
@@ -162,13 +162,13 @@ export BrushesPage := Page {
         // surface_disabled
         Row {
             BrushRect {  
-                background: coop.theme.brushes.surface_disabled;
+                background: Theme.brushes.surface_disabled;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.surface_disabled";
+                text: "Theme.brushes.surface_disabled";
                 vertical_alignment: center;
             }
 
@@ -183,13 +183,13 @@ export BrushesPage := Page {
         // on_surface
         Row {
             BrushRect {  
-                background: coop.theme.brushes.on_surface;
+                background: Theme.brushes.on_surface;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.on_surface";
+                text: "Theme.brushes.on_surface";
                 vertical_alignment: center;
             }
 
@@ -204,13 +204,13 @@ export BrushesPage := Page {
         // primary
         Row {
             BrushRect {  
-                background: coop.theme.brushes.primary;
+                background: Theme.brushes.primary;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.primary";
+                text: "Theme.brushes.primary";
                 vertical_alignment: center;
             }
 
@@ -225,13 +225,13 @@ export BrushesPage := Page {
         // on_primary
         Row {
             BrushRect {  
-                background: coop.theme.brushes.on_primary;
+                background: Theme.brushes.on_primary;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.on_primary";
+                text: "Theme.brushes.on_primary";
                 vertical_alignment: center;
             }
 
@@ -246,13 +246,13 @@ export BrushesPage := Page {
         // border
         Row {
             BrushRect {  
-                background: coop.theme.brushes.border;
+                background: Theme.brushes.border;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.border";
+                text: "Theme.brushes.border";
                 vertical_alignment: center;
             }
 
@@ -267,13 +267,13 @@ export BrushesPage := Page {
         // border_disabled
         Row {
             BrushRect {  
-                background: coop.theme.brushes.border_disabled;
+                background: Theme.brushes.border_disabled;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.border_disabled";
+                text: "Theme.brushes.border_disabled";
                 vertical_alignment: center;
             }
 
@@ -288,13 +288,13 @@ export BrushesPage := Page {
         // state
         Row {
             BrushRect {  
-                background: coop.theme.brushes.state;
+                background: Theme.brushes.state;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.state";
+                text: "Theme.brushes.state";
                 vertical_alignment: center;
             }
 
@@ -309,13 +309,13 @@ export BrushesPage := Page {
         // shadow
         Row {
             BrushRect {  
-                background: coop.theme.brushes.shadow;
+                background: Theme.brushes.shadow;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.shadow";
+                text: "Theme.brushes.shadow";
                 vertical_alignment: center;
             }
 
@@ -330,13 +330,13 @@ export BrushesPage := Page {
         // shadow
         Row {
             BrushRect {  
-                background: coop.theme.brushes.error;
+                background: Theme.brushes.error;
             }
 
             Spacer {}
 
             MediumLabel {  
-                text: "coop.theme.brushes.error";
+                text: "Theme.brushes.error";
                 vertical_alignment: center;
             }
 

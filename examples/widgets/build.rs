@@ -3,7 +3,7 @@
 
 fn generate_imports() {
     book_flip::generate_import().unwrap();
-    // coop_widgets::generate_import().unwrap();
+    coop_widgets::generate_import().unwrap();
 }
 
 #[cfg(not(feature = "mcu-board-support"))]
@@ -20,7 +20,7 @@ fn main() {
 
 #[cfg(any(
     feature = "mcu-board-support",
-    feature = "slint_orbclient",
+    target_os = "redox",
     feature = "slint_coop"
 ))]
 fn main() {

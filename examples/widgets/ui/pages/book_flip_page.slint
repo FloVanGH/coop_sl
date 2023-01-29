@@ -1,0 +1,83 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { Theme, SmallLabel } from "../_imports/coop_widgets.slint";
+import { BookPage, TextPage } from "../_imports/book_flip.slint";
+
+component ThemeBookPage inherits BookPage {
+    background: transparent;
+    title_color: Theme.brushes.foreground;
+    number_color: Theme.brushes.foreground;
+    separator_color: Theme.brushes.border_disabled;
+    title_font_size: Theme.typo.small_title.size;
+    title_font_weight: Theme.typo.small_title.weight;
+    number_font_size: Theme.typo.small_label.size;
+    number_font_weight: Theme.typo.small_label.weight;
+}
+
+component ThemeTextPage inherits TextPage {
+    background: transparent;
+    text_color: Theme.brushes.foreground;
+    title_color: Theme.brushes.foreground;
+    number_color: Theme.brushes.foreground;
+    separator_color: Theme.brushes.border_disabled;
+    title_font_size: Theme.typo.small_title.size;
+    title_font_weight: Theme.typo.small_title.weight;
+    text_font_size: Theme.typo.medium_label.size;
+    text_font_weight: Theme.typo.medium_label.weight;
+    number_font_size: Theme.typo.small_label.size;
+    number_font_weight: Theme.typo.small_label.weight;
+}
+ 
+export component BookFlipPage inherits Page {
+    title: "Book flip";
+    
+    GridLayout {  
+        padding: Theme.spaces.large;
+        spacing: Theme.spaces.medium;
+       
+        // Button
+        Row {
+            RowTitle {
+                text: "(Theme) TextPage";
+            }
+        }
+
+        Row {
+            HorizontalLayout {  
+                ThemeTextPage {  
+                    title: "Chapter 1: the start";
+                    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac. Ut placerat orci nulla pellentesque dignissim enim sit amet venenatis. Orci nulla pellentesque dignissim enim sit amet. Tristique senectus et netus et malesuada fames ac. Vitae proin sagittis nisl rhoncus mattis rhoncus urna. Magna fermentum iaculis eu non diam phasellus vestibulum lorem sed. Massa ultricies mi quis hendrerit dolor. Mauris cursus mattis molestie a iaculis at erat. Sed elementum tempus egestas sed sed risus. Enim praesent elementum facilisis leo vel fringilla est ullamcorper. Malesuada fames ac turpis egestas maecenas pharetra convallis posuere morbi. At elementum eu facilisis sed odio morbi. Vitae aliquet nec ullamcorper sit amet risus nullam. Et ligula ullamcorper malesuada proin libero. Amet venenatis urna cursus eget nunc scelerisque viverra mauris. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Convallis tellus id interdum velit laoreet id donec. Tristique senectus et netus et. Amet commodo nulla facilisi nullam vehicula ipsum a arcu.";      
+                    number: 1;
+                }
+    
+                ThemeBookPage {  
+                    title: "Page with custom content";   
+                    
+                    Rectangle {  
+                        Rectangle { 
+                            width: i_label.width + i_label.x * 2;
+                            height: i_label.height + i_label.y * 2;
+                            background: Theme.brushes.background;
+                            border_color: Theme.brushes.border;
+                            border_width: 1px;
+                            border_radius: 2px;
+
+                            i_label := SmallLabel {
+                                x: 8px;
+                                y: 8px;
+                                text: "Content example";
+                            }
+                        }
+                    }
+                   
+                    number_alignment: right;
+                    number: 2;
+                }
+            }
+        }
+    }
+}

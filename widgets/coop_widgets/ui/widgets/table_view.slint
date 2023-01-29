@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme, Icons } from "../coop/theme.slint";
 import { MediumLabel } from "../components/label.slint";
 import { ScrollView } from "../widgets/scroll_view.slint";
 import { TextLine } from "../widgets/text_line.slint";
 import { Spacer } from "../layouts/spacer.slint";
-import { MaterialIcon, mi } from "../assets/icons/material_icons.slint";
+import { Icon } from "../components/icon.slint";
 
 // `Column` defines a column with header for the `TableViewView`.
-export struct Column := {
+export struct Column  {
     // Defines the header text of the column.
     header: string,
 
@@ -21,7 +21,7 @@ export struct Column := {
 }
 
 // `Cell` defines a single cell in the `TableView`.
-export struct Cell := {
+export struct Cell  {
     // Defines the type of the cell, 0 is text and 1 is icon.
     type: int,
 
@@ -35,59 +35,62 @@ export struct Cell := {
     highlighted: bool,
 }
 
-CellTemplate := Rectangle {
+component CellTemplate inherits Rectangle {
     callback accepted(string);
 
     in-out property <Cell> cell;
 
     vertical_stretch: 0;
                   
-    if(cell.type == 0 && !cell.editable) : MediumLabel {  
+    if(root.cell.type == 0 && !root.cell.editable) : MediumLabel {  
+        x:0;  
         width: 90%;
         height: 100%;
-        text: cell.value;
+        text: root.cell.value;
         vertical-alignment: center;
-        color: cell.highlighted ? coop.theme.brushes.primary : coop.theme.brushes.foreground;
+        color: root.cell.highlighted ? Theme.brushes.primary : Theme.brushes.foreground;
     }
 
-    if(cell.type == 0 && cell.editable) : TextLine {  
-        y: (parent.height - height) / 2;
+    if(root.cell.type == 0 && root.cell.editable) : TextLine {  
+        x:0;  
+        y: (parent.height - self.height) / 2;
         width: 90%;
         height: 80%;
-        text: cell.value;
+        text: root.cell.value;
         accepted => {
-            root.accepted(text);
+            root.accepted(self.text);
         }
         init => { 
-            focus_input(); 
+            self.focus_input(); 
         }
     }
 
-    if(cell.type == 1) : MaterialIcon {  
-        y: (parent.height - height) / 2;
-        icon: cell.value;
-        icon_color: cell.highlighted ? coop.theme.brushes.primary : coop.theme.brushes.foreground;
-        icon_size: coop.theme.icons.size_medium;
+    if(root.cell.type == 1) : Icon {  
+        x:0;  
+        y: (parent.height - self.height) / 2;
+        text: root.cell.value;
+        color: root.cell.highlighted ? Theme.brushes.primary : Theme.brushes.foreground;
+        font_size:  Theme.icon.size.medium;
     }
 }
 
-RowTemplate := Rectangle {
+component RowTemplate inherits Rectangle {
     callback pointer_event <=> i_touch_area.pointer_event;
     callback clicked <=> i_touch_area.clicked;
     callback accepted(int, string);
 
-    private property <brush> foreground: coop.theme.brushes.foreground;
+    private property <brush> foreground: Theme.brushes.foreground;
     in property <int> index;
     in property <[Cell]> cell_row;
-    in property <length> cell_height: coop.theme.sizes.medium;
+    in property <length> cell_height: Theme.sizes.medium;
     in property <[Column]> columns;
 
     i_touch_area := TouchArea {}
 
     HorizontalLayout {
-        padding_left: coop.theme.spaces.large;
-        padding_right: coop.theme.spaces.large;
-        for cell[index] in cell_row : CellTemplate {
+        padding_left: Theme.spaces.large;
+        padding_right: Theme.spaces.large;
+        for cell[index] in root.cell_row : CellTemplate {
             horizontal_stretch: root.columns[index].horizontal_stretch;
             min_width: root.columns[index].min_width;
             cell: cell;
@@ -99,16 +102,16 @@ RowTemplate := Rectangle {
 
     states [
         pressed when i_touch_area.pressed: {
-            background: coop.theme.brushes.background.darker(coop.theme.state.pressed);
+            background: Theme.brushes.background.darker(Theme.state.pressed);
         }
         hover when i_touch_area.has_hover: {
-            background: coop.theme.brushes.background.darker(coop.theme.state.hover);
+            background: Theme.brushes.background.darker(Theme.state.hover);
         }
     ]
 }
 
 // `TableView` is used to display data in columns and rows.
-export TableView := Rectangle {
+export component TableView inherits Rectangle {
     // Received when a button was pressed or released on a row.
     callback row_pointer_event(PointerEvent, int);
 
@@ -125,23 +128,24 @@ export TableView := Rectangle {
     in property <[[Cell]]> rows;
 
     // Defines the height of the header row.
-    in property <length> header_height: coop.theme.sizes.medium;
+    in property <length> header_height: Theme.sizes.medium;
 
     // Defines the height of all cells.
-    in property <length> cell_height: coop.theme.sizes.medium;
+    in property <length> cell_height: Theme.sizes.medium;
 
     VerticalLayout {  
         HorizontalLayout {  
             vertical_stretch: 0;
-            padding_left: coop.theme.spaces.large;
-            padding_right: coop.theme.spaces.large;
+            padding_left: Theme.spaces.large;
+            padding_right: Theme.spaces.large;
 
-            for column in columns : Rectangle {
+            for column in root.columns : Rectangle {
                 min_width: column.min_width;
                 height: root.header_height;
                 horizontal_stretch: column.horizontal_stretch;
 
                 MediumLabel {  
+                    x:0;  
                     height: 100%;
                     text: column.header;
                     vertical-alignment: center;
@@ -153,7 +157,7 @@ export TableView := Rectangle {
             vertical_stretch: 1;
 
             VerticalLayout {  
-                for row[index] in rows : RowTemplate {
+                for row[index] in root.rows : RowTemplate {
                     columns: root.columns;
                     height: root.cell_height;
                     cell_row: row;
@@ -177,7 +181,7 @@ export TableView := Rectangle {
     }
 }
 
-TableViewTest := Rectangle {
+component TableViewTest inherits Rectangle {
     preferred_width: 600px;
     preferred_height: 400px;
 
@@ -185,26 +189,26 @@ TableViewTest := Rectangle {
         private property <int> current_row: -1;
 
         property <[Cell]> first_row: [
-            { value: mi.folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
+            { value: Icons.fa_var_folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
         ];
 
         property <[Cell]> second_row: [
-            { value: mi.article, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+            { value: Icons.fa_var_folder, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
         ];
 
         property <[Cell]> third_row: [
-            { value: mi.article, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
+            { value: Icons.fa_var_folder, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
         ];
 
         row_clicked(index) => {  
 
-            if(current_row != -1) {
-                rows[current_row][1].editable = false;
+            if(self.current_row != -1) {
+                self.rows[self.current_row][1].editable = false;
             }
 
-            current_row = index;
+            self.current_row = index;
             // column 1 is name
-            rows[index][1].editable = true;
+            self.rows[index][1].editable = true;
         }
         columns: [
             { min_width: 32px },
@@ -214,9 +218,9 @@ TableViewTest := Rectangle {
             { header: "Kind", horizontal_stretch: 1 },
         ];
         rows: [
-            first_row,
-            second_row,
-            third_row
+            self.first_row,
+            self.second_row,
+            self.third_row
         ];
     }
 }

@@ -1,38 +1,73 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-#![cfg_attr(not(feature = "std"), no_std)]
-#![cfg_attr(not(feature = "std"), no_main)]
+use std::rc::Rc;
 
-#[cfg(not(feature = "std"))]
-extern crate alloc;
+use pico_engine_rs::DrawContext;
 
-#[cfg(target_arch = "wasm32")]
-use wasm_bindgen::prelude::*;
+use slint::*;
 
 #[allow(clippy::all)]
-mod generated_code {
+pub mod ui {
     slint::include_modules!();
 }
 
-pub use generated_code::*;
-
-#[cfg(feature = "std")]
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
 pub fn main() {
-    // This provides better error messages in debug mode.
-    // It's disabled in release mode so it doesn't bloat up the file size.
-    #[cfg(all(debug_assertions, target_arch = "wasm32"))]
-    console_error_panic_hook::set_once();
+    let game = ui::Game::new();
+    let drawing_context = Rc::new(DrawContext::new(160, 144, game.get_palette()));
 
-    Game::new().run()
+    drawing::setup(&game, &drawing_context);
+
+    let timer = Timer::default();
+    timer.start(TimerMode::Repeated, std::time::Duration::from_millis(33), {
+        let weak = game.as_weak();
+        move || {
+            weak.unwrap().invoke_update();
+            weak.unwrap().invoke_draw();
+            weak.unwrap().set_frame_buffer(drawing_context.image());
+        }
+    });
+
+    game.run()
 }
 
-#[cfg(feature = "mcu-board-support")]
-#[mcu_board_support::entry]
-fn main() -> ! {
-    mcu_board_support::init();
-    Game::new().run();
+mod drawing {
+    use std::rc::Rc;
 
-    panic!("Should not quit")
+    use slint::*;
+
+    use pico_engine_rs::DrawContext;
+
+    use crate::ui;
+
+    pub fn setup(game: &ui::Game, drawing_context: &Rc<DrawContext>) {
+        game.global::<ui::DrawContext>().on_clear({
+            let drawing_context = drawing_context.clone();
+
+            move |color| {
+                drawing_context.clear(color);
+            }
+        });
+        game.global::<ui::DrawContext>().on_rect({
+            let drawing_context = drawing_context.clone();
+
+            move |x0, y0, x1, y1, color| {
+                drawing_context.rect(x0, y0, x1, y1, color);
+            }
+        });
+
+        game.global::<ui::DrawContext>().on_fill_rect({
+            let drawing_context = drawing_context.clone();
+
+            move |x0, y0, x1, y1, color| {
+                drawing_context.fill_rect(x0, y0, x1, y1, color);
+            }
+        });
+
+        game.global::<ui::DrawContext>().on_print({
+            let drawing_context = drawing_context.clone();
+
+            move |text, x, y, color| drawing_context.print(text, x, y, color)
+        });
+    }
 }

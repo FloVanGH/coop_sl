@@ -1,0 +1,54 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Theme } from "_imports/coop_widgets.slint";
+import { ColorButton } from "color_button.slint";
+
+export component ColorPicker {
+    private property <length> offset: i_container.border_width + 1px;
+    private property <length> color_size: (i_container.width - 2 * offset) / column_count;
+   
+    out property <int> column_count: min(palette.length, max_column_count);
+    in-out property <int> selected_color_index;
+    in property <[color]> palette;
+    in property <int> max_column_count: 4;
+
+    height: self.width;
+
+    i_container := Rectangle {        
+        border_width: 2px;
+        border_color: Theme.brushes.border;
+
+        for color[index] in palette : ColorButton {
+            x: offset + color_size * mod(index, column_count);
+            y: offset + color_size * floor(index / column_count);
+            width: color_size;
+            color: color;
+            selected: index == selected_color_index;
+
+            clicked => {  
+                selected_color_index = index;
+            }
+        }
+    }
+}
+
+component ColorPickerExample inherits Rectangle {
+    property <color> c_green: green;
+    property <color> c_red: red;
+
+    width: 160px;
+    height: 144px;
+
+    ColorPicker {  
+        width: 48px;
+        palette: [
+            c_green,
+            c_red,
+            c_red,
+            c_red,
+            c_green,
+            c_red,
+        ];
+    }
+}

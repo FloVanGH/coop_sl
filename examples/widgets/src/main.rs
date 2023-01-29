@@ -28,11 +28,11 @@ fn app() -> App {
         text.into()
     });
 
-    #[cfg(feature = "slint_orbclient")]
-    app.global::<coop>().set_embedded_helper(true);
+    #[cfg(target_os = "redox")]
+    app.global::<Theme>().set_embedded_helper(true);
 
-    #[cfg(feature = "slint_coop")]
-    app.global::<coop>().set_skip_animations(true);
+    #[cfg(feature = "coop_client")]
+    app.global::<Theme>().set_skip_animations(true);
 
     app
 }
@@ -40,18 +40,8 @@ fn app() -> App {
 #[cfg(not(feature = "mcu-board-support"))]
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen(start))]
 pub fn main() {
-    #[cfg(feature = "slint_orbclient")]
-    slint_orbclient::init_config(
-        slint_orbclient::Config::default()
-            .width(1000)
-            .height(600)
-            .resizable(true)
-            .events_async(true)
-            .title("Widgets gallery"),
-    );
-
-    #[cfg(feature = "slint_coop")]
-    slint_coop::init_config(600., 400., "widgets");
+    #[cfg(feature = "coop_client")]
+    coop_client::init_config(600., 400., "widgets");
 
     // This provides better error messages in debug mode.
     // It's disabled in release mode so it doesn't bloat up the file size.
@@ -69,9 +59,9 @@ fn main() -> ! {
     let app = app();
 
     app.global::<AppManager>().set_keyboard_enabled(true);
-    let mut settings = app.global::<coop>().get_settings();
+    let mut settings = app.global::<Theme>().get_settings();
     settings.minimize = true;
-    app.global::<coop>().set_settings(settings);
+    app.global::<Theme>().set_settings(settings);
 
     app.run();
 

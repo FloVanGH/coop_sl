@@ -1,18 +1,18 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme } from "../coop/theme.slint";
 
-ScrollIndicator := Rectangle {
-    border_radius: coop.theme.radius.extra_extra_small;
-    background: coop.theme.brushes.foreground;
+component ScrollIndicator inherits Rectangle {
+    border_radius: Theme.radius.extra_extra_small;
+    background: Theme.brushes.foreground;
     opacity: 0;
 
-    animate opacity { duration: coop.theme.durations.medium; }
+    animate opacity { duration: Theme.durations.medium; }
 }
 
 // `ScrollView` allows to scroll content that is larger then the given size.
-export ScrollView := Rectangle {
+export component ScrollView {
     // The width of the content view port.
     in property <length> viewport_width <=> i_flickable.viewport_width;
 
@@ -28,8 +28,8 @@ export ScrollView := Rectangle {
     // If set to `false` the widget is disabled.
     in property <bool> enabled: true;
 
-    min_width: coop.theme.sizes.medium;
-    min_height: min_width;
+    min_width: Theme.sizes.medium;
+    min_height: root.min_width;
     horizontal_stretch: 1;
     vertical_stretch: 1;
 
@@ -41,13 +41,13 @@ export ScrollView := Rectangle {
     }
 
     i_ver_scroll := ScrollIndicator {
-        property <length> padding_height: root.height - 2 * coop.theme.spaces.small  - i_hor_scroll.height;
+        property <length> padding_height: root.height - 2 * Theme.spaces.small  - i_hor_scroll.height;
         property <length> max: root.viewport_height - root.height;
 
-        x: parent.width - width - coop.theme.spaces.small;
-        y:  coop.theme.spaces.small + (padding_height - height) * (-root.viewport_y / max);
+        x: parent.width - self.width - Theme.spaces.small;
+        y:  Theme.spaces.small + (self.padding_height - self.height) * (-root.viewport_y / self.max);
         width: 4px;
-        height: max <= 0phx ? 0phx: padding_height * (root.height / root.viewport_height);
+        height: self.max <= 0phx ? 0phx: self.padding_height * (root.height / root.viewport_height);
 
         states [  
             visible when root.viewport_height > root.height: {
@@ -57,12 +57,12 @@ export ScrollView := Rectangle {
     }
 
     i_hor_scroll := ScrollIndicator {
-        property <length> padding_width: root.width - 2 * coop.theme.spaces.small - i_ver_scroll.width;
+        property <length> padding_width: root.width - 2 * Theme.spaces.small - i_ver_scroll.width;
         property <length> max: root.viewport_width - root.width;
 
-        x: coop.theme.spaces.small + (padding_width - width) * (-root.viewport_x / max);
-        y: parent.height - height - coop.theme.spaces.small;
-        width: max <= 0phx ? 0phx: padding_width * (root.height / root.viewport_height);
+        x: Theme.spaces.small + (self.padding_width - self.width) * (-root.viewport_x / self.max);
+        y: parent.height - self.height - Theme.spaces.small;
+        width: self.max <= 0phx ? 0phx: self.padding_width * (root.height / root.viewport_height);
         height: 4px; 
 
         states [  
@@ -73,7 +73,7 @@ export ScrollView := Rectangle {
     }   
 }
 
-ScrollViewTest := Rectangle {
+component ScrollViewTest inherits Rectangle {
     width: 600px;
     height: 400px;
 

@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { coop } from "../coop/coop.slint";
+import { Theme, Icons } from "../coop/theme.slint";
 import { FocusBorder } from "../components/focus_border.slint";
-import { mi, MaterialIcon } from "../assets/icons/material_icons.slint";
+import {  Icon } from "../components/icon.slint";
 import { Popup } from "../components/popup.slint";
 import { LargeLabel } from "../components/label.slint";
 import { List, GroupItemModel, ItemModel } from "../widgets/list.slint";
 
 // `ComboBox` enables users to select a value from a list inside of a `Popuup`.
-export ComboBox := Rectangle {
+export component ComboBox {
     // Is called after current index is changed.
     callback current_changed(int);
 
@@ -23,7 +23,7 @@ export ComboBox := Rectangle {
     in property <string> placeholder: "placeholder";
 
     // Represents the curren selected item. If there is no selection the current item is empty.
-    out property <ItemModel> current_item: current_index < 0 || current_index > model.length ? {}: model[current_index];
+    out property <ItemModel> current_item: root.current_index < 0 || root.current_index > root.model.length ? {}: root.model[root.current_index];
 
     // Defines the index of the current selected item.
     in-out property <int> current_index: -1;
@@ -31,47 +31,51 @@ export ComboBox := Rectangle {
     accessible-role: combobox;
     accessible-value: root.current_index;
 
-    min_width: coop.theme.sizes.large;
-    min_height: coop.theme.sizes.medium;
+    min_width: Theme.sizes.large;
+    min_height: Theme.sizes.medium;
     horizontal-stretch: 1;
     vertical-stretch: 0;
 
     i_container := Rectangle {
-        property <brush> foreground: coop.theme.brushes.foreground;
+        property <brush> foreground: Theme.brushes.foreground;
 
-        border_radius: coop.theme.radius.small;
-        background: coop.theme.brushes.surface;
+        border_radius: Theme.radius.small;
+        background: Theme.brushes.surface;
 
         HorizontalLayout {  
-            padding_left: coop.theme.spaces.medium;
-            padding_right: coop.theme.spaces.medium;
-            spacing: coop.theme.spaces.small;     
+            padding_left: Theme.spaces.medium;
+            padding_right: Theme.spaces.medium;
+            spacing: Theme.spaces.small;     
 
-            if(root.current_index >= 0 && root.current_index < model.length) : LargeLabel {  
+            if(root.current_index >= 0 && root.current_index < root.model.length) : LargeLabel {  
                 vertical-alignment: center;
-                text: root.model[root.current-index].text;
+                text: root.model[root.current_index].text;
                 color: i_container.foreground;
                 overflow: elide;
+                horizontal_stretch: 1;
+                horizontal_alignment: left;
             }
 
             // placeholder
             if(root.current_index < 0) : LargeLabel {
                 text <=> root.placeholder;
-                vertical-alignment: center;
-                color: coop.theme.brushes.border;
+                vertical_alignment: center;
+                color: Theme.brushes.border;
+                horizontal_stretch: 1;
+                horizontal_alignment: left;
                 overflow: elide;
             }
 
-            i_icon := MaterialIcon {
-                y: (parent.height - height) / 2;
-                icon_color: i_container.foreground;
-                icon_size: coop.theme.icons.size_medium;
-                icon: mi.keyboard-arrow-down;
+            i_icon := Icon {
+                color: i_container.foreground;
+                font_size:  Theme.icon.size.medium;
+                text: Icons.fa_var_caret_down;
+                vertical_alignment: center;
             }
         }
 
-        animate background { duration: coop.theme.durations.fast; }
-        animate foreground { duration: coop.theme.durations.fast; }
+        animate background { duration: Theme.durations.fast; }
+        animate foreground { duration: Theme.durations.fast; }
     }
 
     i_touch_area := TouchArea {
@@ -80,6 +84,7 @@ export ComboBox := Rectangle {
     }
 
     i_focus_scope := FocusScope {
+        x:0;
         width: 0px; // Do not react on clicks
         enabled <=> root.enabled;
         
@@ -96,13 +101,14 @@ export ComboBox := Rectangle {
     if(i_focus_scope.has_focus) : FocusBorder {
         width: root.width + 4px;
         height: root.height + 4px;
-        x: (parent.width - width) / 2;
-        y: (parent.height - height) / 2;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
         border_radius: i_container.border_radius + 2px;
     }
 
     i_popup := Popup {
-        y: i_container.y + i_container.height + coop.theme.spaces.small; 
+        x:0;
+        y: i_container.y + i_container.height + Theme.spaces.small; 
         width: i_container.width;
 
         forward_focus: i_popup_focus_scope;
@@ -116,7 +122,7 @@ export ComboBox := Rectangle {
                     items: root.model,
                 };
     
-                model: [ inner_model ];
+                model: [ self.inner_model ];
                 current-item: { parent: 0, item: root.current_index };
     
                 current_item_changed(item) => {  
@@ -127,6 +133,7 @@ export ComboBox := Rectangle {
         } 
 
         i_popup_focus_scope := FocusScope {
+            x: 0;
             width: 0px; // Do not react on clicks
             enabled <=> root.enabled;
             
@@ -145,26 +152,26 @@ export ComboBox := Rectangle {
     }
 
     states [
-        disabled when !enabled: {
-            i_container.background: coop.theme.brushes.surface_disabled;
-            i_container.foreground: coop.theme.brushes.foreground_disabled;
+        disabled when !root.enabled: {
+            i_container.background: Theme.brushes.surface_disabled;
+            i_container.foreground: Theme.brushes.foreground_disabled;
         }
         pressed when i_touch_area.pressed: {
-            i_container.background:  coop.theme.brushes.surface.darker(coop.theme.state.pressed);
-            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
-            i_container.foreground: coop.theme.brushes.foreground.darker(coop.theme.state.pressed);
+            i_container.background:  Theme.brushes.surface.darker(Theme.state.pressed);
+            i_icon.color: Theme.brushes.foreground.darker(Theme.state.pressed);
+            i_container.foreground: Theme.brushes.foreground.darker(Theme.state.pressed);
         }
         hover when i_touch_area.has_hover: {
-            i_container.background: coop.theme.brushes.surface.darker(coop.theme.state.hover);
-            i_icon.icon_color: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
-            i_container.foreground: coop.theme.brushes.foreground.darker(coop.theme.state.hover);
+            i_container.background: Theme.brushes.surface.darker(Theme.state.hover);
+            i_icon.color: Theme.brushes.foreground.darker(Theme.state.hover);
+            i_container.foreground: Theme.brushes.foreground.darker(Theme.state.hover);
         }
     ]
 }
 
 import { CenterLayout } from "../layouts/center_layout.slint";
 
-ComboBoxExample := CenterLayout {
+component ComboBoxExample inherits CenterLayout {
     width: 200px;
     height: 200px;
 
@@ -183,6 +190,6 @@ ComboBoxExample := CenterLayout {
             }
         ];
     
-         current_changed => { debug(current_item.text); }
+         current_changed => { debug(self.current_item.text); }
     }
 }

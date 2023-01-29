@@ -1,0 +1,45 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { CoopWindow } from "coop_window.slint";
+import { Button } from "../widgets/button.slint";
+import { Switch } from "../widgets/selectables.slint";
+import { Theme, Brushes } from "../coop/theme.slint";
+
+// `CoopWindow` provides the possibility to adjust the theming of the `coop_widgets`.
+export component ThemedWindow inherits CoopWindow {
+    in property <Brushes> brushes <=> Theme.brushes;
+}
+
+component CoopWindowExample inherits ThemedWindow {
+    title: "Theme window";
+    width: 600px; 
+    height: 400px;
+
+    brushes: {
+        background: Theme.dark ? #04dc82: #2d00e1,
+        foreground: Theme.dark ? #dfdfdf: #2d2d2d,
+        foreground_disabled: Theme.dark ? #7b7b7b: #a0a0a0,
+        surface: Theme.dark ? #505050: #BDBDBD,
+        surface_disabled: Theme.dark ? #3d3d3d: #d2d2d2,
+        on_surface: Theme.dark ? #212121: #dfdfdf,
+        primary: Theme.accent_color,
+        on_primary: Theme.on_accent_color,
+        border: Theme.dark ? #7e7e7e: #505050,
+        border_disabled: Theme.dark ? #494949: #c5c5c5,
+        state: #000000,
+    };
+
+    VerticalLayout {  
+        padding: Theme.spaces.medium;
+        spacing: Theme.spaces.small;
+
+        Button {
+            text: "Click me";
+        }
+
+        Switch {
+            selected <=> Theme.dark;
+        }
+    }
+}

@@ -10,7 +10,7 @@ This crate provides a custom set of widgets for [Slint](https://slint-ui.com) wi
 ## Component overview
 
 * [Building Blocks](docs::building_blocks)
-* [Coop](docs::coop)
+* [Theme](docs::Theme)
 * [Components](docs::components)
 * [Keyboard](docs::keyboard)
 * [Layouts](docs::layouts)
@@ -22,11 +22,10 @@ This crate provides a custom set of widgets for [Slint](https://slint-ui.com) wi
 
 ```toml
 [dependencies]
-slint = "0.3.2"
+slint = { version = "0.3.4" }
 
 [build-dependencies]
-slint-build = "0.3.2"
-coop_widgets = { ... }
+slint-build = { version = "0.3.4" }coop_widgets = { ... }
 ```
 
 2. Call `coop_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/coop_widgets.slint`:
@@ -63,13 +62,13 @@ where
     let ui_lib_file = env!("UI_LIB_FILE");
 
     let import_file_content = fs::read_to_string(ui_lib_file)
-        .map(|c| c.replace("from \"", format!("from \"{}/", ui_lib_path).as_str()))?;
+        .map(|c| c.replace("from \"", format!("from \"{ui_lib_path}/").as_str()))?;
 
     if !import_path.exists() {
         fs::create_dir_all(import_path.clone())?;
     }
 
-    let mut import_file = fs::File::create(import_path.join(format!("{}.slint", ui_lib_name)))?;
+    let mut import_file = fs::File::create(import_path.join(format!("{ui_lib_name}.slint")))?;
 
     import_file.write_all(import_file_content.as_bytes())
 }

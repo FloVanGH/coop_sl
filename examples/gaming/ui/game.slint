@@ -1,0 +1,44 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { DrawContext } from "_imports/pico_engine_ui.slint";
+import { Button } from "../../../widgets/coop_widgets/ui/widgets/button.slint";
+
+export { DrawContext } 
+
+export component Game inherits Window {
+    callback update();
+    callback draw();
+
+    in property <[color]> palette: [ #00ff00, #0000ff ];
+    in property <image> frame_buffer <=> i_canvas.source;
+
+    private property <int> current_color;
+
+    width: 160px;
+    height: 144px;
+    title: "Game example";
+    // palette: [ #00ff00, #ffffff ];
+
+    i_canvas := Image {
+        width: 100%;
+        height: 100%;
+        image_rendering: pixelated;
+    }
+
+    Button {  
+        x: 0px;
+        y: (parent.height - self.height);
+        height: 20px;
+        text: "click";
+        clicked => {  
+            current-color = current-color == 0 ? 1 : 0;
+        }
+    }
+
+    draw => {
+        DrawContext.rect(4, 4, 44, 44, root.current-color);
+        DrawContext.fill_rect(46, 4, 86, 44, root.current_color);
+        DrawContext.print("Hello World", 4, 45, root.current_color);
+    }
+} 
