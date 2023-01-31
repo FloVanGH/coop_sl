@@ -13,7 +13,7 @@ What the `Coop` stands for: cooperation.
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
 </a>
 
-[![CI](https://ci.codeberg.org/api/badges/flovansl/coop_sl/status.svg?branch=main)](https://ci.codeberg.org/flovansl/coop_sl)
+[![CI](https://ci.codeberg.org/api/badges/flovansl/co_sl/status.svg?branch=main)](https://ci.codeberg.org/flovansl/co_sl)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSES/MIT.txt)
 [![GNU GPLv3](https://img.shields.io/badge/license-GPLv3-green.svg)](./LICENSES/GPL-3.0-only.txt)
 
