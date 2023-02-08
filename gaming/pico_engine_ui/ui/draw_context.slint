@@ -1,9 +1,0 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
-// SPDX-License-Identifier: MIT
-
-export global DrawContext {
-    callback clear(int /* color */);
-    callback rect(int /* x0 */, int /* y0 */, int /* x1 */, int /* x2 */, int /* color */);
-    callback fill_rect(int /* x0 */, int /* y0 */, int /* x1 */, int /* x2 */, int /* color */);
-    callback print(string /* text */, int /* x */, int /* y */, int /* color */) -> int /* x of next character */;
-}

@@ -28,9 +28,6 @@ What the `Coop` stands for: cooperation.
     *  [coop_protocol](display/coop_protocol/): Protocol enums and structs used for communication between `coop_client` and `coop_server` apps **(in active development / prototyping)**
 * platform_support/
     * [slint_coop](platform_support/slint_coop/): Slint platform implementation based on `coop_client` **(in active development / prototyping)**
-* gaming/
-    * [pico_engine_ui](gaming/pico_engine_ui/): experimental engine based on slint with no_std support **(in active development / prototyping)**
-    * [pico_engine_rs](gaming/pico_engine_ui/): rust components of the pico_engine **(in active development / prototyping)**
 * widgets/
     * [book_flip](widgets/book_flip/): e-book widget for Slint **(in active development / prototyping)**
     * [coop_widgets](widgets/coop_widgets/): custom default widget library for Slint **(in active development / pre-release)**
@@ -38,7 +35,6 @@ What the `Coop` stands for: cooperation.
 ## examples
 
 * [desktop](examples/desktop/): experimental example desktop environment based on `coop_display` and Slint
-* [gaming](examples/gaming/): example of `pico_engine_ui`
 * [widgets](examples/widgets/): gallery example showing the widget of `book_flip` and `co_widget`
 
 > Check out the [README](examples/README.md) for more details.

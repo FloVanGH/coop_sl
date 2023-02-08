@@ -8,10 +8,7 @@ members = [
    "display/coop_protocol",
    "display/coop_server",
    "examples/desktop",
-   "examples/gaming",
    "examples/widgets",
-   "gaming/pico_engine_ui",
-   "gaming/pico_engine_rs",
    "platform_support/slint_coop",
    "widgets/book_flip",
    "widgets/coop_widgets",
@@ -21,10 +18,7 @@ members = [
 
 default-members = [
    "apps/coop_chat",
-   "examples/gaming",
    "examples/widgets",
-   "gaming/pico_engine_rs",
-   "gaming/pico_engine_ui",
    "widgets/book_flip",
    "widgets/coop_widgets",
    "internal/shared",
