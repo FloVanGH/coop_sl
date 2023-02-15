@@ -30,23 +30,3 @@ export component ProgressBar inherits Rectangle {
         border_radius: root.border_radius;
     }
 }
-
-component ProgressBarExample inherits Rectangle {
-    width: 600px;
-    height: 400px;
-    background: Theme.brushes.background;
-
-    VerticalLayout {  
-        padding: Theme.spaces.large;
-        spacing: Theme.spaces.large;
-        alignment: center;
-
-        ProgressBar {  
-            progress: 0.5;
-        }
-
-        ProgressBar {  
-            indeterminate: true;
-        }
-    }
-}

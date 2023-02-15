@@ -147,32 +147,3 @@ export component Slider {
         }
     ]
 }
-
-component SliderExample inherits Rectangle {
-    width: 600px;
-    height: 400px;
-    background: Theme.brushes.background;
-
-    VerticalLayout {  
-        padding: Theme.spaces.large;
-        spacing: Theme.spaces.large;
-        alignment: center;
-
-        HorizontalLayout {  
-            alignment: center;
-            Switch {
-                selected <=> Theme.dark;
-            }
-        }
-      
-        SmallLabel { 
-            text: "\{slider.value}";
-            horizontal_alignment: center;
-        }
-        slider := Slider {}
-
-        Slider {
-            enabled: false;
-        }    
-    }
-}

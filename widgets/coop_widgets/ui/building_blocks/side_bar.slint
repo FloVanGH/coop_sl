@@ -121,31 +121,3 @@ export component SideBar {
         }
     ]
 }
-
-component SideBarTest inherits Rectangle {
-    min_width: 900px;
-    height: 400px;
-    background: Theme.brushes.background;
-
-    GridLayout {  
-        Rectangle {  
-            col: 1;
-            min_width: 200px;
-            horizontal_stretch: 1;
-
-            Text {
-                x:0;y:0;
-                text: "content";
-            }
-        }
-
-        i_side_bar := SideBar { 
-            responsive: true;
-            col: 0;
-            height: 100%;
-            title: "My App";
-
-            parent_width: parent.width;
-        }   
-    }
-}

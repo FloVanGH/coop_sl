@@ -17,30 +17,3 @@ export component FormElement inherits VerticalLayout {
 
     @children  
 }
-
-import { TextLine } from "../widgets/text_line.slint";
-
-component FormElementTest inherits Rectangle {
-    width: 300px;
-    height: 200px;
-
-    VerticalLayout {  
-        padding: 16px;
-        spacing: 8px;
-
-        alignment: start;
-        FormElement {   
-            title: "Name";
-    
-            TextLine { 
-
-            }
-        }
-
-        FormElement {   
-            title: "Address";
-    
-            TextLine { }
-        }
-    }
-}

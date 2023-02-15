@@ -168,28 +168,3 @@ export component ComboBox {
         }
     ]
 }
-
-import { CenterLayout } from "../layouts/center_layout.slint";
-
-component ComboBoxExample inherits CenterLayout {
-    width: 200px;
-    height: 200px;
-
-    ComboBox {  
-        width: 100px;
-        placeholder: "Select an item";
-        model: [
-            {
-                text: "Item 1",
-            },
-            {
-                text: "Item 2",
-            },
-            {
-                text: "Item 3",
-            }
-        ];
-    
-         current_changed => { debug(self.current_item.text); }
-    }
-}

@@ -18,27 +18,3 @@ export component Popup inherits PopupWindow {
         @children
     }
 }
-
-import { Button } from "../widgets/button.slint";
-
-component Example inherits Rectangle {
-    layout := VerticalLayout {  
-        alignment: center;
-        Button {
-            text: "open popup";
-            clicked => { popup.show() }
-        }
-    }
-   
-    popup := Popup {
-        y: layout.height + layout.y;
-        x: layout.x;
-        width: 60px;
-        height: 20px;
-
-        Text {
-            x:0;y:0;
-            text: "popup content";
-        }
-    }
-}

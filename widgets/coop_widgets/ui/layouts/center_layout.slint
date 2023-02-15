@@ -11,18 +11,3 @@ export component CenterLayout inherits VerticalLayout {
         @children
     }
 }
-
-// Example for the viewer.
-component Example inherits Rectangle {
-    width: 400px;
-    height: 400px;
-    background: red;
-
-    CenterLayout {  
-        Rectangle {  
-            min_width: 100px;
-            min_height: 100px;
-            background: blue;
-        }
-    }
-}
