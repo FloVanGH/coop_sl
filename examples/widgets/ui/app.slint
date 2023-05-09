@@ -3,11 +3,11 @@
 
 import { CoopWindow, KeyboardPage, KeyboardAdapter, GroupItemModel, Theme, Icons } from "_imports/coop_widgets.slint";
 import { BasicsPage, TypoPage, BrushesPage, ListPage, BookFlipPage } from "pages/pages.slint";
-import { AppManager } from "app_manager.slint"; 
+import { AppManager } from "app_manager.slint";
 import { SideBarView } from "side_bar_view.slint";
 
 export { KeyboardAdapter, Theme }
-export { AppManager } 
+export { AppManager }
 
 export component App inherits CoopWindow {
     min_width: 800px;
@@ -18,17 +18,19 @@ export component App inherits CoopWindow {
     }
 
     keyboard_page := KeyboardPage {
+
+
         keyboard_closed(key, text) => {
             AppManager.update_text(key, text);
-        } 
+        }
 
-        GridLayout {   
-            Rectangle {  
+        GridLayout {
+            Rectangle {
                 col: 1;
 
                 if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 0) : BasicsPage {
                     open_keyboard(key, text, placeholder, icon) => { keyboard_page.open_keyboard(key, text, placeholder, icon); }
-                } 
+                }
                 if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 1) : ListPage {}
                 if(i_side_bar.current_item.parent == 0 &&  i_side_bar.current_item.item == 2) : BookFlipPage {}
                 if(i_side_bar.current_item.parent == 1 &&  i_side_bar.current_item.item == 0) : BrushesPage {}
@@ -56,9 +58,9 @@ export component App inherits CoopWindow {
                         { leading_icon: Icons.fa_var_pencil, text: "Typography" },
                     ]
                 };
-  
+
                 navigation_items: [self.widgets, self.resources];
             }
         }
     }
-}  
+}

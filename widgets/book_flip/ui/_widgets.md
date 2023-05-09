@@ -50,11 +50,11 @@ export component TextPage inherits BookPage
 ### Example
 
 ```slint
-PageExample := Rectangle {
+component PageExample inherits Rectangle {
     width: 200px;
     height: 600px;
 
-    HorizontalLayout {  
+    HorizontalLayout {
         TextPage {
             title: "Chapter 1";
             number: 1;

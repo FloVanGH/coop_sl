@@ -19,7 +19,7 @@ mod generated_code {
 pub use generated_code::*;
 
 fn app() -> App {
-    let app = App::new();
+    let app = App::new().unwrap();
 
     // this need to implemented to handle the backspace on the on screen keyboard.
     app.global::<KeyboardAdapter>().on_backspace(|text| {
@@ -48,7 +48,7 @@ pub fn main() {
     #[cfg(all(debug_assertions, target_arch = "wasm32"))]
     console_error_panic_hook::set_once();
 
-    app().run()
+    app().run().unwrap()
 }
 
 #[cfg(feature = "mcu-board-support")]
@@ -63,7 +63,7 @@ fn main() -> ! {
     settings.minimize = true;
     app.global::<Theme>().set_settings(settings);
 
-    app.run();
+    app.run().unwrap();
 
     panic!("The MCU demo should not quit")
 }

@@ -9,13 +9,13 @@ export component TextPage inherits BookPage {
 
      // Defines the color of the text label.
      in property <brush> text_color <=> i_text.color;
- 
+
      // Defines the font size of the text label.
      in property <length> text_font_size <=> i_text.font_size;
- 
+
      // Defines the font weight of the text label.
      in property <int> text_font_weight <=> i_text.font_weight;
- 
+
      // Defines the font family of the text label.
      in property <string> text_font_family <=> i_text.font_family;
 
@@ -24,18 +24,18 @@ export component TextPage inherits BookPage {
         wrap: word_wrap;
         color: black;
      }
-} 
+}
 
-PageExample := Rectangle {
+export component PageExample inherits Rectangle {
     width: 200px;
     height: 600px;
 
-    GridLayout {  
+    GridLayout {
         TextPage {
             title: "Chapter 1";
             number: 1;
             horizontal-stretch: 1;
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac. Ut placerat orci nulla pellentesque dignissim enim sit amet venenatis. Orci nulla pellentesque dignissim enim sit amet. Tristique senectus et netus et malesuada fames ac. Vitae proin sagittis nisl rhoncus mattis rhoncus urna. Magna fermentum iaculis eu non diam phasellus vestibulum lorem sed. Massa ultricies mi quis hendrerit dolor. Mauris cursus mattis molestie a iaculis at erat. Sed elementum tempus egestas sed sed risus. Enim praesent elementum facilisis leo vel fringilla est ullamcorper. Malesuada fames ac turpis egestas maecenas pharetra convallis posuere morbi. At elementum eu facilisis sed odio morbi. Vitae aliquet nec ullamcorper sit amet risus nullam. Et ligula ullamcorper malesuada proin libero. Amet venenatis urna cursus eget nunc scelerisque viverra mauris. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Convallis tellus id interdum velit laoreet id donec. Tristique senectus et netus et. Amet commodo nulla facilisi nullam vehicula ipsum a arcu.";   
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac. Ut placerat orci nulla pellentesque dignissim enim sit amet venenatis. Orci nulla pellentesque dignissim enim sit amet. Tristique senectus et netus et malesuada fames ac. Vitae proin sagittis nisl rhoncus mattis rhoncus urna. Magna fermentum iaculis eu non diam phasellus vestibulum lorem sed. Massa ultricies mi quis hendrerit dolor. Mauris cursus mattis molestie a iaculis at erat. Sed elementum tempus egestas sed sed risus. Enim praesent elementum facilisis leo vel fringilla est ullamcorper. Malesuada fames ac turpis egestas maecenas pharetra convallis posuere morbi. At elementum eu facilisis sed odio morbi. Vitae aliquet nec ullamcorper sit amet risus nullam. Et ligula ullamcorper malesuada proin libero. Amet venenatis urna cursus eget nunc scelerisque viverra mauris. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Convallis tellus id interdum velit laoreet id donec. Tristique senectus et netus et. Amet commodo nulla facilisi nullam vehicula ipsum a arcu.";
         }
 
         TextPage {

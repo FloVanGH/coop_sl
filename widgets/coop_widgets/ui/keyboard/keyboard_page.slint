@@ -8,9 +8,12 @@ import { Keyboard } from "keyboard_widget.slint";
 // `KeyboardPage` can switch between its children an a `Keyboard`.
 export component KeyboardPage {
     private property <bool> keyboard_open: false;
-    
+
     // Called after keyboard is closed.
     callback keyboard_closed(string, string);
+
+    preferred-width: 100%;
+    preferred-height: 100%;
 
     i_container := Rectangle {
         @children
@@ -18,8 +21,8 @@ export component KeyboardPage {
 
     i_keyboard := Keyboard {
         y: i_container.y + i_container.height;
-      
-        close(key, text) => { 
+
+        close(key, text) => {
             root.keyboard_open = false;
             root.keyboard_closed(key, self.text);
          }

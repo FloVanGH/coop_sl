@@ -27,10 +27,10 @@ pub fn main() {
     #[cfg(feature = "slint_coop")]
     slint_coop::init_config(600., 400., "coop_chat");
 
-    let app = App::new();
+    let app = App::new().unwrap();
 
     // let _side_bar_view_controller =
     //     SideBarViewController::new(&app, Box::new(mocks::MockSideBarController::new()));
 
-    app.run();
+    app.run().unwrap();
 }

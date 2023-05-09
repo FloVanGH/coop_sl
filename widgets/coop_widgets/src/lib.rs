@@ -22,10 +22,10 @@ This crate provides a custom set of widgets for [Slint](https://slint-ui.com) wi
 
 ```toml
 [dependencies]
-slint = { version = "0.3.4" }
+slint = { version = "1.0.2" }
 
 [build-dependencies]
-slint-build = { version = "0.3.4" }coop_widgets = { ... }
+slint-build = { version = "1.0.2" }coop_widgets = { ... }
 ```
 
 2. Call `coop_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/coop_widgets.slint`:

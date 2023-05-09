@@ -3,14 +3,14 @@
 
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Spacer, TableView, Cell, HorizontalSeparator, ScrollView, List, ListView, Theme, Icons, GroupItemModel, Switch, HeaderBar } 
+import { Spacer, TableView, Cell, HorizontalSeparator, ScrollView, List, ListView, Theme, Icons, GroupItemModel, Switch, HeaderBar }
     from "../_imports/coop_widgets.slint";
 
 export component ListPage inherits GridLayout {
     Row {
         i_header_bar := HeaderBar {
             title: "Lists";
-            VerticalLayout {  
+            VerticalLayout {
                 alignment: center;
 
                 Switch {
@@ -21,52 +21,52 @@ export component ListPage inherits GridLayout {
                         Theme.dark = !self.selected;
                     }
                 }
-            }    
+            }
         }
     }
 
     Row {
-        GridLayout {  
+        GridLayout {
             padding: Theme.spaces.large;
             spacing: Theme.spaces.medium;
-    
+
             // Lists
             Row {
                 RowTitle {
                     text: "Lists";
                 }
             }
-    
+
             Row {
-                ColumnTitle {  
+                ColumnTitle {
                     text: "List (no scroll)";
                 }
-    
+
                 Spacer {}
-    
-                ColumnTitle {  
+
+                ColumnTitle {
                     text: "ListView (scrolling)";
                 }
 
                 Spacer {}
 
-                ColumnTitle {  
+                ColumnTitle {
                     text: "List with groups";
                 }
-    
+
                 Spacer {}
-    
-                ColumnTitle {  
+
+                ColumnTitle {
                     text: "ScrollView";
                 }
             }
-    
+
             Row {
                 HorizontalSeparator {
-                    colspan: 8; 
+                    colspan: 8;
                 }
             }
-    
+
             Row {
                 i_list := List {
                     property <GroupItemModel> list: {
@@ -81,9 +81,9 @@ export component ListPage inherits GridLayout {
                     };
                     model: [self.list];
                 }
-    
+
                 Spacer {}
-    
+
                 ListView {
                     height: 100px;
                     model: i_list.model;
@@ -108,15 +108,15 @@ export component ListPage inherits GridLayout {
                     };
                     model: [self.list_one, self.list_two];
                 }
-    
+
                 Spacer {}
-    
+
                 ScrollView {
                     height: 100px;
 
                     VerticalLayout {
                         spacing: 4px;
-            
+
                         for i in [0, 1, 2, 3, 4, 5, 6, 7] : Rectangle {
                             height: 50px;
                             background: mod(i, 2) == 0 ? black : gray;
@@ -134,23 +134,23 @@ export component ListPage inherits GridLayout {
 
             Row {
                 HorizontalSeparator {
-                    colspan: 8; 
+                    colspan: 8;
                 }
             }
 
             Row {
                 TableView {
-                    colspan: 8; 
+                    colspan: 8;
                     private property <int> current_row: -1;
-            
+
                     property <[Cell]> first_row: [
                         { value: Icons.fa_var_folder, type: 1, highlighted: true }, { value: "src" }, { value: "2022.11.10" }, { value: "--"}, { value: "Folder"}
                     ];
-            
+
                     property <[Cell]> second_row: [
                         { value: Icons.fa_var_file, type: 1 }, { value: "test.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
                     ];
-            
+
                     property <[Cell]> third_row: [
                         { value: Icons.fa_var_file, type: 1 }, { value: "test2.slint"}, { value: "2022.11.10" }, { value: "17 KB" }, { value: "Document" }
                     ];
@@ -160,12 +160,12 @@ export component ListPage inherits GridLayout {
                         self.rows[self.row][cell].value = text;
                         self.current_row = -1;
                     }
-            
-                    row_clicked(index) => {     
+
+                    row_clicked(index) => {
                         if(self.current_row != -1) {
                             self.rows[self.current_row][1].editable = false;
                         }
-            
+
                         self.current_row = index;
                         // column 1 is name
                         self.rows[index][1].editable = true;
@@ -185,5 +185,5 @@ export component ListPage inherits GridLayout {
                 }
             }
         }
-    } 
+    }
 }
