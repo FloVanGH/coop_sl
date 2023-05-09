@@ -48,7 +48,7 @@ impl slint::platform::Platform for ThemePlatform {
         self.slint_window.borrow().clone()
     }
 
-    fn run_event_loop(&self) {
+    fn run_event_loop(&self) -> std::result::Result<(), slint::PlatformError> {
         let (width, height) = self.coop_window.borrow().size();
 
         self.slint_window
@@ -85,5 +85,7 @@ impl slint::platform::Platform for ThemePlatform {
                 }
             }
         }
+
+        Ok(())
     }
 }
