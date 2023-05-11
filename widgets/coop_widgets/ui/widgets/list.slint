@@ -280,6 +280,10 @@ export component ListView {
         preferred-width: 100%;
         preferred-height: 100%;
 
-        i_list := List {}
+        i_list := List {
+            current_item_changed(item) => {  
+            root.current_item_changed(item);
+            }
+        }
     }
 }
