@@ -14,10 +14,10 @@ repository = "https://codeberg.org/flovansl/coop_sl"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { version = "1.0.2", default-features = false, features = ["compat-1-0"] }
+slint = { version = "1.1.0", default-features = false, features = ["compat-1-0"] }
 
 [build-dependencies]
-slint-build = { version = "1.0.2" }
+slint-build = { version = "1.1.0" }
 [features]
 default = ["std"]
 std = ["slint/default"]

@@ -15,4 +15,4 @@ readme = "README.md"
 coop_protocol = { path = "../coop_protocol" }
 tokio = { version = "1", features = ["full"] }
 tokio-unix-ipc = "0.3"
-slint = { version = "1.0.2", optional = true, default-features = false }
+slint = { version = "1.1.0", optional = true, default-features = false }
