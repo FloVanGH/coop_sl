@@ -43,7 +43,7 @@ What the `Coop` stands for: cooperation.
 
 | Widgets |
 |---------|
-|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/examples/widgets/) |
+|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/examples/gallery/) |
 
 
 ## new to slint?

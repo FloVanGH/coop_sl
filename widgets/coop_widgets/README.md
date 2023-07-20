@@ -18,7 +18,7 @@ What the `Coop` in `coop_widgets` stands for: cooperation.
 
 ## live preview
 
-Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/widgets/).
+Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/gallery/).
 
 
 ## how to use
