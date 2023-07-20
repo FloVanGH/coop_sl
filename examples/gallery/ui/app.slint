@@ -1,0 +1,64 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { CoopWindow, VirtualKeyboard, VirtualKeyboardHandler, GroupListViewItem, Palette, Icons } from "_imports/coop-widgets.slint";
+import { BasicsPage, TypoPage, BrushesPage, ListPage, BookFlipPage } from "pages/pages.slint";
+import { AppManager } from "app-manager.slint";
+import { SideBarView } from "side-bar-view.slint";
+
+export { VirtualKeyboardHandler }
+export { AppManager }
+
+export component App inherits CoopWindow {
+    min-width: 800px;
+    min-height: 600px;
+    title: "Widgets gallery";
+
+    Rectangle {
+        background: Palette.background;
+    }
+
+    Rectangle {
+        GridLayout {
+            Rectangle {
+                col: 1;
+
+                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 0) : BasicsPage {}
+                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 1) : ListPage {}
+                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 2) : BookFlipPage {}
+                if (i-side-bar.current-item.parent == 1 && i-side-bar.current-item.item == 0) : BrushesPage {}
+                if (i-side-bar.current-item.parent == 1 && i-side-bar.current-item.item == 1) : TypoPage {}
+            }
+
+            i-side-bar := SideBarView {
+                col: 0;
+                parent-width: root.width;
+                title: "Gallery";
+                responsive: true;
+
+                property <GroupListViewItem> widgets: {
+                    text: "Widgets",
+                    items: [
+                        { leading-icon: Icons.home, text: "Basics" },
+                        { leading-icon: Icons.list, text: "Lists" },
+                        { leading-icon: Icons.book, text: "Book flip" },
+                    ]
+                };
+
+                property <GroupListViewItem> resources: {
+                    text: "Resources",
+                    items: [
+                        { leading-icon: Icons.brush, text: "Brushes" },
+                        { leading-icon: Icons.format-size, text: "Typography" },
+                    ]
+                };
+
+                navigation-items: [self.widgets, self.resources];
+            }
+        }
+
+        if (AppManager.keyboard-enabled) : VirtualKeyboard {
+            y: TextInputInterface.text-input-focused ? parent.height - self.height : parent.height;
+        }
+    }
+}

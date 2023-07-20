@@ -1,0 +1,163 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { Spacer, StandardTableView, HorizontalSeparator, ScrollView, ListView,
+    GroupListView, GroupListViewItem, Switch, HeaderBar, Palette, Icons, StandardListView, Space }
+    from "../_imports/coop-widgets.slint";
+
+export component ListPage inherits GridLayout {
+    Row {
+        i-header-bar := HeaderBar {
+            title: "Lists";
+            VerticalLayout {
+                alignment: center;
+
+                Switch {
+                    on-icon: Icons.light-mode;
+                    off-icon: Icons.mode-night;
+                    checked: !Palette.dark-color-scheme;
+
+                    toggled(checked) => {
+                        Palette.dark-color-scheme = !self.checked;
+                    }
+                }
+            }
+        }
+    }
+
+    Row {
+        GridLayout {
+            padding: Space.large;
+            spacing: Space.medium;
+
+            // Lists
+            Row {
+                RowTitle {
+                    text: @tr("Lists");
+                }
+            }
+
+            Row {
+                ColumnTitle {
+                    text: @tr("ListView");
+                }
+
+                Spacer {}
+
+                ColumnTitle {
+                    text: @tr("StandardListView");
+                }
+
+                Spacer {}
+
+                ColumnTitle {
+                    text: @tr("GroupListView");
+                }
+
+                Spacer {}
+
+                ColumnTitle {
+                    text: @tr("ScrollView");
+                }
+            }
+
+            Row {
+                HorizontalSeparator {
+                    colspan: 8;
+                }
+            }
+
+            Row {
+                ListView {
+                    for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : HorizontalLayout {
+                        Text {
+                             text: @tr("Item {}", i);
+                        }
+                     }
+                }
+
+                Spacer {}
+
+                StandardListView {
+                    height: 100px;
+
+                    model: [
+                        { leading-icon: Icons.add, text: "Item 1" },
+                        { leading-icon: Icons.add, text: "Item 2" },
+                        { leading-icon: Icons.add, text: "Item 3" },
+                        { leading-icon: Icons.add, text: "Item 4" },
+                        { leading-icon: Icons.add, text: "Item 5" },
+                        { leading-icon: Icons.add, text: "Item 6" },
+                    ];
+                }
+
+                Spacer {}
+
+                GroupListView {
+                    height: 100px;
+                    property <GroupListViewItem> list: {
+                        items: [
+                            { text: "Item 1" },
+                            { text: "Item 2" },
+                            { text: "Item 3" },
+                            { text: "Item 4" },
+                            { text: "Item 5" },
+                            { text: "Item 6" },
+                        ]
+                    };
+                    model: [self.list];
+                }
+
+                Spacer {}
+
+                ScrollView {
+                    height: 100px;
+
+                    VerticalLayout {
+                        spacing: 4px;
+
+                        for i in [0, 1, 2, 3, 4, 5, 6, 7] : Rectangle {
+                            height: 50px;
+                            background: mod(i, 2) == 0 ? black : gray;
+                        }
+                    }
+                }
+            }
+
+             // StandardTableView
+             Row {
+                RowTitle {
+                    text: "StandardTableView";
+                }
+            }
+
+            Row {
+                HorizontalSeparator {
+                    colspan: 8;
+                }
+            }
+
+            Row {
+                StandardTableView {
+                    zebra-pattern: true;
+                    colspan: 8;
+                    columns: [
+                        // folder icons row
+                        { horizontal-stretch: 0, min-width: 32px },
+                        { title: @tr("Name"), horizontal-stretch: 1 },
+                        { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 128px },
+                        { title: @tr("Size"), horizontal-stretch: 0, min-width: 96px },
+                        { title: @tr("Kind"), horizontal-stretch: 0, min-width: 72px },
+                    ];
+                    rows: [
+                        [ { leading-icon: Icons.folder,highlighted: true }, { text: "src" }, { text: "2022.11.10" }, { text: "---" }, { text: "Folder" }, ],
+                        [ { leading-icon: Icons.folder }, { text: "test.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
+                        [ { leading-icon: Icons.folder }, { text: "test2.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
+                    ];
+                }
+            }
+        }
+    }
+}

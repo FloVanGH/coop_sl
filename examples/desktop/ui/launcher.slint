@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { RoundOutlineButton, Theme } from "_imports/coop_widgets.slint";
+import { RoundOutlineButton, Space } from "_imports/coop-widgets.slint";
 
 export component Launcher inherits HorizontalLayout {
     callback open(string);
@@ -11,14 +11,15 @@ export component Launcher inherits HorizontalLayout {
     in property <string> front_path;
     in-out property <[{ text: string, path: string} ]> entries;
 
-    padding: Theme.spaces.medium;
-    spacing: Theme.spaces.small;
+    padding: Space.medium;
+    spacing: Space.small;
     alignment: center;
 
     for entry[index] in root.entries : RoundOutlineButton {
-        text: entry.icon;
+        // text: entry.icon;
         primary: entry.path == root.front_path;
-        clicked => {  
+
+        clicked => {
             root.open(entry.path);
         }
     }

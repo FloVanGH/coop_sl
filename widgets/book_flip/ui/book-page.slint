@@ -1,0 +1,62 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+export component BookPage inherits Rectangle {
+    in property <string> title <=> i-title.text;
+    in property <brush> title-color <=> i-title.color;
+    in property <length> title-font-size <=> i-title.font-size;
+    in property <int> title-font-weight <=> i-title.font-weight;
+    in property <string> title-font-family <=> i-title.font-family;
+    in property <int> number;
+    in property <brush> number-color <=> i-number.color;
+    in property <length> number-font-size <=> i-number.font-size;
+    in property <int> number-font-weight <=> i-number.font-weight;
+    in property <string> number-font-family <=> i-number.font-family;
+    in property <TextHorizontalAlignment> number-alignment <=> i-number.horizontal-alignment;
+    in property <length> spacing: 4px;
+    in property <brush> separator-color <=> i-separator.background;
+
+    padding: 8px;
+    background: white;
+    horizontal-stretch: 1;
+
+    layout := Rectangle {
+        i-title := Text {
+            x: root.padding;
+            y: root.padding;
+            width: root.width - 2 * root.padding;
+            color: black;
+            horizontal-alignment: left;
+            overflow: elide;
+            vertical-stretch: 0;
+        }
+
+        i-separator := Rectangle {
+            x: root.padding;
+            y: i-title.y + i-title.height + root.spacing;
+            width: i-title.width;
+            background: black;
+            height: 1px;
+            vertical-stretch: 0;
+            visible: i-title.text != "";
+        }
+
+        i-layout := VerticalLayout {
+            x: root.padding;
+            y: i-separator.y + i-separator.height + root.spacing;
+            width: i-title.width;
+            height: i-number.y - self.y;
+
+            @children
+        }
+
+        i-number := Text {
+            width: i-title.width;
+            x: root.padding;
+            y: root.height - self.height - root.padding;
+            color: black;
+            text: root.number;
+            vertical-stretch: 0;
+        }
+    }
+}

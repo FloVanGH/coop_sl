@@ -1,0 +1,68 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Radius, Duration, Size, Space, Palette } from "../styling/styling.slint";
+
+component ScrollIndicator inherits Rectangle {
+    border-radius: Radius.extra-extra-small;
+    background: Palette.foreground;
+    opacity: 0;
+
+    animate opacity { duration: Duration.medium; }
+}
+
+export component ScrollView {
+    in property <bool> enabled: true;
+    out property <length> visible-width <=> i-flickable.width;
+    out property <length> visible-height <=> i-flickable.height;
+    in-out property <length> viewport-width <=> i-flickable.viewport-width;
+    in-out property <length> viewport-height <=> i-flickable.viewport-height;
+    in-out property <length> viewport-x <=> i-flickable.viewport-x;
+    in-out property <length> viewport-y <=> i-flickable.viewport-y;
+
+    min-width: Size.medium;
+    min-height: root.min-width;
+    horizontal-stretch: 1;
+    vertical-stretch: 1;
+    preferred-height: 100%;
+    preferred-width: 100%;
+
+    i-flickable := Flickable {
+        width: 100%;
+        height: 100%;
+
+        @children
+    }
+
+    i-ver-scroll := ScrollIndicator {
+        property <length> padding-height: root.height - 2 * Space.small  - i-hor-scroll.height;
+        property <length> max: root.viewport-height - root.height;
+
+        x: parent.width - self.width - Space.small;
+        y:  (self.padding-height - self.height) * (-root.viewport-y / self.max);
+        width: 4px;
+        height: self.max <= 0phx ? 0phx: self.padding-height * (root.height / root.viewport-height);
+
+        states [
+            visible when root.viewport-height > root.height: {
+                opacity: 0.3;
+            }
+        ]
+    }
+
+    i-hor-scroll := ScrollIndicator {
+        property <length> padding-width: root.width - 2 * Space.small - i-ver-scroll.width;
+        property <length> max: root.viewport-width - root.width;
+
+        x: Space.small + (self.padding-width - self.width) * (-root.viewport-x / self.max);
+        y: parent.height - self.height - Space.small;
+        width: self.max <= 0phx ? 0phx: self.padding-width * (root.height / root.viewport-height);
+        height: 4px;
+
+        states [
+            visible when root.viewport-width > root.width: {
+                opacity: 0.3;
+            }
+        ]
+    }
+}

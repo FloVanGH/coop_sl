@@ -1,37 +1,30 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Theme } from "../coop/theme.slint";
+import { Space } from "../styling/styling.slint";
 
-// `Spacer` fills the remaining spae in a layout.
 export component Spacer inherits Rectangle {}
 
-// `VerticalSpacerSmall` fills vertical space with `Theme.spaces.small`.
 export component VerticalSpacerSmall inherits Spacer {
-    height: Theme.spaces.small;
+    height: Space.small;
 }
 
-// `VerticalSpacerMedium` fills vertical space with `Theme.spaces.medium`.
 export component VerticalSpacerMedium inherits Spacer {
-    height: Theme.spaces.medium;
+    height: Space.medium;
 }
 
-//  `VerticalSpacerLarge` fills vertical space with `Theme.spaces.large`.
 export component VerticalSpacerLarge inherits Spacer {
-    height: Theme.spaces.large;
+    height: Space.large;
 }
 
-// `HorizontalSpacerSmall` fills horizontal space with `Theme.spaces.small`.
 export component HorizontalSpacerSmall inherits Spacer {
-    width: Theme.spaces.small;
+    width: Space.small;
 }
 
-// `HorizontalSpacerMedium` fills horizontal space with `Theme.spaces.medium`.
 export component HorizontalSpacerMedium inherits Spacer {
-    width: Theme.spaces.medium;
+    width: Space.medium;
 }
 
-// `HorizontalSpacerLarge` fills horizontal space with `Theme.spaces.large`.
 export component HorizontalSpacerLarge inherits Spacer {
-    width: Theme.spaces.large;
+    width: Space.large;
 }

@@ -1,0 +1,301 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Duration, Icography, Radius, Palette, Size, State, Space, Icons } from "../styling/styling.slint";
+import { ScrollView } from "scroll-view.slint";
+import { CheckableBase } from "checkables.slint";
+import { LargeLabel, FocusBorder } from "../components/components.slint";
+
+export struct ListViewItem  {
+    leading-icon: image,
+    text: string,
+    trailing-icon: image,
+    highlighted: bool,
+}
+
+export struct GroupListViewItem  {
+    text: string,
+    items: [ListViewItem],
+}
+
+export component ItemDelegate inherits TouchArea {
+    private property <brush> foreground: Palette.foreground;
+    private property <brush> icon-color: highlighted ? Palette.primary : Palette.foreground;
+
+    in property <bool> selected;
+    in property <bool> highlighted;
+    in property <image> leading-icon;
+    in property <string> text;
+    in property <image> trailing-icon;
+
+    height: Size.small;
+    forward-focus: i-focus-scope;
+    padding-left: Space.medium;
+    padding-right: Space.medium;
+
+    i-focus-scope := FocusScope {
+        x: 0;
+        width: 0px; // Do not react on clicks
+
+        key-pressed(event) => {
+            if(event.text == " " || event.text == "\n") {
+                root.clicked();
+                return accept;
+            }
+            return reject;
+        }
+    }
+
+    i-background := Rectangle {
+       i-layout := HorizontalLayout {
+            padding-left: root.padding-left;
+            padding-right: root.padding-right;
+            spacing: Space.medium;
+
+            if(root.leading-icon.width > 0 && root.leading-icon.height > 0) : Image {
+                source: root.leading-icon;
+                colorize: root.icon-color;
+                width: Icography.small;
+            }
+
+            LargeLabel {
+                text <=> root.text;
+                vertical-alignment: center;
+                horizontal-alignment: left;
+                color: root.foreground;
+                horizontal-stretch: 1;
+            }
+
+            if(root.trailing-icon.width > 0 && root.trailing-icon.height > 0) : Image {
+                source: root.trailing-icon;
+                colorize: root.foreground;
+                width: Icography.small;
+            }
+        }
+
+        if(i-focus-scope.has-focus) : FocusBorder {}
+    }
+
+    states [
+        pressed when root.pressed: {
+            i-background.background: Palette.background.darker(State.pressed);
+            foreground: Palette.foreground.darker(State.pressed);
+            icon-color: highlighted ? Palette.primary.darker(State.pressed) : Palette.foreground.darker(State.pressed);
+        }
+        hover when root.has-hover: {
+            i-background.background: Palette.background.darker(State.hover);
+            foreground: Palette.foreground.darker(State.hover);
+            icon-color: highlighted ? Palette.primary.darker(State.hover) : Palette.foreground.darker(State.hover);
+        }
+        selected when root.selected: {
+            i-background.background: Palette.background.darker(State.selected);
+        }
+    ]
+
+    animate foreground { duration: Duration.fast; }
+}
+
+// Delegate for a `GroupListViewItem` it can display a `text` and a list of `ItemModels`.
+component GroupItemDelegate {
+    callback current-item-changed({ parent: int, item: int });
+
+    private property <brush> foreground: Palette.foreground;
+    in property <GroupListViewItem> model;
+    in property <int> item-index;
+    in-out property <{ parent: int, item: int }> current-item;
+    in-out property <bool> expanded: true;
+
+    forward-focus: i-focus-scope;
+
+    VerticalLayout {
+        spacing: Space.medium;
+
+        i-background := Rectangle {
+            height: Size.small;
+
+            i-background-layout := HorizontalLayout {
+                padding-left: Space.medium;
+                padding-right: Space.medium;
+                spacing: Space.medium;
+
+                // The item is expandable if it has items.
+                if(root.model.items.length > 0) : Image {
+                    y: (parent.height - self.height) / 2;
+                    source: Icons.arrow-drop-down;
+                    colorize: root.foreground;
+                    // vertical-alignment: center;
+                    // horizontal-alignment: left;
+
+                    states [
+                        collapsed when !root.expanded: {
+                            source: Icons.arrow-right;
+                        }
+                    ]
+                }
+
+                LargeLabel  {
+                    color: root.foreground;
+                    text: root.model.text;
+                    vertical-alignment: center;
+                    horizontal-alignment: left;
+                    horizontal-stretch: 1;
+                }
+            }
+
+            // The item is expandable if it has items.
+            i-touch-area := TouchArea {
+                enabled: root.model.items.length > 0;
+
+                clicked => {
+                    root.expanded = !root.expanded;
+                }
+            }
+
+            i-focus-scope := FocusScope {
+                x:0;
+                width: 0px; // Do not react on clicks
+
+                key-pressed(event) => {
+                    if(event.text == " " || event.text == "\n") {
+                        i-touch-area.clicked();
+                        return accept;
+                    }
+                    return reject;
+                }
+            }
+
+            if (i-focus-scope.has-focus) : FocusBorder {}
+
+            animate background { duration: Duration.fast; }
+        }
+
+        if (root.expanded) : VerticalLayout {
+            for item[item-index] in root.model.items: ItemDelegate {
+                padding-left: i-background-layout.padding-left + i-background-layout.spacing + Icography.medium;
+                padding-right: i-background-layout.padding-right;
+                leading-icon: item.leading-icon;
+                highlighted: item.highlighted;
+                text: item.text;
+                trailing-icon: item.trailing-icon;
+                selected: root.item-index == root.current-item.parent && item-index == root.current-item.item;
+
+                clicked => {
+                    root.current-item = { parent: root.item-index, item: item-index };
+                    root.current-item-changed(root.current-item);
+                }
+            }
+        }
+    }
+
+    states [
+        pressed when i-touch-area.pressed: {
+            i-background.background: Palette.background.darker(State.pressed);
+            foreground: Palette.foreground.darker(State.pressed);
+        }
+        hover when i-touch-area.has-hover: {
+            i-background.background: Palette.background.darker(State.hover);
+            foreground: Palette.foreground.darker(State.hover);
+        }
+    ]
+
+    animate foreground { duration: Duration.fast; }
+}
+
+export component ListView inherits ScrollView {
+    @children
+}
+
+component StandardListViewBase inherits ListView {
+    private property <length> item-height: self.viewport-height / self.model.length;
+    private property <length> current-item-y: self.viewport-y + current-item * item-height;
+
+    in property <[ListViewItem]> model;
+    in-out property <int> current-item: -1;
+
+    for item[idx] in root.model : ItemDelegate {
+        selected: idx == root.current-item;
+        leading-icon: item.leading-icon;
+        text: item.text;
+        trailing-icon: item.trailing-icon;
+
+        clicked => {
+            set-current-item(idx);
+        }
+    }
+
+    public function set-current-item(index: int) {
+        if(index < 0 || index >= model.length) {
+            return;
+        }
+
+        current-item = index;
+
+        if(current-item-y < 0) {
+            self.viewport-y += 0 - current-item-y;
+        }
+
+        if(current-item-y + item-height > self.visible-height) {
+            self.viewport-y -= current-item-y + item-height - self.visible-height;
+        }
+    }
+}
+
+export component StandardListView inherits StandardListViewBase {
+    FocusScope {
+        x: 0;
+        width: 0;  // Do not react on clicks
+
+        key-pressed(event) => {
+            if (event.text == Key.UpArrow) {
+                root.set-current-item(root.current-item - 1);
+                return accept;
+            } else if (event.text == Key.DownArrow) {
+                root.set-current-item(root.current-item + 1);
+                return accept;
+            }
+
+            reject
+        }
+    }
+}
+
+export component GroupListView inherits ScrollView  {
+    callback current-item-changed(/* current-item */ { parent: int, item: int });
+
+    in property <[GroupListViewItem]> model;
+    in-out property <{ parent: int, item: int }> current-item;
+
+    VerticalLayout {
+        spacing: Space.medium;
+
+        for parent-item[parent-index] in root.model: VerticalLayout {
+            if (root.model.length > 1) : GroupItemDelegate {
+                model: parent-item;
+                item-index: parent-index;
+                current-item <=> root.current-item;
+
+                current-item-changed(item) => {
+                    root.current-item-changed(item);
+                }
+            }
+
+            // Only one parent item.
+            if (root.model.length == 1) : VerticalLayout {
+                for item[index] in parent-item.items: ItemDelegate {
+                    leading-icon: item.leading-icon;
+                    text: item.text;
+                    trailing-icon: item.trailing-icon;
+                    highlighted: item.highlighted;
+                    selected: parent-index == root.current-item.parent && index == root.current-item.item;
+                    padding-left: Space.medium;
+                    padding-right: Space.medium;
+
+                    clicked => {
+                        root.current-item = { parent: 0, item: index };
+                        root.current-item-changed(root.current-item);
+                    }
+                }
+            }
+        }
+    }
+}

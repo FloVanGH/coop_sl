@@ -1,301 +1,254 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Theme, Icons } from "../coop/theme.slint";
-import { FocusTouchArea } from "../components/focus_touch_area.slint";
+import { Duration, Icography, Radius, Palette, Size, State, Space, Typography } from "../styling/styling.slint";
+import { FocusTouchArea } from "../components/focus-touch-area.slint";
 import { MediumLabel } from "../components/label.slint";
-import { Icon } from "../components/icon.slint";
 
 // `ButtonBase` is used as base for buttons that can be clicked.
 export component ButtonBase inherits FocusTouchArea {
-    // Used to set an optional icon on the button. .
-    in property <string> icon;
-
-    // Used to set the display text of the button
+     // FIXME: image
+    in property <image> icon;
     in property <string> text;
-
-    // Defines the text color.
-    in property <brush> text_color;
-
-    // Defines the text color.
-    in property <brush> icon_color;
-
-    // Defines the border color of the widget.
-    in property <brush> border_color;
-
-    // Defines the border width of the widget.
-    in property <length> border_width;
-
-    // Defines background of the widget.
+    in property <brush> text-color;
+    in property <brush> icon-color;
+    in property <brush> border-color;
+    in property <length> border-width;
     in property <brush> background;
+    in property <length> icon-size: Icography.small;
+    in property <float> container-scale: 1.0;
+    in property <length> border-radius: Radius.large * root.container-scale;
 
-    // Defines the size of the icon.
-    in property <length> icon_size:  Theme.icon.size.small;
+    focus-border-radius: root.border-radius;
+    padding-left: Space.large;
+    padding-right: Space.large;
+    min-width: i-layout.min-width;
+    min-height: i-layout.min-height;
 
-    // Used to scale the inner background container e.g. to add an effect by button pressed.
-    in property <float> container_scale: 1.0;
-
-    // Defines the border radius of the button background.
-    in property <length> border_radius: Theme.radius.large * root.container_scale; 
-
-    focus_border_radius: root.border_radius;
-    padding_left: Theme.spaces.large;
-    padding_right: Theme.spaces.large;
-
-    i_container := Rectangle {
+    i-background := Rectangle {
         x: (parent.width - self.width) / 2;
         y: (parent.height - self.height) / 2;
-        width: root.width * root.container_scale;
-        height: root.height * root.container_scale;
+        width: root.width * root.container-scale;
+        height: root.height * root.container-scale;
         background: root.background;
-        border_width: root.border_width;
-        border_color: root.border_color;
-        border_radius: root.border_radius;
+        border-width: root.border-width;
+        border-color: root.border-color;
+        border-radius: root.border-radius;
     }
 
-    HorizontalLayout {  
-        spacing: Theme.spaces.small;
-        padding_left: root.padding_right;
-        padding_right: root.padding_right;
+    i-layout := HorizontalLayout {
+        spacing: Space.small;
+        padding-left: root.padding-left;
+        padding-right: root.padding-right;
         alignment: center;
 
-        if(root.icon != "") : Icon {
-            vertical_alignment: center;
-            font_size: root.icon_size;
-            color: root.icon_color;
-            text: root.icon;
+        if (root.icon.width > 0 && root.icon.height > 0) : Image {
+            y: (parent.height - self.height) / 2;
+            width: root.icon-size;
+            colorize: root.icon-color;
+            source: root.icon;
         }
 
-        if(root.text != "") : Text {
+        if (root.text != "") : Text {
             vertical-alignment: center;
             horizontal-stretch: 1;
-            color: root.text_color;
-            font_size: Theme.typo.medium_label.size;
-            font_weight: Theme.typo.medium_label.weight;
-            // font_family: Theme.typo.medium_label.family;
+            color: root.text-color;
+            font-size: Typography.medium-label.font-size;
+            font-weight: Typography.medium-label.font-weight;
             text: root.text;
         }
     }
 }
 
-// `Button` represents the default button with filled surface.
 export component Button {
-    // Will be called when the widget is clicked (pressed and then released).
-    callback clicked <=> i_base.clicked;
+    callback clicked <=> i-base.clicked;
 
-    // Used to set the display text of the button.
-    in property <string> text: "text";
-
-    // Used to set an optional icon on the button. .
-    in property <string> icon;
-
-    // If set to  `true` the button will filled with Theme.brushes.primary`
+    in property <string> text;
+    // FIXME: image
+    in property <image> icon;
     in property <bool> primary: false;
-
-    // If set to false the widget is disabled.
+    out property <bool> has-focus: i-base.has-focus;
+    out property <bool> pressed: self.enabled && i-base.pressed;
     in-out property <bool> enabled: true;
 
     accessible-role: button;
     accessible-label: root.text;
-    min_height: Theme.sizes.medium;
+    min-width: max(Size.medium, i-base.min-width);
+    min-height: max(Size.medium, i-base.min-height);
     vertical-stretch: 0;
     horizontal-stretch: 1;
+    forward-focus: i-base;
 
-    i_base := ButtonBase {  
+    i-base := ButtonBase {
         enabled: root.enabled;
-        background: root.primary ? Theme.brushes.primary: Theme.brushes.surface;
-        text_color: root.primary ? Theme.brushes.on_primary: Theme.brushes.foreground;
-        icon_color: self.text_color;
+        background: root.primary ? Palette.primary: Palette.surface;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: self.text-color;
         text: root.text;
         icon: root.icon;
 
-        animate background { duration: Theme.durations.fast; }
-        animate text_color { duration: Theme.durations.fast; }
-        animate container_scale { duration: Theme.durations.fast; }
+        animate background, text-color, container-scale { duration: Duration.fast; }
     }
 
     states [
         disabled when !root.enabled: {
-            i_base.background: Theme.brushes.surface_disabled;
-            i_base.text_color: Theme.brushes.foreground_disabled;
+            i-base.background: Palette.surface-disabled;
+            i-base.text-color: Palette.foreground-disabled;
         }
-        pressed when i_base.focus_pressed: {
-            i_base.background: root.primary ? Theme.brushes.primary.darker(Theme.state.pressed) : Theme.brushes.surface.darker(Theme.state.pressed);
-            i_base.text_color: root.primary ? Theme.brushes.on_primary.darker(Theme.state.pressed) : Theme.brushes.foreground.darker(Theme.state.pressed);
-            i_base.container_scale: 0.98;
+        pressed when i-base.focus-pressed: {
+            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.surface.darker(State.pressed);
+            i-base.text-color: root.primary ? Palette.on-primary.darker(State.pressed) : Palette.foreground.darker(State.pressed);
+            i-base.container-scale: 0.98;
         }
-        hover when i_base.has_hover: {
-            i_base.background: root.primary ? Theme.brushes.primary.darker(Theme.state.hover) : Theme.brushes.surface.darker(Theme.state.hover);
-            i_base.text_color:  root.primary ? Theme.brushes.on_primary.darker(Theme.state.hover) : Theme.brushes.foreground.darker(Theme.state.hover);
+        hover when i-base.has-hover: {
+            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.surface.darker(State.hover);
+            i-base.text-color:  root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
         }
     ]
 }
 
-// `OutlineButton` represents a default button with an outline border.
 export component OutlineButton {
-    // Will be called when the widget is clicked (pressed and then released).
-    callback clicked <=> i_base.clicked;
+    callback clicked <=> i-base.clicked;
 
-    // Used to set the display text of the button.
-    in property <string> text: "text";
-
-    // Used to set an optional icon on the button. .
-    in property <string> icon;
-
-    // If set to  `true` the button will filled with Theme.brushes.primary`
+    in property <string> text;
+    // FIXME: image
+    in property <image> icon;
     in property <bool> primary: false;
-
-    // If set to false the widget is disabled.
-    in property <bool> enabled: true; 
+    out property <bool> has-focus: i-base.has-focus;
+    out property <bool> pressed: self.enabled && i-base.pressed;
+    in-out property <bool> enabled: true;
 
     accessible-role: button;
     accessible-label: root.text;
-    min_height: Theme.sizes.medium;
+    min-width: max(Size.medium, i-base.min-width);
+    min-height: max(Size.medium, i-base.min-height);
     vertical-stretch: 0;
     horizontal-stretch: 1;
+    forward-focus: i-base;
 
-    i_base := ButtonBase {  
+    i-base := ButtonBase {
         enabled: root.enabled;
-        background: root.primary ? Theme.brushes.primary: Theme.brushes.background;
-        text_color: root.primary ? Theme.brushes.on_primary: Theme.brushes.foreground;
-        icon_color: root.primary ? Theme.brushes.on_primary: Theme.brushes.primary;
-        border_width: 1px;
-        border_color: Theme.brushes.border;
+        background: root.primary ? Palette.primary: Palette.background;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: root.primary ? Palette.on-primary: Palette.primary;
+        border-width: 1px;
+        border-color: Palette.border;
         text: root.text;
         icon: root.icon;
 
-        animate background { duration: Theme.durations.fast; }
-        animate text_color { duration: Theme.durations.fast; }
-        animate icon_color { duration: Theme.durations.fast; }
-        animate border_color { duration: Theme.durations.fast; }
-        animate container_scale { duration: Theme.durations.fast; }
+        animate background, text-color, icon-color, border-color, container-scale { duration: Duration.fast; }
     }
 
     states [
         disabled when !root.enabled: {
-            i_base.background: Theme.brushes.background;
-            i_base.border_color: Theme.brushes.border_disabled;
-            i_base.text_color: Theme.brushes.foreground_disabled;
-            i_base.icon_color: Theme.brushes.foreground_disabled;
+            i-base.background: Palette.background;
+            i-base.border-color: Palette.border-disabled;
+            i-base.text-color: Palette.foreground-disabled;
+            i-base.icon-color: Palette.foreground-disabled;
         }
-        pressed when i_base.focus_pressed: {
-            i_base.background: root.primary ? Theme.brushes.primary.darker(Theme.state.pressed) : Theme.brushes.background.darker(Theme.state.pressed);
-            i_base.border_color: Theme.brushes.border.darker(Theme.state.pressed);
-            i_base.text_color: root.primary ? Theme.brushes.on_primary.darker(Theme.state.pressed) : Theme.brushes.foreground.darker(Theme.state.pressed);
-            i_base.container_scale: 0.98;
+        pressed when i-base.focus-pressed: {
+            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.background.darker(State.pressed);
+            i-base.border-color: Palette.border.darker(State.pressed);
+            i-base.text-color: root.primary ? Palette.on-primary.darker(State.pressed) : Palette.foreground.darker(State.pressed);
+            i-base.container-scale: 0.98;
         }
-        hover when i_base.has_hover: {
-            i_base.background: root.primary ? Theme.brushes.primary.darker(Theme.state.hover) : Theme.brushes.background.darker(Theme.state.hover);
-            i_base.border_color: Theme.brushes.border.darker(Theme.state.hover);
-            i_base.text_color: root.primary ? Theme.brushes.on_primary.darker(Theme.state.hover) : Theme.brushes.foreground.darker(Theme.state.hover);
+        hover when i-base.has-hover: {
+            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.background.darker(State.hover);
+            i-base.border-color: Palette.border.darker(State.hover);
+            i-base.text-color: root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
         }
     ]
 }
 
-// `RoundButton` represents a round fixed sized button with ether an icon or a single character text.
 export component RoundButton {
-    // Will be called when the widget is clicked (pressed and then released).
-    callback clicked <=> i_base.clicked;
+    callback clicked <=> i-base.clicked;
 
-    // Used to set an optional icon on the button. .
-    in property <string> icon <=> i_base.icon;
-
-    // Used to set the display text of the button.
-    in property <string> text <=> i_base.text;
-
-    // If set to false the widget is disabled.
+    in property <image> icon <=> i-base.icon;
+    in property <string> text <=> i-base.text;
+    out property <bool> has-focus: i-base.has-focus;
+    out property <bool> pressed: self.enabled && i-base.pressed;
     in-out property <bool> enabled: true;
-
-    // Defines the round background.
-    in-out property <brush> icon_background: Theme.brushes.background;
+    in-out property <brush> icon-background: Palette.background;
 
     accessible-role: button;
-    width: Theme.sizes.medium;
-    height: root.width;
-    vertical_stretch: 0;
-    horizontal_stretch: 0;
+    min-height: max(Size.medium, i-base.min-height);
+    width: self.height;
+    vertical-stretch: 0;
+    horizontal-stretch: 0;
 
-    i_base := ButtonBase {  
+    i-base := ButtonBase {
         enabled: root.enabled;
-        background: root.icon_background;
-        text_color: Theme.brushes.foreground;
-        icon_color: self.text_color;
-        padding_left: 0px;
-        padding_right: 0px;
+        background: root.icon-background;
+        text-color: Palette.foreground;
+        icon-color: self.text-color;
+        padding-left: 0px;
+        padding-right: 0px;
+        border-radius: max(self.width, self.height) / 2;
 
-        animate text_color { duration: Theme.durations.fast; }
+        animate text-color { duration: Duration.fast; }
     }
 
     states [
         disabled when !root.enabled: {
-            i_base.text_color: Theme.brushes.foreground_disabled;
+            i-base.text-color: Palette.foreground-disabled;
         }
-        pressed when i_base.focus_pressed: {
-            i_base.background: root.icon_background.darker(Theme.state.pressed);
-            i_base.text_color: Theme.brushes.foreground.darker(Theme.state.pressed);
+        pressed when i-base.focus-pressed: {
+            i-base.background: root.icon-background.darker(State.pressed);
+            i-base.text-color: Palette.foreground.darker(State.pressed);
         }
-        hover when i_base.has_hover: {
-            i_base.background: root.icon_background.darker(Theme.state.hover);
-            i_base.text_color: Theme.brushes.foreground.darker(Theme.state.hover);
+        hover when i-base.has-hover: {
+            i-base.background: root.icon-background.darker(State.hover);
+            i-base.text-color: Palette.foreground.darker(State.hover);
         }
     ]
 
-    animate icon_background { duration: Theme.durations.fast; }
+    animate icon-background { duration: Duration.fast; }
 }
 
-// `RoundOutlineButton` represents a round fixed sized button with ether an icon or a single character text and an outline border.
 export component RoundOutlineButton {
-    // Will be called when the widget is clicked (pressed and then released).
-    callback clicked <=> i_base.clicked;
+    callback clicked <=> i-base.clicked;
 
-    // Used to set an optional icon on the button. .
-    in property <string> icon <=> i_base.icon;
-
-    // Used to set the display text of the button.
-    in property <string> text <=> i_base.text;
-
-    // If set to  `true` the button will filled with Theme.brushes.primary`
+    in property <image> icon <=> i-base.icon;
+    in property <string> text <=> i-base.text;
     in property <bool> primary: false;
-
-    // If set to false the widget is disabled.
+    out property <bool> has-focus: i-base.has-focus;
+    out property <bool> pressed: self.enabled && i-base.pressed;
     in-out property <bool> enabled: true;
 
     accessible-role: button;
-    width: Theme.sizes.medium;
-    height: root.width;
-    vertical_stretch: 0;
-    horizontal_stretch: 0;
+    // min-width: max(Size.medium, i-base.min-width);
+    min-height: max(Size.medium, i-base.min-height);
+    width: self.height;
+    vertical-stretch: 0;
+    horizontal-stretch: 0;
 
-    i_base := ButtonBase {  
+    i-base := ButtonBase {
         enabled: root.enabled;
-      
-        background: root.primary ? Theme.brushes.primary: Theme.brushes.background;
-        border_width: 1px;
-        text_color: root.primary ? Theme.brushes.on_primary: Theme.brushes.foreground;
-        icon_color: self.text_color;
-        border_color: Theme.brushes.border;
-        padding_left: 0px;
-        padding_right: 0px;
+        background: root.primary ? Palette.primary: Palette.background;
+        border-width: 1px;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: self.text-color;
+        border-color: Palette.border;
+        padding-left: 0px;
+        padding-right: 0px;
+        border-radius: max(self.width, self.height) / 2;
 
-        animate background { duration: Theme.durations.fast; }
-        animate text_color { duration: Theme.durations.fast; }
-        animate icon_color { duration: Theme.durations.fast; }
-        animate border_color { duration: Theme.durations.fast; }
+        animate background, text-color, icon-color, border-color { duration: Duration.fast; }
     }
 
     states [
         disabled when !root.enabled: {
-            i_base.background: Theme.brushes.background;
-            i_base.border_color: Theme.brushes.border_disabled;
-            i_base.text_color: Theme.brushes.foreground_disabled;
+            i-base.background: Palette.background;
+            i-base.border-color: Palette.border-disabled;
+            i-base.text-color: Palette.foreground-disabled;
         }
-        pressed when i_base.focus_pressed: {
-            i_base.background: root.primary ? Theme.brushes.primary.darker(Theme.state.pressed) : Theme.brushes.background.darker(Theme.state.pressed);
-            i_base.border_color: Theme.brushes.border.darker(Theme.state.pressed);
+        pressed when i-base.focus-pressed: {
+            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.background.darker(State.pressed);
+            i-base.border-color: Palette.border.darker(State.pressed);
         }
-        hover when i_base.has_hover: {
-            i_base.background: root.primary ? Theme.brushes.primary.darker(Theme.state.hover) : Theme.brushes.background.darker(Theme.state.hover);
-            i_base.border_color: Theme.brushes.border.darker(Theme.state.hover);
+        hover when i-base.has-hover: {
+            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.background.darker(State.hover);
+            i-base.border-color: Palette.border.darker(State.hover);
         }
     ]
 }

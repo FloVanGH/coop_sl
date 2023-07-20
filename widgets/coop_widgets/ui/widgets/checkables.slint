@@ -1,0 +1,243 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Duration, Icography, Radius, Palette, Size, State, Space, Icons } from "../styling/styling.slint";
+import { FocusBorder } from "../components/focus-border.slint";
+import { FocusTouchArea } from "../components/focus-touch-area.slint";
+import { SmallLabel } from "../components/label.slint";
+
+export component CheckableBase inherits FocusTouchArea {
+    callback toggled(/* checked */ bool);
+
+    in-out property <bool> checked;
+
+    clicked => {
+        root.checked = !root.checked;
+        root.toggled(root.checked);
+    }
+}
+
+export component CheckBox inherits Rectangle {
+    callback toggled(/* checked */ bool);
+
+    in property <string> text <=> i-label.text;
+    in property <bool> enabled <=> i-base.enabled;
+    out property <bool> has-focus: i-base.has-focus;
+    in-out property <bool> checked <=> i-base.checked;
+
+    min-width: i-layout.min-width;
+    min-height: max(Size.extra-small, i-layout.min-height);
+    horizontal-stretch: 0;
+    vertical-stretch: 0;
+    accessible-label <=> i-label.text;
+    accessible-checkable: true;
+    accessible-checked <=> root.checked;
+    accessible-role: checkbox;
+    forward-focus: i-base;
+
+    i-base := CheckableBase {
+        focus-border-radius: Radius.extra-small;
+
+        i-layout := HorizontalLayout {
+            spacing: Space.small;
+
+            VerticalLayout {
+                alignment: center;
+
+                i-background := Rectangle {
+                    property <length> spacing: root.text == "" ? 0px: Space.small;
+
+                    width: Size.extra-small;
+                    height: Size.extra-small;
+                    border-radius: Radius.extra-small;
+                    border-width: 1px;
+                    border-color: Palette.border;
+                    background: Palette.background;
+
+                    i-icon := Image {
+                        colorize: Palette.on-primary;
+                        source: Icons.check;
+                        opacity: 0;
+                        visible: root.checked;
+                        width: Icography.small;
+
+                        animate colorize, opacity { duration: Duration.fast; }
+                    }
+
+                    animate background { duration: Duration.medium; easing: ease-in-out; }
+                }
+            }
+
+            i-label := SmallLabel {
+                horizontal-alignment: left;
+                vertical-alignment: center;
+                vertical-stretch: 1;
+            }
+        }
+
+        toggled(checked) => {
+            root.toggled(checked);
+        }
+    }
+
+    states [
+        disabled-checked when !root.enabled && root.checked: {
+            i-background.background: Palette.surface-disabled;
+            i-label.color: Palette.foreground-disabled;
+            i-background.border-width: 0px;
+            i-icon.opacity: 1;
+        }
+        disabled when !root.enabled: {
+            i-background.border-color: Palette.border-disabled;
+            i-label.color: Palette.foreground-disabled;
+        }
+        pressed-checked when i-base.focus-pressed && root.checked: {
+            i-background.background: Palette.primary.darker(State.pressed);
+            i-icon.colorize: Palette.on-primary.darker(State.pressed);
+            i-background.border-width: 0px;
+            i-icon.opacity: 1;
+        }
+        hover-checked when i-base.has-hover && root.checked: {
+            i-background.background: Palette.primary.darker(State.hover);
+            i-icon.colorize: Palette.on-primary.darker(State.hover);
+            i-background.border-width: 0px;
+            i-icon.opacity: 1;
+        }
+        pressed when i-base.focus-pressed: {
+            i-background. background: Palette.background.darker(State.pressed);
+            root.border-color: Palette.border.darker(State.pressed);
+            i-icon.colorize: Palette.foreground.darker(State.pressed);
+        }
+        hover when i-base.has-hover: {
+            i-background.background: Palette.background.darker(State.hover);
+            root.border-color: Palette.border.darker(State.hover);
+            i-icon.colorize: Palette.foreground.darker(State.hover);
+        }
+        checked when i-base.checked: {
+            i-background.background: Palette.primary;
+            i-background.border-width: 0px;
+            i-icon.opacity: 1;
+        }
+    ]
+}
+
+export component Switch inherits Rectangle {
+    private property <brush> foreground: Palette.foreground;
+    private property <length> indicator-space: 4px;
+
+    callback toggled(/* checked */ bool);
+
+    in property <string> text <=> i-label.text;
+    in property <image> on-icon;
+    in property <image> off-icon;
+    in property <bool> enabled <=> i-base.enabled;
+    out property <bool> has-focus: i-base.has-focus;
+    in-out property <bool> checked <=> i-base.checked;
+
+    accessible-checkable: true;
+    accessible-checked <=> root.checked;
+    accessible-role: checkbox;
+    width: max(root.height * 2, i-layout.min-width);
+    height: max(Size.extra-small, i-layout.min-height);
+    vertical-stretch: 0;
+    horizontal-stretch: 0;
+    forward-focus: i-base;
+
+    i-base := CheckableBase {
+        focus-border-radius: i-background.border-radius;
+
+        i-layout := HorizontalLayout {
+            spacing: Space.small;
+
+            VerticalLayout {
+                alignment: center;
+
+                i-background := Rectangle {
+                    width: 100%;
+                    height: 100%;
+                    background: Palette.surface;
+                    border-radius: i-indicator.border-radius + root.indicator-space / 2;
+
+                    if(root.on-icon.width > 0 && root.on-icon.height > 0) : Image {
+                        x: root.indicator-space + (i-indicator.width - self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        source: root.on-icon;
+                        width:  Icography.small;
+                        colorize: root.foreground;
+                    }
+
+                    if(root.off-icon.width > 0 && root.off-icon.height > 0) : Image {
+                        x: root.width - root.indicator-space - (i-indicator.width + self.width) / 2;
+                        y: (parent.height - self.height) / 2;
+                        source: root.off-icon;
+                        width:  Icography.small;
+                        colorize: root.foreground;
+                    }
+
+                    i-indicator := Rectangle {
+                        x: root.indicator-space;
+                        y: (parent.height - self.height) / 2;
+                        width: i-background.height - root.indicator-space;
+                        height: self.width;
+                        border-radius: max(self.width, self.height) / 2;
+                        background: Palette.foreground;
+
+                        animate x { duration: Duration.fast; }
+                    }
+
+                    animate background { duration: Duration.fast; }
+                }
+            }
+
+            i-label := SmallLabel {
+                horizontal-alignment: left;
+                vertical-alignment: center;
+                vertical-stretch: 1;
+            }
+        }
+
+        toggled(checked) => {
+            root.toggled(checked);
+        }
+    }
+
+    states [
+        disabled-checked when !root.enabled && root.checked: {
+            i-background.background: Palette.surface-disabled;
+            foreground: Palette.foreground-disabled;
+            i-indicator.background: Palette.foreground-disabled;
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+        }
+        disabled when !root.enabled: {
+            i-background.background: Palette.surface-disabled;
+            foreground: Palette.foreground-disabled;
+            i-indicator.background: Palette.foreground-disabled;
+        }
+        pressed-checked when i-base.focus-pressed && root.checked: {
+            i-background.background: Palette.primary.darker(State.pressed);
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+            i-indicator.background: Palette.background;
+            root.foreground: Palette.background;
+        }
+        hover-checked when i-base.has-hover && root.checked: {
+            i-background.background: Palette.primary.darker(State.hover);
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+            i-indicator.background: Palette.background;
+            root.foreground: Palette.background;
+        }
+        checked when !i-base.focus-pressed && root.checked: {
+            i-background.background: Palette.primary;
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+            i-indicator.background: Palette.background;
+            root.foreground: Palette.background;
+        }
+        pressed when i-base.focus-pressed: {
+            i-background.background: Palette.surface.darker(State.pressed);
+        }
+        hover when i-base.has-hover: {
+            i-background.background: Palette.surface.darker(State.hover);
+        }
+    ]
+
+    animate foreground { duration: Duration.fast; }
+}

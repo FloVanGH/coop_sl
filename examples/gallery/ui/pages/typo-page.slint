@@ -1,0 +1,308 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { SmallLabel, MediumLabel, LargeLabel, ErrorLabel, SmallTitle, MediumTitle, LargeTitle, Spacer, HorizontalSeparator,
+    VerticalSpacerMedium, LineEdit, CheckBox, Switch, Typography, Space } from "../_imports/coop-widgets.slint";
+
+export component TypoPage inherits Page {
+    title: "Typography";
+    keyboard-check-box: false;
+    disabled-check-box: false;
+
+    GridLayout {
+        padding: Space.large;
+        spacing: Space.medium;
+
+        // Labels
+        Row {
+            RowTitle {
+                text: "Labels";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Component";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "key";
+            }
+
+            Spacer {}
+
+            // ColumnTitle {
+            //     text: "font-family";
+            // }
+
+            // Spacer {}
+
+            ColumnTitle {
+                text: "font-size";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "font-weight";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 9;
+            }
+        }
+
+        // SmallLabel
+        Row {
+            SmallLabel {
+                text: "SmallLabel";
+            }
+
+            Spacer {}
+
+            SmallLabel {
+                text: "Typography.small-label";
+            }
+
+            Spacer {}
+
+            // SmallLabel {
+            //     vertical-alignment: center;
+            //     text: Typography.small-label.family;
+            // }
+
+            // Spacer {}
+
+            SmallLabel {
+                vertical-alignment: center;
+                text: "12 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            SmallLabel {
+                vertical-alignment: center;
+                text: "\{Typography.small-label.font-weight}";
+            }
+        }
+
+        // ErrorLabel
+        Row {
+            ErrorLabel {
+                text: "ErrorLabel";
+            }
+
+            Spacer {}
+
+            ErrorLabel {
+                text: "Typography.small-label";
+            }
+
+            Spacer {}
+
+            // SmallLabel {
+            //     vertical-alignment: center;
+            //     text: Typography.small-label.family;
+            // }
+
+            // Spacer {}
+
+            ErrorLabel {
+                vertical-alignment: center;
+                text: "12 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            ErrorLabel {
+                vertical-alignment: center;
+                text: "\{Typography.small-label.font-weight}";
+            }
+        }
+
+        // MediumLabel
+        Row {
+            MediumLabel {
+                text: "MediumLabel";
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Typography.medium-label";
+            }
+
+            Spacer {}
+
+            // MediumLabel {
+            //     vertical-alignment: center;
+            //     text: Typography.medium-label.family;
+            // }
+
+            // Spacer {}
+
+            MediumLabel {
+                vertical-alignment: center;
+                text: "12 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                vertical-alignment: center;
+                text: "\{Typography.medium-label.font-weight}";
+            }
+        }
+
+        // LargeLabel
+        Row {
+            LargeLabel {
+                text: "LargeLabel";
+            }
+
+            Spacer {}
+
+            LargeLabel {
+                vertical-alignment: center;
+                text: "Typography.large-label";
+            }
+
+            Spacer {}
+
+            // LargeLabel {
+            //     vertical-alignment: center;
+            //     text: Typography.large-label.family;
+            // }
+
+            // Spacer {}
+
+            LargeLabel {
+                text: "14 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            LargeLabel {
+                vertical-alignment: center;
+                text: "\{Typography.large-label.font-weight}";
+            }
+        }
+
+        // SmallTitle
+        Row {
+            SmallTitle {
+                text: "SmallTitle";
+            }
+
+            Spacer {}
+
+            SmallTitle {
+                vertical-alignment: center;
+                text: "Typography.small-title";
+            }
+
+            Spacer {}
+
+            // SmallTitle {
+            //     vertical-alignment: center;
+            //     text: Typography.small-title.family;
+            // }
+
+            // Spacer {}
+
+            SmallTitle {
+                vertical-alignment: center;
+                text: "16 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            SmallTitle {
+                vertical-alignment: center;
+                text: "\{Typography.small-title.font-weight}";
+            }
+        }
+
+        // MediumTitle
+        Row {
+            MediumTitle {
+                text: "MediumTitle";
+            }
+
+            Spacer {}
+
+            MediumTitle {
+                vertical-alignment: center;
+                text: "Typography.medium-title";
+            }
+
+            Spacer {}
+
+            // MediumTitle {
+            //     vertical-alignment: center;
+            //     text: Typography.medium-title.family;
+            // }
+
+            // Spacer {}
+
+            MediumTitle {
+                vertical-alignment: center;
+                text: "20 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            MediumTitle {
+                vertical-alignment: center;
+                text: "\{Typography.medium-title.font-weight}";
+            }
+        }
+
+        // LargeTitle
+        Row {
+            LargeTitle {
+                text: "LargeTitle";
+            }
+
+            Spacer {}
+
+            LargeTitle {
+                vertical-alignment: center;
+                text: "Typography.large-title";
+            }
+
+            Spacer {}
+
+            // LargeTitle {
+            //     vertical-alignment: center;
+            //     text: Typography.large-title.family;
+            // }
+
+            // Spacer {}
+
+            LargeTitle {
+                vertical-alignment: center;
+                text: "24 * 0.0769rem";
+            }
+
+            Spacer {}
+
+            LargeTitle {
+                vertical-alignment: center;
+                text: "\{Typography.large-title.font-weight}";
+            }
+        }
+
+         // Fills the remaining available space
+         Row {
+            Spacer {}
+        }
+    }
+}

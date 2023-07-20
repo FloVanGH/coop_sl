@@ -1,54 +1,55 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Spacer, Popup, SmallLabel, Switch,  Icon, CenterLayout, Theme, mi } from "_imports/coop_widgets.slint";
+import { Spacer, Popup, SmallLabel, Switch, CenterLayout, Palette, Icography, State, Size, Space } from "_imports/coop-widgets.slint";
 
 export component HeaderBarButton inherits TouchArea {
-    in-out property <string> icon <=> i_icon.text;
+    in-out property <image> icon <=> i-icon.source;
 
     width: root.height;
-    vertical_stretch: 1;
-    horizontal_stretch: 0;
+    vertical-stretch: 1;
+    horizontal-stretch: 0;
 
-    i_container := Rectangle {
-        border_radius: max(self.width, self.height) / 2;
-        CenterLayout {  
-            i_icon := Icon {  
-                color: Theme.brushes.foreground;
-                font_size:  Theme.icon.size.small;
+    i-container := Rectangle {
+        border-radius: max(self.width, self.height) / 2;
+
+        CenterLayout {
+            i-icon := Image {
+                colorize: Palette.foreground;
+                width:  Icography.small;
             }
         }
     }
 
     states [
         pressed when root.pressed : {
-            i_container.background: Theme.brushes.background.darker(Theme.state.pressed);
-            i_icon.color: Theme.brushes.foreground.darker(Theme.state.pressed);
-        }    
+            i-container.background: Palette.background.darker(State.pressed);
+            i-icon.colorize: Palette.foreground.darker(State.pressed);
+        }
     ]
 }
 
 export component HeaderBar inherits Rectangle {
-    callback logout();// <=> i_logout_button.clicked;
+    callback logout();// <=> i-logout-button.clicked;
 
-    min_width: 100px;
-    height: Theme.sizes.small;
-    background: Theme.brushes.background-alt;
+    min-width: 100px;
+    height: Size.small;
+    background: Palette.background-alt;
     vertical-stretch: 0;
 
-    GridLayout {  
-        padding_left: Theme.spaces.medium;
-        padding_right: Theme.spaces.medium;
-        padding_top: 2px;
-        padding_bottom: 2px;
+    GridLayout {
+        padding-left: Space.medium;
+        padding-right: Space.medium;
+        padding-top: 2px;
+        padding-bottom: 2px;
 
-        Text {  
+        Text {
             col: 2;
         }
-      
-        HorizontalLayout {  
+
+        HorizontalLayout {
             col: 3;
-            spacing: Theme.spaces.small;
+            spacing: Space.small;
 
             @children
         }
@@ -57,21 +58,21 @@ export component HeaderBar inherits Rectangle {
     Rectangle {
         y: parent.height - self.height;
         height: 1px;
-        background: Theme.brushes.border;
+        background: Palette.border;
     }
 
-    i_menu := Popup {  
-        x: root.width - 200px - Theme.spaces.medium;
-        y: root.height + Theme.spaces.medium;
-       
+    i-menu := Popup {
+        x: root.width - 200px - Space.medium;
+        y: root.height + Space.medium;
+
         width: 200px;
         opacity: 0.0;
-       
-        GridLayout {  
-            padding: Theme.spaces.small;
+
+        GridLayout {
+            padding: Space.small;
             Row {
-                SmallLabel {  
-                    vertical_alignment: center;
+                SmallLabel {
+                    vertical-alignment: center;
                     text: "Window tilling";
                 }
 
@@ -79,16 +80,5 @@ export component HeaderBar inherits Rectangle {
             }
 
         }
-    }
-}
-
-component HeaderBarExampel inherits Rectangle {
-    width: 600px;
-    height: 400px;
-
-    HeaderBar {  
-
-    y:0;  
-
     }
 }

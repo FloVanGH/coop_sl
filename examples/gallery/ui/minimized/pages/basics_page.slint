@@ -1,0 +1,207 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { PageMinimized } from "page.slint";
+import { RowTitle, ColumnTitle } from "../../pages/titles.slint";
+
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, Spacer, HorizontalSeparator,
+    VerticalSpacerSmall, LineEdit, CheckBox, Switch, Theme, Icons } from "../../_imports/coop_widgets.slint";
+
+import { AppManager } from "../../app_manager.slint";
+
+export component BasicsPageMinimized inherits PageMinimized {
+    GridLayout {
+        padding: Space.large;
+        spacing: Space.medium;
+
+        // Button
+        Row {
+            RowTitle {
+                text: "Button";
+            }
+        }
+
+        Row {
+            Button {
+                text: "Button";
+                enabled: AppManager.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Button {
+                primary: true;
+                text: "Primary";
+                enabled: AppManager.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // OutlineButton
+        Row {
+            RowTitle {
+                text: "OutlineButton";
+            }
+        }
+
+        Row {
+            OutlineButton {
+                text: "OutlineButton";
+                enabled: AppManager.widgets_enabled;
+            }
+
+            Spacer {}
+
+            OutlineButton {
+                text: "OutlineButton";
+                icon: Icons.fa_var_plus;
+                enabled: AppManager.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // RoundButton
+        Row {
+            RowTitle {
+                text: "RoundButton";
+            }
+        }
+
+        Row {
+            RoundButton {
+                text: "A";
+                enabled: AppManager.widgets_enabled;
+            }
+
+            Spacer {}
+
+            RoundButton {
+                icon: Icons.fa_var_plus;
+                enabled: AppManager.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // RoundOutlineButton
+        Row {
+            RowTitle {
+                text: "RoundOutlineButton";
+            }
+        }
+
+        Row {
+            RoundOutlineButton {
+                text: "A";
+                enabled: AppManager.widgets_enabled;
+            }
+
+            Spacer {}
+
+            RoundOutlineButton {
+                primary: true;
+                icon: Icons.fa_var_plus;
+                enabled: AppManager.widgets_enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // LineEdit
+        Row {
+            RowTitle {
+                text: "LineEdit";
+            }
+        }
+
+        Row {
+            LineEdit {
+                enabled: AppManager.widgets_enabled;
+                clickable: true;
+                text <=> AppManager.text_line_one;
+
+                clicked => { root.open_keyboard("text_line_one", self.text, self.placeholder, self.icon); }
+            }
+
+            Spacer {}
+
+            LineEdit {
+                text: mi.search;
+                has-clear: true;
+                enabled: AppManager.widgets_enabled;
+                clickable: true;
+                text <=> AppManager.text_line_two;
+
+                clicked => { root.open_keyboard("text_line_two", self.text, self.placeholder, self.icon); }
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // Switch
+        Row {
+            RowTitle {
+                text: "Switch";
+            }
+        }
+
+        Row {
+            Switch {
+                enabled: AppManager.widgets_enabled;
+            }
+
+            Spacer {}
+
+            Switch {
+                on_icon: mi.lightbulb;
+                off_icon: mi.nights_stay;
+                checked: !Theme.dark;
+
+                toggled(checked) => {
+                    Theme.dark = !checked;
+                }
+            }
+        }
+
+        Row {
+            VerticalSpacerSmall {}
+        }
+
+        // CheckBox
+        Row {
+            RowTitle {
+                text: "CheckBox";
+            }
+        }
+
+        Row {
+            CheckBox {
+                enabled: AppManager.widgets_enabled;
+            }
+
+            Spacer {}
+
+            CheckBox {
+                text: "Widgets enabled";
+                selected <=> AppManager.widgets_enabled;
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
+    }
+}

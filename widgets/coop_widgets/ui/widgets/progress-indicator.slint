@@ -1,0 +1,29 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Radius, Palette, Size } from "../styling/styling.slint";
+
+export component ProgressIndicator {
+    in property <float> progress;
+    in property <bool> indeterminate;
+
+    min-width: Size.large;
+    height: Size.extra-extra-small;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+
+    Rectangle {
+        background: Palette.surface;
+        border-radius: Radius.extra-extra-small;
+        clip: true;
+
+        i-track := Rectangle {
+            x: !root.indeterminate ? 0px: parent.width * mod(animation-tick(), 2s) / 2s;
+            y: (parent.height - self.height) / 2;
+            width: !root.indeterminate ?  parent.width * root.progress: root.width / 2;
+            height: 100%;
+            background: Palette.primary;
+            border-radius: parent.border-radius;
+        }
+    }
+}

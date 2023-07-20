@@ -1,0 +1,667 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, Spacer, HorizontalSeparator, ComboBox,
+    VerticalSpacerMedium, LineEdit, CheckBox, Switch, Slider, ProgressIndicator, Popup, SmallLabel, Icons,
+    Space } from "../_imports/coop-widgets.slint";
+
+import { AppManager } from "../app-manager.slint";
+
+export component BasicsPage inherits Page {
+    title: "Basics";
+
+    GridLayout {
+        padding: Space.large;
+        spacing: Space.medium;
+
+        // Button
+        Row {
+            RowTitle {
+                text: "Button";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Text+Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Primary";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            HorizontalLayout {
+                alignment: start;
+
+                Button {
+                    text: "Button";
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+
+            Spacer {}
+
+            HorizontalLayout {
+                alignment: start;
+
+                Button {
+                    icon: Icons.add;
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+
+            Spacer {}
+
+            HorizontalLayout {
+                alignment: start;
+
+                Button {
+                    text: "Button";
+                    icon: Icons.add;
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+
+            Spacer {}
+
+            HorizontalLayout {
+                alignment: start;
+
+                Button {
+                    primary: true;
+                    text: "Primary";
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // OutlineButton
+        Row {
+            RowTitle {
+                text: "OutlineButton";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Text+Icon";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            HorizontalLayout {
+                alignment: start;
+
+                OutlineButton {
+                    text: "OutlineButton";
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+
+            Spacer {}
+
+            HorizontalLayout {
+                alignment: start;
+
+                OutlineButton {
+                    icon: Icons.add;
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+
+            Spacer {}
+
+            HorizontalLayout {
+                alignment: start;
+
+                OutlineButton {
+                    text: "OutlineButton";
+                    icon: Icons.add;
+                    enabled: AppManager.widgets-enabled;
+                }
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // RoundButton
+        Row {
+            RowTitle {
+                text: "RoundButton";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Icon";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            RoundButton {
+                text: "A";
+                enabled: AppManager.widgets-enabled;
+            }
+
+            Spacer {}
+
+            RoundButton {
+                icon: Icons.add;
+                enabled: AppManager.widgets-enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // RoundOutlineButton
+        Row {
+            RowTitle {
+                text: "RoundOutlineButton";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Icon";
+            }
+
+            Spacer {}
+            Spacer {}
+            Spacer {}
+
+            ColumnTitle {
+                text: "Primary";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            RoundOutlineButton {
+                text: "A";
+                enabled: AppManager.widgets-enabled;
+            }
+
+            Spacer {}
+
+            RoundOutlineButton {
+                icon: Icons.add;
+                enabled: AppManager.widgets-enabled;
+            }
+
+            Spacer {}
+            Spacer {}
+            Spacer {}
+
+            RoundOutlineButton {
+                primary: true;
+                icon: Icons.add;
+                enabled: AppManager.widgets-enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // LineEdit
+        Row {
+            RowTitle {
+                text: "LineEdit";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Empty";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Error (insert float to remove)";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Icon + Action Icon";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Password";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            LineEdit {
+                enabled: AppManager.widgets-enabled;
+            }
+
+            Spacer {}
+
+            LineEdit {
+                icon: Icons.pin;
+                action-icon: Icons.clear;
+                enabled: AppManager.widgets-enabled;
+                placeholder-text: "Insert a float";
+                has-error: !self.text.is-float();
+
+                action => { self.text = "" }
+            }
+
+            Spacer {}
+
+            LineEdit {
+                text: "hello";
+                icon: Icons.search;
+                action-icon: Icons.clear;
+                enabled: AppManager.widgets-enabled;
+
+                action => { self.text = "" }
+            }
+
+            Spacer {}
+
+            LineEdit {
+                placeholder-text: "Insert a password";
+                input-type: password;
+                text: "password";
+                action-icon: self.input-type == InputType.password ? Icons.visibility : Icons.visibility-off;
+                enabled: AppManager.widgets-enabled;
+
+                action => {
+                    if(self.input-type == InputType.password) {
+                        self.input-type = InputType.text
+                    } else {
+                        self.input-type = InputType.password;
+                    }
+                }
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+         // ComboBox
+         Row {
+            RowTitle {
+                text: "ComboBox";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Pre selected";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "placeholder-text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "With icons";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            ComboBox {
+                enabled: AppManager.widgets-enabled;
+                current-index: 0;
+                model: [
+                    {
+                        text: "Item one"
+                    },
+                    {
+                        text: "Item three"
+                    },
+                    {
+                        text: "Item four"
+                    }
+                ];
+            }
+
+            Spacer {}
+
+            ComboBox {
+                enabled: AppManager.widgets-enabled;
+                placeholder-text: "Select an item";
+                model: [
+                    {
+                        text: "Item one"
+                    },
+                    {
+                        text: "Item three"
+                    },
+                    {
+                        text: "Item four"
+                    }
+                ];
+            }
+
+            Spacer {}
+
+            ComboBox {
+                enabled: AppManager.widgets-enabled;
+                current-index: 0;
+                model: [
+                    {
+                        leading-icon: Icons.clear,
+                        text: "Item one"
+                    },
+                    {
+                        leading-icon: Icons.check,
+                        text: "Item three"
+                    },
+                    {
+                        leading-icon: Icons.calculate,
+                        text: "Item four"
+                    }
+                ];
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // Switch
+        Row {
+            RowTitle {
+                text: "Switch";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "No Icons";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Icons";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            Switch {
+                enabled: AppManager.widgets-enabled;
+            }
+
+            Spacer {}
+
+            Switch {
+                on-icon: Icons.check;
+                off-icon: Icons.clear;
+                enabled: AppManager.widgets-enabled;
+                checked: true;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // CheckBox
+        Row {
+            RowTitle {
+                text: "CheckBox";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "No Text";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "Text";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            CheckBox {
+                enabled: AppManager.widgets-enabled;
+            }
+
+            Spacer {}
+
+            CheckBox {
+                text: "CheckBox";
+                enabled: AppManager.widgets-enabled;
+                checked: true;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // Slider
+        Row {
+            RowTitle {
+                text: "Slider";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            i-slider := Slider {
+                colspan: 2;
+                value: 0.5;
+                enabled: AppManager.widgets-enabled;
+            }
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // ProgressIndicator
+        Row {
+            RowTitle {
+                text: "ProgressIndicator";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Progress";
+            }
+
+            Spacer {}
+
+
+            ColumnTitle {
+                text: "Indeterminate";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            ProgressIndicator {
+                colspan: 2;
+                progress: (i-slider.value - i-slider.minimum) / (i-slider.maximum - i-slider.minimum);
+            }
+
+            Spacer {}
+
+            ProgressIndicator {
+                // colspan: 2;
+                indeterminate: true;
+            }
+
+            Spacer {}
+        }
+
+        Row {
+            VerticalSpacerMedium {}
+        }
+
+        // Popup
+        Row {
+            RowTitle {
+                text: "Popup";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Popup";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 8;
+            }
+        }
+
+        Row {
+            HorizontalLayout {
+                alignment: start;
+
+                i-popup-button := Button {
+                    text: "Open popup";
+                    clicked => { i-popup.show(); }
+                }
+
+                i-popup := Popup {
+                    x: i-popup-button.x;
+                    y: i-popup-button.y - 40px - Space.small;
+                    width: i-popup-button.width;
+                    height: 40px;
+
+                    layout := VerticalLayout {
+                        padding: Space.medium;
+                        SmallLabel {
+                            text: "Popup content";
+                        }
+                    }
+                }
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
+    }
+}

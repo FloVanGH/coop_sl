@@ -1,54 +1,6 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-/*!
-
-# coop_widgets
-
-This crate provides a custom set of widgets for [Slint](https://slint-ui.com) with a custom design (light and dark).
-
-## Component overview
-
-* [Building Blocks](docs::building_blocks)
-* [Theme](docs::Theme)
-* [Components](docs::components)
-* [Keyboard](docs::keyboard)
-* [Layouts](docs::layouts)
-* [Widgets](docs::widgets)
-
-## how to use
-
-1. Add `coop_widgets` as build dependency to your `Cargo.toml`:
-
-```toml
-[dependencies]
-slint = { version = "1.1.0" }
-
-[build-dependencies]
-slint-build = { version = "1.1.0" }coop_widgets = { ... }
-```
-
-2. Call `coop_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/coop_widgets.slint`:
-
-`coop_widgets::generate_import().unwrap();`
-
-3. Add an import to your slint file:
-
-```slint,no-preview
-import { CoopWindow, Button } from "_imports/coop_widgets.slint";
-
-export MyApp := CoopWindow {
-    preferred-width: 600px;
-    preferred-height: 400px;
-    title: "MyApp";
-
-    Button {
-        text: "Click me";
-    }
-}
-```
-*/
-
 use std::{env, fs, io, io::Write, path::Path};
 
 /// Generates a import file for the widget library on the given path e.g. `my_project/my_ui/_my_imports`.
@@ -77,6 +29,3 @@ where
 pub fn generate_import() -> io::Result<()> {
     generate_import_with_custom_ui_path(env::current_dir()?.join("ui/_imports"))
 }
-
-#[cfg(doc)]
-pub mod docs;

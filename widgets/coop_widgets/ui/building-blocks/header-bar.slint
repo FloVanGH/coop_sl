@@ -1,0 +1,26 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Size, Space } from "../styling/styling.slint";
+import { LargeTitle } from "../components/components.slint";
+import { Spacer } from "../layouts/layouts.slint";
+
+export component HeaderBar inherits HorizontalLayout {
+    in property <string> title: "title";
+
+    spacing: Space.medium;
+    padding-left: Space.large;
+    padding-right: Space.large;
+    padding-top: Space.small;
+    padding-bottom: Space.small;
+    height: Size.large;
+
+    i-title := LargeTitle {
+        text: root.title;
+        vertical-alignment: center;
+        horizontal-alignment: left;
+        horizontal-stretch: 1;
+    }
+
+    @children
+}

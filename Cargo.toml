@@ -8,7 +8,7 @@ members = [
    "display/coop_protocol",
    "display/coop_server",
    "examples/desktop",
-   "examples/widgets",
+   "examples/gallery",
    "platform_support/slint_coop",
    "widgets/book_flip",
    "widgets/coop_widgets",
@@ -18,7 +18,7 @@ members = [
 
 default-members = [
    "apps/coop_chat",
-   "examples/widgets",
+   "examples/gallery",
    "widgets/book_flip",
    "widgets/coop_widgets",
    "internal/shared",

@@ -1,20 +1,18 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Theme } from "../coop/theme.slint";
+import { Radius, Palette } from "../styling/styling.slint";
 
-// `PopupBorder` can used to draw border and background of a `Popup`.
 export component PopupBorder inherits Rectangle {
-    background: Theme.brushes.background;
-    border_radius: Theme.radius.medium;
+    background: Palette.background;
+    border_radius: Radius.medium;
     border_width: 1px;
-    border_color: Theme.brushes.border;
+    border_color: Palette.border;
     clip: true;
 }
 
-// `Popup` is used to show a popup overlay.
 export component Popup inherits PopupWindow {
-    PopupBorder {  
+    PopupBorder {
         @children
     }
 }

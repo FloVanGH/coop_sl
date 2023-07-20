@@ -9,6 +9,6 @@ pipeline:
       branch: main
     commands:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - cd examples/widgets
+      - cd examples/gallery
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web

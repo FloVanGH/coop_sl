@@ -21,12 +21,12 @@ impl SlintProxy {
     /// Sends a pointer event to the client..
     pub fn send_pointer_event(&self, key: SharedString, x: f32, y: f32, event: PointerEvent) {
         let button = match event.button {
-            slint::platform::PointerEventButton::None => coop_protocol::PointerEventButton::None,
             slint::platform::PointerEventButton::Left => coop_protocol::PointerEventButton::Left,
             slint::platform::PointerEventButton::Right => coop_protocol::PointerEventButton::Right,
             slint::platform::PointerEventButton::Middle => {
                 coop_protocol::PointerEventButton::Middle
             }
+            _ => coop_protocol::PointerEventButton::None,
         };
 
         match event.kind {

@@ -1,16 +1,14 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Theme } from "../coop/theme.slint";
+import { Palette } from "../styling/styling.slint";
 
-// A vertical visual separator line.
 export component VerticalSeparator inherits Rectangle {
    width: 1px;
-   background: Theme.brushes.border_disabled;
+   background: Palette.border-disabled;
 }
 
-// A horizontal visual separator line.
 export component HorizontalSeparator inherits Rectangle {
     height: 1px;
-    background: Theme.brushes.border_disabled;
+    background: Palette.border-disabled;
  }

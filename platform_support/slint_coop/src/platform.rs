@@ -5,6 +5,8 @@ use std::cell::*;
 use std::rc::*;
 
 use slint::platform::software_renderer as renderer;
+use slint::platform::software_renderer::RepaintBufferType;
+use slint::PlatformError;
 
 use crate::Color;
 
@@ -21,7 +23,7 @@ pub fn init_config(width: f32, height: f32, title: impl Into<String>) {
 
 /// Slint platform implementation based on `coop_client`.
 pub struct ThemePlatform {
-    slint_window: RefCell<Rc<renderer::MinimalSoftwareWindow<1>>>,
+    slint_window: RefCell<Rc<renderer::MinimalSoftwareWindow>>,
     coop_window: RefCell<coop_client::Window>,
 }
 
@@ -29,7 +31,9 @@ impl ThemePlatform {
     /// Returns a new platform object.
     pub fn new(width: f32, height: f32, title: String) -> Self {
         Self {
-            slint_window: RefCell::new(renderer::MinimalSoftwareWindow::new()),
+            slint_window: RefCell::new(renderer::MinimalSoftwareWindow::new(
+                RepaintBufferType::default(),
+            )),
             coop_window: RefCell::new(coop_client::Window::new(width, height, title, true)),
         }
     }
@@ -44,8 +48,10 @@ impl Default for ThemePlatform {
 // todo: event converter with tests
 
 impl slint::platform::Platform for ThemePlatform {
-    fn create_window_adapter(&self) -> Rc<dyn slint::platform::WindowAdapter> {
-        self.slint_window.borrow().clone()
+    fn create_window_adapter(
+        &self,
+    ) -> Result<Rc<dyn slint::platform::WindowAdapter>, PlatformError> {
+        Ok(self.slint_window.borrow().clone())
     }
 
     fn run_event_loop(&self) -> std::result::Result<(), slint::PlatformError> {

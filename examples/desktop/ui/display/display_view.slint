@@ -3,7 +3,7 @@
 
 import { WindowModel } from "window_model.slint";
 import { WindowView } from "window_view.slint";
-import { Button } from "../_imports/coop_widgets.slint";
+import { Button } from "../_imports/coop-widgets.slint";
 
 export global DisplayViewAdapter  {
     callback open(string);
@@ -20,7 +20,7 @@ export global DisplayViewAdapter  {
 
     callback close_all();
 
-    // property WindowModel front_window: 
+    // property WindowModel front_window:
 
     in-out property <[WindowModel]> window_models;
 
@@ -52,7 +52,7 @@ export component DisplayView inherits Rectangle {
     // The list of window window_models.
     in-out property <[WindowModel]> window_models <=> DisplayViewAdapter.window_models;
 
-    Rectangle {  
+    Rectangle {
         for client[index] in root.window_models : WindowView {
             x: client.x;
             y: client.y;
@@ -61,32 +61,32 @@ export component DisplayView inherits Rectangle {
             buffer: client.buffer;
             title: client.title;
 
-            bring_to_front => {  
+            bring_to_front => {
                 root.bring_to_front(client.key);
             }
 
-            pointer_event(x, y, e) => {  
+            pointer_event(x, y, e) => {
                 root.pointer_event(client.key, self.x, self.y, e);
             }
 
-            key_pressed_event(e) => {  
+            key_pressed_event(e) => {
                 root.key_pressed_event(client.key, e);
                 accept
             }
 
-            key_released_event(e) => {  
+            key_released_event(e) => {
                 root.key_released_event(client.key, e);
                 accept
             }
 
-            move(x, y) => {  
+            move(x, y) => {
                 client.x = max(0px, min(self.x, root.width - self.width));
                 client.y = max(0px, min(self.y, root.height - self.height));
             }
 
-            close => {  
+            close => {
                 root.close(client.key);
             }
         }
     }
-} 
+}

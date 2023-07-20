@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Button, TextLine, CenterLayout, LargeTitle, ErrorLabel, FormElement, PopupBorder, Theme } from "_imports/coop_widgets.slint";
+import { Button, LineEdit, CenterLayout, LargeTitle, ErrorLabel, FormElement, PopupBorder, Space, Palette } from "_imports/coop-widgets.slint";
 
 export component Login inherits Rectangle {
     pure callback login(string, string) -> bool;
@@ -9,33 +9,33 @@ export component Login inherits Rectangle {
     in-out property <image> logo <=> i_logo.source;
     in-out property <bool> login_error;
 
-    background: Theme.brushes.background;
+    background: Palette.background;
 
-    CenterLayout {  
-        PopupBorder {  
-            i_layout := VerticalLayout {  
-                padding: Theme.spaces.large;
-                spacing: Theme.spaces.large;
+    CenterLayout {
+        PopupBorder {
+            i_layout := VerticalLayout {
+                padding: Space.large;
+                spacing: Space.large;
 
-                i_logo := Image {  
+                i_logo := Image {
                     max_width: 100px;
                 }
 
-                FormElement {  
+                FormElement {
                     title: "User name";
 
-                    i_user_name := TextLine {  
-                        placeholder: "User";
+                    i_user_name := LineEdit {
+                        placeholder-text: "User";
                         text: "user";
                         has_error: root.login_error;
                     }
                 }
 
-                FormElement {  
+                FormElement {
                     title: "Password";
 
-                    i_password := TextLine {  
-                        placeholder: "Password";
+                    i_password := LineEdit {
+                        placeholder-text: "Password";
                         text: "password";
                         input-type: password;
                         has_error: root.login_error;
@@ -46,11 +46,12 @@ export component Login inherits Rectangle {
                     visible: root.login_error;
                     text: "User name or password wrong";
                 }
-    
-                Button {  
+
+                Button {
                     text: "Login";
                     primary: true;
-                    clicked => {  
+
+                    clicked => {
                         root.login_error = !root.login(i_user_name.text, i_password.text);
                     }
                 }

@@ -1,0 +1,39 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { BookPage } from "book-page.slint";
+
+export component TextPage inherits BookPage {
+     in property <string> text <=> i-text.text;
+     in property <brush> text-color <=> i-text.color;
+     in property <length> text-font-size <=> i-text.font-size;
+     in property <int> text-font-weight <=> i-text.font-weight;
+     in property <string> text-font-family <=> i-text.font-family;
+
+     i-text := Text {
+        horizontal-alignment: left;
+        wrap: word-wrap;
+        color: black;
+     }
+}
+
+export component PageExample inherits Rectangle {
+    width: 200px;
+    height: 600px;
+
+    GridLayout {
+        TextPage {
+            title: "Chapter 1";
+            number: 1;
+            horizontal-stretch: 1;
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac. Ut placerat orci nulla pellentesque dignissim enim sit amet venenatis. Orci nulla pellentesque dignissim enim sit amet. Tristique senectus et netus et malesuada fames ac. Vitae proin sagittis nisl rhoncus mattis rhoncus urna. Magna fermentum iaculis eu non diam phasellus vestibulum lorem sed. Massa ultricies mi quis hendrerit dolor. Mauris cursus mattis molestie a iaculis at erat. Sed elementum tempus egestas sed sed risus. Enim praesent elementum facilisis leo vel fringilla est ullamcorper. Malesuada fames ac turpis egestas maecenas pharetra convallis posuere morbi. At elementum eu facilisis sed odio morbi. Vitae aliquet nec ullamcorper sit amet risus nullam. Et ligula ullamcorper malesuada proin libero. Amet venenatis urna cursus eget nunc scelerisque viverra mauris. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Convallis tellus id interdum velit laoreet id donec. Tristique senectus et netus et. Amet commodo nulla facilisi nullam vehicula ipsum a arcu.";
+        }
+
+        TextPage {
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac. Ut placerat orci nulla pellentesque dignissim enim sit amet venenatis. Orci nulla pellentesque dignissim enim sit amet. Tristique senectus et netus et malesuada fames ac. Vitae proin sagittis nisl rhoncus mattis rhoncus urna. Magna fermentum iaculis eu non diam phasellus vestibulum lorem sed. Massa ultricies mi quis hendrerit dolor. Mauris cursus mattis molestie a iaculis at erat. Sed elementum tempus egestas sed sed risus. Enim praesent elementum facilisis leo vel fringilla est ullamcorper. Malesuada fames ac turpis egestas maecenas pharetra convallis posuere morbi. At elementum eu facilisis sed odio morbi. Vitae aliquet nec ullamcorper sit amet risus nullam. Et ligula ullamcorper malesuada proin libero. Amet venenatis urna cursus eget nunc scelerisque viverra mauris. Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Convallis tellus id interdum velit laoreet id donec. Tristique senectus et netus et. Amet commodo nulla facilisi nullam vehicula ipsum a arcu.";
+            horizontal-stretch: 1;
+            number-alignment: right;
+            number: 2;
+        }
+    }
+}

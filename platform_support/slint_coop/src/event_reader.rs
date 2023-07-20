@@ -49,11 +49,11 @@ pub fn convert(in_event: &coop_protocol::ClientEvent) -> Event {
         ClientEvent::PointerExited => platform::WindowEvent::PointerExited.into(),
         // FIXME: use SharedString after it is updated by Slint
         ClientEvent::KeyPressed { text } => platform::WindowEvent::KeyPressed {
-            text: text.chars().into_iter().next().unwrap(),
+            text: text.chars().into_iter().next().unwrap().into(),
         }
         .into(),
         ClientEvent::KeyReleased { text } => platform::WindowEvent::KeyReleased {
-            text: text.chars().into_iter().next().unwrap(),
+            text: text.chars().into_iter().next().unwrap().into(),
         }
         .into(),
     }
@@ -61,7 +61,7 @@ pub fn convert(in_event: &coop_protocol::ClientEvent) -> Event {
 
 fn convert_button(button: &coop_protocol::PointerEventButton) -> platform::PointerEventButton {
     match button {
-        PointerEventButton::None => slint::platform::PointerEventButton::None,
+        PointerEventButton::None => slint::platform::PointerEventButton::Other,
         PointerEventButton::Left => slint::platform::PointerEventButton::Left,
         PointerEventButton::Right => slint::platform::PointerEventButton::Right,
         PointerEventButton::Middle => slint::platform::PointerEventButton::Middle,

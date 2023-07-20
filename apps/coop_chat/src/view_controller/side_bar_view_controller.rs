@@ -6,7 +6,7 @@
 
 // use crate::{
 //     controller::{ChannelType, SideBarController},
-//      App, GroupItemModel, ItemModel, SideBarViewAdapter,
+//      App, GroupListViewItem, ListViewItem, SideBarViewAdapter,
 // };
 
 // pub struct SideBarViewController {
@@ -32,7 +32,7 @@
 //             let private_icon = private_icon.clone();
 //             let public_icon = public_icon.clone();
 //             let direct_icon = direct_icon.clone();
-//             move |c| ItemModel {
+//             move |c| ListViewItem {
 //                 text: c.text.into(),
 //                 leading_icon: match c.channel_type {
 //                     ChannelType::Private => private_icon.clone(),
@@ -43,7 +43,7 @@
 //             }
 //         }));
 
-//         let direct_channels = Rc::new(direct_channels.map(move |c| ItemModel {
+//         let direct_channels = Rc::new(direct_channels.map(move |c| ListViewItem {
 //             text: c.text.into(),
 //             leading_icon: match c.channel_type {
 //                 ChannelType::Private => private_icon.clone(),
@@ -54,11 +54,11 @@
 //         }));
 
 //         let channels = Rc::new(VecModel::default());
-//         channels.push(GroupItemModel {
+//         channels.push(GroupListViewItem {
 //             text: group_channels_title.into(),
 //             items: group_channels.into(),
 //         });
-//         channels.push(GroupItemModel {
+//         channels.push(GroupListViewItem {
 //             text: direct_channels_title.into(),
 //             items: direct_channels.into(),
 //         });

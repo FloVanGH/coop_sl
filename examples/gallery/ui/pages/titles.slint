@@ -1,0 +1,13 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { MediumLabel, LargeLabel, Palette } from "../_imports/coop-widgets.slint";
+
+export component RowTitle inherits LargeLabel {
+    height: 18px;
+}
+
+export component ColumnTitle inherits MediumLabel {
+    height: 14px;
+    color: Palette.foreground_disabled;
+}

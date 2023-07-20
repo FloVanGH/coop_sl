@@ -1,149 +1,126 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Theme } from "../coop/theme.slint";
-import { FocusBorder } from "../components/focus_border.slint";
+import { Duration, Size, State, Radius, Palette } from "../styling/styling.slint";
+import { FocusBorder } from "../components/focus-border.slint";
 import { SmallLabel } from "../components/label.slint";
-import { Switch } from "../widgets/selectables.slint";
+import { Switch } from "../widgets/checkables.slint";
 
-// `Slider` allow to make selections from a range of values.
 export component Slider {
-    // Is called after `value` has changed. The parameter represents the current value.
-    callback value_changed(float);
-    
-    // If `true` the widget has keyboard focus.
-    out property <bool> has_focus <=> i_focus_scope.has-focus;
+    callback changed(/* value */ float);
 
-    // If set to `false` the widget is disabled.
-    in property <bool> enabled <=> i_touch_area.enabled;
+    in property <bool> enabled <=> i-touch-area.enabled;
+    in property<float> maximum: 100;
+    in property<float> minimum;
+    out property <bool> has-focus <=> i-focus-scope.has-focus;
+    in-out property <float> value;
 
-    // Represents the current value of the slider. 
-    //
-    // Must be a value between 0.0 and 1.0.
-    in-out property <float> value: 0.0;
-
-    min-width: Theme.sizes.large;
-    min-height: i_thumb.height  ;
+    min-width: Size.large;
+    min-height: Size.small;
     horizontal-stretch: 1;
     vertical-stretch: 0;
 
-    accessible_role: slider;
-    accessible_value: root.value;
-    accessible_value_minimum: i_touch_area.minimum;
-    accessible_value_maximum: i_touch_area.maximum;
-    accessible_value_step: i_touch_area.step_size;
+    accessible-role: slider;
+    accessible-value: root.value;
+    accessible-value-minimum: root.minimum;
+    accessible-value-maximum: root.maximum;
+    accessible-value-step: (root.maximum - root.minimum) / 100;
 
-    i_container := Rectangle {
+    i-background := Rectangle {
         y: (parent.height - self.height) / 2;
         width: 100%;
-        height: Theme.sizes.extra_extra_small;
-        background: Theme.brushes.surface;
-        border_radius: Theme.radius.extra_extra_small;
+        height: Size.extra-extra-small;
+        background: Palette.surface;
+        border-radius: Radius.extra-extra-small;
 
-        animate background { duration: Theme.durations.fast; }
+        animate background { duration: Duration.fast; }
     }
 
-    i_track := Rectangle {
-        x:0;
+    i-track := Rectangle {
+        x: 0;
         y: (parent.height - self.height) / 2;
-        width: parent.width * root.value;
-        height: i_container.height;
-        background: Theme.brushes.primary;
-        border_radius: i_container.border_radius;
+        width: i-thumb.x + (i-thumb.width / 2);
+        height: i-background.height;
+        background: Palette.primary;
+        border-radius: i-background.border-radius;
 
-        animate background { duration: Theme.durations.fast; }
+        animate background { duration: Duration.fast; }
     }
 
-    i_thumb := Rectangle {
-        x:  (root.width - self.width) * (root.value - i_touch_area.minimum) / (i_touch_area.maximum - i_touch_area.minimum);
+    i-thumb := Rectangle {
+        x: (parent.width - self.width) * (root.value - root.minimum) / (root.maximum - root.minimum);
         y: (parent.height - self.height) / 2;
-        width: Theme.sizes.small;
+        width: Size.small;
         height: self.width;
-        border_radius: max(self.width, self.height) / 2;
-        background: Theme.brushes.primary;
-    
-        animate background { duration: Theme.durations.fast; }
+        border-radius: max(self.width, self.height) / 2;
+        background: Palette.primary;
+
+        animate background, width { duration: Duration.fast; }
     }
 
-    i_thumb_border := Rectangle {
-        x: i_thumb.x + (i_thumb.width - self.width) / 2;
-        y: (i_thumb.height - self.height) / 2;
-        width: i_thumb.width + 4px;
-        height: self.width;
-        border_radius: max(self.width, self.height) / 2;
-        border_width: 1px;
-        border_color: Theme.brushes.foreground.darker(Theme.state.hover);
-        opacity: 0;
-
-        animate opacity { duration: Theme.durations.fast; }
-    }
-
-    i_touch_area := TouchArea {
-        property <float> pressed_value;
-        property <float> minimum;
-        property <float> maximum: 1.0;
-        property <float> step_size: (self.maximum - self.minimum) / 100;
+    i-touch-area := TouchArea {
+        property <float> pressed-value;
+        property <float> step-size: (root.maximum - root.minimum) / 100;
 
         width: parent.width;
         height: parent.height;
-       
+
         pointer-event(event) => {
             if(event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
-                self.pressed_value = root.value;
+                self.pressed-value = root.value;
             }
         }
 
         moved => {
             if(self.enabled && self.pressed) {
-                root.value = max(i_touch_area.minimum, min(i_touch_area.maximum,
-                    self.pressed_value + (i_touch_area.mouse_x - i_touch_area.pressed_x) * (self.maximum - self.minimum) / (root.width - i_thumb.width)));
-                root.value_changed(root.value);
+                root.value = max(root.minimum, min(root.maximum,
+                    self.pressed-value + (i-touch-area.mouse-x - i-touch-area.pressed-x) * (root.maximum - root.minimum) / (root.width - i-thumb.width)));
+                root.changed(root.value);
             }
         }
     }
 
-    i_focus_scope := FocusScope {
+    i-focus-scope := FocusScope {
         x:0;
         width: 0px;
         enabled: root.enabled;
 
         key-pressed(event) => {
             if(self.enabled && event.text == Key.RightArrow) {
-                root.value = Math.min(root.value + i_touch_area.step_size, i_touch_area.maximum);
-                root.value_changed(root.value);
+                root.value = Math.min(root.value + i-touch-area.step-size, root.maximum);
+                root.changed(root.value);
                 accept
             } else if(self.enabled && event.text == Key.LeftArrow) {
-                root.value = Math.max(root.value - i_touch_area.step_size, i_touch_area.minimum);
-                root.value_changed(root.value);
+                root.value = Math.max(root.value - i-touch-area.step-size, root.minimum);
+                root.changed(root.value);
                 accept
             } else {
                 reject
             }
         }
     }
-   
-    if(i_focus_scope.has_focus) : FocusBorder {
+
+    if (i-focus-scope.has-focus) : FocusBorder {
         width: root.width + 4px;
         height: root.height + 4px;
         x: (parent.width - self.width) / 2;
         y: (parent.height - self.height) / 2;
-        border_radius: i_container.border_radius + 2px;
+        border-radius: i-background.border-radius + 2px;
     }
 
     states [
         disabled when !root.enabled: {
-            i_container.background: Theme.brushes.surface_disabled;
-            i_track.background: Theme.brushes.foreground_disabled;
-            i_thumb.background: Theme.brushes.foreground_disabled;
+            i-background.background: Palette.surface-disabled;
+            i-track.background: Palette.foreground-disabled;
+            i-thumb.background: Palette.foreground-disabled;
         }
-        pressed when i_touch_area.pressed: {
-            i_thumb.background: Theme.brushes.primary.darker(Theme.state.pressed);
-            i_thumb_border.border_color: Theme.brushes.foreground.darker(Theme.state.pressed);
-            i_thumb_border.opacity: 1.0;
+        pressed when i-touch-area.pressed: {
+            i-thumb.background: Palette.primary.darker(State.pressed);
+            i-thumb.width: Size.small * 0.96;
         }
-        hover when i_touch_area.has_hover: {
-            i_thumb.background: Theme.brushes.primary.darker(Theme.state.hover);
-            i_thumb_border.opacity: 1.0;
+        hover when i-touch-area.has-hover: {
+            i-thumb.background: Palette.primary.darker(State.hover);
+
         }
     ]
 }

@@ -1,0 +1,48 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { AppManager } from "../app-manager.slint";
+
+import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Palette, Icons } from "../_imports/coop-widgets.slint";
+
+export component Page inherits GridLayout {
+    in-out property <string> title <=> i_header_bar.title;
+    in-out property <bool> keyboard_check_box: true;
+    in-out property <bool> disabled_check_box: true;
+
+    Row {
+        i_header_bar := HeaderBar {
+            if(root.keyboard_check_box) : CheckBox {
+                y: (parent.height - self.height) / 2;
+                text: "Keyboard enabled";
+                checked <=> AppManager.keyboard_enabled;
+            }
+
+            if(root.disabled_check_box) : CheckBox {
+                y: (parent.height - self.height) / 2;
+                text: "Widgets enabled";
+                checked <=> AppManager.widgets_enabled;
+            }
+
+            VerticalLayout {
+                alignment: center;
+
+                Switch {
+                    on_icon: Icons.mode-night;
+                    off_icon: Icons.light-mode;
+                    checked: !Palette.dark-color-scheme;
+
+                    toggled(checked) => {
+                        Palette.dark-color-scheme = !checked;
+                    }
+                }
+            }
+        }
+    }
+
+    Row {
+        ScrollView {
+            @children
+        }
+    }
+}

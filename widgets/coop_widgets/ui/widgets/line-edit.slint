@@ -1,0 +1,178 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Radius, Palette, Icography, Size, State, Space, Typography } from "../styling/styling.slint";
+import { FocusBorder } from "../components/components.slint";
+
+component ActionButton inherits TouchArea {
+    in property <image> icon <=> i-icon.source;
+
+    width: i-icon.width;
+    height: i-icon.height;
+
+    i-icon := Image {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: Icography.small;
+        colorize: Palette.border;
+    }
+
+    states [
+        pressed when root.pressed: {
+            i-icon.colorize: Palette.foreground.darker(State.pressed);
+        }
+        hover when root.has-hover: {
+            i-icon.colorize: Palette.foreground.darker(State.hover);
+        }
+        disabled when !root.enabled: {
+            i-icon.opacity: State.container-disabled;
+        }
+    ]
+}
+
+export component LineEdit {
+    private property <length> computed-x;
+    private property <length> padding-outer: i-layout.padding-left + i-layout.padding-right;
+
+    callback accepted(/* text */ string);
+    callback edited(/* text */ string);
+    callback clicked;
+    callback action;
+
+    in property <image> icon;
+    in property <string> placeholder-text;
+    in property <image> action-icon;
+    in property <bool> read-only <=> i-text-input.read-only;
+    in property <InputType> input-type <=> i-text-input.input-type;
+    in property <bool> has-error;
+    in property <bool> enabled <=> i-text-input.enabled;
+    in property <bool> clickable;
+    in-out property <string> text <=> i-text-input.text;
+
+    min-width: max(168px, i-layout.min-width);
+    min-height: max(Size.medium, i-layout.min-height);
+    forward-focus: i-text-input;
+    horizontal-stretch: 1;
+    vertical-stretch: 0;
+
+    i-background := Rectangle {
+        border-radius: Radius.small;
+        background: Palette.surface;
+
+        i-layout := HorizontalLayout {
+            padding-left: Space.medium;
+            padding-right: Space.medium;
+            spacing: Space.small;
+
+            if (root.icon.width > 0 && root.icon.height > 0) : Image {
+                y: (parent.height - self.height) / 2;
+                colorize: Palette.foreground;
+                width: Icography.small;
+                source: root.icon;
+                opacity: i-text-input.opacity;
+            }
+
+            Rectangle {
+                clip: true;
+
+                i-text-input := TextInput {
+                    x: min(0px, max(parent.width - self.width, root.computed-x));
+                    width: max(parent.width, self.preferred-width);
+                    height: 100%;
+                    color: Palette.foreground;
+                    vertical-alignment: center;
+                    font-size: Typography.medium-label.font-size;
+                    font-weight: Typography.medium-label.font-weight;
+
+                    accepted => {
+                        root.accepted(self.text);
+                    }
+
+                    edited => {
+                        root.edited(self.text);
+                    }
+
+                    cursor-position-changed(cpos) => {
+                        if(cpos.x + root.computed-x < root.padding-outer) {
+                            root.computed-x = - cpos.x + root.padding-outer;
+                        } else if(cpos.x + root.computed-x > parent.width - root.padding-outer) {
+                            root.computed-x = parent.width - cpos.x - root.padding-outer;
+                        }
+                    }
+                }
+
+                if (root.text == "") : Text {
+                    x:0;
+                    text <=> root.placeholder-text;
+                    y: (parent.height - self.height) / 2;
+                    color: Palette.border;
+                    opacity: i-text-input.opacity;
+                    font-size: Typography.medium-label.font-size;
+                    font-weight: Typography.medium-label.font-weight;
+                }
+
+                TouchArea {
+                    enabled <=> root.enabled;
+                    width: 100%;
+                    height: 100%;
+
+                    clicked => {
+                        root.focus();
+                        root.clicked();
+                    }
+                }
+            }
+
+            if (root.action-icon.width > 0 && root.action-icon.height > 0) : ActionButton {
+                icon: root.action-icon;
+                enabled: root.enabled;
+                y: (parent.height - self.height) / 2;
+
+                clicked => {
+                    root.action();
+                }
+            }
+        }
+    }
+
+    if (i-text-input.has-focus || root.has-error) : FocusBorder {
+        width: root.width + 4px;
+        height: root.height + 4px;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        border-radius: i-background.border-radius + 2px;
+        border-color: !root.has-error ? Palette.foreground : Palette.error;
+    }
+
+    public function select-all() {
+        i-text-input.select-all();
+    }
+
+    public function clear-selection() {
+        i-text-input.clear-selection();
+    }
+
+    public function cut() {
+        i-text-input.cut();
+    }
+
+    public function copy() {
+        i-text-input.copy();
+    }
+
+    public function paste() {
+        i-text-input.paste();
+    }
+
+    public function focus-input() {
+        i-text-input.focus();
+    }
+
+
+    states [
+        disabled when !root.enabled: {
+            i-background.opacity: State.container-disabled;
+            i-text-input.opacity: State.content-disabled;
+        }
+    ]
+}

@@ -1,0 +1,356 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+
+import { MediumLabel, Spacer, HorizontalSeparator, Radius, Palette, Size, Space } from "../_imports/coop-widgets.slint";
+
+component BrushRect inherits Rectangle {
+    width: Size.small;
+    height: root.width;
+    border-radius: Radius.medium;
+    border-width: 1px;
+    border-color: Palette.border;
+}
+
+export component BrushesPage inherits Page {
+    title: "Brushes";
+    keyboard-check-box: false;
+    disabled-check-box: false;
+
+    GridLayout {
+        padding: Space.large;
+        spacing: Space.medium;
+
+        // Labels
+        Row {
+            RowTitle {
+                text: "Brushes";
+            }
+        }
+
+        Row {
+            ColumnTitle {
+                text: "Brush";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "key";
+            }
+
+            Spacer {}
+
+            ColumnTitle {
+                text: "description";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 9;
+            }
+        }
+
+        // background
+        Row {
+            BrushRect {
+                background: Palette.background;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.background";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "background brush of the window";
+                vertical-alignment: center;
+            }
+        }
+
+        // background-alt
+        Row {
+            BrushRect {
+                background: Palette.background-alt;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.background-alt";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "alternative background brush";
+                vertical-alignment: center;
+            }
+        }
+
+        // foreground
+        Row {
+            BrushRect {
+                background: Palette.foreground;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.foreground";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "common foreground brush e.g. for text";
+                vertical-alignment: center;
+            }
+        }
+
+        // foreground-disabled
+        Row {
+            BrushRect {
+                background: Palette.foreground-disabled;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.foreground-disabled";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "common foreground for disabled elements";
+                vertical-alignment: center;
+            }
+        }
+
+        // surface
+        Row {
+            BrushRect {
+                background: Palette.surface;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.surface";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "widget surface brush e.g. used by button";
+                vertical-alignment: center;
+            }
+        }
+
+        // surface-disabled
+        Row {
+            BrushRect {
+                background: Palette.surface-disabled;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.surface-disabled";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "widget surface brush of disabled widgets";
+                vertical-alignment: center;
+            }
+        }
+
+        // on-surface
+        Row {
+            BrushRect {
+                background: Palette.on-surface;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.on-surface";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "content elements on surface background";
+                vertical-alignment: center;
+            }
+        }
+
+        // primary
+        Row {
+            BrushRect {
+                background: Palette.primary;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.primary";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "defines the accent brush";
+                vertical-alignment: center;
+            }
+        }
+
+        // on-primary
+        Row {
+            BrushRect {
+                background: Palette.on-primary;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.on-primary";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "content elements on primary background";
+                vertical-alignment: center;
+            }
+        }
+
+        // border
+        Row {
+            BrushRect {
+                background: Palette.border;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.border";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "brush of borders";
+                vertical-alignment: center;
+            }
+        }
+
+        // border-disabled
+        Row {
+            BrushRect {
+                background: Palette.border-disabled;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.border-disabled";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "brush of disabled borders";
+                vertical-alignment: center;
+            }
+        }
+
+        // state
+        Row {
+            BrushRect {
+                background: Palette.state;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.state";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "helper brush for state visualization (used with opactiy)";
+                vertical-alignment: center;
+            }
+        }
+
+        // shadow
+        Row {
+            BrushRect {
+                background: Palette.shadow;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.shadow";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "default drop shadow brush";
+                vertical-alignment: center;
+            }
+        }
+
+        // shadow
+        Row {
+            BrushRect {
+                background: Palette.error;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "Palette.error";
+                vertical-alignment: center;
+            }
+
+            Spacer {}
+
+            MediumLabel {
+                text: "brush for error representation elements";
+                vertical-alignment: center;
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
+    }
+}

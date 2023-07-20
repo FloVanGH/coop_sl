@@ -61,12 +61,12 @@ SPDX-License-Identifier: MIT
 * `RoundOutlineButton`
 * `ComboBox`
 * `List`
-* `ListView`
-* `ProgressBar`
+* `GroupListView`
+* `ProgressIndicator`
 * `ScrollView`
-* `SelectableBase`
+* `CheckableBase`
 * `CheckBox`
 * `Switch`
 * `Slider`
-* `TableView`
-* `TextLine`
+* `StandardTableView`
+* `LineEdit`

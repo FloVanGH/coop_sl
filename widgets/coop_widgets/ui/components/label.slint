@@ -1,75 +1,45 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-// workaround to get font displayed embedded on the softwarerendrer
-// import "../assets/fonts/Roboto-Regular.ttf"; 
-// import "../assets/fonts/Roboto-Medium.ttf"; 
+import { Palette, Typography, TextStyle } from "../styling/styling.slint";
 
-import { Font } from "../coop/typo.slint";
-import { Theme } from "../coop/theme.slint";
-
-// `BaseLabel` represents the base for `Theme` labels. Set font settings by font property.
-export component BaseLabel inherits Text {
-    // Defines the font settings.
-    in property <Font> font;
-
-    color: Theme.brushes.foreground;
-    // font_family: font.family;
-    font_size: root.font.size;
-    font_weight: root.font.weight;
-}
-
-// `SmallLabel` is a label with settings `Theme.typo.small_label`.
 export component SmallLabel inherits Text {
-    // font: Theme.typo.small_label;
-    color: Theme.brushes.foreground;
-    font_size: 12px;
-    font_weight: 400;
+    color: Palette.foreground;
+    font-size: Typography.small-label.font-size;
+    font-weight: Typography.small-label.font-weight;
 }
 
-// `MediumLabel` is a label with settings `Theme.typo.medium_label`.
 export component MediumLabel inherits Text {
-    // font: Theme.typo.medium_label;
-    color: Theme.brushes.foreground;
-    font_size: 12px;
-    font_weight: 500;
+    color: Palette.foreground;
+    font-size: Typography.small-label.font-size;
+    font-weight: Typography.small-label.font-weight;
 }
 
-// `LargeLabel` is a label with settings `Theme.typo.large_label.
 export component LargeLabel inherits Text {
-    color: Theme.brushes.foreground;
-    font_size: 14px;
-    font_weight: 500;
+    color: Palette.foreground;
+    font-size: Typography.large-label.font-size;
+    font-weight: Typography.small-label.font-weight;
 }
 
-// `ErrorLabel` is a `ErrorLabel` displayed with error text color.
 export component ErrorLabel inherits Text {
-    // font: Theme.typo.small_label;
-    font_size: 12px;
-    font_weight: 400;
-    color: Theme.brushes.error;
+    font-size: Typography.small-label.font-size;
+    font-weight: Typography.small-label.font-weight;
 }
 
-
-// `SmallTitle` is a label with settings `Theme.typo.small_title`.
 export component SmallTitle inherits Text {
-    // font: Theme.typo.small_title;
-    color: Theme.brushes.foreground;
-    font_size: 16px;
-    font_weight: 500;
+    color: Palette.foreground;
+    font-size: Typography.small-title.font-size;
+    font-weight: Typography.small-title.font-weight;
 }
 
-// `MediumTitle` is a label with settings `Theme.typo.medium_title`.
 export component MediumTitle inherits Text {
-    // font: Theme.typo.medium_title;
-    color: Theme.brushes.foreground;
-    font_size: 20px;
-    font_weight: 500;
+    color: Palette.foreground;
+    font-size: Typography.medium-title.font-size;
+    font-weight: Typography.medium-title.font-weight;
 }
 
-// `LargeTitle` is a label with settings `Theme.typo.large_title.
 export component LargeTitle inherits Text {
-    color: Theme.brushes.foreground;
-    font_size: 24px;
-    font_weight: 500;
+    color: Palette.foreground;
+    font-size: Typography.large-title.font-size;
+    font-weight: Typography.large-title.font-weight;
 }

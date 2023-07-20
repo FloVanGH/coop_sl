@@ -6,11 +6,11 @@
 import { HeaderBarButton, HeaderBar } from "header_bar.slint";
 import { WindowModel, DisplayView, DisplayViewAdapter } from "display/display.slint";
 import { Launcher } from "launcher.slint";
-import { PopupBorder, Theme, SmallLabel, RoundButton, mi } from "_imports/coop_widgets.slint";
+import { PopupBorder, SmallLabel, RoundButton, Icons, Space, Duration } from "_imports/coop-widgets.slint";
 import { Login } from "login.slint";
 
 export { WindowModel, DisplayViewAdapter }
- 
+
 export component Desktop inherits Window {
     title: "desktop example";
     width: 1020px;
@@ -18,51 +18,51 @@ export component Desktop inherits Window {
 
     private property <bool> logged_in;
 
-    if(!root.logged_in) : Login {  
-        login(user, password) => {  
-            root.logged_in = user == "user" && password == "password";
+    if(!root.logged_in) : Login {
+        login(user, password) => {
+            // root.logged_in = user == "user" && password == "password";
             root.logged_in
         }
     }
 
-    if(root.logged_in) : Rectangle { 
-        VerticalLayout {  
-            i_header_bar := HeaderBar { 
-                HeaderBarButton {  
+    if(root.logged_in) : Rectangle {
+        VerticalLayout {
+            i_header_bar := HeaderBar {
+                HeaderBarButton {
                     y: (parent.height - self.height) / 2;
-                    text: mi.arrow-drop-down;
-    
+                    icon: Icons.arrow-drop-down;
+
                     clicked => { i_menu.open = true; }
                 }
                }
-        
+
             i_wm := DisplayView {
-    
+
             }
-    
-            Launcher {  
+
+            Launcher {
                 front_path: DisplayViewAdapter.front_path;
-                open(path) => {  
+                open(path) => {
                     i_wm.open(path);
                 }
                 vertical-stretch: 0;
-    
+
                 entries: [
                     {
                         path: "target/debug/widgets",
-                        text: mi.dashboard,
+                        // text: mi.dashboard,
                     },
                     {
                         path: "target/debug/coop_chat",
-                        text: mi.chat,
+                        // text: mi.chat,
                     }
                 ];
             }
         }
-      
-        TouchArea {  
+
+        TouchArea {
             visible: i_menu.open;
-            pointer_event(e) => {  
+            pointer_event(e) => {
                 if(self.mouse_x >= i_menu.x && self.mouse_x <= i_menu.x + i_menu.width && self.mouse_y >= i_menu.y && self.mouse_y <= i_menu.y + i_menu.height) {
                     return;
                 }
@@ -70,45 +70,46 @@ export component Desktop inherits Window {
                     i_menu.open = false;
                 }
             }
-    
+
             i_menu := VerticalLayout {
                 property <bool> open;
-                alignment: start;  
-                x: root.width - self.width - Theme.spaces.small;
-                y: i_header_bar.height + Theme.spaces.small;
-               
+                alignment: start;
+                x: root.width - self.width - Space.small;
+                y: i_header_bar.height + Space.small;
+
                 width: 200px;
                 opacity: 0.0;
-        
-                PopupBorder {  
-                    TouchArea {  
-                        
+
+                PopupBorder {
+                    TouchArea {
+
                     }
-                    layout := GridLayout {  
-                        padding: Theme.spaces.medium;
-                        spacing: Theme.spaces.medium;
+                    layout := GridLayout {
+                        padding: Space.medium;
+                        spacing: Space.medium;
                         // Row {
-                        //     SmallLabel {  
+                        //     SmallLabel {
                         //         vertical_alignment: center;
                         //         text: "Window tilling";
                         //     }
-        
+
                         //     Switch {
-                        //         selected_changed(selected) => {  
+                        //         selected_changed(selected) => {
                         //            i_window_manager.window_tilling = selected;
                         //         }
                         //     }
                         // }
-            
+
                         Row {
-                            SmallLabel {  
+                            SmallLabel {
                                 vertical_alignment: center;
                                 text: "Logout";
                             }
-        
+
                             i_logout_button := RoundButton {
-                                text: mi.log-out;
-                                clicked => {  
+                                // icon: Icons;
+
+                                clicked => {
                                     root.logged_in = false;
                                     i_menu.open = false;
                                 }
@@ -116,14 +117,14 @@ export component Desktop inherits Window {
                         }
                     }
                 }
-        
-                states [  
+
+                states [
                     open when i_menu.open : {
                         opacity: 1.0;
                     }
                 ]
-        
-                animate opacity { duration: Theme.durations.fast; }
+
+                animate opacity { duration: Duration.fast; }
             }
         }
      }

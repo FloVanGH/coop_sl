@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 pipeline:
-  deploy_wasm_widgets:
+  deploy_wasm_gallery:
     group: wasm
     image: rust
     when:
@@ -10,7 +10,7 @@ pipeline:
       branch: main
     secrets: [ mail, codeberg_token ]
     environment:
-      - OUTPUT=examples/widgets
+      - OUTPUT=examples/gallery
     commands:
       - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
@@ -19,15 +19,15 @@ pipeline:
       - git config --global user.name "Woodpecker CI"
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
 
-      # widgets example
+      # gallery example
       - cd $OUTPUT
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web
-    
+
       # Copy build step output to repository folder
-      - cp -ar pkg/* /tmp/pages/coop_sl/snapshots/examples/widgets/pkg/
-      - cp index.html /tmp/pages/coop_sl/snapshots/examples/widgets/
-     
+      - cp -ar pkg/* /tmp/pages/coop_sl/snapshots/examples/gallery/pkg/
+      - cp index.html /tmp/pages/coop_sl/snapshots/examples/gallery/
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .
@@ -62,11 +62,11 @@ pipeline:
       - cd $OUTPUT
       - sed -i "s/#wasm# //" Cargo.toml
       - wasm-pack build --release --target web
-    
+
       # Copy build step output to repository folder
       - cp -ar pkg/* /tmp/pages/coop_sl/snapshots/apps/coop_chat/pkg/
       - cp index.html /tmp/pages/coop_sl/snapshots/apps/coop_chat/
-     
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .

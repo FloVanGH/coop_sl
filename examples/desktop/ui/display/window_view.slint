@@ -1,83 +1,83 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { SmallTitle, RoundButton, Spacer, Theme, mi } from "../_imports/coop_widgets.slint";
+import { SmallTitle, RoundButton, Spacer, Palette, Size, Space, Radius } from "../_imports/coop-widgets.slint";
 
 component WindowButton inherits RoundButton {
-    height: Theme.sizes.extra-small;
-    width: Theme.sizes.extra-small;
+    height: Size.extra-small;
+    width: Size.extra-small;
     horizontal-stretch: 0;
 }
 
 // `WindowView` represents a frame buffer based window that is drawn and handeld by `DisplayView`.
 export component WindowView inherits Rectangle {
     // Received when a button was pressed or released on the window.
-    callback pointer_event(length, length, PointerEvent);
+    callback pointer-event(length, length, PointerEvent);
 
     // Recived when key is pressed.
-    pure callback key_pressed_event <=> i_focus_scope.key_pressed;
+    callback key-pressed-event <=> i-focus-scope.key-pressed;
 
     // Recived when key is released.
-    pure callback key_released_event <=> i_focus_scope.key_released;
+    callback key-released-event <=> i-focus-scope.key-released;
 
     // Called when the window wants to be moved.
     callback move(length, length);
 
     // Request to close the window.accessible-delegate-focus.
-    callback close <=> i_close_button.clicked;
+    callback close <=> i-close-button.clicked;
 
     // Request to show the window on front.
-    callback bring_to_front <=> i_header_touch_area.clicked;
+    callback bring-to-front <=> i-header-touch-area.clicked;
 
     // Reference to the frame buffer.
-    in-out property <image> buffer <=> i_canvas.source;
+    in-out property <image> buffer <=> i-canvas.source;
 
     // Defines the width of the window without border.
-    in-out property <length> inner_width;
-    
+    in-out property <length> inner-width;
+
     // Defines the height of the window without border.
-    in-out property <length> inner_height;
+    in-out property <length> inner-height;
 
     // Gets the current mouse x position on the window.
-    in-out property <length> mouse_x: i_pointer.mouse_x;
+    in-out property <length> mouse-x: i-pointer.mouse-x;
 
     // Gets the current mouse y position on the window.
-    in-out property <length> mouse_y: i_pointer.mouse_y;
+    in-out property <length> mouse-y: i-pointer.mouse-y;
 
     // Defines the window title.
-    in-out property <string> title <=> i_title.text;
+    in-out property <string> title <=> i-title.text;
 
     // privates
-    in-out property <length> header_height: Theme.sizes.small;
-    in-out property <length> window_padding: 1px;
+    in-out property <length> header-height: Size.small;
+    in-out property <length> window-padding: 1px;
 
-    width: root.inner_width + 2 * root.window_padding;
-    height: root.header_height + root.inner_height + root.window_padding;
-    border-radius: Theme.radius.small;
-    background: Theme.brushes.background-alt; 
+    width: root.inner-width + 2 * root.window-padding;
+    height: root.header-height + root.inner-height + root.window-padding;
+    border-radius: Radius.small;
+    background: Palette.background-alt;
     clip: true;
 
-    i_header := Rectangle {  
-        y:0;  
+    i-header := Rectangle {
+        y:0;
         width: 100%;
-        height: root.header_height;
+        height: root.header-height;
 
         // header move touch area
-        i_header_touch_area := TouchArea {
+        i-header-touch-area := TouchArea {
             moved => {
                 if (self.pressed) {
-                    root.move(root.x + self.mouse_x - self.pressed_x, root.y + self.mouse_y - self.pressed_y);
+                    root.move(root.x + self.mouse-x - self.pressed-x, root.y + self.mouse-y - self.pressed-y);
                 }
             }
         }
 
-        HorizontalLayout {  
-            padding-left: Theme.spaces.small;
-            padding-right: Theme.spaces.small;
+        HorizontalLayout {
+            padding-left: Space.small;
+            padding-right: Space.small;
 
             Spacer {}
 
-            i_title := SmallTitle {  
+            i-title := SmallTitle {
                 vertical-alignment: center;
                 horizontal-alignment: center;
                 color: white;
@@ -85,9 +85,9 @@ export component WindowView inherits Rectangle {
 
             Spacer {}
 
-            i_close_button := WindowButton {  
+            i-close-button := WindowButton {
                 y: (parent.height - self.height) / 2;
-                text: mi.close;
+                // text: mi.close;
             }
         }
 
@@ -95,39 +95,39 @@ export component WindowView inherits Rectangle {
             width: 100%;
             y: parent.height - self.height;
             height: 1px;
-            background: Theme.brushes.border;
+            background: Palette.border;
         }
     }
 
-    i_inner := Rectangle {
-        x: root.window_padding;
-        y: i_header.height;
+    i-inner := Rectangle {
+        x: root.window-padding;
+        y: i-header.height;
         width: root.inner-width;
         height: root.inner-height;
-        background: Theme.brushes.background;
-        border_radius: root.border_radius - 1px;
+        background: Palette.background;
+        border-radius: root.border-radius - 1px;
 
-        Rectangle {  
-            y:0;  
+        Rectangle {
+            y:0;
             width: 100%;
-            height: parent.border_radius;
+            height: parent.border-radius;
             background: root.background;
         }
 
         // window touch area.
-        i_pointer := TouchArea {
-            clicked => { i_focus_scope.focus(); }
-            pointer_event(event) => {  
-                root.pointer-event(self.mouse_x, self.mouse_y, event);
+        i-pointer := TouchArea {
+            clicked => { i-focus-scope.focus(); }
+            pointer-event(event) => {
+                root.pointer-event(self.mouse-x, self.mouse-y, event);
             }
         }
 
-        i_focus_scope := FocusScope {
+        i-focus-scope := FocusScope {
             x:0;
             width: 0px;
         }
 
-        i_canvas := Image {
+        i-canvas := Image {
             width: 100%;
             height: 100%;
         }

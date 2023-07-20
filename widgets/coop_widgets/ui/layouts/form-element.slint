@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { SmallTitle } from "../components/label.slint";
+import { Space } from "../styling/styling.slint";
+
+export component FormElement inherits VerticalLayout {
+    in property <string> title <=> i-title.text;
+
+    spacing: Space.small;
+
+    i-title := Text {
+        horizontal-alignment: left;
+    }
+
+    @children
+}

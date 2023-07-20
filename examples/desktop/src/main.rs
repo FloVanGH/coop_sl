@@ -13,11 +13,11 @@ pub mod view_controller;
 use view_controller::DisplayViewController;
 
 fn main() {
-    let ui = Desktop::new();
+    let ui = Desktop::new().unwrap();
 
     let wm_controller = DisplayViewController::new(&ui);
 
-    ui.run();
+    ui.run().unwrap();
 
     wm_controller.join().unwrap();
 }
