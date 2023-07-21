@@ -6,11 +6,7 @@ fn generate_imports() {
     coop_widgets::generate_import().unwrap();
 }
 
-#[cfg(not(feature = "mcu-board-support"))]
 const APP: &str = "ui/app.slint";
-
-#[cfg(feature = "mcu-board-support")]
-const APP: &str = "ui/minimized/app.slint";
 
 #[cfg(feature = "default")]
 fn main() {

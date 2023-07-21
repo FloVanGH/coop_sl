@@ -1,0 +1,17 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { CoopWindow } from "_imports/coop-widgets.slint";
+import { FileView, FileViewAdapter } from "views/file-view.slint";
+
+export { FileViewAdapter }
+
+export component MainWindow inherits CoopWindow {
+    title: "coop local";
+    min-width: 800px;
+    min-height: 600px;
+
+    FileView {
+
+    }
+}

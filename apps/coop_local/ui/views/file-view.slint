@@ -1,0 +1,30 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { ScrollView, StandardListView, ListViewItem, Icons } from "../_imports/coop-widgets.slint";
+
+export global FileViewAdapter {
+    in property <[[ListViewItem]]> model: [
+        [
+            { leading-icon: Icons.folder, text: "Folder 1", trailing-icon: Icons.arrow-right },
+            { leading-icon: Icons.folder, text: "Folder 2", trailing-icon: Icons.arrow-right },
+            { leading-icon: Icons.folder, text: "Folder 3", trailing-icon: Icons.arrow-right }
+        ],
+        [
+            { leading-icon: Icons.folder, text: "File 1" },
+            { leading-icon: Icons.folder, text: "File 2" },
+            { leading-icon: Icons.folder, text: "Folder 3", trailing-icon: Icons.arrow-right }
+        ]
+    ];
+}
+
+export component FileView inherits Rectangle {
+    ScrollView {
+        HorizontalLayout {
+            for items in FileViewAdapter.model : StandardListView {
+                width: 200px;
+                model: items;
+            }
+        }
+    }
+}

@@ -135,6 +135,7 @@ export component StandardTableView {
     callback sort-ascending(/* column-index */ int);
     callback sort-descending(/* column-index */ int);
     callback row-pointer-event(/* row-index */ int,  /* event */ PointerEvent, /* absolute mouse position */ Point);
+    callback current-row-changed(/* current-row */ int);
 
     in property <[[ListViewItem]]> rows;
     in property <bool> zebra-pattern;
@@ -148,6 +149,8 @@ export component StandardTableView {
     vertical-stretch: 1;
 
     VerticalLayout {
+        spacing: Space.small;
+
         Rectangle {
             clip: true;
             vertical-stretch: 0;
@@ -156,7 +159,6 @@ export component StandardTableView {
             i-header-layout := HorizontalLayout {
                 width: max(self.preferred-width, parent.width);
                 x: i-scroll-view.viewport-x;
-                padding-right: 6px;
                 min-height: root.min-header-height;
 
                 for column[index] in root.columns : TableViewColumn {
@@ -191,7 +193,7 @@ export component StandardTableView {
 
                 for row[idx] in root.rows : TableViewRow {
                     selected: idx == root.current-row;
-                    alternative-background: mod(idx, 2) == 0 && root.zebra-pattern;
+                    alternative-background: mod(idx, 2) != 0 && root.zebra-pattern;
 
                     for cell[index] in row : TableViewCell {
                         private property <bool> has_inner_focus;
@@ -212,6 +214,7 @@ export component StandardTableView {
                             vertical-alignment: center;
                             horizontal-alignment: left;
                             horizontal-stretch: 1;
+                            overflow: elide;
                         }
 
                         if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
@@ -271,6 +274,7 @@ export component StandardTableView {
         }
 
         current-row = index;
+        root.current-row-changed(current-row);
 
         if (current-item-y < 0) {
             i-scroll-view.viewport-y += 0 - current-item-y;

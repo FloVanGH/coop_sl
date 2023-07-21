@@ -6,8 +6,6 @@ import { Duration, Palette, Size, Space } from "../styling/styling.slint";
 import { MediumTitle } from "../components/label.slint";
 import { Spacer } from "../layouts/spacer.slint";
 
-
-// `SideBar` is a bar with vertical arranged children.
 export component SideBar {
     private property <bool> on-break-point: root.responsive && root.parent-width < root.break-point;
 
@@ -61,7 +59,6 @@ export component SideBar {
             padding-top: Space.medium;
             padding-bottom: Space.medium;
             spacing: Space.medium;
-            // alignment: start;
 
             if (root.on-break-point || root.title != "") : HorizontalLayout {
                 padding-left: Space.medium;
@@ -100,10 +97,10 @@ export component SideBar {
                 animate i-content.x { duration: Duration.fast; }
             }
             in {
-                    animate i-content.x { duration: Duration.fast; }
+                animate i-content.x { duration: Duration.fast; }
             }
             out {
-                    animate i-content.x { duration: Duration.fast; }
+                animate i-content.x { duration: Duration.fast; }
             }
         }
 

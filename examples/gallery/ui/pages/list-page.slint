@@ -3,7 +3,7 @@
 
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Spacer, StandardTableView, HorizontalSeparator, ScrollView, ListView,
+import { Palette, StandardTableView, HorizontalSeparator, ScrollView, ListView, VerticalSpacerMedium,
     GroupListView, GroupListViewItem, Switch, HeaderBar, Palette, Icons, StandardListView, Space }
     from "../_imports/coop-widgets.slint";
 
@@ -35,7 +35,7 @@ export component ListPage inherits GridLayout {
             // Lists
             Row {
                 RowTitle {
-                    text: @tr("Lists");
+                    text: @tr("ListViews");
                 }
             }
 
@@ -44,19 +44,13 @@ export component ListPage inherits GridLayout {
                     text: @tr("ListView");
                 }
 
-                Spacer {}
-
                 ColumnTitle {
                     text: @tr("StandardListView");
                 }
 
-                Spacer {}
-
                 ColumnTitle {
                     text: @tr("GroupListView");
                 }
-
-                Spacer {}
 
                 ColumnTitle {
                     text: @tr("ScrollView");
@@ -65,7 +59,7 @@ export component ListPage inherits GridLayout {
 
             Row {
                 HorizontalSeparator {
-                    colspan: 8;
+                    colspan: 4;
                 }
             }
 
@@ -73,12 +67,11 @@ export component ListPage inherits GridLayout {
                 ListView {
                     for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : HorizontalLayout {
                         Text {
-                             text: @tr("Item {}", i);
+                            color: Palette.foreground;
+                            text: @tr("Item {}", i);
                         }
                      }
                 }
-
-                Spacer {}
 
                 StandardListView {
                     height: 100px;
@@ -93,24 +86,26 @@ export component ListPage inherits GridLayout {
                     ];
                 }
 
-                Spacer {}
-
                 GroupListView {
                     height: 100px;
-                    property <GroupListViewItem> list: {
+                    property <GroupListViewItem> group: {
+                        text: "Group 1",
                         items: [
                             { text: "Item 1" },
                             { text: "Item 2" },
                             { text: "Item 3" },
-                            { text: "Item 4" },
-                            { text: "Item 5" },
-                            { text: "Item 6" },
                         ]
                     };
-                    model: [self.list];
+                    property <GroupListViewItem> group-two: {
+                        text: "Group 2",
+                        items: [
+                            { text: "Item 1" },
+                            { text: "Item 2" },
+                            { text: "Item 3" },
+                        ]
+                    };
+                    model: [self.group, self.group-two];
                 }
-
-                Spacer {}
 
                 ScrollView {
                     height: 100px;
@@ -126,6 +121,10 @@ export component ListPage inherits GridLayout {
                 }
             }
 
+            Row {
+                VerticalSpacerMedium {}
+            }
+
              // StandardTableView
              Row {
                 RowTitle {
@@ -135,26 +134,27 @@ export component ListPage inherits GridLayout {
 
             Row {
                 HorizontalSeparator {
-                    colspan: 8;
+                    colspan: 4;
                 }
             }
 
             Row {
                 StandardTableView {
                     zebra-pattern: true;
-                    colspan: 8;
+                    colspan: 4;
                     columns: [
                         // folder icons row
-                        { horizontal-stretch: 0, min-width: 32px },
                         { title: @tr("Name"), horizontal-stretch: 1 },
                         { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 128px },
                         { title: @tr("Size"), horizontal-stretch: 0, min-width: 96px },
                         { title: @tr("Kind"), horizontal-stretch: 0, min-width: 128px },
                     ];
                     rows: [
-                        [ { leading-icon: Icons.folder,highlighted: true }, { text: "src" }, { text: "2022.11.10" }, { text: "---" }, { text: "Folder" }, ],
-                        [ { leading-icon: Icons.folder }, { text: "test.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
-                        [ { leading-icon: Icons.folder }, { text: "test2.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
+                        [ { leading-icon: Icons.folder,highlighted: true, text: "src" }, { text: "2022.11.10" }, { text: "---" }, { text: "Folder" }, ],
+                        [ { leading-icon: Icons.description, text: "test.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
+                        [ { leading-icon: Icons.description, text: "test2.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
+                        [ { leading-icon: Icons.description, text: "test3.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
+                        [ { leading-icon: Icons.description, text: "test4.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
                     ];
                 }
             }

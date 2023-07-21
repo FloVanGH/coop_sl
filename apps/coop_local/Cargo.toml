@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: GPL-3.0-only
+
+[package]
+name = "coop_local"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+authors = ["Florian Blasius <co_sl@tutanota.com>"]
+description = "Local git repository manager."
+publish = false
+repository = "https://codeberg.org/flovansl/coop_sl"
+
+[[bin]]
+path = "src/main.rs"
+name = "coop_local"
+
+[dependencies]
+slint = { git = "https://github.com/slint-ui/slint.git", rev = "81bb6e2c70461fa54d64bf16060559b1d8ad28e0", default-features = false, features = ["compat-1-0"] }
+
+[build-dependencies]
+slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "81bb6e2c70461fa54d64bf16060559b1d8ad28e0" }
+coop_widgets = { path = "../../widgets/coop_widgets" }
+
+[features]
+default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility"]

@@ -64,6 +64,7 @@ export component ItemDelegate inherits TouchArea {
                 horizontal-alignment: left;
                 color: root.foreground;
                 horizontal-stretch: 1;
+                overflow: elide;
             }
 
             if(root.trailing-icon.width > 0 && root.trailing-icon.height > 0) : Image {
@@ -97,9 +98,10 @@ export component ItemDelegate inherits TouchArea {
 
 // Delegate for a `GroupListViewItem` it can display a `text` and a list of `ItemModels`.
 component GroupItemDelegate {
-    callback current-item-changed({ parent: int, item: int });
-
     private property <brush> foreground: Palette.foreground;
+
+    callback current-item-changed(/* current-item */ { parent: int, item: int });
+
     in property <GroupListViewItem> model;
     in property <int> item-index;
     in-out property <{ parent: int, item: int }> current-item;
@@ -108,7 +110,7 @@ component GroupItemDelegate {
     forward-focus: i-focus-scope;
 
     VerticalLayout {
-        spacing: Space.medium;
+        spacing: root.expanded ? Space.medium : 0;
 
         i-background := Rectangle {
             height: Size.small;
@@ -123,8 +125,6 @@ component GroupItemDelegate {
                     y: (parent.height - self.height) / 2;
                     source: Icons.arrow-drop-down;
                     colorize: root.foreground;
-                    // vertical-alignment: center;
-                    // horizontal-alignment: left;
 
                     states [
                         collapsed when !root.expanded: {
@@ -169,7 +169,7 @@ component GroupItemDelegate {
             animate background { duration: Duration.fast; }
         }
 
-        if (root.expanded) : VerticalLayout {
+        VerticalLayout {
             for item[item-index] in root.model.items: ItemDelegate {
                 padding-left: i-background-layout.padding-left + i-background-layout.spacing + Icography.medium;
                 padding-right: i-background-layout.padding-right;
@@ -183,6 +183,15 @@ component GroupItemDelegate {
                     root.current-item = { parent: root.item-index, item: item-index };
                     root.current-item-changed(root.current-item);
                 }
+
+                states [
+                    collapsed when !root.expanded : {
+                        height: 0;
+                        opacity: 0;
+                    }
+                ]
+
+                animate height { duration: Duration.fast; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
             }
         }
     }
@@ -209,6 +218,8 @@ component StandardListViewBase inherits ListView {
     private property <length> item-height: self.viewport-height / self.model.length;
     private property <length> current-item-y: self.viewport-y + current-item * item-height;
 
+    callback current-item-changed(/* current-item */ int);
+
     in property <[ListViewItem]> model;
     in-out property <int> current-item: -1;
 
@@ -217,6 +228,7 @@ component StandardListViewBase inherits ListView {
         leading-icon: item.leading-icon;
         text: item.text;
         trailing-icon: item.trailing-icon;
+        highlighted: item.highlighted;
 
         clicked => {
             set-current-item(idx);
@@ -229,6 +241,7 @@ component StandardListViewBase inherits ListView {
         }
 
         current-item = index;
+        root.current-item-changed(current-item);
 
         if(current-item-y < 0) {
             self.viewport-y += 0 - current-item-y;
@@ -269,31 +282,13 @@ export component GroupListView inherits ScrollView  {
         spacing: Space.medium;
 
         for parent-item[parent-index] in root.model: VerticalLayout {
-            if (root.model.length > 1) : GroupItemDelegate {
+           GroupItemDelegate {
                 model: parent-item;
                 item-index: parent-index;
                 current-item <=> root.current-item;
 
                 current-item-changed(item) => {
                     root.current-item-changed(item);
-                }
-            }
-
-            // Only one parent item.
-            if (root.model.length == 1) : VerticalLayout {
-                for item[index] in parent-item.items: ItemDelegate {
-                    leading-icon: item.leading-icon;
-                    text: item.text;
-                    trailing-icon: item.trailing-icon;
-                    highlighted: item.highlighted;
-                    selected: parent-index == root.current-item.parent && index == root.current-item.item;
-                    padding-left: Space.medium;
-                    padding-right: Space.medium;
-
-                    clicked => {
-                        root.current-item = { parent: 0, item: index };
-                        root.current-item-changed(root.current-item);
-                    }
                 }
             }
         }
