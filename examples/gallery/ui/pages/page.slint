@@ -3,7 +3,7 @@
 
 import { AppManager } from "../app-manager.slint";
 
-import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Palette, Icons } from "../_imports/coop-widgets.slint";
+import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Icons, ComboBox, Palette, ColorTheme, ColorVariant } from "../_imports/coop-widgets.slint";
 
 export component Page inherits GridLayout {
     in-out property <string> title <=> i_header_bar.title;
@@ -12,16 +12,38 @@ export component Page inherits GridLayout {
 
     Row {
         i_header_bar := HeaderBar {
-            if(root.keyboard_check_box) : CheckBox {
+            if (root.keyboard_check_box) : CheckBox {
                 y: (parent.height - self.height) / 2;
                 text: "Keyboard enabled";
                 checked <=> AppManager.keyboard_enabled;
             }
 
-            if(root.disabled_check_box) : CheckBox {
+            if (root.disabled_check_box) : CheckBox {
                 y: (parent.height - self.height) / 2;
                 text: "Widgets enabled";
                 checked <=> AppManager.widgets_enabled;
+            }
+
+            ComboBox {
+                width: 128px;
+                placeholder-text: @tr("Select theme:");
+                current-index: Palette.current-color-theme == ColorTheme.Coop ? 0 : 1;
+
+                model: [
+                    { text: "Coop" },
+                    { text: "Cosmic" },
+                ];
+
+                selected (index) => {
+                    if (index == 0) {
+                        Palette.set-color-theme(ColorTheme.Coop);
+                        return;
+                    }
+
+                    if (index == 1) {
+                        Palette.set-color-theme(ColorTheme.Cosmic);
+                    }
+                }
             }
 
             VerticalLayout {
@@ -33,7 +55,7 @@ export component Page inherits GridLayout {
                     checked: !Palette.dark-color-scheme;
 
                     toggled(checked) => {
-                        Palette.dark-color-scheme = !checked;
+                        Palette.set-color-variant(checked ? ColorVariant.Light : ColorVariant.Dark);
                     }
                 }
             }

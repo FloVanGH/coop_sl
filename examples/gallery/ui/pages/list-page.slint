@@ -4,7 +4,7 @@
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import { Palette, StandardTableView, HorizontalSeparator, ScrollView, ListView, VerticalSpacerMedium,
-    GroupListView, GroupListViewItem, Switch, HeaderBar, Palette, Icons, StandardListView, Space }
+    GroupListView, GroupListViewItem, Switch, HeaderBar, Palette, Icons, StandardListView, Space, ColorVariant }
     from "../_imports/coop-widgets.slint";
 
 export component ListPage inherits GridLayout {
@@ -20,7 +20,7 @@ export component ListPage inherits GridLayout {
                     checked: !Palette.dark-color-scheme;
 
                     toggled(checked) => {
-                        Palette.dark-color-scheme = !self.checked;
+                        Palette.set-color-variant(checked ? ColorVariant.Light : ColorVariant.Dark);
                     }
                 }
             }

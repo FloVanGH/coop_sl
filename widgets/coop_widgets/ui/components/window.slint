@@ -1,0 +1,39 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Palette, Settings, ColorTheme, ColorVariant } from "../styling/styling.slint";
+
+
+export component CoopWindow inherits Window {
+    in-out property <bool> dark-color-scheme <=> Settings.dark-color-scheme;
+    in-out property <brush> accent <=> Palette.accent;
+    in-out property <brush> on-accent <=> Palette.on-accent;
+
+    background: Palette.background;
+
+    public function set-color-variant(variant: ColorVariant) {
+        Palette.set-color-variant(variant);
+    }
+
+    public function set-color-theme(theme: ColorTheme) {
+        Palette.set-color-theme(theme);
+    }
+}
+
+export component ThemedWindow inherits Window {
+    in-out property <bool> dark-color-scheme <=> Settings.dark-color-scheme;
+    in-out property <brush> background-alt <=> Palette.background-alt;
+    in-out property <brush> foreground <=> Palette.foreground;
+    in-out property <brush> foreground-disabled <=> Palette.foreground-disabled;
+    in-out property <brush> surface <=> Palette.surface;
+    in-out property <brush> surface-disabled <=> Palette.surface-disabled;
+    in-out property <brush> on-surface <=> Palette.on-surface;
+    in-out property <brush> primary <=> Palette.primary;
+    in-out property <brush> on-primary <=> Palette.on-primary;
+    in-out property <brush> border <=> Palette.border;
+    in-out property <brush> border-disabled <=> Palette.border-disabled;
+    in-out property <brush> shadow <=> Palette.shadow;
+    in-out property <brush> error <=> Palette.error;
+
+    background: Palette.background;
+}
