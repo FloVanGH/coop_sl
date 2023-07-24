@@ -9,6 +9,9 @@ export component PopupBorder inherits Rectangle {
     border_width: 1px;
     border_color: Palette.border;
     clip: true;
+    drop-shadow-color: Palette.shadow;
+    drop-shadow-blur: 16px;
+    drop-shadow-offset-y: 4px;
 }
 
 export component Popup inherits PopupWindow {

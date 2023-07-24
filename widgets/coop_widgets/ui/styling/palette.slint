@@ -29,7 +29,7 @@ export global CoopPalette {
     out property <brush> on-primary: on-accent;
     out property <brush> border: Settings.dark-color-scheme ? #7e7e7e: #505050;
     out property <brush> border-disabled: Settings.dark-color-scheme ? #494949: #c5c5c5;
-    out property <brush> shadow: #000000;
+    out property <brush> shadow: Settings.dark-color-scheme ? #00000052 : #00000014;
     out property <brush> error: #EF5350;
     out property <brush> accent: Settings.dark-color-scheme ? #01fec5: #1d9bf2;
     out property <brush> on-accent: Settings.dark-color-scheme ? #212121: #dfdfdf;
@@ -47,7 +47,7 @@ export global CosmicPalette {
     out property <brush> on-primary: on-accent;
     out property <brush> border: Settings.dark-color-scheme ? #E2E2E2: #1B1B1B;
     out property <brush> border-disabled: Settings.dark-color-scheme ? #494949: #c5c5c5;
-    out property <brush> shadow: #000000;
+    out property <brush> shadow: Settings.dark-color-scheme ? #00000052 : #00000014;
     out property <brush> error: Settings.dark-color-scheme ? #FFB5B5 : #A0252B;
     out property <brush> accent: Settings.dark-color-scheme ? #94EBEB: #00496D;
     out property <brush> on-accent: Settings.dark-color-scheme ? #000000: #FFFFFF;
