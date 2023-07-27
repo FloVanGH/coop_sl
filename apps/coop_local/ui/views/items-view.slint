@@ -1,0 +1,52 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton, Icons } from "../_imports/coop-widgets.slint";
+
+export global ItemsViewAdapter {
+    callback current-item-change(/* current-page */ int, /* current-item */ int);
+    callback back();
+
+    in property <[[ListViewItem]]> model: [
+        [
+            { leading-icon: Icons.folder, text: "Folder 1", highlighted: true },
+            { leading-icon: Icons.folder, text: "Folder 2", highlighted: true },
+            { leading-icon: Icons.folder, text: "Folder 3", highlighted: true },
+            { leading-icon: Icons.description, text: "File 1" },
+            { leading-icon: Icons.description, text: "File 2" },
+        ]
+    ];
+    in-out property <int> current-item;
+    in-out property <int> current-page;
+    in property <string> title;
+}
+
+export component ItemsView {
+    VerticalLayout {
+        HeaderBar {
+            action-icon:  Icons.arrow-back;
+            action-enabled: ItemsViewAdapter.current-page > 0;
+            title: ItemsViewAdapter.title;
+
+            action => {
+                ItemsViewAdapter.back();
+            }
+        }
+        Carousel {
+            width: 100%;
+            vertical-stretch: 1;
+            current-page <=> ItemsViewAdapter.current-page;
+
+            for items[page-index] in ItemsViewAdapter.model : StandardListView {
+                width: root.width;
+                height: root.height;
+                model: items;
+
+                current-item-changed(current-item) => {
+                    ItemsViewAdapter.current-item-change(page-index, current-item);
+                }
+            }
+        }
+    }
+
+}

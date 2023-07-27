@@ -3,23 +3,34 @@
 
 import { Size, Space } from "../styling/styling.slint";
 import { LargeTitle } from "../components/components.slint";
+import { RoundButton } from "../widgets/widgets.slint";
 import { Spacer } from "../layouts/layouts.slint";
 
 export component HeaderBar inherits HorizontalLayout {
-    in property <string> title: "title";
+    callback action <=> i-action-button.clicked;
+
+    in property <string> title;
+    in property <image> action-icon <=> i-action-button.icon;
+    in property <string> action-text <=> i-action-button.text;
+    in property <bool> action-enabled <=> i-action-button.enabled;
 
     spacing: Space.medium;
-    padding-left: Space.large;
-    padding-right: Space.large;
+    padding-left: Space.medium;
+    padding-right: Space.medium;
     padding-top: Space.small;
     padding-bottom: Space.small;
     height: Size.large;
 
-    i-title := LargeTitle {
+    i-action-button := RoundButton {
+        visible: self.enabled;
+    }
+
+    if (root.title != "") : LargeTitle {
         text: root.title;
         vertical-alignment: center;
         horizontal-alignment: left;
         horizontal-stretch: 1;
+        overflow: elide;
     }
 
     @children

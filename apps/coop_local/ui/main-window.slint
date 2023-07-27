@@ -1,17 +1,19 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { CoopWindow } from "_imports/coop-widgets.slint";
-import { FileView, FileViewAdapter } from "views/file-view.slint";
+import { CoopWindow, Icons } from "_imports/coop-widgets.slint";
+export { Icons }
 
-export { FileViewAdapter }
+import { ItemsView, ItemsViewAdapter } from "views/items-view.slint";
+export { ItemsViewAdapter }
 
 export component MainWindow inherits CoopWindow {
     title: "coop local";
-    min-width: 800px;
-    min-height: 600px;
+    min-width: 600px;
+    min-height: 400px;
 
-    FileView {
-
+    ItemsView {
+        width: 100%;
+        height: 100%;
     }
 }

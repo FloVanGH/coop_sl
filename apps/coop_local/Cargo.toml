@@ -17,6 +17,7 @@ name = "coop_local"
 
 [dependencies]
 slint = { git = "https://github.com/slint-ui/slint.git", rev = "81bb6e2c70461fa54d64bf16060559b1d8ad28e0", default-features = false, features = ["compat-1-0"] }
+tokio = { version = "1", features = ["full"] }
 
 [build-dependencies]
 slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "81bb6e2c70461fa54d64bf16060559b1d8ad28e0" }
@@ -24,3 +25,4 @@ coop_widgets = { path = "../../widgets/coop_widgets" }
 
 [features]
 default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility"]
+mock = []
