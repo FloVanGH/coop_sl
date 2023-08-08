@@ -1,0 +1,127 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton, Icons,
+    ContextMenu } from "../_imports/coop-widgets.slint";
+
+export global FilesAdapter {
+    private property <[ListViewItem]> dummy-context-menu: [
+        { text: "Rename" },
+        { text: "Delete" },
+        { text: "Copy" },
+    ];
+
+    // header callbacks
+    callback get-main-menu() -> [ListViewItem];
+    callback main-menu-action(/* page */ int, /* action */ string);
+    callback previous-page();
+
+    // file callbacks
+    callback open(/* page */ int, /* file */ int);
+    callback get-file-context-menu(/* page */ int, /* file */ int) -> [ListViewItem];
+    callback context-menu-action(/* page */ int, /* file */ int, /* action */ string);
+
+    in property <[[ListViewItem]]> files: [
+        [
+            { leading-icon: Icons.folder, text: "Folder 1", highlighted: true },
+            { leading-icon: Icons.folder, text: "Folder 2", highlighted: true },
+            { leading-icon: Icons.folder, text: "Folder 3", highlighted: true },
+            { leading-icon: Icons.description, text: "File 1" },
+            { leading-icon: Icons.description, text: "File 2" },
+        ]
+    ];
+
+    in-out property <int> current-page;
+    in property <string> title;
+
+    // only used for preview
+    get-file-context-menu => {
+       dummy-context-menu
+    }
+}
+
+export component FilesView {
+    private property <[ListViewItem]> main-menu-model;
+    private property <[ListViewItem]> context-menu-model;
+    private property <length> context-menu-x;
+    private property <length> context-menu-y;
+    private property <int> context-menu-page-index;
+    private property <int> context-menu-item-index;
+
+    VerticalLayout {
+        HeaderBar {
+            action-icon:  Icons.arrow-back;
+            action-enabled: FilesAdapter.current-page > 0;
+            title: FilesAdapter.title;
+
+            i-menu-button := RoundButton {
+                icon: Icons.menu;
+                horizontal-stretch: 0;
+
+                clicked => {
+                    root.main-menu-model = FilesAdapter.get-main-menu();
+                    i-menu.show();
+                }
+            }
+
+            i-menu := PopupWindow {
+                x: i-menu-button.x - (72px - i-menu-button.width);
+                y: i-menu-button.y + i-menu-button.height;
+                min-width: 72px;
+
+                ContextMenu {
+                    width: 100%;
+                    model: root.main-menu-model;
+
+                    item-clicked(index) => {
+                        FilesAdapter.main-menu-action(FilesAdapter.current-page, self.model[index].spec);
+                    }
+                }
+            }
+
+            action => {
+                FilesAdapter.previous-page();
+            }
+        }
+
+        Carousel {
+            width: 100%;
+            vertical-stretch: 1;
+            current-page <=> FilesAdapter.current-page;
+
+            for files[page-index] in FilesAdapter.files : StandardListView {
+                width: root.width;
+                height: 100%;
+                model: files;
+
+                current-item-changed(current-file) => {
+                    FilesAdapter.open(page-index, current-file);
+                }
+
+                item-pointer-event(index, evt, pos) => {
+                    if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
+                        root.context-menu-model = FilesAdapter.get-file-context-menu(page-index, index);
+                        root.context-menu-x = pos.x;
+                        root.context-menu-y = pos.y;
+                        root.context-menu-page-index = page-index;
+                        root.context-menu-item-index = index;
+                        i-context-menu.show();
+                    }
+                }
+
+                i-context-menu := PopupWindow {
+                    x: root.context-menu-x;
+                    y: root.context-menu-y;
+
+                    ContextMenu {
+                        model: root.context-menu-model;
+
+                        item-clicked(index) => {
+                            FilesAdapter.context-menu-action(root.context-menu-page-index, root.context-menu-item-index, self.model[index].spec);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

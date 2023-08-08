@@ -1,0 +1,40 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { TextInputDialog } from "../dialogs/text-input-dialog.slint";
+export global DialogViewAdapter {
+    callback cancel();
+    callback ti-default(/* text */ string);
+
+    in property <string> title;
+    in property <bool> ti-visible;
+    in property <string> default-button-text;
+    in-out property <string> ti-text;
+}
+
+export component DialogView {
+    if (DialogViewAdapter.ti-visible) : TouchArea {
+        width: 100%;
+        height: 100%;
+
+        Rectangle {
+            width: 100%;
+            height: 100%;
+            background: #00000080;
+
+            if (DialogViewAdapter.ti-visible) : TextInputDialog {
+                title: DialogViewAdapter.title;
+                text <=> DialogViewAdapter.ti-text;
+                default-button-text: DialogViewAdapter.default-button-text;
+
+                cancel-clicked => {
+                    DialogViewAdapter.cancel();
+                }
+
+                default-clicked => {
+                    DialogViewAdapter.ti-default(self.text);
+                }
+            }
+        }
+    }
+}

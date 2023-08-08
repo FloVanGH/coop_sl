@@ -10,8 +10,14 @@ const APP: &str = "ui/app.slint";
 
 #[cfg(feature = "default")]
 fn main() {
+    use slint_build::CompilerConfiguration;
+
     generate_imports();
-    slint_build::compile(APP).unwrap();
+    slint_build::compile_with_config(
+        APP,
+        CompilerConfiguration::new().with_style("fluent".into()),
+    )
+    .unwrap();
 }
 
 #[cfg(any(

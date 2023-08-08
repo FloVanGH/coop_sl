@@ -22,7 +22,6 @@ export component HeaderBar inherits HorizontalLayout {
     height: Size.large;
 
     if (root.action-text != "" || (root.action-icon.width > 0 && root.action-icon.height  > 0)) : RoundButton {
-        visible: self.enabled;
         enabled: root.action-enabled;
         text: root.action-text;
         icon: root.action-icon;
@@ -32,7 +31,7 @@ export component HeaderBar inherits HorizontalLayout {
         }
     }
 
-    if (root.title != "") : LargeTitle {
+    LargeTitle {
         text: root.title;
         vertical-alignment: center;
         horizontal-alignment: left;

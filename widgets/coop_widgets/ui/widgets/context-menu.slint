@@ -1,0 +1,27 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { PopupBorder } from "../components/components.slint";
+import { ItemDelegate, ListViewItem } from "list-view.slint";
+
+export component ContextMenu  {
+    callback item-clicked(/* index */ int);
+
+    in property <[ListViewItem]> model;
+
+    min-width: 32px;
+
+    PopupBorder {
+        VerticalLayout {
+            for item[index] in model : ItemDelegate {
+                leading-icon: item.leading-icon;
+                text: item.text;
+                trailing-icon: item.trailing-icon;
+
+                clicked => {
+                    root.item-clicked(index);
+                }
+            }
+        }
+    }
+}

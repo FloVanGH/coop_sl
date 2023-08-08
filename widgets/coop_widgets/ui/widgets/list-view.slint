@@ -11,6 +11,7 @@ export struct ListViewItem  {
     text: string,
     trailing-icon: image,
     highlighted: bool,
+    spec: string
 }
 
 export struct GroupListViewItem  {
@@ -28,14 +29,16 @@ export component ItemDelegate inherits TouchArea {
     in property <string> text;
     in property <image> trailing-icon;
 
-    height: Size.small;
+    min-height: max(Size.small, i-layout.min-height);
     forward-focus: i-focus-scope;
-    padding-left: Space.medium;
+    // padding: Space.medium;
     padding-right: Space.medium;
+    padding-left: Space.medium;
 
     i-focus-scope := FocusScope {
         x: 0;
         width: 0px; // Do not react on clicks
+        enabled: root.enabled;
 
         key-pressed(event) => {
             if(event.text == " " || event.text == "\n") {
@@ -58,7 +61,7 @@ export component ItemDelegate inherits TouchArea {
                 width: Icography.small;
             }
 
-            LargeLabel {
+            i-label := LargeLabel {
                 text <=> root.text;
                 vertical-alignment: center;
                 horizontal-alignment: left;
@@ -78,6 +81,11 @@ export component ItemDelegate inherits TouchArea {
     }
 
     states [
+        disabled when !root.enabled: {
+            i-label.color: Palette.foreground-disabled;
+            root.icon-color: Palette.foreground-disabled;
+        }
+
         pressed when root.pressed: {
             i-background.background: Palette.background.darker(State.pressed);
             foreground: Palette.foreground.darker(State.pressed);
@@ -219,11 +227,13 @@ component StandardListViewBase inherits ListView {
     private property <length> current-item-y: self.viewport-y + current-item * item-height;
 
     callback current-item-changed(/* current-item */ int);
+    callback item-pointer-event(int /* item-index */, PointerEvent /* event */, Point /* absolute mouse position */);
 
     in property <[ListViewItem]> model;
     in-out property <int> current-item: -1;
 
     for item[idx] in root.model : ItemDelegate {
+        height: self.min-height;
         selected: idx == root.current-item;
         leading-icon: item.leading-icon;
         text: item.text;
@@ -232,6 +242,13 @@ component StandardListViewBase inherits ListView {
 
         clicked => {
             set-current-item(idx);
+        }
+
+        pointer-event(pe) => {
+            root.item-pointer-event(idx, pe, {
+                x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
+                y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
+            });
         }
     }
 

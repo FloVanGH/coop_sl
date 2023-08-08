@@ -1,0 +1,24 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { PopupBorder, HeaderBar, VerticalBox } from "../_imports/coop-widgets.slint";
+
+export component DialogBase {
+    in property <string> title <=> i-header-bar.title;
+
+    min-width: 128px;
+    min-height: 128px;
+
+    PopupBorder {
+        width: 100%;
+        height: 100%;
+
+        VerticalLayout {
+            i-header-bar := HeaderBar {}
+
+            VerticalBox {
+                @children
+            }
+        }
+    }
+}

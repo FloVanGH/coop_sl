@@ -7,7 +7,7 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
-description = "Local git repository manager."
+description = "File manager with special features."
 publish = false
 repository = "https://codeberg.org/flovansl/coop_sl"
 
@@ -19,6 +19,11 @@ name = "coop_local"
 slint = { git = "https://github.com/slint-ui/slint.git", rev = "a9fa51469c5f0cfe122c5beffba3d54c702770bc", default-features = false, features = ["compat-1-0"] }
 tokio = { version = "1", features = ["full"] }
 
+# file helper crates
+trash = "3.0.2"
+open = "4"
+dirs = "5.0.1"
+
 [build-dependencies]
 slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "a9fa51469c5f0cfe122c5beffba3d54c702770bc" }
 coop_widgets = { path = "../../widgets/coop_widgets" }
@@ -26,3 +31,11 @@ coop_widgets = { path = "../../widgets/coop_widgets" }
 [features]
 default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility"]
 mock = []
+
+[package.metadata.bundle]
+name = "coop_local"
+identifier = "org.flovansl.coop_local"
+icon = ["assets/256x256.png"]
+version = "0.0.1"
+copyright = "Copyright (c) Florian Blasius 2023. All rights reserved."
+short_description = "File manager with special features."
