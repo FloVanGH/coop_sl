@@ -115,9 +115,10 @@ component GroupItemDelegate {
     in-out property <{ parent: int, item: int }> current-item;
     in-out property <bool> expanded: true;
 
+    min-height: max(Size.small, i-layout.min-height);
     forward-focus: i-focus-scope;
 
-    VerticalLayout {
+    i-layout := VerticalLayout {
         spacing: root.expanded ? Space.medium : 0;
 
         i-background := Rectangle {
@@ -128,8 +129,7 @@ component GroupItemDelegate {
                 padding-right: Space.medium;
                 spacing: Space.medium;
 
-                // The item is expandable if it has items.
-                if(root.model.items.length > 0) : Image {
+                Image {
                     y: (parent.height - self.height) / 2;
                     source: Icons.arrow-drop-down;
                     colorize: root.foreground;
@@ -152,8 +152,6 @@ component GroupItemDelegate {
 
             // The item is expandable if it has items.
             i-touch-area := TouchArea {
-                enabled: root.model.items.length > 0;
-
                 clicked => {
                     root.expanded = !root.expanded;
                 }
@@ -186,6 +184,7 @@ component GroupItemDelegate {
                 text: item.text;
                 trailing-icon: item.trailing-icon;
                 selected: root.item-index == root.current-item.parent && item-index == root.current-item.item;
+                height: self.min-height;
 
                 clicked => {
                     root.current-item = { parent: root.item-index, item: item-index };
@@ -303,6 +302,7 @@ export component GroupListView inherits ScrollView  {
                 model: parent-item;
                 item-index: parent-index;
                 current-item <=> root.current-item;
+                height: self.min-height;
 
                 current-item-changed(item) => {
                     root.current-item-changed(item);
