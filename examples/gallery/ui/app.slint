@@ -39,17 +39,17 @@ export component App inherits CoopWindow {
                 property <GroupListViewItem> widgets: {
                     text: "Widgets",
                     items: [
-                        { leading-icon: Icons.home, text: "Basics" },
-                        { leading-icon: Icons.list, text: "Lists" },
-                        { leading-icon: Icons.book, text: "Book flip" },
+                        { leading-icon: Icons.home, text: "Basics", highlighted: true },
+                        { leading-icon: Icons.list, text: "Lists", highlighted: true },
+                        { leading-icon: Icons.book, text: "Book flip", highlighted: true },
                     ]
                 };
 
                 property <GroupListViewItem> resources: {
                     text: "Resources",
                     items: [
-                        { leading-icon: Icons.brush, text: "Brushes" },
-                        { leading-icon: Icons.format-size, text: "Typography" },
+                        { leading-icon: Icons.brush, text: "Brushes", highlighted: true },
+                        { leading-icon: Icons.format-size, text: "Typography", highlighted: true },
                     ]
                 };
 
