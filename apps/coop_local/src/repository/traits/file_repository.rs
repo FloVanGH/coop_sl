@@ -9,8 +9,9 @@ pub trait FileRepository {
     fn remove(&self, file: &FileModel) -> bool;
     fn rename(&self, file: FileModel, new_name: String) -> io::Result<FileModel>;
     fn open(&self, file: FileModel) -> io::Result<()>;
-    fn copy(&self, file: FileModel);
+    fn add_to_clipboard(&self, file: FileModel);
+    fn clear_clipboard(&self);
     fn can_paste(&self) -> bool;
-    fn paste(&self, root: &FileModel) -> io::Result<FileModel>;
+    fn paste(&self, root: &FileModel) -> io::Result<Vec<FileModel>>;
     fn create_new_folder(&self, root: &FileModel, name: String) -> io::Result<FileModel>;
 }

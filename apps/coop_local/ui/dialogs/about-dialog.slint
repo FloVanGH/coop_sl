@@ -1,0 +1,59 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { LineEdit, Button, Space, HorizontalBox, VerticalSeparator, Space, MediumTitle, MediumLabel } from "../_imports/coop-widgets.slint";
+import { AboutSlint } from "std-widgets.slint";
+import { DialogBase } from "dialog-base.slint";
+
+export component AboutDialog inherits DialogBase {
+    callback cancel-clicked <=> i-cancel-button.clicked;
+
+    HorizontalLayout {
+        spacing: Space.medium;
+
+        Rectangle {
+            width: 200px;
+            horizontal-stretch: 1;
+
+            VerticalLayout {
+                spacing: Space.medium;
+                alignment: center;
+
+                Image {
+                    x: (parent.width - self.width) / 2;
+                    width: 128px;
+                    source: @image-url("../../assets/256x256.png");
+                }
+
+                MediumTitle {
+                    horizontal-alignment: center;
+                    text: "coop local";
+                }
+
+                MediumLabel {
+                    horizontal-alignment: center;
+                    text: "Version: 0.0.1";
+                }
+
+            }
+        }
+
+        VerticalSeparator {}
+
+        Rectangle {
+            horizontal-stretch: 1;
+
+            i-about-slint := AboutSlint {}
+        }
+    }
+
+    HorizontalLayout {
+        padding-top: Space.medium;
+        spacing: Space.medium;
+        alignment: end;
+
+        i-cancel-button := Button {
+            text: @tr("Close");
+        }
+    }
+}

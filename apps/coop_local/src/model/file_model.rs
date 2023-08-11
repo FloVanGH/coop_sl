@@ -8,6 +8,8 @@ pub enum FileType {
     Dir,
     Text,
     Image,
+    Audio,
+    Video,
     Unknown,
 }
 
@@ -55,6 +57,10 @@ impl FileModel {
                 "txt" | "slint" | "cpp" | "h" | "hpp" | "md" | "lua" | "java" | "dart" | "toml"
                 | "js" | "rs" | "ts" | "json" | "yml" | "xml" | "xaml" | "cs" | "c" | "sh" => {
                     return FileType::Text
+                }
+                "mp3" | "acc" | "wav" | "flac" => return FileType::Audio,
+                "mp4" | "mov" | "wmv" | "avi" | "avchd" | "flv" | "mpg" | "mpeg" => {
+                    return FileType::Video
                 }
                 _ => return FileType::Unknown,
             }

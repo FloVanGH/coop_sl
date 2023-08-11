@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton, Icons,
-    ContextMenu } from "../_imports/coop-widgets.slint";
+    ContextMenu, SelectionMode } from "../_imports/coop-widgets.slint";
 
 export global FilesAdapter {
     private property <[ListViewItem]> dummy-context-menu: [
@@ -66,12 +66,11 @@ export component FilesView {
             }
 
             i-menu := PopupWindow {
-                x: i-menu-button.x - (72px - i-menu-button.width);
+                x: i-menu-button.x - (128px - i-menu-button.width);
                 y: i-menu-button.y + i-menu-button.height;
-                min-width: 72px;
 
                 ContextMenu {
-                    width: 100%;
+                    min-width: 128px;
                     model: root.main-menu-model;
 
                     item-clicked(index) => {
@@ -94,16 +93,18 @@ export component FilesView {
                 width: root.width;
                 height: 100%;
                 model: files;
-
-                current-item-changed(current-file) => {
-                    FilesAdapter.open(page-index, current-file);
-                }
+                selection-mode: SelectionMode.None;
 
                 item-pointer-event(index, evt, pos) => {
+                    if (evt.kind == PointerEventKind.up && !evt.modifiers.control && evt.button == PointerEventButton.left) {
+                        FilesAdapter.open(page-index, index);
+                        return;
+                    }
+
                     if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
                         root.context-menu-model = FilesAdapter.get-file-context-menu(page-index, index);
 
-                        if(root.context-menu-model.length == 0) {
+                        if (root.context-menu-model.length == 0) {
                             return;
                         }
 

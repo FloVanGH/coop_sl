@@ -163,7 +163,7 @@ pub enum FilesMessage {
         path: String,
     },
     PreviousPage,
-    DisplayAboutDialog,
+    ShowAboutDialog,
 
     // file based operation
     Open {
@@ -181,13 +181,14 @@ pub enum FilesMessage {
         page_index: usize,
         file_model: FileModel,
     },
-    Copy {
+    AddToClipboard {
         file_model: FileModel,
     },
     Paste {
         page_index: usize,
         root: FileModel,
     },
+    ClearClipboard,
     CreateNewFolder {
         page_index: usize,
         root: FileModel,
@@ -240,8 +241,8 @@ async fn handle_message<R>(
         } => {
             tokio::spawn(remove(page_index, file_model, window_handle, repository));
         }
-        FilesMessage::Copy { file_model } => {
-            tokio::spawn(copy(file_model, repository));
+        FilesMessage::AddToClipboard { file_model } => {
+            tokio::spawn(add_to_clipboard(file_model, repository));
         }
 
         FilesMessage::AddBookmark {
@@ -253,7 +254,12 @@ async fn handle_message<R>(
         FilesMessage::Paste { page_index, root } => {
             tokio::spawn(paste(page_index, root, window_handle, repository));
         }
-        FilesMessage::DisplayAboutDialog => todo!(),
+        FilesMessage::ClearClipboard => {
+            tokio::spawn(clear_clipboard(repository));
+        }
+        FilesMessage::ShowAboutDialog => {
+            tokio::spawn(show_about_dialog(dialog_controller));
+        }
         FilesMessage::CreateNewFolder { page_index, root } => {
             tokio::spawn(create_new_folder(
                 page_index,
@@ -419,11 +425,11 @@ async fn remove<R>(
     }
 }
 
-async fn copy<R>(file_model: FileModel, repository: R)
+async fn add_to_clipboard<R>(file_model: FileModel, repository: R)
 where
     R: repository::traits::FileRepository + std::marker::Send + Clone + 'static,
 {
-    repository.copy(file_model);
+    repository.add_to_clipboard(file_model);
 }
 
 async fn paste<R>(
@@ -438,11 +444,28 @@ async fn paste<R>(
         return;
     }
 
-    if let Ok(added_file) = repository.paste(&root) {
+    if let Ok(added_files) = repository.paste(&root) {
         upgrade_proxy_model(window_handle, page_index, move |proxy_model| {
-            proxy_model.push_to_source(added_file);
+            for file in added_files {
+                proxy_model.push_to_source(file);
+            }
         })
     };
+
+    repository.clear_clipboard();
+}
+
+async fn show_about_dialog(dialog_controller: DialogViewController) {
+    dialog_controller
+        .spawn_message(DialogViewMessage::ShowAbout)
+        .await;
+}
+
+async fn clear_clipboard<R>(repository: R)
+where
+    R: repository::traits::FileRepository + std::marker::Send + Clone + 'static,
+{
+    repository.clear_clipboard();
 }
 
 async fn create_new_folder<R>(

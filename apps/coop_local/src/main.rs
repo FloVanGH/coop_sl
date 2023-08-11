@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 use slint::*;
 
-use coop_local::{controller, repository, service::SettingsService, ui};
+use coop_local::{controller, repository, ui};
+
+#[cfg(not(feature = "mock"))]
+use coop_local::service::SettingsService;
 
 pub fn main() -> Result<(), slint::PlatformError> {
     let main_window = ui::MainWindow::new()?;

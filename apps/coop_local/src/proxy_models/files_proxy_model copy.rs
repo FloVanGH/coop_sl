@@ -148,11 +148,7 @@ fn item_type_to_icon(window_handle: &Weak<ui::MainWindow>, item_type: FileType) 
             FileType::Dir => main_window.global::<ui::Icons>().get_filled_folder(),
             FileType::Text => main_window.global::<ui::Icons>().get_filled_description(),
             FileType::Image => main_window.global::<ui::Icons>().get_filled_image(),
-            FileType::Audio => main_window.global::<ui::Icons>().get_filled_audio_file(),
-            FileType::Video => main_window.global::<ui::Icons>().get_filled_video_file(),
-            FileType::Unknown => main_window
-                .global::<ui::Icons>()
-                .get_filled_insert_drive_file(),
+            FileType::Unknown => main_window.global::<ui::Icons>().get_insert_drive_file(),
         };
     }
 

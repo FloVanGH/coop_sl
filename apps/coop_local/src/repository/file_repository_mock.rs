@@ -8,7 +8,7 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
 pub struct FileRepositoryMock {
-    file_to_copy: Arc<Mutex<Option<FileModel>>>,
+    clipboard: Arc<Mutex<Vec<FileModel>>>,
 }
 
 impl Default for FileRepositoryMock {
@@ -20,7 +20,7 @@ impl Default for FileRepositoryMock {
 impl FileRepositoryMock {
     pub fn new() -> Self {
         Self {
-            file_to_copy: Arc::new(Mutex::new(None)),
+            clipboard: Arc::new(Mutex::new(vec![])),
         }
     }
 }
@@ -66,24 +66,39 @@ impl traits::FileRepository for FileRepositoryMock {
         Ok(())
     }
 
-    fn copy(&self, file: FileModel) {
-        if let Ok(mut copy_file) = self.file_to_copy.lock() {
-            *copy_file = Some(file);
+    fn add_to_clipboard(&self, file: FileModel) {
+        if let Ok(mut clipboard) = self.clipboard.lock() {
+            clipboard.push(file);
+        }
+    }
+
+    fn clear_clipboard(&self) {
+        if let Ok(mut clipboard) = self.clipboard.lock() {
+            clipboard.clear();
         }
     }
 
     fn can_paste(&self) -> bool {
-        if let Ok(copy_file) = self.file_to_copy.lock() {
-            return (*copy_file).is_some();
+        if let Ok(clipboard) = self.clipboard.lock() {
+            return !clipboard.is_empty();
         }
 
         false
     }
 
-    fn paste(&self, root: &FileModel) -> io::Result<FileModel> {
-        if let Ok(copy_file) = self.file_to_copy.lock() {
-            if let Some(copy_file) = (*copy_file).as_ref() {
-                return Ok(copy_file.clone());
+    fn paste(&self, root: &FileModel) -> io::Result<Vec<FileModel>> {
+        if root.is_dir() {
+            if let Ok(clipboard) = self.clipboard.lock() {
+                let mut files = vec![];
+
+                for file_to_copy in clipboard.iter() {
+                    let copy_file_path =
+                        root.as_path().join(file_to_copy.name().unwrap_or_default());
+
+                    files.push(FileModel::new(copy_file_path.to_str().unwrap_or_default()));
+                }
+
+                return Ok(files);
             }
         }
 

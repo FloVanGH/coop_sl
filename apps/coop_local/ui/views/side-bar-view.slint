@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { SideBar, GroupListView, GroupListViewItem, ContextMenu, ListViewItem, Icons } from "../_imports/coop-widgets.slint";
+import { SideBar, GroupListView, GroupListViewItem, ContextMenu, ListViewItem, Icons,
+    SelectionMode } from "../_imports/coop-widgets.slint";
 
 export global SideBarAdapter {
     private property <[ListViewItem]> dummy-context-menu: [
@@ -48,13 +49,15 @@ export component SideBarView inherits SideBar {
         vertical-stretch: 1;
         model: SideBarAdapter.bookmarks;
         current-item <=> SideBarAdapter.current-bookmark;
+        selection-mode: SelectionMode.None;
 
-        current-item-changed(current-item) => {
-            root.expanded = false;
-            SideBarAdapter.open(current-item.parent, current-item.item);
-         }
+        item-pointer-event(parent-index, index, evt, pos) => {
+            if (evt.kind == PointerEventKind.up && !evt.modifiers.control && evt.button == PointerEventButton.left) {
+                root.expanded = false;
+                SideBarAdapter.open(parent-index, index);
+                return;
+            }
 
-         item-pointer-event(parent-index, index, evt, pos) => {
             if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
                 root.context-menu-model = SideBarAdapter.get-context-menu(parent-index, index);
 

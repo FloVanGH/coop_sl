@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
 pub struct FileRepository {
-    file_to_copy: Arc<Mutex<Option<FileModel>>>,
+    clipboard: Arc<Mutex<Vec<FileModel>>>,
 }
 
 impl Default for FileRepository {
@@ -21,7 +21,7 @@ impl Default for FileRepository {
 impl FileRepository {
     pub fn new() -> Self {
         Self {
-            file_to_copy: Arc::new(Mutex::new(None)),
+            clipboard: Arc::new(Mutex::new(vec![])),
         }
     }
 }
@@ -73,25 +73,33 @@ impl traits::FileRepository for FileRepository {
         open::that(file_model.path())
     }
 
-    fn copy(&self, file: FileModel) {
-        if let Ok(mut copy_file) = self.file_to_copy.lock() {
-            *copy_file = Some(file);
+    fn add_to_clipboard(&self, file: FileModel) {
+        if let Ok(mut clipboard) = self.clipboard.lock() {
+            clipboard.push(file);
+        }
+    }
+
+    fn clear_clipboard(&self) {
+        if let Ok(mut clipboard) = self.clipboard.lock() {
+            clipboard.clear();
         }
     }
 
     fn can_paste(&self) -> bool {
         // FIXME: check current root dir is not readonly
-        if let Ok(copy_file) = self.file_to_copy.lock() {
-            return (*copy_file).is_some();
+        if let Ok(clipboard) = self.clipboard.lock() {
+            return !clipboard.is_empty();
         }
 
         false
     }
 
-    fn paste(&self, root: &FileModel) -> io::Result<FileModel> {
+    fn paste(&self, root: &FileModel) -> io::Result<Vec<FileModel>> {
         if root.is_dir() {
-            if let Ok(file_to_copy) = self.file_to_copy.lock() {
-                if let Some(file_to_copy) = (*file_to_copy).as_ref() {
+            if let Ok(clipboard) = self.clipboard.lock() {
+                let mut files = vec![];
+
+                for file_to_copy in clipboard.iter() {
                     let mut copy_file_path =
                         root.as_path().join(file_to_copy.name().unwrap_or_default());
                     let mut counter: i32 = -1;
@@ -123,8 +131,10 @@ impl traits::FileRepository for FileRepository {
 
                     fs::copy(file_to_copy.path(), copy_file_path.as_path())?;
 
-                    return Ok(FileModel::new(copy_file_path.to_str().unwrap_or_default()));
+                    files.push(FileModel::new(copy_file_path.to_str().unwrap_or_default()));
                 }
+
+                return Ok(files);
             }
         }
 

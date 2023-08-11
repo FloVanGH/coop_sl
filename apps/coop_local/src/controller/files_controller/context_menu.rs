@@ -12,9 +12,10 @@ use std::rc::Rc;
 const OPEN: &str = "open";
 const RENAME: &str = "rename";
 const REMOVE: &str = "remove";
-const COPY: &str = "copy";
+const ADD_TO_CLIPBOARD: &str = "add-to-clipboard";
 const ADD_BOOKMARK: &str = "add-to-favorites";
 const PASTE: &str = "paste";
+const CLEAR_CLIPBOARD: &str = "clear-clipboard";
 const NEW_FOLDER: &str = "new-folder";
 const ABOUT: &str = "about";
 
@@ -22,23 +23,27 @@ pub fn on_main_menu_action(controller: FilesController, main_window: &ui::MainWi
     main_window
         .global::<ui::FilesAdapter>()
         .on_main_menu_action(move |page_index, action| match action.as_str() {
-            PASTE => {
-                if let Some(root) = controller.get_root(page_index as usize) {
-                    controller.spawn_message(FilesMessage::Paste {
-                        page_index: page_index as usize,
-                        root,
-                    })
-                }
-            }
             NEW_FOLDER => {
                 if let Some(root) = controller.get_root(page_index as usize) {
                     controller.spawn_message(FilesMessage::CreateNewFolder {
                         page_index: page_index as usize,
                         root,
-                    })
+                    });
                 }
             }
-            ABOUT => controller.spawn_message(FilesMessage::DisplayAboutDialog),
+            CLEAR_CLIPBOARD => {
+                controller.spawn_message(FilesMessage::ClearClipboard);
+            }
+            PASTE => {
+                if let Some(root) = controller.get_root(page_index as usize) {
+                    controller.spawn_message(FilesMessage::Paste {
+                        page_index: page_index as usize,
+                        root,
+                    });
+                }
+            }
+
+            ABOUT => controller.spawn_message(FilesMessage::ShowAboutDialog),
             _ => {}
         });
 }
@@ -49,20 +54,25 @@ where
 {
     let items = VecModel::default();
 
-    if repository.can_paste() {
-        items.push(ui::ListViewItem {
-            text: "Paste".into(),
-            spec: PASTE.into(),
-            ..Default::default()
-        });
-    }
-
     // FIXME: only on writable roots
     items.push(ui::ListViewItem {
         text: "New folder".into(),
         spec: NEW_FOLDER.into(),
         ..Default::default()
     });
+
+    if repository.can_paste() {
+        items.push(ui::ListViewItem {
+            text: "Paste".into(),
+            spec: PASTE.into(),
+            ..Default::default()
+        });
+        items.push(ui::ListViewItem {
+            text: "Clear clipboard".into(),
+            spec: CLEAR_CLIPBOARD.into(),
+            ..Default::default()
+        });
+    }
 
     items.push(ui::ListViewItem {
         text: "About".into(),
@@ -106,11 +116,11 @@ pub fn on_context_menu_action(controller: FilesController, main_window: &ui::Mai
                         });
                     }
                 }
-                COPY => {
+                ADD_TO_CLIPBOARD => {
                     if let Some(file_model) =
                         controller.get_file_model(page_index as usize, file_index as usize)
                     {
-                        controller.spawn_message(FilesMessage::Copy { file_model });
+                        controller.spawn_message(FilesMessage::AddToClipboard { file_model });
                     }
                 }
                 ADD_BOOKMARK => controller.spawn_message(FilesMessage::AddBookmark {
@@ -147,8 +157,8 @@ pub fn get_context_menu(file: &FileModel) -> ModelRc<ui::ListViewItem> {
         }
     }
     items.push(ui::ListViewItem {
-        text: "Copy".into(),
-        spec: COPY.into(),
+        text: "Add to clipboard".into(),
+        spec: ADD_TO_CLIPBOARD.into(),
         ..Default::default()
     });
 
