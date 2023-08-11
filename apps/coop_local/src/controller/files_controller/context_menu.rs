@@ -13,7 +13,7 @@ const OPEN: &str = "open";
 const RENAME: &str = "rename";
 const REMOVE: &str = "remove";
 const COPY: &str = "copy";
-const ADD_TO_FAVORITES: &str = "add-to-favorites";
+const ADD_BOOKMARK: &str = "add-to-favorites";
 const PASTE: &str = "paste";
 const NEW_FOLDER: &str = "new-folder";
 const ABOUT: &str = "about";
@@ -113,7 +113,7 @@ pub fn on_context_menu_action(controller: FilesController, main_window: &ui::Mai
                         controller.spawn_message(FilesMessage::Copy { file_model });
                     }
                 }
-                ADD_TO_FAVORITES => controller.spawn_message(FilesMessage::AddToFavorites {
+                ADD_BOOKMARK => controller.spawn_message(FilesMessage::AddBookmark {
                     page_index: page_index as usize,
                     file_index: file_index as usize,
                 }),
@@ -154,8 +154,8 @@ pub fn get_context_menu(file: &FileModel) -> ModelRc<ui::ListViewItem> {
 
     if file.file_type().eq(&FileType::Dir) {
         items.push(ui::ListViewItem {
-            text: "Add to favorites".into(),
-            spec: ADD_TO_FAVORITES.into(),
+            text: "Add bookmark".into(),
+            spec: ADD_BOOKMARK.into(),
             ..Default::default()
         });
     }

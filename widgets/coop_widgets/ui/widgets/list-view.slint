@@ -109,6 +109,7 @@ component GroupItemDelegate {
     private property <brush> foreground: Palette.foreground;
 
     callback current-item-changed(/* current-item */ { parent: int, item: int });
+    callback item-pointer-event(/* item-index */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
 
     in property <GroupListViewItem> model;
     in property <int> item-index;
@@ -191,6 +192,13 @@ component GroupItemDelegate {
                     root.current-item-changed(root.current-item);
                 }
 
+                pointer-event(pe) => {
+                    root.item-pointer-event(item-index, pe, {
+                        x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
+                        y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
+                    });
+                }
+
                 states [
                     collapsed when !root.expanded : {
                         height: 0;
@@ -226,25 +234,25 @@ component StandardListViewBase inherits ListView {
     private property <length> current-item-y: self.viewport-y + current-item * item-height;
 
     callback current-item-changed(/* current-item */ int);
-    callback item-pointer-event(int /* item-index */, PointerEvent /* event */, Point /* absolute mouse position */);
+    callback item-pointer-event(/* item-index */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
 
     in property <[ListViewItem]> model;
     in-out property <int> current-item: -1;
 
-    for item[idx] in root.model : ItemDelegate {
+    for item[index] in root.model : ItemDelegate {
         height: self.min-height;
-        selected: idx == root.current-item;
+        selected: index == root.current-item;
         leading-icon: item.leading-icon;
         text: item.text;
         trailing-icon: item.trailing-icon;
         highlighted: item.highlighted;
 
         clicked => {
-            set-current-item(idx);
+            set-current-item(index);
         }
 
         pointer-event(pe) => {
-            root.item-pointer-event(idx, pe, {
+            root.item-pointer-event(index, pe, {
                 x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
                 y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
             });
@@ -290,6 +298,7 @@ export component StandardListView inherits StandardListViewBase {
 
 export component GroupListView inherits ScrollView  {
     callback current-item-changed(/* current-item */ { parent: int, item: int });
+    callback item-pointer-event(int /* parent-index */, int /* item-index */, PointerEvent /* event */, Point /* absolute mouse position */);
 
     in property <[GroupListViewItem]> model;
     in-out property <{ parent: int, item: int }> current-item;
@@ -306,6 +315,13 @@ export component GroupListView inherits ScrollView  {
 
                 current-item-changed(item) => {
                     root.current-item-changed(item);
+                }
+
+                item-pointer-event(index, event, position) => {
+                    root.item-pointer-event(parent-index, index, event, {
+                        x: position.x,
+                        y: position.y,
+                    });
                 }
             }
         }

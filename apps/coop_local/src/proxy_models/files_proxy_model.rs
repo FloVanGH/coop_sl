@@ -5,10 +5,11 @@ use crate::model::{FileModel, FileType};
 use crate::ui;
 use slint::{ComponentHandle, Image, Model, ModelExt, ModelRc, VecModel, Weak};
 
+use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct FilesProxyModel {
-    root: FileModel,
+    root: Rc<RefCell<FileModel>>,
     source: Rc<VecModel<FileModel>>,
     wrapped_model: ModelRc<FileModel>,
     window_handle: Weak<ui::MainWindow>,
@@ -23,22 +24,35 @@ impl FilesProxyModel {
         let source = Rc::new(VecModel::from(files));
 
         Self {
-            root,
+            root: Rc::new(RefCell::new(root)),
             source: source.clone(),
             wrapped_model: source.into(),
             window_handle,
         }
     }
 
-    pub fn get(&self, index: usize) -> Option<FileModel> {
+    /// Gets the `FileModel` from the inner wrapped model.
+    pub fn row_data_as_file_model(&self, index: usize) -> Option<FileModel> {
         self.wrapped_model.row_data(index)
     }
 
-    pub fn set(&self, index: usize, new_file_model: FileModel) {
+    /// Sets a new `FileModel` on the given index of the wrapped model.
+    pub fn set_row_data_as_file_model(&self, index: usize, new_file_model: FileModel) {
         self.wrapped_model.set_row_data(index, new_file_model);
     }
 
-    pub fn remove_item(&self, file_model: FileModel) -> Option<FileModel> {
+    /// Gets the `FileModel` from the source model.
+    pub fn row_data_from_source(&self, index: usize) -> Option<FileModel> {
+        self.source.row_data(index)
+    }
+
+    /// Sets a new `FileModel` on the given index of the source model.
+    pub fn set_row_data_source(&self, index: usize, new_file_model: FileModel) {
+        self.source.set_row_data(index, new_file_model);
+    }
+
+    /// Removes the given item from the source model.
+    pub fn remove_from_source(&self, file_model: FileModel) -> Option<FileModel> {
         for i in 0..self.source.row_count() {
             if let Some(source_file_model) = self.source.row_data(i) {
                 if !source_file_model.eq(&file_model) {
@@ -52,12 +66,22 @@ impl FilesProxyModel {
         None
     }
 
-    pub fn root(&self) -> &FileModel {
-        &self.root
+    pub fn set_root(&self, root: FileModel) {
+        *self.root.borrow_mut() = root;
     }
 
-    pub fn push(&self, file_model: FileModel) {
+    pub fn root(&self) -> FileModel {
+        self.root.borrow().clone()
+    }
+
+    /// Pushes the given `FileModel` on the source model.
+    pub fn push_to_source(&self, file_model: FileModel) {
         self.source.push(file_model);
+    }
+
+    /// Returns the  `row_count` of the source model.
+    pub fn row_count_source(&self) -> usize {
+        self.source.row_count()
     }
 
     pub fn as_sort_by<F>(&self, sort_function: F) -> FilesProxyModel
@@ -82,6 +106,10 @@ impl FilesProxyModel {
             wrapped_model: Rc::new(self.wrapped_model.clone().filter(filter_function)).into(),
             window_handle: self.window_handle.clone(),
         }
+    }
+
+    pub fn clear(&self) {
+        self.source.set_vec(vec![]);
     }
 }
 

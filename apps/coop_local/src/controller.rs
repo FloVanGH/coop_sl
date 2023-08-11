@@ -6,3 +6,6 @@ pub use files_controller::*;
 
 mod dialog_view_controller;
 pub use dialog_view_controller::*;
+
+mod side_bar_controller;
+pub use side_bar_controller::*;

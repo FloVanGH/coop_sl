@@ -3,6 +3,7 @@
 
 use super::traits;
 use crate::model::{self, FileModel};
+use std::io;
 use std::sync::{Arc, Mutex};
 
 #[derive(Clone)]
@@ -25,8 +26,8 @@ impl FileRepositoryMock {
 }
 
 impl traits::FileRepository for FileRepositoryMock {
-    fn files(&self, root: &FileModel) -> Option<Vec<FileModel>> {
-        Some(match root.path() {
+    fn files(&self, root: &FileModel) -> io::Result<Vec<FileModel>> {
+        Ok(match root.path() {
             "/docs" => {
                 let mut items = vec![FileModel::new("/docs/basics")];
 
@@ -55,8 +56,8 @@ impl traits::FileRepository for FileRepositoryMock {
         true
     }
 
-    fn rename(&self, _file_model: FileModel, new_name: String) -> Option<FileModel> {
-        Some(FileModel::new(new_name))
+    fn rename(&self, _file_model: FileModel, new_name: String) -> io::Result<FileModel> {
+        Ok(FileModel::new(new_name))
     }
 
     fn open(&self, file_model: FileModel) -> std::io::Result<()> {
@@ -79,18 +80,21 @@ impl traits::FileRepository for FileRepositoryMock {
         false
     }
 
-    fn paste(&self, _root: &FileModel) -> Option<FileModel> {
+    fn paste(&self, root: &FileModel) -> io::Result<FileModel> {
         if let Ok(copy_file) = self.file_to_copy.lock() {
             if let Some(copy_file) = (*copy_file).as_ref() {
-                return Some(copy_file.clone());
+                return Ok(copy_file.clone());
             }
         }
 
-        None
+        Err(io::Error::new(
+            io::ErrorKind::Other,
+            format!("Cannot paste file to {}", root.path()),
+        ))
     }
 
-    fn create_new_folder(&self, root: &FileModel, name: String) -> Option<FileModel> {
-        Some(FileModel::new(
+    fn create_new_folder(&self, root: &FileModel, name: String) -> io::Result<FileModel> {
+        Ok(FileModel::new(
             root.as_path()
                 .join(name)
                 .as_path()

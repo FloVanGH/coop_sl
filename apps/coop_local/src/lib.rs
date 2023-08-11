@@ -5,4 +5,5 @@ pub mod controller;
 pub mod model;
 pub mod proxy_models;
 pub mod repository;
+pub mod service;
 pub mod ui;

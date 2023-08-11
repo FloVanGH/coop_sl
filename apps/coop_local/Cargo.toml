@@ -16,16 +16,21 @@ path = "src/main.rs"
 name = "coop_local"
 
 [dependencies]
-slint = { git = "https://github.com/slint-ui/slint.git", rev = "a9fa51469c5f0cfe122c5beffba3d54c702770bc", default-features = false, features = ["compat-1-0"] }
+slint = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd", default-features = false, features = ["compat-1-0"] }
 tokio = { version = "1", features = ["full"] }
+
+# save and load settings
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.7.4"
 
 # file helper crates
 trash = "3.0.2"
 open = "4"
 dirs = "5.0.1"
+fs_at = "0.1"
 
 [build-dependencies]
-slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "a9fa51469c5f0cfe122c5beffba3d54c702770bc" }
+slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }
 coop_widgets = { path = "../../widgets/coop_widgets" }
 
 [features]

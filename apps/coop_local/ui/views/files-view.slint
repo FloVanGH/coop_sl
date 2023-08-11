@@ -17,6 +17,7 @@ export global FilesAdapter {
     callback previous-page();
 
     // file callbacks
+    callback show(/* path */ string);
     callback open(/* page */ int, /* file */ int);
     callback get-file-context-menu(/* page */ int, /* file */ int) -> [ListViewItem];
     callback context-menu-action(/* page */ int, /* file */ int, /* action */ string);
@@ -55,7 +56,7 @@ export component FilesView {
             title: FilesAdapter.title;
 
             i-menu-button := RoundButton {
-                icon: Icons.menu;
+                icon: Icons.more-vert;
                 horizontal-stretch: 0;
 
                 clicked => {
@@ -101,6 +102,11 @@ export component FilesView {
                 item-pointer-event(index, evt, pos) => {
                     if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
                         root.context-menu-model = FilesAdapter.get-file-context-menu(page-index, index);
+
+                        if(root.context-menu-model.length == 0) {
+                            return;
+                        }
+
                         root.context-menu-x = pos.x;
                         root.context-menu-y = pos.y;
                         root.context-menu-page-index = page-index;

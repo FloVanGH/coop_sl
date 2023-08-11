@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 # SPDX-License-Identifier: MIT
 
-pipeline:
+steps:
   deploy_docs_coop_widgets:
     group: docs
     image: rust
@@ -13,7 +13,7 @@ pipeline:
       - OUTPUT=target/doc
     commands:
       - apt-get update && apt-get install -y cmake
-    
+
       - cargo doc --no-deps -p coop_widgets
       # Git configuration
       - git config --global user.email $MAIL
@@ -21,7 +21,7 @@ pipeline:
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
       - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
-    
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .
@@ -54,7 +54,7 @@ pipeline:
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
       - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
-    
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .
@@ -87,7 +87,7 @@ pipeline:
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
       - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
-    
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .
@@ -120,7 +120,7 @@ pipeline:
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
       - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
-    
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .
@@ -153,7 +153,7 @@ pipeline:
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
       - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
-    
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .
@@ -186,7 +186,7 @@ pipeline:
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
       - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
-    
+
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
       - git add .

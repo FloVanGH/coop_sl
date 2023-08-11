@@ -10,6 +10,9 @@ export { FilesAdapter }
 import { DialogView, DialogViewAdapter } from "views/dialog-view.slint";
 export { DialogViewAdapter }
 
+import { SideBarView, SideBarAdapter } from "views/side-bar-view.slint";
+export { SideBarAdapter }
+
 // export component Logo {
 //     Rectangle {
 //         border-width: 1px;
@@ -29,16 +32,29 @@ export { DialogViewAdapter }
 
 export component MainWindow inherits CoopWindow {
     title: "coop local";
-    min-width: 600px;
+    min-width: 316px;
     min-height: 400px;
+    preferred-width: 600px;
 
-    FilesView {
-        width: 100%;
-        height: 100%;
-    }
+    GridLayout {
+        Rectangle {
+            col: 1;
 
-    DialogView {
-        width: 100%;
-        height: 100%;
+            FilesView {
+                width: 100%;
+                height: 100%;
+            }
+
+            DialogView {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        SideBarView {
+            col: 0;
+            parent-width: root.width;
+            responsive: true;
+        }
     }
 }

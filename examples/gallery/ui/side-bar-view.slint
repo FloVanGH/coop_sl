@@ -9,6 +9,7 @@ export component SideBarView inherits SideBar {
 
     i-navigation := GroupListView {
         vertical-stretch: 1;
+        current-item: { item: -1, parent: -1 };
 
         current-item-changed => {
             root.expanded = false;

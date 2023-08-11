@@ -9,7 +9,7 @@ use slint::*;
 use std::io;
 use std::rc::Rc;
 use tokio::runtime::Builder;
-use tokio::sync::mpsc;
+use tokio::sync::{mpsc, oneshot};
 
 mod context_menu;
 
@@ -30,12 +30,13 @@ impl FilesController {
     {
         let rt = Builder::new_current_thread().enable_all().build()?;
         let (send, mut recv) = mpsc::channel(16);
+
         let controller = Self {
             window_handle: main_window.as_weak(),
             spawn: send,
         };
 
-        connect_callback_handlers(&controller, &repository, main_window);
+        init(&controller, &repository, main_window);
 
         std::thread::spawn({
             let window_handle = main_window.as_weak();
@@ -68,7 +69,7 @@ impl FilesController {
                     .as_any()
                     .downcast_ref::<proxy_models::FilesProxyModel>()
                 {
-                    return files_proxy.get(file_index);
+                    return files_proxy.row_data_as_file_model(file_index);
                 }
             }
         }
@@ -102,11 +103,8 @@ impl FilesController {
 
 // setup
 
-fn connect_callback_handlers<R>(
-    controller: &FilesController,
-    repository: &R,
-    main_window: &ui::MainWindow,
-) where
+fn init<R>(controller: &FilesController, repository: &R, main_window: &ui::MainWindow)
+where
     R: repository::traits::FileRepository + Clone + std::marker::Send + 'static,
 {
     let adapter: ui::FilesAdapter<'_> = main_window.global::<ui::FilesAdapter>();
@@ -149,6 +147,12 @@ fn connect_callback_handlers<R>(
         }
     });
 
+    adapter.on_show({
+        let controller = controller.clone();
+
+        move |path| controller.spawn_message(FilesMessage::Load { path: path.into() })
+    });
+
     context_menu::on_main_menu_action(controller.clone(), main_window);
     context_menu::on_context_menu_action(controller.clone(), main_window);
 }
@@ -188,10 +192,11 @@ pub enum FilesMessage {
         page_index: usize,
         root: FileModel,
     },
-    AddToFavorites {
+    AddBookmark {
         page_index: usize,
         file_index: usize,
     },
+    CheckForModifications,
 }
 
 async fn handle_message<R>(
@@ -239,7 +244,12 @@ async fn handle_message<R>(
             tokio::spawn(copy(file_model, repository));
         }
 
-        FilesMessage::AddToFavorites { .. } => todo!(),
+        FilesMessage::AddBookmark {
+            page_index,
+            file_index,
+        } => {
+            tokio::spawn(add_bookmark(page_index, file_index, window_handle));
+        }
         FilesMessage::Paste { page_index, root } => {
             tokio::spawn(paste(page_index, root, window_handle, repository));
         }
@@ -253,6 +263,9 @@ async fn handle_message<R>(
                 window_handle,
             ));
         }
+        FilesMessage::CheckForModifications => {
+            tokio::spawn(check_for_modifications(repository, window_handle));
+        }
     };
 }
 
@@ -260,7 +273,15 @@ async fn load<R>(root: FileModel, window_handle: Weak<ui::MainWindow>, repositor
 where
     R: repository::traits::FileRepository + std::marker::Send + 'static,
 {
-    if let Some(files) = repository.files(&root) {
+    // don't open same page twice
+    let window_handle_clone = window_handle.clone();
+    if let Some(current_root) = current_root_async(window_handle_clone).await {
+        if root.eq(&current_root) {
+            return;
+        }
+    }
+
+    if let Ok(files) = repository.files(&root) {
         upgrade_adapter(window_handle.clone(), move |adapter| {
             let adapter_files = adapter.get_files();
             let current_page = adapter.get_current_page();
@@ -331,9 +352,7 @@ where
         FileType::Dir => {
             tokio::spawn(load(file, window_handle, repository));
         }
-        FileType::Text => todo!(),
-        FileType::Image => todo!(),
-        FileType::Unknown => todo!(),
+        _ => {}
     }
 }
 
@@ -373,9 +392,9 @@ async fn rename_file<R>(
                     return;
                 }
 
-                if let Some(updated_file) = repository.rename(file_model, new_name) {
+                if let Ok(updated_file) = repository.rename(file_model, new_name) {
                     upgrade_proxy_model(window_handle, page_index, move |proxy_model| {
-                        proxy_model.set(file_index, updated_file);
+                        proxy_model.set_row_data_as_file_model(file_index, updated_file);
                     });
                 }
             }
@@ -395,7 +414,7 @@ async fn remove<R>(
 {
     if repository.remove(&file_model) {
         upgrade_proxy_model(window_handle, page_index, move |proxy_model| {
-            proxy_model.remove_item(file_model);
+            proxy_model.remove_from_source(file_model);
         });
     }
 }
@@ -419,9 +438,9 @@ async fn paste<R>(
         return;
     }
 
-    if let Some(added_file) = repository.paste(&root) {
+    if let Ok(added_file) = repository.paste(&root) {
         upgrade_proxy_model(window_handle, page_index, move |proxy_model| {
-            proxy_model.push(added_file);
+            proxy_model.push_to_source(added_file);
         })
     };
 }
@@ -453,9 +472,9 @@ async fn create_new_folder<R>(
                     return;
                 }
 
-                if let Some(new_folder) = repository.create_new_folder(&root, folder_name) {
+                if let Ok(new_folder) = repository.create_new_folder(&root, folder_name) {
                     upgrade_proxy_model(window_handle, page_index, move |proxy_model| {
-                        proxy_model.push(new_folder);
+                        proxy_model.push_to_source(new_folder);
                     });
                 }
             }
@@ -465,7 +484,95 @@ async fn create_new_folder<R>(
     }
 }
 
+async fn check_for_modifications<R>(repository: R, window_handle: Weak<ui::MainWindow>)
+where
+    R: repository::traits::FileRepository + std::marker::Send + 'static,
+{
+    let window_handle_share = window_handle.clone();
+    if let Some(root) = current_root_async(window_handle_share).await {
+        if let Ok(mut files) = repository.files(&root) {
+            upgrade_adapter(window_handle, move |adapter| {
+                let current_page: usize = adapter.get_current_page() as usize;
+                if let Some(model) = adapter.get_files().row_data(current_page) {
+                    if let Some(proxy_model) = model
+                        .as_any()
+                        .downcast_ref::<proxy_models::FilesProxyModel>()
+                    {
+                        // if !root.modified() {
+                        //     return;
+                        // }
+
+                        // proxy_model.set_root(root.clone());
+
+                        if !files.is_empty() {
+                            for row in 0..proxy_model.row_count_source() {
+                                if let Some(file_model) = proxy_model.row_data_from_source(row) {
+                                    if files.contains(&file_model) {
+                                        files.remove(
+                                            files.iter().position(|f| f.eq(&file_model)).unwrap(),
+                                        );
+                                        continue;
+                                    }
+
+                                    // file is no longer in the real directory but still in the ui (remove it)
+                                    proxy_model.remove_from_source(file_model);
+                                }
+                            }
+
+                            // add new files to proxy
+                            for file in files {
+                                proxy_model.push_to_source(file);
+                            }
+                            return;
+                        }
+
+                        // clears the proxy if there are no more files left
+                        proxy_model.clear();
+                    }
+                }
+            });
+        }
+    }
+}
+
+async fn add_bookmark(page_index: usize, file_index: usize, window_handle: Weak<ui::MainWindow>) {
+    let _ = window_handle.upgrade_in_event_loop(move |main_window| {
+        if let Some(files) = main_window
+            .global::<ui::FilesAdapter>()
+            .get_files()
+            .row_data(page_index)
+        {
+            if let Some(files_proxy) = files
+                .as_any()
+                .downcast_ref::<proxy_models::FilesProxyModel>()
+            {
+                if let Some(file_model) = files_proxy.row_data_as_file_model(file_index) {
+                    main_window
+                        .global::<ui::SideBarAdapter>()
+                        .invoke_add_bookmark(file_model.path().into());
+                }
+            }
+        }
+    });
+}
+
 // helper
+
+async fn current_root_async(window_handle: Weak<ui::MainWindow>) -> Option<FileModel> {
+    let (tx, rx) = oneshot::channel();
+
+    upgrade_adapter(window_handle, |adapter| {
+        let current_page = adapter.get_current_page();
+
+        let _ = tx.send(get_root(current_page as usize, &adapter));
+    });
+
+    if let Ok(root) = rx.await {
+        return root;
+    }
+
+    None
+}
 
 fn upgrade_adapter(
     window_handle: Weak<ui::MainWindow>,
