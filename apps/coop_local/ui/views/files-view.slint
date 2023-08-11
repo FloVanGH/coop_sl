@@ -4,6 +4,8 @@
 import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton, Icons,
     ContextMenu, SelectionMode } from "../_imports/coop-widgets.slint";
 
+import { TextView } from "text-view.slint";
+
 export global FilesAdapter {
     private property <[ListViewItem]> dummy-context-menu: [
         { text: "Rename" },
@@ -35,6 +37,10 @@ export global FilesAdapter {
     in-out property <int> current-page;
     in property <string> title;
 
+    // text-view
+    in property <bool> text-view-visible;
+    in-out property <string> text-view-text;
+
     // only used for preview
     get-file-context-menu => {
        dummy-context-menu
@@ -52,7 +58,7 @@ export component FilesView {
     VerticalLayout {
         HeaderBar {
             action-icon:  Icons.arrow-back;
-            action-enabled: FilesAdapter.current-page > 0;
+            action-enabled: FilesAdapter.current-page > 0 || FilesAdapter.text-view-visible;
             title: FilesAdapter.title;
 
             i-menu-button := RoundButton {
@@ -87,47 +93,59 @@ export component FilesView {
         Carousel {
             width: 100%;
             vertical-stretch: 1;
-            current-page <=> FilesAdapter.current-page;
+            current-page: FilesAdapter.text-view-visible ? 1 : 0;
 
-            for files[page-index] in FilesAdapter.files : StandardListView {
+            Carousel {
                 width: root.width;
                 height: 100%;
-                model: files;
-                selection-mode: SelectionMode.None;
+                current-page <=> FilesAdapter.current-page;
 
-                item-pointer-event(index, evt, pos) => {
-                    if (evt.kind == PointerEventKind.up && !evt.modifiers.control && evt.button == PointerEventButton.left) {
-                        FilesAdapter.open(page-index, index);
-                        return;
-                    }
+                for files[page-index] in FilesAdapter.files : StandardListView {
+                    width: root.width;
+                    height: 100%;
+                    model: files;
+                    selection-mode: SelectionMode.None;
 
-                    if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
-                        root.context-menu-model = FilesAdapter.get-file-context-menu(page-index, index);
-
-                        if (root.context-menu-model.length == 0) {
+                    item-pointer-event(index, evt, pos) => {
+                        if (evt.kind == PointerEventKind.up && !evt.modifiers.control && evt.button == PointerEventButton.left) {
+                            FilesAdapter.open(page-index, index);
                             return;
                         }
 
-                        root.context-menu-x = pos.x;
-                        root.context-menu-y = pos.y;
-                        root.context-menu-page-index = page-index;
-                        root.context-menu-item-index = index;
-                        i-context-menu.show();
+                        if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
+                            root.context-menu-model = FilesAdapter.get-file-context-menu(page-index, index);
+
+                            if (root.context-menu-model.length == 0) {
+                                return;
+                            }
+
+                            root.context-menu-x = pos.x;
+                            root.context-menu-y = pos.y;
+                            root.context-menu-page-index = page-index;
+                            root.context-menu-item-index = index;
+                            i-context-menu.show();
+                        }
                     }
-                }
 
-                i-context-menu := PopupWindow {
-                    x: root.context-menu-x;
-                    y: root.context-menu-y;
+                    i-context-menu := PopupWindow {
+                        x: root.context-menu-x;
+                        y: root.context-menu-y;
 
-                    ContextMenu {
-                        model: root.context-menu-model;
+                        ContextMenu {
+                            model: root.context-menu-model;
 
-                        item-clicked(index) => {
-                            FilesAdapter.context-menu-action(root.context-menu-page-index, root.context-menu-item-index, self.model[index].spec);
+                            item-clicked(index) => {
+                                FilesAdapter.context-menu-action(root.context-menu-page-index, root.context-menu-item-index, self.model[index].spec);
+                            }
                         }
                     }
                 }
+            }
+
+            if(FilesAdapter.text-view-visible) : TextView {
+                text <=> FilesAdapter.text-view-text;
+                width: root.width;
+                height: 100%;
             }
         }
     }

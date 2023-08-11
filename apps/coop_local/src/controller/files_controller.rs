@@ -6,8 +6,9 @@ use crate::model::{FileModel, FileType};
 use crate::proxy_models::FilesProxyModel;
 use crate::{proxy_models, repository, ui};
 use slint::*;
-use std::io;
+use std::io::Read;
 use std::rc::Rc;
+use std::{fs, io};
 use tokio::runtime::Builder;
 use tokio::sync::{mpsc, oneshot};
 
@@ -325,6 +326,16 @@ where
 
 async fn previous_page(window_handle: Weak<ui::MainWindow>) {
     upgrade_adapter(window_handle.clone(), move |adapter| {
+        if adapter.get_text_view_visible() {
+            adapter.set_text_view_visible(false);
+            let current_page = adapter.get_current_page();
+            if let Some(root) = get_root(current_page as usize, &adapter) {
+                adapter.set_title(root.name().unwrap_or_default().into());
+            }
+
+            return;
+        }
+
         let current_page = adapter.get_current_page();
         let number_of_pages = adapter.get_files().row_count() as i32;
 
@@ -357,6 +368,9 @@ where
     match file.file_type() {
         FileType::Dir => {
             tokio::spawn(load(file, window_handle, repository));
+        }
+        FileType::Text => {
+            tokio::spawn(open_text_view(file, window_handle));
         }
         _ => {}
     }
@@ -595,6 +609,19 @@ async fn current_root_async(window_handle: Weak<ui::MainWindow>) -> Option<FileM
     }
 
     None
+}
+
+async fn open_text_view(file_model: FileModel, window_handle: Weak<ui::MainWindow>) {
+    if let Ok(mut file) = fs::File::open(file_model.as_path()) {
+        let mut text = String::default();
+        if file.read_to_string(&mut text).is_ok() {
+            upgrade_adapter(window_handle, move |adapter| {
+                adapter.set_text_view_text(text.into());
+                adapter.set_text_view_visible(true);
+                adapter.set_title(file_model.name().unwrap_or_default().into());
+            });
+        }
+    }
 }
 
 fn upgrade_adapter(

@@ -1,0 +1,46 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { ScrollView, Space, Palette, Typography } from "../_imports/coop-widgets.slint";
+
+export component TextView {
+    private property <length> visible-width <=> i-scroll-view.visible-width;
+    private property <length> visible-height <=> i-scroll-view.visible-height;
+    private property <length> viewport-x <=> i-scroll-view.viewport-x;
+    private property <length> viewport-y <=> i-scroll-view.viewport-y;
+    in-out property <length> viewport-width <=> i-scroll-view.viewport-width;
+    in-out property <length> viewport-height <=> i-scroll-view.viewport-height;
+    in-out property <string> text <=> i-text-input.text;
+
+    i-scroll-view := ScrollView {
+        VerticalLayout {
+            padding: Space.large;
+
+            i-text-input := TextInput {
+                enabled: true;
+                color: Palette.foreground;
+                font-size: Typography.large-label.font-size;
+                font-weight: Typography.large-label.font-weight;
+                selection-background-color: Palette.primary;
+                selection-foreground-color: self.color;
+                single-line: false;
+                wrap: word-wrap;
+                read-only: true;
+
+                cursor-position-changed(cpos) => {
+                    if (cpos.x + root.viewport-x < 12px) {
+                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  - cpos.x + 12px ));
+                    } else if (cpos.x + root.viewport-x > i-scroll-view.visible-width - 12px) {
+                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  i-scroll-view.visible-width - cpos.x - 12px ));
+                    }
+                    if (cpos.y + root.viewport-y < 12px) {
+                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  - cpos.y + 12px ));
+                    } else if (cpos.y + root.viewport-y > i-scroll-view.visible-height - 12px - 20px) {
+                        // FIXME: font-height hardcoded to 20px
+                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  i-scroll-view.visible-height - cpos.y - 12px - 20px));
+                    }
+                }
+            }
+        }
+    }
+}
