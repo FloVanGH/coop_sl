@@ -326,8 +326,10 @@ where
 
 async fn previous_page(window_handle: Weak<ui::MainWindow>) {
     upgrade_adapter(window_handle.clone(), move |adapter| {
-        if adapter.get_text_view_visible() {
+        if adapter.get_text_view_visible() || adapter.get_image_view_visible() {
             adapter.set_text_view_visible(false);
+            adapter.set_image_view_visible(false);
+
             let current_page = adapter.get_current_page();
             if let Some(root) = get_root(current_page as usize, &adapter) {
                 adapter.set_title(root.name().unwrap_or_default().into());
@@ -371,6 +373,9 @@ where
         }
         FileType::Text => {
             tokio::spawn(open_text_view(file, window_handle));
+        }
+        FileType::Image => {
+            tokio::spawn(open_image_view(file, window_handle));
         }
         _ => {}
     }
@@ -621,6 +626,24 @@ async fn open_text_view(file_model: FileModel, window_handle: Weak<ui::MainWindo
                 adapter.set_title(file_model.name().unwrap_or_default().into());
             });
         }
+    }
+}
+
+async fn open_image_view(file_model: FileModel, window_handle: Weak<ui::MainWindow>) {
+    if let Ok(image) = image::open(file_model.path()) {
+        let image = image.into_rgba8();
+
+        upgrade_adapter(window_handle, move |adapter| {
+            let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+                image.as_raw(),
+                image.width(),
+                image.height(),
+            );
+
+            adapter.set_image_view_image(Image::from_rgba8(buffer));
+            adapter.set_image_view_visible(true);
+            adapter.set_title(file_model.name().unwrap_or_default().into());
+        });
     }
 }
 

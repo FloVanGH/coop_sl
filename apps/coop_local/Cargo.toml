@@ -28,6 +28,7 @@ trash = "3.0.2"
 open = "4"
 dirs = "5.0.1"
 fs_at = "0.1"
+image = "0.24.6"
 
 [build-dependencies]
 slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }

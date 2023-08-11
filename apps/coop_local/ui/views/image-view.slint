@@ -1,0 +1,25 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { ScrollView, Space, Palette, Radius } from "../_imports/coop-widgets.slint";
+
+export component ImageView {
+    in-out property <image> image <=> i-image.source;
+
+    VerticalLayout {
+        alignment: start;
+        padding: Space.large;
+
+        Rectangle {
+            border-width: 1px;
+            clip: true;
+            border-color: Palette.border;
+            border-radius: Radius.large;
+
+            VerticalLayout {
+                padding: Space.small;
+                i-image := Image {}
+            }
+        }
+    }
+}

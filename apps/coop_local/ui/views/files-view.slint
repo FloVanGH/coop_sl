@@ -5,6 +5,7 @@ import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton
     ContextMenu, SelectionMode } from "../_imports/coop-widgets.slint";
 
 import { TextView } from "text-view.slint";
+import { ImageView } from "image-view.slint";
 
 export global FilesAdapter {
     private property <[ListViewItem]> dummy-context-menu: [
@@ -41,6 +42,10 @@ export global FilesAdapter {
     in property <bool> text-view-visible;
     in-out property <string> text-view-text;
 
+    // image-view
+    in property <bool> image-view-visible;
+    in-out property <image> image-view-image;
+
     // only used for preview
     get-file-context-menu => {
        dummy-context-menu
@@ -58,7 +63,7 @@ export component FilesView {
     VerticalLayout {
         HeaderBar {
             action-icon:  Icons.arrow-back;
-            action-enabled: FilesAdapter.current-page > 0 || FilesAdapter.text-view-visible;
+            action-enabled: FilesAdapter.current-page > 0 || FilesAdapter.text-view-visible || FilesAdapter.image-view-visible;
             title: FilesAdapter.title;
 
             i-menu-button := RoundButton {
@@ -93,7 +98,7 @@ export component FilesView {
         Carousel {
             width: 100%;
             vertical-stretch: 1;
-            current-page: FilesAdapter.text-view-visible ? 1 : 0;
+            current-page: FilesAdapter.text-view-visible || FilesAdapter.image-view-visible ? 1 : 0;
 
             Carousel {
                 width: root.width;
@@ -142,10 +147,16 @@ export component FilesView {
                 }
             }
 
-            if(FilesAdapter.text-view-visible) : TextView {
+            if (FilesAdapter.text-view-visible) : TextView {
                 text <=> FilesAdapter.text-view-text;
                 width: root.width;
                 height: 100%;
+            }
+
+            if (FilesAdapter.image-view-visible) : ImageView {
+                width: root.width;
+                height: 100%;
+                image <=> FilesAdapter.image-view-image;
             }
         }
     }
