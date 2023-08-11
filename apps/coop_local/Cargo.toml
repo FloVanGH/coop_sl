@@ -7,7 +7,7 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
-description = "File manager with special features."
+description = "Cross platform file browser."
 publish = false
 repository = "https://codeberg.org/flovansl/coop_sl"
 
@@ -43,4 +43,4 @@ identifier = "org.flovansl.coop_local"
 icon = ["assets/256x256.png"]
 version = "0.0.1"
 copyright = "Copyright (c) Florian Blasius 2023. All rights reserved."
-short_description = "File manager with special features."
+short_description = "Cross platform file browser."

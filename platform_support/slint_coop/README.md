@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # slint_coop
 
-[Slint](https://slint-ui.com) platform implementation based on [coop_client](../coop_client/).
+[Slint](https://slint.dev) platform implementation based on [coop_client](../coop_client/).
 
 <a href="https://codeberg.org/flovansl/co_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">

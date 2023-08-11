@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # coop_widgets
 
-The goal with `coop_widgets` is to provide a custom widget and components library for [Slint](https://slint-ui.com/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system. The theme is available in a light and a dark variant.
+The goal with `coop_widgets` is to provide a custom widget and components library for [Slint](https://slint.dev/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system. The theme is available in a light and a dark variant.
 
 What the `Coop` in `coop_widgets` stands for: cooperation.
 
@@ -103,7 +103,7 @@ MyLayout := HorizontalLayout {
 
 Best to start with these sources:
 
-* getting start: https://slint-ui.com/#tryout
+* getting start: https://slint.dev/#tryout
 * Slint docs (*Slint lang docs included*) : https://docs.rs/slint/latest/slint/
 * Slint examples: https://github.com/slint-ui/slint/tree/master/examples
 * Slint chat: https://chat.slint-ui.com/
