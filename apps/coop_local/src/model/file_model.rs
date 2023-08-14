@@ -88,7 +88,7 @@ impl FileModel {
     pub fn hidden(&self) -> bool {
         if cfg!(target_family = "unix") {
             if let Some(name) = self.name() {
-                return name.starts_with(".");
+                return name.starts_with('.');
             }
         }
 

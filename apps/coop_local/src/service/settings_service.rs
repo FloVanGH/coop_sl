@@ -48,10 +48,7 @@ impl SettingsService {
         settings_path = settings_path.join(key);
 
         let value_toml = toml::to_string(&value).map_err(|e| {
-            io::Error::new(
-                io::ErrorKind::Other,
-                format!("Save settings error: {}", e.to_string()),
-            )
+            io::Error::new(io::ErrorKind::Other, format!("Save settings error: {}", e))
         })?;
 
         let mut settings_file = fs::File::create(settings_path)?;
@@ -73,10 +70,7 @@ impl SettingsService {
         file.read_to_string(&mut content)?;
 
         toml::from_str(content.as_str()).map_err(|e| {
-            io::Error::new(
-                io::ErrorKind::Other,
-                format!("Load settings error: {}", e.to_string()),
-            )
+            io::Error::new(io::ErrorKind::Other, format!("Load settings error: {}", e))
         })
     }
 }

@@ -58,10 +58,8 @@ impl traits::FileRepository for FileRepository {
     fn rename(&self, file_model: FileModel, new_name: String) -> io::Result<FileModel> {
         let new_path = Path::new(file_model.parent().unwrap_or_default()).join(new_name);
 
-        if !new_path.exists() {
-            if fs::rename(file_model.as_path(), &new_path).is_ok() {
-                return Ok(FileModel::new(new_path.to_str().unwrap_or_default()));
-            }
+        if !new_path.exists() && fs::rename(file_model.as_path(), &new_path).is_ok() {
+            return Ok(FileModel::new(new_path.to_str().unwrap_or_default()));
         }
 
         Err(io::Error::new(
@@ -153,12 +151,10 @@ impl traits::FileRepository for FileRepository {
         if root.is_dir() {
             let new_folder_path = root.as_path().join(name.as_str());
 
-            if !new_folder_path.exists() {
-                if fs::create_dir(new_folder_path.as_path()).is_ok() {
-                    return Ok(FileModel::new(
-                        new_folder_path.as_path().to_str().unwrap_or_default(),
-                    ));
-                }
+            if !new_folder_path.exists() && fs::create_dir(new_folder_path.as_path()).is_ok() {
+                return Ok(FileModel::new(
+                    new_folder_path.as_path().to_str().unwrap_or_default(),
+                ));
             }
         }
 

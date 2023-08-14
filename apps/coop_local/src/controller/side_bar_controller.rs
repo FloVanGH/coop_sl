@@ -116,9 +116,7 @@ where
     });
 
     adapter.on_get_context_menu({
-        move |parent, _bookmark: i32| {
-            return context_menu::get_context_menu(parent as usize);
-        }
+        move |parent, _bookmark: i32| context_menu::get_context_menu(parent as usize)
     });
 
     adapter.on_open({
