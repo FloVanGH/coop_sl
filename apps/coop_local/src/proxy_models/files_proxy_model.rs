@@ -158,3 +158,258 @@ fn item_type_to_icon(window_handle: &Weak<ui::MainWindow>, item_type: FileType) 
 
     Image::default()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_files_proxy_model() {
+        let proxy_model = FilesProxyModel::new(
+            FileModel::new("/root"),
+            vec![
+                FileModel::new("/root/1.png"),
+                FileModel::new("/root/2"),
+                FileModel::new("/root/3"),
+                FileModel::new("/root/4"),
+            ],
+            ui::MainWindow::new().unwrap().as_weak(),
+        );
+
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(0),
+            Some(FileModel::new("/root/1.png"))
+        );
+        assert_eq!(proxy_model.row_data_as_file_model(5), None);
+
+        proxy_model.set_row_data_as_file_model(0, FileModel::new("/root/new/1.png"));
+        assert_eq!(
+            proxy_model.row_data_as_file_model(0),
+            Some(FileModel::new("/root/new/1.png"))
+        );
+        assert_eq!(
+            proxy_model.row_data(0),
+            Some(ui::ListViewItem {
+                highlighted: false,
+                leading_icon: item_type_to_icon(&proxy_model.window_handle, FileType::Image),
+                text: "1.png".into(),
+                ..Default::default()
+            })
+        );
+
+        assert_eq!(
+            proxy_model.row_data_from_source(1),
+            Some(FileModel::new("/root/2"))
+        );
+
+        proxy_model.set_row_data_source(1, FileModel::new("/root/new/2"));
+        assert_eq!(
+            proxy_model.row_data_from_source(1),
+            Some(FileModel::new("/root/new/2"))
+        );
+
+        assert_eq!(
+            proxy_model.remove_from_source(FileModel::new("/root/new/2")),
+            Some(FileModel::new("/root/new/2"))
+        );
+        assert_eq!(
+            proxy_model.remove_from_source(FileModel::new("/not/in/files")),
+            None
+        );
+        assert_eq!(proxy_model.row_count_source(), 3);
+        assert_eq!(proxy_model.row_count(), 3);
+        assert_eq!(
+            proxy_model.row_data_from_source(1),
+            Some(FileModel::new("/root/3"))
+        );
+
+        assert_eq!(proxy_model.root(), FileModel::new("/root"));
+        proxy_model.set_root(FileModel::new("/new_root"));
+        assert_eq!(proxy_model.root(), FileModel::new("/new_root"));
+
+        proxy_model.push_to_source(FileModel::new("/root/5"));
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+        assert_eq!(
+            proxy_model.row_data_from_source(3),
+            Some(FileModel::new("/root/5"))
+        );
+    }
+
+    #[test]
+    fn test_files_proxy_model_sorted() {
+        let proxy_model = FilesProxyModel::new(
+            FileModel::new("/root"),
+            vec![
+                FileModel::new("/root/5"),
+                FileModel::new("/root/3"),
+                FileModel::new("/root/4"),
+                FileModel::new("/root/1"),
+            ],
+            ui::MainWindow::new().unwrap().as_weak(),
+        )
+        .as_sort_by(|l, r| l.name().unwrap().cmp(r.name().unwrap()));
+
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(0),
+            Some(FileModel::new("/root/1"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/5"))
+        );
+        assert_eq!(
+            proxy_model.row_data(0),
+            Some(ui::ListViewItem {
+                highlighted: false,
+                leading_icon: item_type_to_icon(&proxy_model.window_handle, FileType::Dir),
+                text: "1".into(),
+                ..Default::default()
+            })
+        );
+
+        proxy_model.set_row_data_as_file_model(3, FileModel::new("/root/0"));
+        assert_eq!(
+            proxy_model.row_data_as_file_model(0),
+            Some(FileModel::new("/root/0"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/0"))
+        );
+
+        proxy_model.set_row_data_source(2, FileModel::new("/root/6"));
+        assert_eq!(
+            proxy_model.row_data_as_file_model(2),
+            Some(FileModel::new("/root/3"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(2),
+            Some(FileModel::new("/root/6"))
+        );
+
+        assert_eq!(
+            proxy_model.remove_from_source(FileModel::new("/root/6")),
+            Some(FileModel::new("/root/6"))
+        );
+
+        assert_eq!(proxy_model.row_count_source(), 3);
+        assert_eq!(proxy_model.row_count(), 3);
+
+        proxy_model.push_to_source(FileModel::new("/root/9"));
+
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(3),
+            Some(FileModel::new("/root/9"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(3),
+            Some(FileModel::new("/root/9"))
+        );
+    }
+
+    #[test]
+    fn test_files_proxy_model_filtered() {
+        let proxy_model = FilesProxyModel::new(
+            FileModel::new("/root"),
+            vec![
+                FileModel::new("/root/filtered5"),
+                FileModel::new("/root/3"),
+                FileModel::new("/root/filtered4"),
+                FileModel::new("/root/1"),
+            ],
+            ui::MainWindow::new().unwrap().as_weak(),
+        )
+        .as_filter_by(|f| !f.name().unwrap().contains("filtered"));
+
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(0),
+            Some(FileModel::new("/root/3"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/filtered5"))
+        );
+        assert_eq!(
+            proxy_model.row_data(0),
+            Some(ui::ListViewItem {
+                highlighted: false,
+                leading_icon: item_type_to_icon(&proxy_model.window_handle, FileType::Dir),
+                text: "3".into(),
+                ..Default::default()
+            })
+        );
+
+        proxy_model.set_row_data_as_file_model(0, FileModel::new("/root/filtered3"));
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 1);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(0),
+            Some(FileModel::new("/root/1"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/filtered5"))
+        );
+
+        proxy_model.push_to_source(FileModel::new("/root/9"));
+
+        assert_eq!(proxy_model.row_count_source(), 5);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(1),
+            Some(FileModel::new("/root/9"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(4),
+            Some(FileModel::new("/root/9"))
+        );
+
+        proxy_model.push_to_source(FileModel::new("/root/filtered9"));
+
+        assert_eq!(proxy_model.row_count_source(), 6);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(1),
+            Some(FileModel::new("/root/9"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(5),
+            Some(FileModel::new("/root/filtered9"))
+        );
+
+        proxy_model.remove_from_source(FileModel::new("/root/filtered9"));
+
+        assert_eq!(proxy_model.row_count_source(), 5);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(
+            proxy_model.row_data_as_file_model(1),
+            Some(FileModel::new("/root/9"))
+        );
+        assert_eq!(
+            proxy_model.row_data_from_source(4),
+            Some(FileModel::new("/root/9"))
+        );
+
+        proxy_model.remove_from_source(FileModel::new("/root/1"));
+
+        assert_eq!(proxy_model.row_count_source(), 4);
+        assert_eq!(proxy_model.row_count(), 1);
+    }
+}

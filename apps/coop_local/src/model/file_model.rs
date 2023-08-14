@@ -117,9 +117,6 @@ mod tests {
         assert_eq!(folder_model.extension(), None);
         assert_eq!(folder_model.path(), "/i/am/a/folder");
         assert_eq!(folder_model.as_path(), Path::new("/i/am/a/folder"));
-
-        // this works only with mock features
-        // assert_eq!(folder_model.file_type(), FileType::Folder);
     }
 
     #[test]

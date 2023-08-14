@@ -19,6 +19,7 @@ members = [
 
 default-members = [
    "apps/coop_chat",
+   "apps/coop_local",
    "examples/gallery",
    "widgets/book_flip",
    "widgets/coop_widgets",
