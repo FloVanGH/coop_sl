@@ -14,6 +14,12 @@ impl BookMarksRepositoryMock {
     }
 }
 
+impl Default for BookMarksRepositoryMock {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl traits::BookMarksRepository for BookMarksRepositoryMock {
     fn add_bookmark(&self, bookmark: &BookmarkModel) -> io::Result<()> {
         println!("Added bookmark {:?}", bookmark);

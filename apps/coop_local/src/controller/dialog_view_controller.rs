@@ -67,7 +67,7 @@ async fn handle_message(message: DialogViewMessage, window_handle: Weak<ui::Main
                     let respond_to = respond_to.clone();
 
                     move || {
-                        let _ = respond_to.send(DialogResponse::Canceled);
+                        let _ = respond_to.blocking_send(DialogResponse::Canceled);
                         if let Some(main_window) = window_handle.upgrade() {
                             main_window
                                 .global::<ui::DialogViewAdapter>()

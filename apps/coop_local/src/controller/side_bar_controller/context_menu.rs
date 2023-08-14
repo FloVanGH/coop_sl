@@ -12,13 +12,10 @@ pub fn on_context_menu_action(controller: SideBarController, main_window: &ui::M
     main_window
         .global::<ui::SideBarAdapter>()
         .on_context_menu_action(move |_parent_index, bookmark_index, action| {
-            match action.as_str() {
-                REMOVE => {
-                    controller.spawn_message(SideBarMessage::RemoveBookmark {
-                        bookmark: bookmark_index as usize,
-                    });
-                }
-                _ => {}
+            if action.as_str() == REMOVE {
+                controller.spawn_message(SideBarMessage::RemoveBookmark {
+                    bookmark: bookmark_index as usize,
+                })
             }
         });
 }
