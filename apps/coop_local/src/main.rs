@@ -31,15 +31,6 @@ pub fn main() -> Result<(), slint::PlatformError> {
 
     files_controller.spawn_message(controller::FilesMessage::Load { path: start_dir });
 
-    let update_timer = Timer::default();
-    update_timer.start(
-        TimerMode::Repeated,
-        std::time::Duration::from_millis(500),
-        move || {
-            files_controller.spawn_message(controller::FilesMessage::CheckForModifications);
-        },
-    );
-
     #[cfg(feature = "mock")]
     let bookmarks_repository = repository::BookMarksRepositoryMock::new();
 
@@ -50,6 +41,25 @@ pub fn main() -> Result<(), slint::PlatformError> {
 
     controller::SideBarController::new(&main_window, bookmarks_repository)
         .map_err(|e| slint::PlatformError::Other(e.to_string()))?;
+
+    #[cfg(all(feature = "mock", feature = "games"))]
+    let games_repository = repository::GamesRepositoryMock::new();
+
+    #[cfg(all(not(feature = "mock"), feature = "games"))]
+    let games_repository = repository::GamesRepository::new();
+
+    #[cfg(feature = "games")]
+    controller::GamesController::new(&main_window, games_repository)
+        .map_err(|e| slint::PlatformError::Other(e.to_string()))?;
+
+    let update_timer = Timer::default();
+    update_timer.start(
+        TimerMode::Repeated,
+        std::time::Duration::from_millis(500),
+        move || {
+            files_controller.spawn_message(controller::FilesMessage::CheckForModifications);
+        },
+    );
 
     main_window.run()
 }

@@ -6,3 +6,9 @@ pub use bookmarks_proxy_model::*;
 
 mod files_proxy_model;
 pub use files_proxy_model::*;
+
+#[cfg(feature = "games")]
+mod games_proxy_model;
+
+#[cfg(feature = "games")]
+pub use games_proxy_model::*;

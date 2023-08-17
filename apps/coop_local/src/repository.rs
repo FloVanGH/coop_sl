@@ -13,4 +13,14 @@ pub use file_repository::*;
 mod file_repository_mock;
 pub use file_repository_mock::*;
 
+#[cfg(feature = "games")]
+mod games_repository;
+#[cfg(feature = "games")]
+pub use games_repository::*;
+
+#[cfg(feature = "games")]
+mod games_repository_mock;
+#[cfg(feature = "games")]
+pub use games_repository_mock::*;
+
 pub mod traits;

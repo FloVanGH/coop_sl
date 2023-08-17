@@ -6,6 +6,7 @@ import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton
 
 import { TextView } from "text-view.slint";
 import { ImageView } from "image-view.slint";
+import { GamesView } from "games-view.slint";
 
 export global FilesAdapter {
     private property <[ListViewItem]> dummy-context-menu: [
@@ -46,6 +47,9 @@ export global FilesAdapter {
     in property <bool> image-view-visible;
     in-out property <image> image-view-image;
 
+    // games-view
+    in property <bool> games-view-visible;
+
     // only used for preview
     get-file-context-menu => {
        dummy-context-menu
@@ -63,7 +67,8 @@ export component FilesView {
     VerticalLayout {
         HeaderBar {
             action-icon:  Icons.arrow-back;
-            action-enabled: FilesAdapter.current-page > 0 || FilesAdapter.text-view-visible || FilesAdapter.image-view-visible;
+            action-enabled: FilesAdapter.current-page > 0 || FilesAdapter.text-view-visible || FilesAdapter.image-view-visible
+                || FilesAdapter.games-view-visible;
             title: FilesAdapter.title;
 
             i-menu-button := RoundButton {
@@ -98,7 +103,8 @@ export component FilesView {
         Carousel {
             width: 100%;
             vertical-stretch: 1;
-            current-page: FilesAdapter.text-view-visible || FilesAdapter.image-view-visible ? 1 : 0;
+            current-page: FilesAdapter.text-view-visible || FilesAdapter.image-view-visible ||
+                FilesAdapter.games-view-visible ? 1 : 0;
 
             Carousel {
                 width: root.width;
@@ -157,6 +163,11 @@ export component FilesView {
                 width: root.width;
                 height: 100%;
                 image <=> FilesAdapter.image-view-image;
+            }
+
+            if (FilesAdapter.games-view-visible) : GamesView {
+                width: root.width;
+                height: 100%;
             }
         }
     }

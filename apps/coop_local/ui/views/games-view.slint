@@ -1,0 +1,106 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, LargeLabel } from "../_imports/coop-widgets.slint";
+import { Launcher, LauncherItem } from "../widgets/launcher.slint";
+
+export global GamesAdapter {
+    callback launch-game(/* index */ int);
+    callback open(/* path */ string) -> bool;
+    callback is-games-dir(/* path */ string) -> bool;
+    callback current-game-changed(/* current-game */ int);
+
+    in property <[LauncherItem]> games: [
+        { text: "Game 1", image: @image-url("../../assets/256x256.png") },
+        { text: "Game 2", image: @image-url("../../assets/256x256.png") },
+        { text: "Game 3", image: @image-url("../../assets/256x256.png") },
+        { text: "Game 4", image: @image-url("../../assets/256x256.png") },
+    ];
+    in property <[LauncherItem]> current-game-meta: [
+        { text: "Last Time Played: 17.08.2023 17:00", image: Icons.filled-calendar-month },
+        { text: "Times Played: 4", image: Icons.add },
+    ];
+    in-out property <int> current-game;
+
+    // dummy implementation
+    open => {
+        false
+    }
+
+    is-games-dir => {
+        false
+    }
+}
+
+export component GamesView {
+    VerticalLayout {
+        padding: Space.large;
+        spacing: Space.large;
+
+        Launcher {
+            vertical-stretch: 0;
+            model: GamesAdapter.games;
+            current-item <=> GamesAdapter.current-game;
+
+            launch(index) => {
+                GamesAdapter.launch-game(index);
+            }
+
+            current-item-changed(current-game) => {
+                GamesAdapter.current-game-changed(current-game);
+            }
+        }
+
+        ScrollView {
+            vertical-stretch: 1;
+
+            VerticalLayout {
+                spacing: Space.large;
+                alignment: start;
+
+                ExtraLargeTitle {
+                    text: GamesAdapter.games[GamesAdapter.current-game].text;
+                    horizontal-alignment: left;
+                }
+
+                for item in GamesAdapter.current-game-meta : HorizontalLayout {
+                    alignment: start;
+                    spacing: Space.medium;
+
+                    Image {
+                        source: item.image;
+                        colorize: Palette.primary;
+                        width: Icography.small;
+                    }
+
+                    i-label := LargeLabel {
+                        text: item.text;
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+                        color: Palette.foreground;
+                        horizontal-stretch: 1;
+                        overflow: elide;
+                    }
+                }
+
+                HorizontalLayout {
+                    alignment: start;
+                    spacing: Space.medium;
+                    padding-top: Space.medium;
+
+                    Button {
+                        text: @tr("Play");
+
+                        clicked => {
+                            GamesAdapter.launch-game(GamesAdapter.current-game);
+                        }
+                    }
+
+                    // Button {
+                    //     icon: Icons.filled-settings;
+                    // }
+                }
+            }
+        }
+    }
+}

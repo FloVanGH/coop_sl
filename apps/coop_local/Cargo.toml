@@ -30,13 +30,20 @@ dirs = "5.0.1"
 fs_at = "0.1"
 image = "0.24.6"
 
+# games
+tauri-icns = { version = "0.1.0", optional = true }
+chrono = { version = "0.4.26", optional = true }
+
 [build-dependencies]
 slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }
 coop_widgets = { path = "../../widgets/coop_widgets" }
 
 [features]
-default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility"]
+default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility", "games"]
 mock = []
+
+# activate builtin games launcher
+games = ["tauri-icns", "chrono"]
 
 [package.metadata.bundle]
 name = "coop_local"

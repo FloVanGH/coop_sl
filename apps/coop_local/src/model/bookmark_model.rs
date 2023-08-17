@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 pub enum BookmarkType {
     Root,
     Dir,
+    Game,
 }
 
 impl Default for BookmarkType {

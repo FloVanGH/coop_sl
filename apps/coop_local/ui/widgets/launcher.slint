@@ -1,0 +1,132 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { Duration, Space, LargeTitle, Palette, Radius } from "../_imports/coop-widgets.slint";
+
+export global LauncherStyle {
+    out property <length> max-item-size: 132px;
+    out property <length> item-size: 94px;
+}
+
+component LauncherItemDelegate  {
+    callback clicked <=> touch-area.clicked;
+
+    in property <bool> selected: false;
+    in property <image> image <=> i-image.source;
+
+    width: root.selected ? LauncherStyle.max-item-size : LauncherStyle.item-size;
+    height: self.width;
+
+    touch-area := TouchArea {}
+
+    Rectangle {
+        border-width: root.selected ? 0px : 1px;
+        border-color:  Palette.border;
+        background: root.selected ? Palette.accent : Palette.surface;
+        border-radius: 24px;
+
+        i-image := Image {
+            width: 90%;
+            height: 90%;
+        }
+    }
+
+     animate width { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
+}
+
+export struct LauncherItem {
+    text: string,
+    image: image
+}
+
+export component Launcher inherits FocusScope {
+    private property <length> start-x: 0;
+    private property <length> spacing: Space.large;
+    private property <length> item-width: LauncherStyle.item-size;
+
+    callback launch(/* index */ int);
+    callback current-item-changed(/* current-item */ int);
+
+    in property <[LauncherItem]> model;
+    in-out property <int> current-item;
+
+    forward-focus: i-focus-scope;
+    min-height: max(LauncherStyle.max-item-size, i-layout.min-height);
+
+    i-focus-scope:= FocusScope {
+        key-pressed(event) => {
+            if(event.text == Key.RightArrow) {
+                root.next();
+                return accept;
+            }
+
+            if(event.text == Key.LeftArrow) {
+                root.previous();
+                return accept;
+            }
+
+            if(event.text == Key.Return) {
+                root.launch(root.current-item);
+                return accept;
+            }
+
+            return accept;
+        }
+    }
+
+    TouchArea {
+        width: parent.width;
+        height: parent.height;
+
+        clicked => {
+            i-focus-scope.focus()
+        }
+    }
+
+    Rectangle {
+        clip: true;
+        background: transparent;
+        height: 100%;
+
+        Flickable {
+            interactive: false;
+            viewport-x: root.start-x - root.current-item * (root.item-width + root.spacing);
+
+            i-layout := HorizontalLayout {
+                spacing <=> root.spacing;
+
+                for item[index] in root.model : LauncherItemDelegate {
+                    image: item.image;
+                    selected: index == root.current-item;
+
+                    clicked => {
+                        if(index != root.current-item) {
+                            root.focus();
+                            root.set-current-item(index);
+                        } else {
+                            root.launch(root.current-item);
+                        }
+                    }
+                }
+            }
+
+            animate viewport-x { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0);  }
+        }
+    }
+
+    function set-current-item(index: int) {
+        root.current-item = max(min(index, root.model.length - 1), 0);
+
+        if(root.current-item == index) {
+            root.current-item-changed(root.current-item);
+        }
+    }
+
+    function next() {
+        root.set-current-item(root.current-item + 1);
+    }
+
+    function previous() {
+        root.set-current-item(root.current-item - 1);
+    }
+}

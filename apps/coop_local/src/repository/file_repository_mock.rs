@@ -47,6 +47,7 @@ impl traits::FileRepository for FileRepositoryMock {
             _ => vec![
                 model::FileModel::new("/docs"),
                 model::FileModel::new("/src"),
+                model::FileModel::new("/games"),
                 model::FileModel::new("/README.md"),
             ],
         })

@@ -42,35 +42,47 @@ impl SettingsService {
     where
         V: serde::Serialize,
     {
-        let mut settings_path = Path::new(self.location.as_str()).to_path_buf();
-        let mut key = key.into();
-        key.push_str(SETTINGS_EXT);
-        settings_path = settings_path.join(key);
-
-        let value_toml = toml::to_string(&value).map_err(|e| {
-            io::Error::new(io::ErrorKind::Other, format!("Save settings error: {}", e))
-        })?;
-
-        let mut settings_file = fs::File::create(settings_path)?;
-        settings_file.write_all(value_toml.as_bytes())
+        save(&self.location, key, value)
     }
 
     pub fn load<V>(&self, key: impl Into<String>) -> io::Result<V>
     where
         V: serde::de::DeserializeOwned,
     {
-        let mut settings_path = Path::new(self.location.as_str()).to_path_buf();
-        let mut key = key.into();
-        key.push_str(SETTINGS_EXT);
-        settings_path = settings_path.join(key);
-
-        let mut content = String::default();
-
-        let mut file = fs::File::open(settings_path)?;
-        file.read_to_string(&mut content)?;
-
-        toml::from_str(content.as_str()).map_err(|e| {
-            io::Error::new(io::ErrorKind::Other, format!("Load settings error: {}", e))
-        })
+        load(&self.location, key)
     }
+}
+
+pub fn save<V>(location: &str, key: impl Into<String>, value: &V) -> io::Result<()>
+where
+    V: serde::Serialize,
+{
+    let mut settings_path = Path::new(location).to_path_buf();
+    let mut key = key.into();
+    key.push_str(SETTINGS_EXT);
+    settings_path = settings_path.join(key);
+
+    let value_toml = toml::to_string(&value)
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Save settings error: {}", e)))?;
+
+    let mut settings_file = fs::File::create(settings_path)?;
+    settings_file.write_all(value_toml.as_bytes())
+}
+
+pub fn load<V>(location: &str, key: impl Into<String>) -> io::Result<V>
+where
+    V: serde::de::DeserializeOwned,
+{
+    let mut settings_path = Path::new(location).to_path_buf();
+    let mut key = key.into();
+    key.push_str(SETTINGS_EXT);
+    settings_path = settings_path.join(key);
+
+    let mut content = String::default();
+
+    let mut file = fs::File::open(settings_path)?;
+    file.read_to_string(&mut content)?;
+
+    toml::from_str(content.as_str())
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("Load settings error: {}", e)))
 }

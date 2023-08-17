@@ -95,12 +95,28 @@ impl FileModel {
         false
     }
 
-    pub fn as_file(&self) -> Result<fs::File> {
+    pub fn as_writeable_file(&self) -> Result<fs::File> {
         fs::File::create(self.path.as_str())
+    }
+
+    pub fn as_readable_file(&self) -> Result<fs::File> {
+        fs::File::open(self.path.as_str())
     }
 
     pub fn as_path(&self) -> &Path {
         Path::new(self.path.as_str())
+    }
+}
+
+impl From<&str> for FileModel {
+    fn from(value: &str) -> Self {
+        Self::new(value)
+    }
+}
+
+impl From<String> for FileModel {
+    fn from(value: String) -> Self {
+        Self::new(value)
     }
 }
 

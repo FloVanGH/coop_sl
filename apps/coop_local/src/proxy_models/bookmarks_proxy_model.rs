@@ -82,6 +82,7 @@ fn bookmark_type_to_icon(
         return match bookmark_type {
             BookmarkType::Root => main_window.global::<ui::Icons>().get_computer(),
             BookmarkType::Dir => main_window.global::<ui::Icons>().get_folder(),
+            BookmarkType::Game => main_window.global::<ui::Icons>().get_videogame_asset(),
         };
     }
 

@@ -6,6 +6,7 @@
         "./widgets/coop_widgets/Cargo.toml",
         "./apps/coop_local/Cargo.toml",
         "./apps/coop_local/Cargo.toml",
+        "./apps/coop_local/Cargo.toml",
         "./apps/coop_local/Cargo.toml"
     ]
 }

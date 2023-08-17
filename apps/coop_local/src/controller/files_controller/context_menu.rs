@@ -48,30 +48,32 @@ pub fn on_main_menu_action(controller: FilesController, main_window: &ui::MainWi
         });
 }
 
-pub fn get_main_menu<R>(repository: R) -> ModelRc<ui::ListViewItem>
+pub fn get_main_menu<R>(repository: R, files_open: bool) -> ModelRc<ui::ListViewItem>
 where
     R: repository::traits::FileRepository + std::marker::Send + Clone + 'static,
 {
     let items = VecModel::default();
 
     // FIXME: only on writable roots
-    items.push(ui::ListViewItem {
-        text: "New folder".into(),
-        spec: NEW_FOLDER.into(),
-        ..Default::default()
-    });
+    if files_open {
+        items.push(ui::ListViewItem {
+            text: "New folder".into(),
+            spec: NEW_FOLDER.into(),
+            ..Default::default()
+        });
 
-    if repository.can_paste() {
-        items.push(ui::ListViewItem {
-            text: "Paste".into(),
-            spec: PASTE.into(),
-            ..Default::default()
-        });
-        items.push(ui::ListViewItem {
-            text: "Clear clipboard".into(),
-            spec: CLEAR_CLIPBOARD.into(),
-            ..Default::default()
-        });
+        if repository.can_paste() {
+            items.push(ui::ListViewItem {
+                text: "Paste".into(),
+                spec: PASTE.into(),
+                ..Default::default()
+            });
+            items.push(ui::ListViewItem {
+                text: "Clear clipboard".into(),
+                spec: CLEAR_CLIPBOARD.into(),
+                ..Default::default()
+            });
+        }
     }
 
     items.push(ui::ListViewItem {

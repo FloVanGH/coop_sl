@@ -8,7 +8,7 @@ use slint::*;
 use std::io;
 use std::rc::Rc;
 use tokio::runtime::Builder;
-use tokio::sync::mpsc;
+use tokio::sync::{mpsc, oneshot};
 
 mod context_menu;
 
@@ -141,8 +141,31 @@ async fn on_add_bookmark<B>(
 ) where
     B: repository::traits::BookMarksRepository + Clone + std::marker::Send + 'static,
 {
+    let (tx, rx) = oneshot::channel();
+    let _ = window_handle.upgrade_in_event_loop({
+        let path = path.clone();
+
+        move |main_window| {
+            let _ = tx.send(
+                main_window
+                    .global::<ui::GamesAdapter>()
+                    .invoke_is_games_dir(path.into()),
+            );
+        }
+    });
+
+    let bookmark_type = if let Ok(is_games_dir) = rx.await {
+        if is_games_dir {
+            BookmarkType::Game
+        } else {
+            BookmarkType::Dir
+        }
+    } else {
+        BookmarkType::Dir
+    };
+
     let bookmark = BookmarkModel::new(
-        BookmarkType::Dir,
+        bookmark_type,
         FileModel::new(path.as_str()).name().unwrap_or_default(),
         path,
     );

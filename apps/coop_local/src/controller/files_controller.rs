@@ -130,8 +130,25 @@ where
 
     adapter.on_get_main_menu({
         let repository = repository.clone();
+        let window_handle = main_window.as_weak();
 
-        move || context_menu::get_main_menu(repository.clone())
+        move || {
+            let files_open = if let Some(main_window) = window_handle.upgrade() {
+                !main_window
+                    .global::<ui::FilesAdapter>()
+                    .get_text_view_visible()
+                    && !main_window
+                        .global::<ui::FilesAdapter>()
+                        .get_image_view_visible()
+                    && !main_window
+                        .global::<ui::FilesAdapter>()
+                        .get_games_view_visible()
+            } else {
+                false
+            };
+
+            context_menu::get_main_menu(repository.clone(), files_open)
+        }
     });
 
     adapter.on_get_file_context_menu({
@@ -280,6 +297,11 @@ async fn load<R>(root: FileModel, window_handle: Weak<ui::MainWindow>, repositor
 where
     R: repository::traits::FileRepository + std::marker::Send + 'static,
 {
+    let window_handle_clone = window_handle.clone();
+    if open_game_view(&root, window_handle_clone).await {
+        return;
+    }
+
     // don't open same page twice
     let window_handle_clone = window_handle.clone();
     if let Some(current_root) = current_root_async(window_handle_clone).await {
@@ -290,6 +312,15 @@ where
 
     if let Ok(files) = repository.files(&root) {
         upgrade_adapter(window_handle.clone(), move |adapter| {
+            if adapter.get_text_view_visible()
+                || adapter.get_image_view_visible()
+                || adapter.get_games_view_visible()
+            {
+                adapter.set_text_view_visible(false);
+                adapter.set_image_view_visible(false);
+                adapter.set_games_view_visible(false);
+            }
+
             let adapter_files = adapter.get_files();
             let current_page = adapter.get_current_page();
             let number_of_pages = adapter_files.row_count() as i32;
@@ -326,9 +357,13 @@ where
 
 async fn previous_page(window_handle: Weak<ui::MainWindow>) {
     upgrade_adapter(window_handle.clone(), move |adapter| {
-        if adapter.get_text_view_visible() || adapter.get_image_view_visible() {
+        if adapter.get_text_view_visible()
+            || adapter.get_image_view_visible()
+            || adapter.get_games_view_visible()
+        {
             adapter.set_text_view_visible(false);
             adapter.set_image_view_visible(false);
+            adapter.set_games_view_visible(false);
 
             let current_page = adapter.get_current_page();
             if let Some(root) = get_root(current_page as usize, &adapter) {
@@ -363,19 +398,19 @@ async fn previous_page(window_handle: Weak<ui::MainWindow>) {
 
 // handlers
 
-async fn open<R>(file: FileModel, window_handle: Weak<ui::MainWindow>, repository: R)
+async fn open<R>(file_model: FileModel, window_handle: Weak<ui::MainWindow>, repository: R)
 where
     R: repository::traits::FileRepository + std::marker::Send + 'static,
 {
-    match file.file_type() {
+    match file_model.file_type() {
         FileType::Dir => {
-            tokio::spawn(load(file, window_handle, repository));
+            tokio::spawn(load(file_model, window_handle, repository));
         }
         FileType::Text => {
-            tokio::spawn(open_text_view(file, window_handle));
+            tokio::spawn(open_text_view(file_model, window_handle));
         }
         FileType::Image => {
-            tokio::spawn(open_image_view(file, window_handle));
+            tokio::spawn(open_image_view(file_model, window_handle));
         }
         _ => {}
     }
@@ -645,6 +680,36 @@ async fn open_image_view(file_model: FileModel, window_handle: Weak<ui::MainWind
             adapter.set_title(file_model.name().unwrap_or_default().into());
         });
     }
+}
+
+async fn open_game_view(file_model: &FileModel, window_handle: Weak<ui::MainWindow>) -> bool {
+    let (tx, rx) = oneshot::channel();
+
+    let path = file_model.path().into();
+    let file_name = file_model.name().unwrap_or_default().into();
+
+    let _ = window_handle.upgrade_in_event_loop(move |main_window| {
+        let open = if main_window.global::<ui::GamesAdapter>().invoke_open(path) {
+            main_window
+                .global::<ui::FilesAdapter>()
+                .set_title(file_name);
+            main_window
+                .global::<ui::FilesAdapter>()
+                .set_games_view_visible(true);
+
+            true
+        } else {
+            false
+        };
+
+        let _ = tx.send(open);
+    });
+
+    if let Ok(open) = rx.await {
+        return open;
+    }
+
+    false
 }
 
 fn upgrade_adapter(
