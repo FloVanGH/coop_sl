@@ -23,7 +23,7 @@ What the `Coop` stands for: cooperation.
     * [coop_chat](apps/coop_chat/): A visual Slint prototype of a chat app **(on hold)**
     * [coop_local](apps/coop_local/): Cross platform file browser **(in active development / pre-release)**
 * display/
-    * coop_display](display/README.md) is an experimental frame buffer based display server that can be used e.g. to render a standalone app inside of a Slint app.
+    * [coop_display](display/README.md) is an experimental frame buffer based display server that can be used e.g. to render a standalone app inside of a Slint app.
     *  [coop_client](display/coop_client/): Client library that can be used to make an app work with `coop_server` **(on hold)**
     *  [coop_server](display/coop_server/): Server part of the display server, can handle multiple `coop_client` apps **(on hold)**
     *  [coop_protocol](display/coop_protocol/): Protocol enums and structs used for communication between `coop_client` and `coop_server` apps **(on hold)**

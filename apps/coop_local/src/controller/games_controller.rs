@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::model::GameModel;
 use crate::proxy_models::{self, GamesProxyModel};
 use crate::{repository, ui};
 use slint::*;
@@ -132,7 +133,9 @@ where
 {
     if let Ok(games) = repository.games(path) {
         upgrade_adapter(window_handle.clone(), move |adapter| {
-            adapter.set_games(Rc::new(GamesProxyModel::new(games)).into());
+            let proxy_model = GamesProxyModel::new(games)
+                .as_sort_by(|l, r| r.meta().last_time_played.cmp(&l.meta().last_time_played));
+            adapter.set_games(Rc::new(proxy_model).into());
             adapter.set_current_game(0);
         });
     }
@@ -145,16 +148,33 @@ async fn launch<R>(row: usize, repository: R, window_handle: Weak<ui::MainWindow
 where
     R: repository::traits::GamesRepository + Clone + std::marker::Send + 'static,
 {
-    upgrade_proxy_model(window_handle.clone(), move |proxy_model| {
-        if let Some(mut game_model) = proxy_model.row_data_as_game(row) {
-            if repository.launch(&mut game_model).is_ok() {
-                proxy_model.set_row_data_as_game(row, game_model);
-            }
-        }
-    });
-
     let window_handle_clone = window_handle.clone();
-    display_meta(row, window_handle_clone).await;
+
+    let (tx, rx) = oneshot::channel();
+
+    if let Some(mut game_model) = row_data_as_game_async(row, window_handle_clone).await {
+        if repository.launch(&mut game_model).is_ok() {
+            upgrade_adapter(window_handle.clone(), move |adapter| {
+                if let Some(proxy_model) = adapter
+                    .get_games()
+                    .as_any()
+                    .downcast_ref::<proxy_models::GamesProxyModel>()
+                {
+                    proxy_model.set_row_data_as_game(row, game_model.clone());
+
+                    if let Some(row) = proxy_model.row(&game_model) {
+                        adapter.set_current_game(row as i32);
+                        let _ = tx.send(row);
+                    }
+                }
+            });
+        }
+    }
+
+    if let Ok(row) = rx.await {
+        let window_handle_clone = window_handle.clone();
+        display_meta(row, window_handle_clone).await;
+    }
 }
 
 async fn display_meta(row: usize, window_handle: Weak<ui::MainWindow>) {
@@ -179,6 +199,15 @@ async fn display_meta(row: usize, window_handle: Weak<ui::MainWindow>) {
                     };
                 }
 
+                let mut play_time = "00:00".to_string();
+                if game_model.meta().play_time > 0 {
+                    play_time = std::format!(
+                        "{:02}:{:02}",
+                        game_model.meta().play_time / 3600 % 24,
+                        game_model.meta().play_time / 60 % 60
+                    )
+                }
+
                 main_window
                     .global::<ui::GamesAdapter>()
                     .set_current_game_meta(VecModel::from_slice(&[
@@ -192,6 +221,10 @@ async fn display_meta(row: usize, window_handle: Weak<ui::MainWindow>) {
                             text: std::format!("Times played: {}", game_model.meta().times_played)
                                 .into(),
                             image: main_window.global::<ui::Icons>().get_add(),
+                        },
+                        ui::LauncherItem {
+                            text: std::format!("Play time: {}", play_time).into(),
+                            image: main_window.global::<ui::Icons>().get_filled_av_timer(),
                         },
                     ]));
             }
@@ -217,6 +250,23 @@ pub async fn is_games_view_visible_async(window_handle: Weak<ui::MainWindow>) ->
     }
 
     false
+}
+
+pub async fn row_data_as_game_async(
+    row: usize,
+    window_handle: Weak<ui::MainWindow>,
+) -> Option<GameModel> {
+    let (tx, rx) = oneshot::channel();
+
+    upgrade_proxy_model(window_handle, move |proxy_model| {
+        let _ = tx.send(proxy_model.row_data_as_game(row));
+    });
+
+    if let Ok(game) = rx.await {
+        return game;
+    }
+
+    None
 }
 
 fn upgrade_adapter(

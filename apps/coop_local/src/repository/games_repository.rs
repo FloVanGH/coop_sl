@@ -9,6 +9,7 @@ use crate::service;
 use super::traits;
 use std::fs;
 use std::io;
+use std::process::Command;
 use std::sync::{Arc, Mutex};
 
 #[cfg(target_os = "macos")]
@@ -190,9 +191,28 @@ impl traits::GamesRepository for GamesRepository {
 
     fn launch(&self, game_model: &mut GameModel) -> io::Result<()> {
         use chrono::*;
+        use std::time;
 
         game_model.meta_mut().times_played += 1;
         game_model.meta_mut().last_time_played = Local::now().timestamp_millis();
+
+        let start_time = time::Instant::now();
+
+        #[cfg(target_os = "macos")]
+        if let Ok(join_handle) = Command::new("open")
+            .arg("--wait-apps")
+            .arg(game_model.file_model().path())
+            .spawn()
+        {
+            let _ = join_handle.wait_with_output();
+        }
+
+        #[cfg(not(target_os = "macos"))]
+        if let Ok(join_handle) = Command::new(game_model.file_model().path()).spawn() {
+            let _ = join_handle.wait_with_output();
+        }
+
+        game_model.meta_mut().play_time += start_time.elapsed().as_secs();
 
         if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
             coop_game_model
@@ -201,7 +221,6 @@ impl traits::GamesRepository for GamesRepository {
         }
 
         self.save_coop_game_model();
-
-        open::that(game_model.file_model().path())
+        Ok(())
     }
 }

@@ -38,7 +38,12 @@ impl RgbaIconModel {
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct GameMetaModel {
     pub times_played: u32,
+
+    /// Last time played in unix time.
     pub last_time_played: i64,
+
+    /// Time played in milliseconds.
+    pub play_time: u64,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]

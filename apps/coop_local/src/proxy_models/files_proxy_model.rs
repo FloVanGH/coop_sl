@@ -84,7 +84,7 @@ impl FilesProxyModel {
         self.source.row_count()
     }
 
-    pub fn as_sort_by<F>(&self, sort_function: F) -> FilesProxyModel
+    pub fn as_sort_by<F>(&self, sort_function: F) -> Self
     where
         F: FnMut(&FileModel, &FileModel) -> core::cmp::Ordering + 'static,
     {
@@ -96,7 +96,7 @@ impl FilesProxyModel {
         }
     }
 
-    pub fn as_filter_by<F>(&self, filter_function: F) -> FilesProxyModel
+    pub fn as_filter_by<F>(&self, filter_function: F) -> Self
     where
         F: Fn(&FileModel) -> bool + 'static,
     {
