@@ -38,7 +38,7 @@ export component GamesView {
         padding-right: Space.large;
         spacing: Space.large;
 
-        Launcher {
+        i-launcher := Launcher {
             vertical-stretch: 0;
             model: GamesAdapter.games;
             current-item <=> GamesAdapter.current-game;
@@ -55,51 +55,60 @@ export component GamesView {
         ScrollView {
             vertical-stretch: 1;
 
-            VerticalLayout {
-                spacing: Space.large;
-                alignment: start;
-
-                ExtraLargeTitle {
-                    text: GamesAdapter.games[GamesAdapter.current-game].text;
-                    horizontal-alignment: left;
+            Rectangle {
+                TouchArea {
+                    clicked => {
+                        debug("jup");
+                        i-launcher.focus();
+                    }
                 }
 
-                for item in GamesAdapter.current-game-meta : HorizontalLayout {
+                VerticalLayout {
+                    spacing: Space.large;
                     alignment: start;
-                    spacing: Space.medium;
 
-                    Image {
-                        source: item.image;
-                        colorize: Palette.primary;
-                        width: Icography.small;
-                    }
-
-                    i-label := LargeLabel {
-                        text: item.text;
-                        vertical-alignment: center;
+                    ExtraLargeTitle {
+                        text: GamesAdapter.games[GamesAdapter.current-game].text;
                         horizontal-alignment: left;
-                        color: Palette.foreground;
-                        horizontal-stretch: 1;
-                        overflow: elide;
                     }
-                }
 
-                HorizontalLayout {
-                    alignment: start;
-                    spacing: Space.medium;
-                    padding-top: Space.medium;
+                    for item in GamesAdapter.current-game-meta : HorizontalLayout {
+                        alignment: start;
+                        spacing: Space.medium;
 
-                    Button {
-                        text: @tr("Play");
+                        Image {
+                            source: item.image;
+                            colorize: Palette.primary;
+                            width: Icography.small;
+                        }
 
-                        clicked => {
-                            GamesAdapter.launch-game(GamesAdapter.current-game);
+                        i-label := LargeLabel {
+                            text: item.text;
+                            vertical-alignment: center;
+                            horizontal-alignment: left;
+                            color: Palette.foreground;
+                            horizontal-stretch: 1;
+                            overflow: elide;
                         }
                     }
 
-                    // Button {
-                    //     icon: Icons.filled-settings;
-                    // }
+                    HorizontalLayout {
+                        alignment: start;
+                        spacing: Space.medium;
+                        padding-top: Space.medium;
+
+                        Button {
+                            text: @tr("Play");
+
+                            clicked => {
+                                GamesAdapter.launch-game(GamesAdapter.current-game);
+                            }
+                        }
+
+                        // Button {
+                        //     icon: Icons.filled-settings;
+                        // }
+                    }
                 }
             }
         }
