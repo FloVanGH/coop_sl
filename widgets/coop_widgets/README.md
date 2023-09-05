@@ -27,10 +27,11 @@ Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/gallery/).
 
 ```toml
 [dependencies]
-slint = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }
+slint = { version = "1.2.0" }
 
 [build-dependencies]
-slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }coop_widgets = { git = "https://codeberg.org/flovansl/coop_sl" }
+slint-build = { version = "1.2.0" }
+coop_widgets = { git = "https://codeberg.org/flovansl/coop_sl" }
 ```
 
 2. Call `coop_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/coop_widgets.slint`:

@@ -16,11 +16,11 @@ name = "desktop"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }
+slint = { version = "1.2.0" }
 coop_protocol = { path = "../../display/coop_protocol" }
 coop_server = { path = "../../display/coop_server", features = ["slint"] }
 tokio = { version = "1", features = ["full"] }
 
 [build-dependencies]
-slint-build = { git = "https://github.com/slint-ui/slint.git", rev = "9edd8d1dce7d2fdaea65d275dd3bdafe40a3a3bd" }
+slint-build = { version = "1.2.0" }
 coop_widgets = { path = "../../widgets/coop_widgets" }
