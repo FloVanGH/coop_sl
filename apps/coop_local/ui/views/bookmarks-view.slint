@@ -1,0 +1,56 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { GroupListView, GroupListViewItem, ListViewItem, ContextMenu } from "../_imports/coop-widgets.slint";
+
+export global BookmarksAdapter {
+    callback open-dir(/* parent */ int, /* item */ int);
+    callback get-item-context-menu(/* parent-row */ int, /* item-row */ int) -> [ListViewItem];
+    callback item-context-menu-action(/* parent-row */ int, /* item-row */ int, /* spec */ string);
+
+    in property <[GroupListViewItem]> bookmarks;
+}
+
+export component BookmarksView {
+    private property <[ListViewItem]> item-context-menu;
+    private property <Point> item-context-menu-pos;
+    private property <int> item-context-menu-item-row;
+    private property <int> item-context-menu-parent-row;
+
+    GroupListView {
+        selection-mode: Custom;
+        model: BookmarksAdapter.bookmarks;
+
+        item-pointer-event(parent, item, event, position) => {
+            if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
+                BookmarksAdapter.open-dir(parent, item);
+            }
+
+            if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
+                root.item-context-menu = BookmarksAdapter.get-item-context-menu(parent, item);
+                if (root.item-context-menu.length == 0) {
+                    return;
+                }
+
+                root.item-context-menu-item-row = item;
+                root.item-context-menu-parent-row = parent;
+                root.item-context-menu-pos = position;
+                i-item-context-menu.show();
+            }
+        }
+
+        i-item-context-menu := PopupWindow {
+            x: root.item-context-menu-pos.x;
+            y: root.item-context-menu-pos.y;
+
+            ContextMenu {
+                model: root.item-context-menu;
+
+                item-clicked(row) => {
+                    BookmarksAdapter.item-context-menu-action(root.item-context-menu-parent-row,
+                        root.item-context-menu-item-row, self.model[row].spec);
+                }
+            }
+        }
+    }
+}

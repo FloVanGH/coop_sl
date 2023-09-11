@@ -1,43 +1,94 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ScrollView, Space, Palette, Typography } from "../_imports/coop-widgets.slint";
+import { ScrollView, Space, Palette, Typography, ListViewItem, HeaderBar, RoundButton, Icons, ContextMenu } from "../_imports/coop-widgets.slint";
+
+export global TextAdapter {
+    callback back();
+    callback get-context-menu() -> [ListViewItem];
+    callback context-menu-action(/* spec */ string);
+
+    in property <string> title;
+    in-out property <string> text;
+}
 
 export component TextView {
+    private property <[ListViewItem]> context-menu;
     private property <length> visible-width <=> i-scroll-view.visible-width;
     private property <length> visible-height <=> i-scroll-view.visible-height;
     private property <length> viewport-x <=> i-scroll-view.viewport-x;
     private property <length> viewport-y <=> i-scroll-view.viewport-y;
     in-out property <length> viewport-width <=> i-scroll-view.viewport-width;
     in-out property <length> viewport-height <=> i-scroll-view.viewport-height;
-    in-out property <string> text <=> i-text-input.text;
 
-    i-scroll-view := ScrollView {
-        VerticalLayout {
-            padding: Space.large;
+    VerticalLayout {
+        HeaderBar {
+            action-icon: Icons.arrow-back;
+            action-enabled: true;
+            title: TextAdapter.title;
 
-            i-text-input := TextInput {
-                enabled: true;
-                color: Palette.foreground;
-                font-size: Typography.large-label.font-size;
-                font-weight: Typography.large-label.font-weight;
-                selection-background-color: Palette.primary;
-                selection-foreground-color: self.color;
-                single-line: false;
-                wrap: word-wrap;
-                read-only: true;
+            i-menu-button := RoundButton {
+                icon: Icons.more-vert;
+                horizontal-stretch: 0;
 
-                cursor-position-changed(cpos) => {
-                    if (cpos.x + root.viewport-x < 12px) {
-                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  - cpos.x + 12px ));
-                    } else if (cpos.x + root.viewport-x > i-scroll-view.visible-width - 12px) {
-                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  i-scroll-view.visible-width - cpos.x - 12px ));
+                clicked => {
+                    root.context-menu = TextAdapter.get-context-menu();
+
+                    if (root.context-menu.length == 0) {
+                        return;
                     }
-                    if (cpos.y + root.viewport-y < 12px) {
-                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  - cpos.y + 12px ));
-                    } else if (cpos.y + root.viewport-y > i-scroll-view.visible-height - 12px - 20px) {
-                        // FIXME: font-height hardcoded to 20px
-                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  i-scroll-view.visible-height - cpos.y - 12px - 20px));
+
+                    i-context-menu.show();
+                }
+            }
+
+            action => {
+                TextAdapter.back();
+            }
+
+            i-context-menu := PopupWindow {
+                x: i-menu-button.x - (128px - i-menu-button.width);
+                y: i-menu-button.y + i-menu-button.height;
+
+                ContextMenu {
+                    min-width: 128px;
+                    model: root.context-menu;
+
+                    item-clicked(row) => {
+                        TextAdapter.context-menu-action(self.model[row].spec);
+                    }
+                }
+            }
+        }
+
+        i-scroll-view := ScrollView {
+            VerticalLayout {
+                padding: Space.large;
+
+                i-text-input := TextInput {
+                    enabled: true;
+                    color: Palette.foreground;
+                    font-size: Typography.large-label.font-size;
+                    font-weight: Typography.large-label.font-weight;
+                    selection-background-color: Palette.primary;
+                    selection-foreground-color: self.color;
+                    single-line: false;
+                    wrap: word-wrap;
+                    read-only: true;
+                    text <=> TextAdapter.text;
+
+                    cursor-position-changed(cpos) => {
+                        if (cpos.x + root.viewport-x < 12px) {
+                            root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  - cpos.x + 12px ));
+                        } else if (cpos.x + root.viewport-x > i-scroll-view.visible-width - 12px) {
+                            root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  i-scroll-view.visible-width - cpos.x - 12px ));
+                        }
+                        if (cpos.y + root.viewport-y < 12px) {
+                            root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  - cpos.y + 12px ));
+                        } else if (cpos.y + root.viewport-y > i-scroll-view.visible-height - 12px - 20px) {
+                            // FIXME: font-height hardcoded to 20px
+                            root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  i-scroll-view.visible-height - cpos.y - 12px - 20px));
+                        }
                     }
                 }
             }

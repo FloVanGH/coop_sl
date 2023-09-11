@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
-use super::traits;
+
 use crate::{
-    model::{BookmarkModel, BookmarkType},
-    service::SettingsService,
+    models::{BookmarkModel, BookmarkType},
+    services::SettingsService,
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -19,12 +19,12 @@ pub struct BookmarksVec {
 }
 
 #[derive(Clone)]
-pub struct BookMarksRepository {
+pub struct BookmarksRepository {
     settings_service: SettingsService,
     bookmarks: Arc<Mutex<BookmarksVec>>,
 }
 
-impl BookMarksRepository {
+impl BookmarksRepository {
     pub fn new(settings_service: SettingsService) -> Self {
         let bookmarks = if let Ok(bookmarks) = settings_service.load::<BookmarksVec>(BOOKMARKS) {
             bookmarks
@@ -37,10 +37,8 @@ impl BookMarksRepository {
             bookmarks: Arc::new(Mutex::new(bookmarks)),
         }
     }
-}
 
-impl traits::BookMarksRepository for BookMarksRepository {
-    fn add_bookmark(&self, bookmark: &BookmarkModel) -> io::Result<()> {
+    pub fn add_bookmark(&self, bookmark: &BookmarkModel) -> io::Result<()> {
         let mut bookmark_vec = self
             .bookmarks
             .lock()
@@ -49,7 +47,7 @@ impl traits::BookMarksRepository for BookMarksRepository {
         self.settings_service.save(BOOKMARKS, &*bookmark_vec)
     }
 
-    fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel> {
+    pub fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel> {
         let mut bookmark_vec = self
             .bookmarks
             .lock()
@@ -61,7 +59,7 @@ impl traits::BookMarksRepository for BookMarksRepository {
         Ok(removed_bookmark)
     }
 
-    fn bookmarks(&self) -> Vec<BookmarkModel> {
+    pub fn bookmarks(&self) -> Vec<BookmarkModel> {
         if let Ok(bookmarks) = self.bookmarks.lock() {
             return bookmarks.bookmarks.clone();
         }
@@ -69,7 +67,7 @@ impl traits::BookMarksRepository for BookMarksRepository {
         vec![]
     }
 
-    fn locations(&self) -> Vec<crate::model::BookmarkModel> {
+    pub fn locations(&self) -> Vec<BookmarkModel> {
         let root = if cfg!(target_os = "windows") {
             BookmarkModel::new(BookmarkType::Root, "C", "C:\\")
         } else {

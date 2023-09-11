@@ -1,40 +1,38 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { CoopWindow, Icons, Palette, Icons } from "_imports/coop-widgets.slint";
-export { Icons }
+import { BookmarksView, BookmarksAdapter } from "views/bookmarks-view.slint";
+export { BookmarksAdapter }
+
+import { DialogView, DialogAdapter } from "views/dialog-view.slint";
+export { DialogAdapter }
 
 import { FilesView, FilesAdapter } from "views/files-view.slint";
 export { FilesAdapter }
 
-import { DialogView, DialogViewAdapter } from "views/dialog-view.slint";
-export { DialogViewAdapter }
-
-import { SideBarView, SideBarAdapter } from "views/side-bar-view.slint";
-export { SideBarAdapter }
-
-import { GamesAdapter } from "views/games-view.slint";
+import { GamesView, GamesAdapter } from "views/games-view.slint";
 export { GamesAdapter }
 
-import { LauncherItem } from "widgets/launcher.slint";
-export { LauncherItem }
 
-// export component Logo {
-//     Rectangle {
-//         border-width: 1px;
-//         border-color: Palette.border;
-//         background: Palette.background;
-//         width: 128px;
-//         height: 128px;
-//         border-radius: 24px;
+import { ImageView, ImageAdapter } from "views/image-view.slint";
+export { ImageAdapter }
 
-//         Image {
-//             width: 80px;
-//             source: Icons.folder;
-//             colorize: Palette.accent;
-//         }
-//     }
-// }
+import { TextView, TextAdapter } from "views/text-view.slint";
+export { TextAdapter }
+
+import { ListViewItem, CoopWindow, Icons, GroupListViewItem, SideBar } from "_imports/coop-widgets.slint";
+export { ListViewItem, Icons, GroupListViewItem }
+
+export enum ActiveView {
+    Files,
+    Image,
+    Text,
+    Games
+}
+
+export global MainAdapter {
+    in property <ActiveView> active-view: ActiveView.Files;
+}
 
 export component MainWindow inherits CoopWindow {
     title: "coop local";
@@ -46,17 +44,33 @@ export component MainWindow inherits CoopWindow {
         Rectangle {
             col: 1;
 
-            FilesView {
+            if (MainAdapter.active-view == ActiveView.Files) : FilesView {
+                width: 100%;
+                height: 100%;
+            }
 
+            if (MainAdapter.active-view == ActiveView.Image) : ImageView {
+                width: 100%;
+                height: 100%;
+            }
+
+            if (MainAdapter.active-view == ActiveView.Text) : TextView {
+                width: 100%;
+                height: 100%;
+            }
+
+            if (MainAdapter.active-view == ActiveView.Games) : GamesView {
                 width: 100%;
                 height: 100%;
             }
         }
 
-        SideBarView {
+        SideBar {
             col: 0;
             parent-width: root.width;
             responsive: true;
+
+            BookmarksView {}
         }
     }
 

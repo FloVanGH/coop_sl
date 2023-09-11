@@ -1,74 +1,50 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { StandardListView, ListViewItem, Icons, Carousel, HeaderBar, RoundButton, Icons,
-    ContextMenu, SelectionMode } from "../_imports/coop-widgets.slint";
-
-import { TextView } from "text-view.slint";
-import { ImageView } from "image-view.slint";
-import { GamesView } from "games-view.slint";
+import { ListViewItem, StandardListView, Icons, HeaderBar, SelectionMode, ContextMenu,
+    RoundButton } from "../_imports/coop-widgets.slint";
 
 export global FilesAdapter {
-    private property <[ListViewItem]> dummy-context-menu: [
-        { text: "Rename" },
-        { text: "Delete" },
-        { text: "Copy" },
-    ];
+    callback back();
+    callback open-internal(/* index */ int);
+    callback get-context-menu() -> [ListViewItem];
+    callback context-menu-action(/* spec */ string);
+    callback get-item-context-menu(/* row */ int) -> [ListViewItem];
+    callback item-context-menu-action(/* row */ int, /* spec */ string);
+    callback rename-item(/* row */ int, /* text */ string);
+    callback update-selection(/* row */ int, /* control */ bool);
+    callback select-all();
 
-    // header callbacks
-    callback get-main-menu() -> [ListViewItem];
-    callback main-menu-action(/* page */ int, /* action */ string);
-    callback previous-page();
-
-    // file callbacks
-    callback show(/* path */ string);
-    callback open(/* page */ int, /* file */ int);
-    callback get-file-context-menu(/* page */ int, /* file */ int) -> [ListViewItem];
-    callback context-menu-action(/* page */ int, /* file */ int, /* action */ string);
-
-    in property <[[ListViewItem]]> files: [
-        [
-            { leading-icon: Icons.folder, text: "Folder 1", highlighted: true },
-            { leading-icon: Icons.folder, text: "Folder 2", highlighted: true },
-            { leading-icon: Icons.folder, text: "Folder 3", highlighted: true },
-            { leading-icon: Icons.description, text: "File 1" },
-            { leading-icon: Icons.description, text: "File 2" },
-        ]
-    ];
-
-    in-out property <int> current-page;
-    in property <string> title;
-
-    // text-view
-    in property <bool> text-view-visible;
-    in-out property <string> text-view-text;
-
-    // image-view
-    in property <bool> image-view-visible;
-    in-out property <image> image-view-image;
-
-    // games-view
-    in property <bool> games-view-visible;
-
-    // only used for preview
-    get-file-context-menu => {
-       dummy-context-menu
-    }
+    in property <string> title: "Root";
+    in property <[ListViewItem]> files;
+    in property <bool> back-enabled;
+    in property <int> edit-file: -1;
 }
 
 export component FilesView {
-    private property <[ListViewItem]> main-menu-model;
-    private property <[ListViewItem]> context-menu-model;
-    private property <length> context-menu-x;
-    private property <length> context-menu-y;
-    private property <int> context-menu-page-index;
-    private property <int> context-menu-item-index;
+    private property <[ListViewItem]> context-menu;
+    private property <[ListViewItem]> item-context-menu;
+    private property <Point> item-context-menu-pos;
+    private property <int> item-context-menu-item-row;
+
+    i-focus-scope := FocusScope {
+        width: 0;
+        height: 0;
+
+        key-pressed(e) => {
+            if (e.text == "a" && e.modifiers.control) {
+                FilesAdapter.select-all();
+                return accept;
+            }
+
+            reject
+        }
+    }
 
     VerticalLayout {
         HeaderBar {
-            action-icon:  Icons.arrow-back;
-            action-enabled: FilesAdapter.current-page > 0 || FilesAdapter.text-view-visible || FilesAdapter.image-view-visible
-                || FilesAdapter.games-view-visible;
+            action-icon: Icons.arrow-back;
+            action-enabled: FilesAdapter.back-enabled;
             title: FilesAdapter.title;
 
             i-menu-button := RoundButton {
@@ -76,98 +52,82 @@ export component FilesView {
                 horizontal-stretch: 0;
 
                 clicked => {
-                    root.main-menu-model = FilesAdapter.get-main-menu();
-                    i-menu.show();
+                    root.context-menu = FilesAdapter.get-context-menu();
+
+                    if (root.context-menu.length == 0) {
+                        return;
+                    }
+
+                    i-context-menu.show();
                 }
             }
 
-            i-menu := PopupWindow {
+            action => {
+                FilesAdapter.back();
+            }
+
+            i-context-menu := PopupWindow {
                 x: i-menu-button.x - (128px - i-menu-button.width);
                 y: i-menu-button.y + i-menu-button.height;
 
                 ContextMenu {
                     min-width: 128px;
-                    model: root.main-menu-model;
+                    model: root.context-menu;
 
-                    item-clicked(index) => {
-                        FilesAdapter.main-menu-action(FilesAdapter.current-page, self.model[index].spec);
+                    item-clicked(row) => {
+                        FilesAdapter.context-menu-action(self.model[row].spec);
                     }
                 }
-            }
-
-            action => {
-                FilesAdapter.previous-page();
             }
         }
 
-        Carousel {
-            width: 100%;
-            vertical-stretch: 1;
-            current-page: FilesAdapter.text-view-visible || FilesAdapter.image-view-visible ||
-                FilesAdapter.games-view-visible ? 1 : 0;
+        StandardListView {
+            model: FilesAdapter.files;
+            selection-mode: SelectionMode.Custom;
+            edit-item: FilesAdapter.edit-file;
 
-            Carousel {
-                width: root.width;
-                height: 100%;
-                current-page <=> FilesAdapter.current-page;
+            item-pointer-event(row, event, position) => {
+                i-focus-scope.focus();
 
-                for files[page-index] in FilesAdapter.files : StandardListView {
-                    width: root.width;
-                    height: 100%;
-                    model: files;
-                    selection-mode: SelectionMode.None;
+                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && !event.modifiers.control
+                        && !event.modifiers.shift) {
+                    FilesAdapter.open-internal(row);
+                    return;
+                }
 
-                    item-pointer-event(index, evt, pos) => {
-                        if (evt.kind == PointerEventKind.up && !evt.modifiers.control && evt.button == PointerEventButton.left) {
-                            FilesAdapter.open(page-index, index);
-                            return;
-                        }
+                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && (event.modifiers.control
+                        || event.modifiers.shift)) {
+                    FilesAdapter.update-selection(row, event.modifiers.control);
+                    return;
+                }
 
-                        if (evt.kind == PointerEventKind.up && evt.button == PointerEventButton.right) {
-                            root.context-menu-model = FilesAdapter.get-file-context-menu(page-index, index);
-
-                            if (root.context-menu-model.length == 0) {
-                                return;
-                            }
-
-                            root.context-menu-x = pos.x;
-                            root.context-menu-y = pos.y;
-                            root.context-menu-page-index = page-index;
-                            root.context-menu-item-index = index;
-                            i-context-menu.show();
-                        }
+                if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
+                    root.item-context-menu = FilesAdapter.get-item-context-menu(row);
+                    if (root.item-context-menu.length == 0) {
+                        return;
                     }
 
-                    i-context-menu := PopupWindow {
-                        x: root.context-menu-x;
-                        y: root.context-menu-y;
-
-                        ContextMenu {
-                            model: root.context-menu-model;
-
-                            item-clicked(index) => {
-                                FilesAdapter.context-menu-action(root.context-menu-page-index, root.context-menu-item-index, self.model[index].spec);
-                            }
-                        }
-                    }
+                    root.item-context-menu-item-row = row;
+                    root.item-context-menu-pos = position;
+                    i-item-context-menu.show();
                 }
             }
 
-            if (FilesAdapter.text-view-visible) : TextView {
-                text <=> FilesAdapter.text-view-text;
-                width: root.width;
-                height: 100%;
+            item-accepted(row, text) => {
+                FilesAdapter.rename-item(row, text);
             }
 
-            if (FilesAdapter.image-view-visible) : ImageView {
-                width: root.width;
-                height: 100%;
-                image <=> FilesAdapter.image-view-image;
-            }
+            i-item-context-menu := PopupWindow {
+                x: root.item-context-menu-pos.x;
+                y: root.item-context-menu-pos.y;
 
-            if (FilesAdapter.games-view-visible) : GamesView {
-                width: root.width;
-                height: 100%;
+                ContextMenu {
+                    model: root.item-context-menu;
+
+                    item-clicked(row) => {
+                        FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
+                    }
+                }
             }
         }
     }

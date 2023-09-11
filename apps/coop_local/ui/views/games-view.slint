@@ -1,112 +1,141 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, LargeLabel } from "../_imports/coop-widgets.slint";
+import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, LargeLabel,
+    ListViewItem, HeaderBar, RoundButton, ContextMenu } from "../_imports/coop-widgets.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
 
 export global GamesAdapter {
-    callback launch-game(/* index */ int);
-    callback open(/* path */ string) -> bool;
-    callback is-games-dir(/* path */ string) -> bool;
+    callback back();
+    callback get-context-menu() -> [ListViewItem];
+    callback context-menu-action(/* spec */ string);
+    callback launch-game(/* row */ int);
     callback current-game-changed(/* current-game */ int);
 
-    in property <[LauncherItem]> games: [
-        { text: "Game 1", image: @image-url("../../assets/256x256.png") },
-        { text: "Game 2", image: @image-url("../../assets/256x256.png") },
-        { text: "Game 3", image: @image-url("../../assets/256x256.png") },
-        { text: "Game 4", image: @image-url("../../assets/256x256.png") },
-    ];
-    in property <[LauncherItem]> current-game-meta: [
-        { text: "Last Time Played: 17.08.2023 17:00", image: Icons.filled-calendar-month },
-        { text: "Times Played: 4", image: Icons.add },
-    ];
+    in property <[LauncherItem]> games;
+    in property <[LauncherItem]> current-game-meta;
     in-out property <int> current-game;
-
-    // dummy implementation
-    open => {
-        false
-    }
-
-    is-games-dir => {
-        false
-    }
+    in property <string> title;
 }
 
 export component GamesView {
+    private property <[ListViewItem]> context-menu;
+
     VerticalLayout {
-        padding-left: Space.large;
-        padding-right: Space.large;
-        spacing: Space.large;
+        HeaderBar {
+            action-icon: Icons.arrow-back;
+            action-enabled: true;
+            title: GamesAdapter.title;
 
-        i-launcher := Launcher {
-            vertical-stretch: 0;
-            model: GamesAdapter.games;
-            current-item <=> GamesAdapter.current-game;
+            i-menu-button := RoundButton {
+                icon: Icons.more-vert;
+                horizontal-stretch: 0;
 
-            launch(index) => {
-                GamesAdapter.launch-game(index);
+                clicked => {
+                    root.context-menu = GamesAdapter.get-context-menu();
+
+                    if (root.context-menu.length == 0) {
+                        return;
+                    }
+
+                    i-context-menu.show();
+                }
             }
 
-            current-item-changed(current-game) => {
-                GamesAdapter.current-game-changed(current-game);
+            action => {
+                GamesAdapter.back();
+            }
+
+            i-context-menu := PopupWindow {
+                x: i-menu-button.x - (128px - i-menu-button.width);
+                y: i-menu-button.y + i-menu-button.height;
+
+                ContextMenu {
+                    min-width: 128px;
+                    model: root.context-menu;
+
+                    item-clicked(row) => {
+                        GamesAdapter.context-menu-action(self.model[row].spec);
+                    }
+                }
             }
         }
 
-        ScrollView {
-            vertical-stretch: 1;
+        VerticalLayout {
+            padding-left: Space.large;
+            padding-right: Space.large;
+            spacing: Space.large;
 
-            Rectangle {
-                TouchArea {
-                    clicked => {
-                        i-launcher.focus();
-                    }
+            i-launcher := Launcher {
+                vertical-stretch: 0;
+                model: GamesAdapter.games;
+                current-item <=> GamesAdapter.current-game;
+
+                launch(index) => {
+                    GamesAdapter.launch-game(index);
                 }
 
-                VerticalLayout {
-                    spacing: Space.large;
-                    alignment: start;
+                current-item-changed(current-game) => {
+                    GamesAdapter.current-game-changed(current-game);
+                }
+            }
 
-                    ExtraLargeTitle {
-                        text: GamesAdapter.games[GamesAdapter.current-game].text;
-                        horizontal-alignment: left;
+            ScrollView {
+                vertical-stretch: 1;
+
+                Rectangle {
+                    TouchArea {
+                        clicked => {
+                            i-launcher.focus();
+                        }
                     }
 
-                    for item in GamesAdapter.current-game-meta : HorizontalLayout {
+                    VerticalLayout {
+                        spacing: Space.large;
                         alignment: start;
-                        spacing: Space.medium;
 
-                        Image {
-                            source: item.image;
-                            colorize: Palette.primary;
-                            width: Icography.small;
-                        }
-
-                        i-label := LargeLabel {
-                            text: item.text;
-                            vertical-alignment: center;
+                        ExtraLargeTitle {
+                            text: GamesAdapter.games[GamesAdapter.current-game].text;
                             horizontal-alignment: left;
-                            color: Palette.foreground;
-                            horizontal-stretch: 1;
-                            overflow: elide;
                         }
-                    }
 
-                    HorizontalLayout {
-                        alignment: start;
-                        spacing: Space.medium;
-                        padding-top: Space.medium;
+                        for item in GamesAdapter.current-game-meta : HorizontalLayout {
+                            alignment: start;
+                            spacing: Space.medium;
 
-                        Button {
-                            text: @tr("Play");
+                            Image {
+                                source: item.image;
+                                colorize: Palette.primary;
+                                width: Icography.small;
+                            }
 
-                            clicked => {
-                                GamesAdapter.launch-game(GamesAdapter.current-game);
+                            i-label := LargeLabel {
+                                text: item.text;
+                                vertical-alignment: center;
+                                horizontal-alignment: left;
+                                color: Palette.foreground;
+                                horizontal-stretch: 1;
+                                overflow: elide;
                             }
                         }
 
-                        // Button {
-                        //     icon: Icons.filled-settings;
-                        // }
+                        HorizontalLayout {
+                            alignment: start;
+                            spacing: Space.medium;
+                            padding-top: Space.medium;
+
+                            Button {
+                                text: @tr("Play");
+
+                                clicked => {
+                                    GamesAdapter.launch-game(GamesAdapter.current-game);
+                                }
+                            }
+
+                            // Button {
+                            //     icon: Icons.filled-settings;
+                            // }
+                        }
                     }
                 }
             }

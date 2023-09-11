@@ -1,12 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::model::CoopGameModel;
-use crate::model::GameMetaModel;
-use crate::model::GameModel;
-use crate::service;
+use crate::models::{CoopGameModel, GameMetaModel, GameModel};
+use crate::services;
 
-use super::traits;
 use std::fs;
 use std::io;
 use std::process::Command;
@@ -25,6 +22,7 @@ pub const MACOS_APP_EXT: &str = "app";
 pub const APP_IMAGE_EXT: &str = "appimage";
 
 pub const COOP_GAME: &str = "coop_game";
+pub const GAMES_FILE_NAME: &str = "coop_game.toml";
 
 #[derive(Clone, Debug)]
 pub struct GamesRepository {
@@ -46,9 +44,74 @@ impl GamesRepository {
         }
     }
 
+    pub fn is_games_dir(&self, path: impl Into<String>) -> io::Result<bool> {
+        let path = path.into();
+
+        for entry in fs::read_dir(path)?.flatten() {
+            if let Some(name) = entry.file_name().to_str() {
+                if name.eq(GAMES_FILE_NAME) {
+                    return Ok(true);
+                }
+            }
+        }
+
+        Ok(false)
+    }
+
+    pub fn games(&self, path: impl Into<String>) -> io::Result<Vec<GameModel>> {
+        let path = path.into();
+
+        if let Ok(mut current_path) = self.current_path.lock() {
+            *current_path = path.clone();
+        }
+
+        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
+            if let Ok(loaded_model) = services::load(path.as_str(), COOP_GAME) {
+                *coop_game_model = loaded_model;
+            }
+        }
+
+        self.get_games(path)
+    }
+
+    pub fn launch(&self, game_model: &mut GameModel) -> io::Result<()> {
+        use chrono::*;
+        use std::time;
+
+        game_model.meta_mut().times_played += 1;
+        game_model.meta_mut().last_time_played = Local::now().timestamp_millis();
+
+        let start_time = time::Instant::now();
+
+        #[cfg(target_os = "macos")]
+        if let Ok(join_handle) = Command::new("open")
+            .arg("--wait-apps")
+            .arg(game_model.file_model().path())
+            .spawn()
+        {
+            let _ = join_handle.wait_with_output();
+        }
+
+        #[cfg(not(target_os = "macos"))]
+        if let Ok(join_handle) = Command::new(game_model.file_model().path()).spawn() {
+            let _ = join_handle.wait_with_output();
+        }
+
+        game_model.meta_mut().play_time += start_time.elapsed().as_secs();
+
+        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
+            coop_game_model
+                .meta
+                .insert(game_model.name().to_string(), game_model.meta().clone());
+        }
+
+        self.save_coop_game_model();
+        Ok(())
+    }
+
     #[cfg(target_os = "macos")]
     fn get_games(&self, path: impl Into<String>) -> io::Result<Vec<GameModel>> {
-        use crate::model::{FileModel, RgbaIconModel};
+        use crate::models::{FileModel, RgbaIconModel};
 
         let mut games = vec![];
 
@@ -105,7 +168,7 @@ impl GamesRepository {
 
     #[cfg(target_os = "linux")]
     fn get_games(&self, path: impl Into<String>) -> io::Result<Vec<GameModel>> {
-        use crate::model::{FileModel, RgbaIconModel};
+        use crate::models::{FileModel, RgbaIconModel};
         let mut games = vec![];
 
         let path = path.into();
@@ -152,75 +215,8 @@ impl GamesRepository {
     fn save_coop_game_model(&self) {
         if let Ok(current_path) = self.current_path.lock() {
             if let Ok(coop_game_model) = self.coop_game_model.lock() {
-                let _ = service::save(&current_path, COOP_GAME, &*coop_game_model);
+                let _ = services::save(&current_path, COOP_GAME, &*coop_game_model);
             }
         }
-    }
-}
-
-impl traits::GamesRepository for GamesRepository {
-    fn is_games_dir(&self, path: impl Into<String>) -> io::Result<bool> {
-        let path = path.into();
-
-        for entry in fs::read_dir(path)?.flatten() {
-            if let Some(name) = entry.file_name().to_str() {
-                if name.eq(traits::GAMES_FILE_NAME) {
-                    return Ok(true);
-                }
-            }
-        }
-
-        Ok(false)
-    }
-
-    fn games(&self, path: impl Into<String>) -> io::Result<Vec<GameModel>> {
-        let path = path.into();
-
-        if let Ok(mut current_path) = self.current_path.lock() {
-            *current_path = path.clone();
-        }
-
-        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
-            if let Ok(loaded_model) = service::load(path.as_str(), COOP_GAME) {
-                *coop_game_model = loaded_model;
-            }
-        }
-
-        self.get_games(path)
-    }
-
-    fn launch(&self, game_model: &mut GameModel) -> io::Result<()> {
-        use chrono::*;
-        use std::time;
-
-        game_model.meta_mut().times_played += 1;
-        game_model.meta_mut().last_time_played = Local::now().timestamp_millis();
-
-        let start_time = time::Instant::now();
-
-        #[cfg(target_os = "macos")]
-        if let Ok(join_handle) = Command::new("open")
-            .arg("--wait-apps")
-            .arg(game_model.file_model().path())
-            .spawn()
-        {
-            let _ = join_handle.wait_with_output();
-        }
-
-        #[cfg(not(target_os = "macos"))]
-        if let Ok(join_handle) = Command::new(game_model.file_model().path()).spawn() {
-            let _ = join_handle.wait_with_output();
-        }
-
-        game_model.meta_mut().play_time += start_time.elapsed().as_secs();
-
-        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
-            coop_game_model
-                .meta
-                .insert(game_model.name().to_string(), game_model.meta().clone());
-        }
-
-        self.save_coop_game_model();
-        Ok(())
     }
 }

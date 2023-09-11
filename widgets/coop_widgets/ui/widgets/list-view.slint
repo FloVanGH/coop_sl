@@ -5,10 +5,12 @@ import { Duration, Icography, Radius, Palette, Size, State, Space, Icons } from 
 import { ScrollView } from "scroll-view.slint";
 import { CheckableBase } from "checkables.slint";
 import { LargeLabel, FocusBorder } from "../components/components.slint";
+import { LineEdit } from "line-edit.slint";
 
 export enum SelectionMode {
     None,
-    Single
+    Single,
+    Custom
 }
 
 export struct ListViewItem  {
@@ -16,7 +18,10 @@ export struct ListViewItem  {
     text: string,
     trailing-icon: image,
     highlighted: bool,
-    spec: string
+    spec: string,
+
+    // this is only used for custom selection
+    selected: bool
 }
 
 export struct GroupListViewItem  {
@@ -27,32 +32,20 @@ export struct GroupListViewItem  {
 export component ItemDelegate inherits TouchArea {
     private property <brush> foreground: Palette.foreground;
     private property <brush> icon-color: highlighted ? Palette.primary : Palette.foreground;
+    private property <brush> text-color: root.foreground;
+
+    callback accepted(/* text*/ string);
 
     in property <bool> selected;
     in property <bool> highlighted;
     in property <image> leading-icon;
-    in property <string> text;
     in property <image> trailing-icon;
+    in property <bool> edit;
+    in-out property <string> text;
 
     min-height: max(Size.small, i-layout.min-height);
-    forward-focus: i-focus-scope;
-    // padding: Space.medium;
     padding-right: Space.medium;
     padding-left: Space.medium;
-
-    i-focus-scope := FocusScope {
-        x: 0;
-        width: 0px; // Do not react on clicks
-        enabled: root.enabled;
-
-        key-pressed(event) => {
-            if(event.text == " " || event.text == "\n") {
-                root.clicked();
-                return accept;
-            }
-            return reject;
-        }
-    }
 
     i-background := Rectangle {
        i-layout := HorizontalLayout {
@@ -60,34 +53,41 @@ export component ItemDelegate inherits TouchArea {
             padding-right: root.padding-right;
             spacing: Space.medium;
 
-            if(root.leading-icon.width > 0 && root.leading-icon.height > 0) : Image {
+            if (root.leading-icon.width > 0 && root.leading-icon.height > 0) : Image {
                 source: root.leading-icon;
                 colorize: root.icon-color;
                 width: Icography.small;
             }
 
-            i-label := LargeLabel {
+            if (!root.edit) : LargeLabel {
                 text <=> root.text;
                 vertical-alignment: center;
                 horizontal-alignment: left;
                 color: root.foreground;
-                horizontal-stretch: 1;
                 overflow: elide;
             }
 
-            if(root.trailing-icon.width > 0 && root.trailing-icon.height > 0) : Image {
+            if (root.edit) : LineEdit {
+                y: (parent.height - self.height) / 2;
+                text: root.text;
+                height: Size.extra-small;
+
+                accepted(text) => {
+                    root.accepted(text);
+                }
+            }
+
+            if (root.trailing-icon.width > 0 && root.trailing-icon.height > 0) : Image {
                 source: root.trailing-icon;
                 colorize: root.foreground;
                 width: Icography.small;
             }
         }
-
-        if(i-focus-scope.has-focus) : FocusBorder {}
     }
 
     states [
         disabled when !root.enabled: {
-            i-label.color: Palette.foreground-disabled;
+            root.text-color: Palette.foreground-disabled;
             root.icon-color: Palette.foreground-disabled;
         }
 
@@ -119,7 +119,7 @@ component GroupItemDelegate {
     in property <GroupListViewItem> model;
     in property <int> item-index;
     in property <SelectionMode> selection-mode: SelectionMode.Single;
-    in-out property <{ parent: int, item: int }> current-item;
+    in-out property <{ parent: int, item: int }> current-item: { parent: -1, item: -1};
     in-out property <bool> expanded: true;
 
     min-height: max(Size.small, i-layout.min-height);
@@ -190,8 +190,9 @@ component GroupItemDelegate {
                 highlighted: item.highlighted;
                 text: item.text;
                 trailing-icon: item.trailing-icon;
-                selected: root.item-index == root.current-item.parent && item-index == root.current-item.item
-                    && root.selection-mode != SelectionMode.None;
+                selected: (root.item-index == root.current-item.parent && item-index == root.current-item.item
+                    && root.selection-mode == SelectionMode.Single)
+                    || (root.selection-mode == SelectionMode.Custom && item.selected);
                 height: self.min-height;
 
                 clicked => {
@@ -240,19 +241,24 @@ export component ListView inherits ScrollView {
 }
 
 component StandardListViewBase inherits ListView {
+    private property <int> into-view-item;
     private property <length> item-height: self.viewport-height / self.model.length;
-    private property <length> current-item-y: self.viewport-y + current-item * item-height;
+    private property <length> into-view-item-y: self.viewport-y + current-item * item-height;
 
     callback current-item-changed(/* current-item */ int);
     callback item-pointer-event(/* item-index */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
+    callback item-accepted(/* row */ int, /* text */ string);
 
     in property <[ListViewItem]> model;
     in property <SelectionMode> selection-mode: SelectionMode.Single;
+    in property <int> edit-item: -1;
     in-out property <int> current-item: -1;
 
     for item[index] in root.model : ItemDelegate {
         height: self.min-height;
-        selected: index == root.current-item && root.selection-mode != SelectionMode.None;
+        selected: (index == root.current-item && root.selection-mode == SelectionMode.Single)
+            || (item.selected && root.selection-mode == SelectionMode.Custom);
+        edit: index == root.edit-item;
         leading-icon: item.leading-icon;
         text: item.text;
         trailing-icon: item.trailing-icon;
@@ -268,22 +274,31 @@ component StandardListViewBase inherits ListView {
                 y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
             });
         }
+
+        accepted(text) => {
+            root.item-accepted(index, text);
+        }
     }
 
     public function set-current-item(index: int) {
-        if(index < 0 || index >= model.length || root.selection-mode == SelectionMode.None) {
+        if (index < 0 || index >= model.length || root.selection-mode == SelectionMode.None || root.selection-mode == SelectionMode.Custom) {
             return;
         }
 
         current-item = index;
         root.current-item-changed(current-item);
+        bring-into-view(current-item);
+    }
 
-        if(current-item-y < 0) {
-            self.viewport-y += 0 - current-item-y;
+    public function bring-into-view(row: int) {
+        into-view-item = row;
+
+        if (into-view-item-y < 0) {
+            self.viewport-y += 0 - into-view-item-y;
         }
 
-        if(current-item-y + item-height > self.visible-height) {
-            self.viewport-y -= current-item-y + item-height - self.visible-height;
+        if (into-view-item-y + item-height > self.visible-height) {
+            self.viewport-y -= into-view-item-y + item-height - self.visible-height;
         }
     }
 }
@@ -324,6 +339,7 @@ export component GroupListView inherits ScrollView  {
                 item-index: parent-index;
                 current-item <=> root.current-item;
                 height: self.min-height;
+                selection-mode: root.selection-mode;
 
                 current-item-changed(item) => {
                     root.current-item-changed(item);

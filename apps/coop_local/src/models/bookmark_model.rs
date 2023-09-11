@@ -21,6 +21,9 @@ pub struct BookmarkModel {
     bookmark_type: BookmarkType,
     name: String,
     path: String,
+
+    #[serde(skip)]
+    selected: bool,
 }
 
 impl BookmarkModel {
@@ -33,6 +36,7 @@ impl BookmarkModel {
             bookmark_type,
             name: name.into(),
             path: path.into(),
+            selected: false,
         }
     }
 
@@ -46,5 +50,13 @@ impl BookmarkModel {
 
     pub fn bookmark_type(&self) -> BookmarkType {
         self.bookmark_type
+    }
+
+    pub fn set_selected(&mut self, selected: bool) {
+        self.selected = selected;
+    }
+
+    pub fn selected(&self) -> bool {
+        self.selected
     }
 }

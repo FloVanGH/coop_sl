@@ -51,7 +51,7 @@ pub struct CoopGameModel {
     pub meta: HashMap<String, GameMetaModel>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 pub struct GameModel {
     file_model: FileModel,
     icon_model: RgbaIconModel,

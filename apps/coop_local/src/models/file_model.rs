@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use std::{fs, io::Result, path::Path};
+use std::{fs, io::Result, path::Path, time::SystemTime};
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub enum FileType {
@@ -13,14 +13,18 @@ pub enum FileType {
     Unknown,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 pub struct FileModel {
     path: String,
+    selected: bool,
 }
 
 impl FileModel {
     pub fn new(path: impl Into<String>) -> Self {
-        Self { path: path.into() }
+        Self {
+            path: path.into(),
+            selected: false,
+        }
     }
 
     pub fn parent(&self) -> Option<&str> {
@@ -105,6 +109,26 @@ impl FileModel {
 
     pub fn as_path(&self) -> &Path {
         Path::new(self.path.as_str())
+    }
+
+    pub fn modified(&self) -> Option<SystemTime> {
+        if let Ok(file) = self.as_readable_file() {
+            if let Ok(meta) = file.metadata() {
+                if let Ok(modified) = meta.modified() {
+                    return Some(modified);
+                }
+            }
+        }
+
+        None
+    }
+
+    pub fn set_selected(&mut self, selected: bool) {
+        self.selected = selected;
+    }
+
+    pub fn selected(&self) -> bool {
+        self.selected
     }
 }
 

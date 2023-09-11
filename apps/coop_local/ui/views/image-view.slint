@@ -1,24 +1,77 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ScrollView, Space, Palette, Radius } from "../_imports/coop-widgets.slint";
+import { ScrollView, Space, Palette, Radius, HeaderBar, Icons, RoundButton, ListViewItem,
+    ContextMenu } from "../_imports/coop-widgets.slint";
+
+export global ImageAdapter {
+    callback back();
+    callback get-context-menu() -> [ListViewItem];
+    callback context-menu-action(/* spec */ string);
+
+    in property <image> image;
+    in property <string> title;
+}
 
 export component ImageView {
-    in-out property <image> image <=> i-image.source;
+    private property <[ListViewItem]> context-menu;
 
     VerticalLayout {
-        alignment: start;
-        padding: Space.large;
+        HeaderBar {
+            action-icon: Icons.arrow-back;
+            action-enabled: true;
+            title: ImageAdapter.title;
 
-        Rectangle {
-            border-width: 1px;
-            clip: true;
-            border-color: Palette.border;
-            border-radius: Radius.large;
+            i-menu-button := RoundButton {
+                icon: Icons.more-vert;
+                horizontal-stretch: 0;
 
-            VerticalLayout {
-                padding: Space.small;
-                i-image := Image {}
+                clicked => {
+                    root.context-menu = ImageAdapter.get-context-menu();
+
+                    if (root.context-menu.length == 0) {
+                        return;
+                    }
+
+                    i-context-menu.show();
+                }
+            }
+
+            action => {
+                ImageAdapter.back();
+            }
+
+            i-context-menu := PopupWindow {
+                x: i-menu-button.x - (128px - i-menu-button.width);
+                y: i-menu-button.y + i-menu-button.height;
+
+                ContextMenu {
+                    min-width: 128px;
+                    model: root.context-menu;
+
+                    item-clicked(row) => {
+                        ImageAdapter.context-menu-action(self.model[row].spec);
+                    }
+                }
+            }
+        }
+
+        VerticalLayout {
+            alignment: start;
+            padding: Space.large;
+
+            Rectangle {
+                border-width: 1px;
+                clip: true;
+                border-color: Palette.border;
+                border-radius: Radius.large;
+
+                VerticalLayout {
+                    padding: Space.small;
+                    i-image := Image {
+                        source: ImageAdapter.image;
+                    }
+                }
             }
         }
     }

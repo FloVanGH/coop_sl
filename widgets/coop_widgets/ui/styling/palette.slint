@@ -33,6 +33,7 @@ export global CoopPalette {
     out property <brush> error: #EF5350;
     out property <brush> accent: Settings.dark-color-scheme ? #01fec5: #1d9bf2;
     out property <brush> on-accent: Settings.dark-color-scheme ? #212121: #dfdfdf;
+    out property <brush> selection: Settings.dark-color-scheme ? #01fec54d: #1d9bf24d;
 }
 
 export global CosmicPalette {
@@ -51,6 +52,7 @@ export global CosmicPalette {
     out property <brush> error: Settings.dark-color-scheme ? #FFB5B5 : #A0252B;
     out property <brush> accent: Settings.dark-color-scheme ? #94EBEB: #00496D;
     out property <brush> on-accent: Settings.dark-color-scheme ? #000000: #FFFFFF;
+    out property <brush> selection: Settings.dark-color-scheme ? #94EBEB4d: #00496D4d;
 }
 
 export global Palette {
@@ -71,6 +73,7 @@ export global Palette {
     in-out property <brush> error: CoopPalette.error;
     in-out property <brush> accent: CoopPalette.accent;
     in-out property <brush> on-accent: CoopPalette.on-accent;
+    in-out property <brush> selection: CoopPalette.selection;
 
     public function set-color-variant(variant: ColorVariant) {
         if (variant == ColorVariant.Light) {
@@ -101,6 +104,7 @@ export global Palette {
             error = CosmicPalette.error;
             accent = CosmicPalette.accent;
             on-accent = CosmicPalette.on-accent;
+            selection = CosmicPalette.selection;
 
             return;
         }
@@ -120,5 +124,6 @@ export global Palette {
         error = CoopPalette.error;
         accent = CoopPalette.accent;
         on-accent = CoopPalette.on-accent;
+        selection = CoopPalette.selection
     }
 }

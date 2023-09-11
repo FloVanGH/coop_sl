@@ -79,10 +79,12 @@ export component LineEdit {
                     x: min(0px, max(parent.width - self.width, root.computed-x));
                     width: max(parent.width, self.preferred-width);
                     height: 100%;
-                    color: Palette.foreground;
+                    color: Palette.foreground.transparentize(0.5);
                     vertical-alignment: center;
                     font-size: Typography.medium-label.font-size;
                     font-weight: Typography.medium-label.font-weight;
+                    selection-background-color: Palette.selection;
+                    selection-foreground-color: self.color;
 
                     accepted => {
                         root.accepted(self.text);

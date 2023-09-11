@@ -20,6 +20,7 @@ export component HeaderBar inherits HorizontalLayout {
     padding-top: Space.small;
     padding-bottom: Space.small;
     height: Size.large;
+    vertical-stretch: 0;
 
     if (root.action-text != "" || (root.action-icon.width > 0 && root.action-icon.height  > 0)) : RoundButton {
         enabled: root.action-enabled;

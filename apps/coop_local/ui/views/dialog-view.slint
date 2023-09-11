@@ -1,49 +1,27 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { TextInputDialog } from "../dialogs/text-input-dialog.slint";
 import { AboutDialog } from "../dialogs/about-dialog.slint";
 
-export global DialogViewAdapter {
-    callback cancel();
-    callback ti-default(/* text */ string);
+export global DialogAdapter {
+    callback close-about();
 
-    in property <string> title;
-    in property <bool> ti-visible;
-    in property <bool> about-visible;
-    in property <string> default-button-text;
-    in-out property <string> ti-text;
+    in property <bool> show-about;
 }
 
 export component DialogView {
-    if (DialogViewAdapter.ti-visible || DialogViewAdapter.about-visible) : TouchArea {
-        width: 100%;
-        height: 100%;
+    if (DialogAdapter.show-about) : Rectangle {
+        preferred-width: 100%;
+        preferred-height: 100%;
+        background: #000000;
+        opacity: 0.5;
 
-        Rectangle {
-            width: 100%;
-            height: 100%;
-            background: #00000080;
+        TouchArea {}
+    }
 
-            if (DialogViewAdapter.ti-visible) : TextInputDialog {
-                title: DialogViewAdapter.title;
-                text <=> DialogViewAdapter.ti-text;
-                default-button-text: DialogViewAdapter.default-button-text;
-
-                cancel-clicked => {
-                    DialogViewAdapter.cancel();
-                }
-
-                default-clicked => {
-                    DialogViewAdapter.ti-default(self.text);
-                }
-            }
-
-            if (DialogViewAdapter.about-visible) : AboutDialog {
-                cancel-clicked => {
-                    DialogViewAdapter.cancel();
-                }
-            }
+    if (DialogAdapter.show-about) : AboutDialog {
+        cancel-clicked => {
+            DialogAdapter.close-about();
         }
     }
 }
