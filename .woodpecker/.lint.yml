@@ -28,7 +28,6 @@ steps:
       event: [push, pull_request, tag]
       branch: main
     commands:
-      - apt-get update && apt-get install -y python3-pip python3-venv
-      - python3 -m pip install --user pipx
+      - apt-get update && apt-get install -y python3-pip python3-venv pipx
       - export PATH=$PATH:/root/.local/bin
       - pipx run reuse lint
