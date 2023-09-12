@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use std::cell::RefCell;
+use std::path::Path;
 use std::rc::Rc;
 use std::{cell::Cell, io};
 
@@ -185,6 +186,43 @@ impl BookmarksController {
         });
     }
 
+    pub fn get_first_bookmark(&self) -> Option<String> {
+        if self.bookmarks.row_count() > 0 {
+            return self.bookmarks.row_data(0).map(|b| b.path().to_string());
+        }
+
+        if self.locations.row_count() > 0 {
+            return self.locations.row_data(0).map(|b| b.path().to_string());
+        }
+
+        None
+    }
+
+    pub fn update(&self) {
+        let bookmarks = self.bookmarks.clone();
+        let locations = self.locations.clone();
+        let repository = self.repository.clone();
+
+        let _ = slint::spawn_local(async move {
+            for r in (0..bookmarks.row_count()).rev() {
+                if let Some(bookmark) = bookmarks.row_data(r) {
+                    if !Path::new(bookmark.path()).exists() && repository.remove_bookmark(r).is_ok()
+                    {
+                        bookmarks.remove_from_source(bookmark);
+                    }
+                }
+            }
+
+            for r in (0..locations.row_count()).rev() {
+                if let Some(location) = locations.row_data(r) {
+                    if !Path::new(location.path()).exists() {
+                        locations.remove_from_source(location);
+                    }
+                }
+            }
+        });
+    }
+
     fn execute_item_context_menu_action(&self, parent_row: usize, item_row: usize, spec: &str) {
         if parent_row != 0 {
             return;
@@ -218,10 +256,8 @@ impl BookmarksController {
         let bookmarks = self.bookmarks.clone();
         let locations = self.locations.clone();
 
-        let _ = slint::spawn_local(async move {
-            bookmarks.set_vec_to_source(repository.bookmarks());
-            locations.set_vec_to_source(repository.locations());
-        });
+        bookmarks.set_vec_to_source(repository.bookmarks());
+        locations.set_vec_to_source(repository.locations());
     }
 
     fn on_open_dir(&self, parent: usize, item: usize) {

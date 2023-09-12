@@ -3,7 +3,7 @@
 
 use crate::models::{FileModel, FileType};
 use crate::proxy_model::ProxyModel;
-use crate::repositories::FilesRepository;
+use crate::repositories::{FilesRepository, GamesRepository};
 use crate::ui::*;
 use slint::*;
 use std::cell::{Cell, RefCell};
@@ -30,6 +30,7 @@ pub struct FilesController {
     files: Rc<ProxyModel<FileModel>>,
     view_handle: Weak<MainWindow>,
     repository: FilesRepository,
+    games_repository: GamesRepository,
     root_file: Rc<RefCell<FileModel>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
     selected_items: Rc<RefCell<BTreeSet<usize>>>,
@@ -42,6 +43,7 @@ impl FilesController {
         root_file: FileModel,
         view_handle: Weak<MainWindow>,
         files_repository: FilesRepository,
+        games_repository: GamesRepository,
     ) -> Self {
         // todo load files from root
 
@@ -86,6 +88,7 @@ impl FilesController {
             files,
             view_handle,
             repository: files_repository,
+            games_repository,
             root_modified,
             selected_items: Rc::new(RefCell::new(BTreeSet::default())),
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
@@ -137,6 +140,20 @@ impl FilesController {
                         controller.select_all();
                     }
                 });
+
+                adapter.on_copy({
+                    let controller = controller.clone();
+                    move || {
+                        controller.copy(None);
+                    }
+                });
+
+                adapter.on_paste({
+                    let controller = controller.clone();
+                    move || {
+                        controller.paste();
+                    }
+                });
             }
         });
 
@@ -167,7 +184,7 @@ impl FilesController {
                     return;
                 }
 
-                for row in 0..files_model.row_count_from_source() {
+                for row in (0..files_model.row_count_from_source()).rev() {
                     if let Some(file_model) = files_model.row_data_from_source(row) {
                         if repo_files.contains(&file_model) {
                             repo_files
@@ -241,11 +258,18 @@ impl FilesController {
             });
 
             #[cfg(feature = "games")]
-            items.push(ListViewItem {
-                text: "Create game file".into(),
-                spec: context_menu::CREATE_GAME_FILE.into(),
-                ..Default::default()
-            });
+            if let Ok(is_games_dir) = self
+                .games_repository
+                .is_games_dir(self.root_file.borrow().path())
+            {
+                if !is_games_dir {
+                    items.push(ListViewItem {
+                        text: "Create game file".into(),
+                        spec: context_menu::CREATE_GAME_FILE.into(),
+                        ..Default::default()
+                    });
+                }
+            }
 
             if self.repository.can_paste() {
                 items.push(ListViewItem {
@@ -358,21 +382,7 @@ impl FilesController {
                 self.root_modified.set(self.root_file.borrow().modified());
             }
             context_menu::COPY => {
-                if !self.selected_items.borrow().contains(&row) {
-                    if let Some(file_model) = self.files.row_data(row) {
-                        self.repository.copy(&[file_model])
-                    }
-                } else {
-                    let mut copy_files = vec![];
-
-                    for r in self.selected_items.borrow().iter().rev() {
-                        if let Some(file_model) = self.files.row_data(*r) {
-                            copy_files.push(file_model);
-                        }
-                    }
-
-                    self.repository.copy(&copy_files);
-                }
+                self.copy(Some(row));
             }
             context_menu::RENAME => {
                 upgrade_adapter(&self.view_handle, move |adapter| {
@@ -488,6 +498,27 @@ impl FilesController {
             self.files.push_to_source(new_file.clone());
             self.root_modified.set(self.root_file.borrow().modified());
         }
+    }
+
+    fn copy(&self, row: Option<usize>) {
+        if let Some(row) = row {
+            if !self.selected_items.borrow().contains(&row) {
+                if let Some(file_model) = self.files.row_data(row) {
+                    self.repository.copy(&[file_model]);
+                    return;
+                }
+            }
+        }
+
+        let mut copy_files = vec![];
+
+        for r in self.selected_items.borrow().iter().rev() {
+            if let Some(file_model) = self.files.row_data(*r) {
+                copy_files.push(file_model);
+            }
+        }
+
+        self.repository.copy(&copy_files);
     }
 
     fn paste(&self) {

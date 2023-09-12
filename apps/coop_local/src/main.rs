@@ -24,13 +24,25 @@ pub fn main() -> Result<(), slint::PlatformError> {
     let bookmarks_controller = BookmarksController::new(view_handle.clone())
         .map_err(|e| PlatformError::Other(e.to_string()))?;
 
-    let file_model_stack = Rc::new(RefCell::new(vec![FileModel::new("/")]));
+    let initial_location = if let Some(bookmark) = bookmarks_controller.get_first_bookmark() {
+        bookmark
+    } else if cfg!(windows) {
+        "C://".to_string()
+    } else {
+        "/".to_string()
+    };
+    bookmarks_controller.select(initial_location.as_str());
+    let initial_location = FileModel::new(initial_location);
+
+    let file_model_stack = Rc::new(RefCell::new(vec![initial_location.clone()]));
 
     let files_repository = FilesRepository::new();
+    let games_repository = GamesRepository::new();
     let files_controller = FilesController::new(
-        FileModel::new("/"),
+        initial_location,
         view_handle.clone(),
         files_repository.clone(),
+        games_repository.clone(),
     );
 
     let files_controller_clone = files_controller.clone();
@@ -71,7 +83,6 @@ pub fn main() -> Result<(), slint::PlatformError> {
         }
     });
 
-    let games_repository = GamesRepository::new();
     let games_controller = GamesController::new(view_handle.clone(), games_repository.clone());
     games_controller.on_back(on_back.clone());
     games_controller.on_show_about(on_show_about.clone());
@@ -112,6 +123,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
         let file_model_stack = file_model_stack.clone();
         let view_handle = view_handle.clone();
         let image_controller = image_controller.clone();
+        let games_controller = games_controller.clone();
 
         move |file_model: FileModel| {
             if file_model_stack.borrow().last().eq(&Some(&file_model)) {
@@ -159,9 +171,23 @@ pub fn main() -> Result<(), slint::PlatformError> {
         TimerMode::Repeated,
         std::time::Duration::from_millis(200),
         {
-            let files_controller = files_controller.clone();
             move || {
-                files_controller.update();
+                upgrade_adapter(&view_handle, {
+                    let files_controller = files_controller.clone();
+                    let games_controller = games_controller.clone();
+
+                    move |adapter| {
+                        if adapter.get_active_view() == ActiveView::Files {
+                            files_controller.update();
+                        }
+
+                        if adapter.get_active_view() == ActiveView::Games {
+                            games_controller.update();
+                        }
+                    }
+                });
+
+                bookmarks_controller.update();
             }
         },
     );

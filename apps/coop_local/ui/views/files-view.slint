@@ -14,6 +14,8 @@ export global FilesAdapter {
     callback rename-item(/* row */ int, /* text */ string);
     callback update-selection(/* row */ int, /* control */ bool);
     callback select-all();
+    callback copy();
+    callback paste();
 
     in property <string> title: "Root";
     in property <[ListViewItem]> files;
@@ -35,6 +37,14 @@ export component FilesView {
             if (e.text == "a" && e.modifiers.control) {
                 FilesAdapter.select-all();
                 return accept;
+            }
+
+            if (e.text == "c" && e.modifiers.control) {
+                FilesAdapter.copy();
+            }
+
+            if (e.text == "v" && e.modifiers.control) {
+                FilesAdapter.paste();
             }
 
             reject

@@ -7,8 +7,9 @@ use crate::repositories::GamesRepository;
 use crate::ui::*;
 use chrono::{Local, LocalResult, TimeZone};
 use slint::*;
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
+use std::time::SystemTime;
 
 mod context_menu {
     pub const SHOW_FILES: &str = "show_files";
@@ -19,7 +20,8 @@ mod context_menu {
 pub struct GamesController {
     view_handle: Weak<MainWindow>,
     repository: GamesRepository,
-
+    root_file: Rc<RefCell<Option<FileModel>>>,
+    root_modified: Rc<Cell<Option<SystemTime>>>,
     games: Rc<ProxyModel<GameModel>>,
     meta: Rc<VecModel<LauncherItem>>,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
@@ -28,12 +30,11 @@ pub struct GamesController {
 
 impl GamesController {
     pub fn new(view_handle: Weak<MainWindow>, repository: GamesRepository) -> Self {
-        // let games = ;
-
         let controller = Self {
             view_handle,
             repository,
-
+            root_file: Rc::new(RefCell::new(None)),
+            root_modified: Rc::new(Cell::new(None)),
             games: Rc::new(
                 ProxyModel::default().as_sort_by(|l: &GameModel, r: &GameModel| {
                     r.meta().last_time_played.cmp(&l.meta().last_time_played)
@@ -104,6 +105,9 @@ impl GamesController {
     }
 
     pub fn show_games(&self, file_model: FileModel) {
+        *self.root_file.borrow_mut() = Some(file_model.clone());
+        self.root_modified.set(file_model.modified());
+
         if let Ok(games) = self.repository.games(file_model.path()) {
             self.games.set_vec_to_source(games);
         }
@@ -114,6 +118,46 @@ impl GamesController {
         });
 
         self.display_current_meta(0);
+    }
+
+    pub fn update(&self) {
+        if let Some(root_file) = &*self.root_file.borrow() {
+            if self.root_modified.get().eq(&root_file.modified()) {
+                return;
+            }
+
+            let root_file = root_file.clone();
+            let games_model = self.games.clone();
+            let repository: GamesRepository = self.repository.clone();
+            self.root_modified.set(root_file.modified());
+
+            let _ = slint::spawn_local(async move {
+                if let Ok(mut repo_games) = repository.games(root_file.path()) {
+                    if repo_games.is_empty() {
+                        games_model.clear();
+                        return;
+                    }
+
+                    for row in (0..games_model.row_count_from_source()).rev() {
+                        if let Some(game_model) = games_model.row_data_from_source(row) {
+                            if repo_games.contains(&game_model) {
+                                repo_games.remove(
+                                    repo_games.iter().position(|g| g.eq(&game_model)).unwrap(),
+                                );
+                                continue;
+                            }
+
+                            // game is no longer in the real directory but still in the ui (remove it)
+                            games_model.remove_from_source(game_model);
+                        }
+                    }
+
+                    for game in repo_games {
+                        games_model.push_to_source(game);
+                    }
+                }
+            });
+        }
     }
 
     fn display_current_meta(&self, row: usize) {
