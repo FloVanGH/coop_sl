@@ -32,6 +32,15 @@ impl FilesRepository {
             let mut items = vec![];
 
             for entry in fs::read_dir(root.path())?.flatten() {
+                if entry
+                    .path()
+                    .file_name()
+                    .unwrap_or_default()
+                    .to_str()
+                    .eq(&Some("$RECYCLE.BIN"))
+                {
+                    continue;
+                }
                 items.push(FileModel::new(
                     entry.path().to_str().unwrap_or_default().to_string(),
                 ));
