@@ -10,11 +10,15 @@ use slint::*;
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::time::SystemTime;
+use tokio::runtime::Builder;
+use tokio::sync::oneshot;
 
 mod context_menu {
     pub const SHOW_FILES: &str = "show_files";
     pub const ABOUT: &str = "about";
 }
+
+type LoadingCallback = Rc<RefCell<Box<dyn FnMut(bool) + 'static>>>;
 
 #[derive(Clone)]
 pub struct GamesController {
@@ -26,6 +30,7 @@ pub struct GamesController {
     meta: Rc<VecModel<LauncherItem>>,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     show_files_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
+    loading_callback: LoadingCallback,
 }
 
 impl GamesController {
@@ -43,6 +48,7 @@ impl GamesController {
             meta: Rc::new(VecModel::default()),
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             show_files_callback: Rc::new(RefCell::new(Box::new(|| {}))),
+            loading_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
         };
 
         upgrade_adapter(&controller.view_handle, {
@@ -100,6 +106,10 @@ impl GamesController {
         *self.show_about_callback.borrow_mut() = Box::new(callback);
     }
 
+    pub fn on_loading(&self, callback: impl FnMut(bool) + 'static) {
+        *self.loading_callback.borrow_mut() = Box::new(callback);
+    }
+
     pub fn on_show_files(&self, callback: impl FnMut() + 'static) {
         *self.show_files_callback.borrow_mut() = Box::new(callback);
     }
@@ -107,6 +117,10 @@ impl GamesController {
     pub fn show_games(&self, file_model: FileModel) {
         *self.root_file.borrow_mut() = Some(file_model.clone());
         self.root_modified.set(file_model.modified());
+
+        upgrade_adapter(&self.view_handle, |adapter| {
+            adapter.set_loading(true);
+        });
 
         if let Ok(games) = self.repository.games(file_model.path()) {
             self.games.set_vec_to_source(games);
@@ -118,6 +132,10 @@ impl GamesController {
         });
 
         self.display_current_meta(0);
+
+        upgrade_adapter(&self.view_handle, |adapter| {
+            adapter.set_loading(false);
+        });
     }
 
     pub fn update(&self) {
@@ -246,22 +264,30 @@ impl GamesController {
         let repository = self.repository.clone();
         let controller = self.clone();
         let view_handle = self.view_handle.clone();
+        let loading_callback = self.loading_callback.clone();
+        loading_callback.borrow_mut()(true);
 
         if let Some(mut game_model) = self.games.row_data(row) {
             let _ = slint::spawn_local(async move {
-                if let Ok(game_model) = std::thread::spawn(move || {
-                    let _ = repository.launch(&mut game_model);
-                    game_model
-                })
-                .join()
-                {
-                    // FIXME: block games view with loading indicator until game is closed
+                let rt = Builder::new_current_thread().enable_all().build().unwrap();
+                let (tx, rx) = oneshot::channel();
+
+                let _ = std::thread::spawn(move || {
+                    rt.block_on(async move {
+                        let _ = repository.launch(&mut game_model);
+                        let _ = tx.send(game_model);
+                    });
+                });
+
+                if let Ok(game_model) = rx.await {
                     controller.games.set_row_data(row, game_model);
                     controller.display_current_meta(row);
 
                     upgrade_adapter(&view_handle, |adapter| {
                         adapter.set_current_game(0);
-                    })
+                    });
+
+                    loading_callback.borrow_mut()(false);
                 }
             });
         }

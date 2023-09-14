@@ -70,6 +70,12 @@ pub fn main() -> Result<(), slint::PlatformError> {
         }
     };
 
+    let on_loading = {
+        let view_handle = view_handle.clone();
+
+        move |loading| upgrade_adapter(&view_handle, move |adapter| adapter.set_loading(loading))
+    };
+
     files_controller.on_back(on_back.clone());
     files_controller.on_show_about(on_show_about.clone());
     files_controller.on_add_bookmark({
@@ -112,6 +118,8 @@ pub fn main() -> Result<(), slint::PlatformError> {
                 files_controller_clone.set_back_enabled(file_model_stack.borrow().len() > 1);
             }
         });
+
+        games_controller.on_loading(on_loading);
 
         games_controller
     };
@@ -176,8 +184,6 @@ pub fn main() -> Result<(), slint::PlatformError> {
 
     files_controller.on_open_internal(open_internal.clone());
     bookmarks_controller.on_open_internal(open_internal);
-
-    // let emu_controller =
 
     let update_timer = Timer::default();
     update_timer.start(

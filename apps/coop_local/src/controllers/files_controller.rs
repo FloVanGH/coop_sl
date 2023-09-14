@@ -52,8 +52,6 @@ impl FilesController {
         files_repository: FilesRepository,
         #[cfg(feature = "games")] games_repository: GamesRepository,
     ) -> Self {
-        // todo load files from root
-
         let files = Rc::new(
             ProxyModel::default()
                 .as_sort_by(|l: &FileModel, r: &FileModel| {
@@ -547,11 +545,20 @@ impl FilesController {
         let files_model = self.files.clone();
         let repository: FilesRepository = self.repository.clone();
         let root_file = self.root_file.borrow().clone();
+        let view_handle = self.view_handle.clone();
+
+        upgrade_adapter(&view_handle, |adapter| {
+            adapter.set_loading(true);
+        });
 
         let _ = slint::spawn_local(async move {
             if let Ok(repo_files) = repository.files(&root_file) {
                 files_model.set_vec_to_source(repo_files);
             }
+
+            upgrade_adapter(&view_handle, |adapter| {
+                adapter.set_loading(false);
+            });
         });
     }
 

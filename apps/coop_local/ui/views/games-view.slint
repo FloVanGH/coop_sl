@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, LargeLabel,
-    ListViewItem, HeaderBar, RoundButton, ContextMenu } from "../_imports/coop-widgets.slint";
+    ListViewItem, HeaderBar, RoundButton, ContextMenu, LoadingIndicator } from "../_imports/coop-widgets.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
 
 export global GamesAdapter {
@@ -14,12 +14,14 @@ export global GamesAdapter {
 
     in property <[LauncherItem]> games;
     in property <[LauncherItem]> current-game-meta;
-    in-out property <int> current-game;
+    in property <bool> loading;
     in property <string> title;
+    in-out property <int> current-game;
 }
 
 export component GamesView {
     private property <[ListViewItem]> context-menu;
+    private property <float> display-loading;
 
     VerticalLayout {
         HeaderBar {
@@ -141,4 +143,19 @@ export component GamesView {
             }
         }
     }
+
+    if (root.display-loading >= 1.0) : LoadingIndicator {
+        width: 100%;
+        height: 100%;
+    }
+
+    states [
+        loading when GamesAdapter.loading : {
+            display-loading: 1.0;
+
+            in {
+                animate display-loading { duration: 500ms; }
+            }
+        }
+    ]
 }

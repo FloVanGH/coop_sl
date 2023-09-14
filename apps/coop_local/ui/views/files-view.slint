@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ListViewItem, StandardListView, Icons, HeaderBar, SelectionMode, ContextMenu,
-    RoundButton } from "../_imports/coop-widgets.slint";
+    RoundButton, LoadingIndicator } from "../_imports/coop-widgets.slint";
+
 
 export global FilesAdapter {
     callback back();
@@ -21,6 +22,7 @@ export global FilesAdapter {
     in property <[ListViewItem]> files;
     in property <bool> back-enabled;
     in property <int> edit-file: -1;
+    in property <bool> loading;
 }
 
 export component FilesView {
@@ -28,6 +30,7 @@ export component FilesView {
     private property <[ListViewItem]> item-context-menu;
     private property <Point> item-context-menu-pos;
     private property <int> item-context-menu-item-row;
+    private property <float> display-loading;
 
     i-focus-scope := FocusScope {
         width: 0;
@@ -141,4 +144,19 @@ export component FilesView {
             }
         }
     }
+
+    if (root.display-loading >= 1.0) : LoadingIndicator {
+        width: 100%;
+        height: 100%;
+    }
+
+    states [
+        loading when FilesAdapter.loading : {
+            display-loading: 1.0;
+
+            in {
+                animate display-loading { duration: 500ms; }
+            }
+        }
+    ]
 }
