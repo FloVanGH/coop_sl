@@ -25,7 +25,7 @@ toml = "0.7.4"
 
 # file helper crates
 trash = "3.0.2"
-open = "4"
+open = "5"
 dirs = "5.0.1"
 fs_at = "0.1"
 image = "0.24.6"
@@ -41,6 +41,7 @@ coop_widgets = { path = "../../widgets/coop_widgets" }
 
 [features]
 default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility", "games"]
+slint-default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility"]
 mock = []
 
 # activate builtin games launcher

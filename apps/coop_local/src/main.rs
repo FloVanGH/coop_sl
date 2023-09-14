@@ -1,12 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use coop_local::controllers::{
-    BookmarksController, DialogController, FilesController, GamesController, ImageController,
-    TextController,
-};
-use coop_local::models::{BookmarkModel, FileModel, FileType};
-use coop_local::repositories::{FilesRepository, GamesRepository};
+use coop_local::controllers::*;
+use coop_local::models::*;
+use coop_local::repositories::*;
+
 use coop_local::ui::*;
 use slint::*;
 use std::cell::RefCell;
@@ -37,11 +35,15 @@ pub fn main() -> Result<(), slint::PlatformError> {
     let file_model_stack = Rc::new(RefCell::new(vec![initial_location.clone()]));
 
     let files_repository = FilesRepository::new();
+
+    #[cfg(feature = "games")]
     let games_repository = GamesRepository::new();
+
     let files_controller = FilesController::new(
         initial_location,
         view_handle.clone(),
         files_repository.clone(),
+        #[cfg(feature = "games")]
         games_repository.clone(),
     );
 
@@ -83,30 +85,36 @@ pub fn main() -> Result<(), slint::PlatformError> {
         }
     });
 
-    let games_controller = GamesController::new(view_handle.clone(), games_repository.clone());
-    games_controller.on_back(on_back.clone());
-    games_controller.on_show_about(on_show_about.clone());
+    #[cfg(feature = "games")]
+    let games_controller = {
+        let games_controller = GamesController::new(view_handle.clone(), games_repository.clone());
 
-    let files_controller_clone = files_controller.clone();
-    games_controller.on_show_files({
-        let file_model_stack = file_model_stack.clone();
-        let view_handle = view_handle.clone();
-        let bookmarks_controller = bookmarks_controller.clone();
+        games_controller.on_back(on_back.clone());
+        games_controller.on_show_about(on_show_about.clone());
+        let files_controller_clone = files_controller.clone();
 
-        move || {
-            if let Some(root_file) = file_model_stack.borrow().last() {
-                files_controller_clone.show_files(root_file.clone());
-                bookmarks_controller.select(root_file.path());
+        games_controller.on_show_files({
+            let file_model_stack = file_model_stack.clone();
+            let view_handle = view_handle.clone();
+            let bookmarks_controller = bookmarks_controller.clone();
+
+            move || {
+                if let Some(root_file) = file_model_stack.borrow().last() {
+                    files_controller_clone.show_files(root_file.clone());
+                    bookmarks_controller.select(root_file.path());
+                }
+
+                // back is always to files view
+                upgrade_adapter(&view_handle, |adapter| {
+                    adapter.set_active_view(ActiveView::Files);
+                });
+
+                files_controller_clone.set_back_enabled(file_model_stack.borrow().len() > 1);
             }
+        });
 
-            // back is always to files view
-            upgrade_adapter(&view_handle, |adapter| {
-                adapter.set_active_view(ActiveView::Files);
-            });
-
-            files_controller_clone.set_back_enabled(file_model_stack.borrow().len() > 1);
-        }
-    });
+        games_controller
+    };
 
     let text_controller = TextController::new(view_handle.clone(), files_repository.clone());
     text_controller.on_back(on_back.clone());
@@ -123,6 +131,8 @@ pub fn main() -> Result<(), slint::PlatformError> {
         let file_model_stack = file_model_stack.clone();
         let view_handle = view_handle.clone();
         let image_controller = image_controller.clone();
+
+        #[cfg(feature = "games")]
         let games_controller = games_controller.clone();
 
         move |file_model: FileModel| {
@@ -134,6 +144,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
             bookmark_controller_clone.select(file_model.path());
 
             if file_model.is_dir() {
+                #[cfg(feature = "games")]
                 if let Ok(is_games) = games_repository.is_games_dir(file_model.path()) {
                     if is_games {
                         games_controller.show_games(file_model);
@@ -166,6 +177,8 @@ pub fn main() -> Result<(), slint::PlatformError> {
     files_controller.on_open_internal(open_internal.clone());
     bookmarks_controller.on_open_internal(open_internal);
 
+    // let emu_controller =
+
     let update_timer = Timer::default();
     update_timer.start(
         TimerMode::Repeated,
@@ -174,6 +187,8 @@ pub fn main() -> Result<(), slint::PlatformError> {
             move || {
                 upgrade_adapter(&view_handle, {
                     let files_controller = files_controller.clone();
+
+                    #[cfg(feature = "games")]
                     let games_controller = games_controller.clone();
 
                     move |adapter| {
@@ -181,6 +196,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
                             files_controller.update();
                         }
 
+                        #[cfg(feature = "games")]
                         if adapter.get_active_view() == ActiveView::Games {
                             games_controller.update();
                         }

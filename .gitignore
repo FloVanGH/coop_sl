@@ -26,3 +26,5 @@ Cargo.lock
 pkg/
 
 book/
+
+*.gb

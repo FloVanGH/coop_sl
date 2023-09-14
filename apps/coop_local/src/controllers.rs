@@ -12,7 +12,6 @@ pub use files_controller::*;
 
 #[cfg(feature = "games")]
 mod games_controller;
-
 #[cfg(feature = "games")]
 pub use games_controller::*;
 

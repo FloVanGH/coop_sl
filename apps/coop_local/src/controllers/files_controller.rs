@@ -3,7 +3,11 @@
 
 use crate::models::{FileModel, FileType};
 use crate::proxy_model::ProxyModel;
-use crate::repositories::{FilesRepository, GamesRepository};
+use crate::repositories::FilesRepository;
+
+#[cfg(feature = "games")]
+use crate::repositories::GamesRepository;
+
 use crate::ui::*;
 use slint::*;
 use std::cell::{Cell, RefCell};
@@ -19,6 +23,8 @@ mod context_menu {
     pub const ADD_BOOKMARK: &str = "add-to-favorites";
     pub const PASTE: &str = "paste";
     pub const NEW_FOLDER: &str = "new-folder";
+
+    #[cfg(feature = "games")]
     pub const CREATE_GAME_FILE: &str = "create-game-file";
     pub const ABOUT: &str = "about";
 }
@@ -30,6 +36,7 @@ pub struct FilesController {
     files: Rc<ProxyModel<FileModel>>,
     view_handle: Weak<MainWindow>,
     repository: FilesRepository,
+    #[cfg(feature = "games")]
     games_repository: GamesRepository,
     root_file: Rc<RefCell<FileModel>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
@@ -43,7 +50,7 @@ impl FilesController {
         root_file: FileModel,
         view_handle: Weak<MainWindow>,
         files_repository: FilesRepository,
-        games_repository: GamesRepository,
+        #[cfg(feature = "games")] games_repository: GamesRepository,
     ) -> Self {
         // todo load files from root
 
@@ -88,6 +95,7 @@ impl FilesController {
             files,
             view_handle,
             repository: files_repository,
+            #[cfg(feature = "games")]
             games_repository,
             root_modified,
             selected_items: Rc::new(RefCell::new(BTreeSet::default())),

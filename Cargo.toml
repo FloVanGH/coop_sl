@@ -14,7 +14,7 @@ members = [
    "widgets/book_flip",
    "widgets/coop_widgets",
    "internal/shared",
-   "internal/platforms_support",
+   "internal/platforms_support"
 ]
 
 default-members = [
@@ -24,7 +24,7 @@ default-members = [
    "widgets/book_flip",
    "widgets/coop_widgets",
    "internal/shared",
-   "internal/platforms_support",
+   "internal/platforms_support"
 ]
 
 exclude = [
