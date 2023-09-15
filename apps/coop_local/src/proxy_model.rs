@@ -111,3 +111,178 @@ impl<T: Clone + Default> Model for ProxyModel<T> {
         self.wrapper.set_row_data(row, data);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::models::FileModel;
+
+    #[test]
+    fn test_proxy_model() {
+        let proxy_model = ProxyModel::new();
+        proxy_model.set_vec_to_source(vec![
+            FileModel::new("/root/1.png"),
+            FileModel::new("/root/2"),
+            FileModel::new("/root/3"),
+            FileModel::new("/root/4"),
+        ]);
+
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+
+        assert_eq!(proxy_model.row_data(0), Some(FileModel::new("/root/1.png")));
+        assert_eq!(proxy_model.row_data(5), None);
+
+        proxy_model.set_row_data(0, FileModel::new("/root/new/1.png"));
+        assert_eq!(
+            proxy_model.row_data(0),
+            Some(FileModel::new("/root/new/1.png"))
+        );
+
+        assert_eq!(
+            proxy_model.row_data_from_source(1),
+            Some(FileModel::new("/root/2"))
+        );
+
+        assert_eq!(
+            proxy_model.remove_from_source(FileModel::new("/root/2")),
+            Some(FileModel::new("/root/2"))
+        );
+        assert_eq!(
+            proxy_model.remove_from_source(FileModel::new("/not/in/files")),
+            None
+        );
+        assert_eq!(proxy_model.row_count_from_source(), 3);
+        assert_eq!(proxy_model.row_count(), 3);
+        assert_eq!(
+            proxy_model.row_data_from_source(1),
+            Some(FileModel::new("/root/3"))
+        );
+
+        proxy_model.push_to_source(FileModel::new("/root/5"));
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+        assert_eq!(
+            proxy_model.row_data_from_source(3),
+            Some(FileModel::new("/root/5"))
+        );
+    }
+
+    #[test]
+    fn test_proxy_model_sorted() {
+        let proxy_model = ProxyModel::new()
+            .as_sort_by(|l: &FileModel, r: &FileModel| l.name().unwrap().cmp(r.name().unwrap()));
+
+        proxy_model.set_vec_to_source(vec![
+            FileModel::new("/root/5"),
+            FileModel::new("/root/3"),
+            FileModel::new("/root/4"),
+            FileModel::new("/root/1"),
+        ]);
+
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+
+        assert_eq!(proxy_model.row_data(0), Some(FileModel::new("/root/1")));
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/5"))
+        );
+
+        proxy_model.set_row_data(3, FileModel::new("/root/0"));
+        assert_eq!(proxy_model.row_data(0), Some(FileModel::new("/root/0")));
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/0"))
+        );
+
+        assert_eq!(
+            proxy_model.remove_from_source(FileModel::new("/root/0")),
+            Some(FileModel::new("/root/0"))
+        );
+
+        assert_eq!(proxy_model.row_count_from_source(), 3);
+        assert_eq!(proxy_model.row_count(), 3);
+
+        proxy_model.push_to_source(FileModel::new("/root/9"));
+
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 4);
+
+        assert_eq!(proxy_model.row_data(3), Some(FileModel::new("/root/9")));
+        assert_eq!(
+            proxy_model.row_data_from_source(3),
+            Some(FileModel::new("/root/9"))
+        );
+    }
+
+    #[test]
+    fn test_proxy_model_filtered() {
+        let proxy_model =
+            ProxyModel::new().as_filter_by(|f: &FileModel| !f.name().unwrap().contains("filtered"));
+
+        proxy_model.set_vec_to_source(vec![
+            FileModel::new("/root/filtered5"),
+            FileModel::new("/root/3"),
+            FileModel::new("/root/filtered4"),
+            FileModel::new("/root/1"),
+        ]);
+
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(proxy_model.row_data(0), Some(FileModel::new("/root/3")));
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/filtered5"))
+        );
+
+        proxy_model.set_row_data(0, FileModel::new("/root/filtered3"));
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 1);
+
+        assert_eq!(proxy_model.row_data(0), Some(FileModel::new("/root/1")));
+        assert_eq!(
+            proxy_model.row_data_from_source(0),
+            Some(FileModel::new("/root/filtered5"))
+        );
+
+        proxy_model.push_to_source(FileModel::new("/root/9"));
+
+        assert_eq!(proxy_model.row_count_from_source(), 5);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(proxy_model.row_data(1), Some(FileModel::new("/root/9")));
+        assert_eq!(
+            proxy_model.row_data_from_source(4),
+            Some(FileModel::new("/root/9"))
+        );
+
+        proxy_model.push_to_source(FileModel::new("/root/filtered9"));
+
+        assert_eq!(proxy_model.row_count_from_source(), 6);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(proxy_model.row_data(1), Some(FileModel::new("/root/9")));
+        assert_eq!(
+            proxy_model.row_data_from_source(5),
+            Some(FileModel::new("/root/filtered9"))
+        );
+
+        proxy_model.remove_from_source(FileModel::new("/root/filtered9"));
+
+        assert_eq!(proxy_model.row_count_from_source(), 5);
+        assert_eq!(proxy_model.row_count(), 2);
+
+        assert_eq!(proxy_model.row_data(1), Some(FileModel::new("/root/9")));
+        assert_eq!(
+            proxy_model.row_data_from_source(4),
+            Some(FileModel::new("/root/9"))
+        );
+
+        proxy_model.remove_from_source(FileModel::new("/root/1"));
+
+        assert_eq!(proxy_model.row_count_from_source(), 4);
+        assert_eq!(proxy_model.row_count(), 1);
+    }
+}
