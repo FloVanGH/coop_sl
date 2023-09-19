@@ -60,3 +60,22 @@ impl BookmarkModel {
         self.selected
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_bookmark_model() {
+        let mut bookmark_model =
+            BookmarkModel::new(BookmarkType::Dir, "Bookmark", "Path/to/bookmark");
+
+        assert_eq!(bookmark_model.name(), "Bookmark");
+        assert_eq!(bookmark_model.path(), "Path/to/bookmark");
+        assert_eq!(bookmark_model.bookmark_type(), BookmarkType::Dir);
+        assert!(!bookmark_model.selected());
+
+        bookmark_model.set_selected(true);
+        assert!(bookmark_model.selected());
+    }
+}
