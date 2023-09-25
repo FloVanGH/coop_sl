@@ -281,7 +281,7 @@ impl GamesController {
 
                 if let Ok(game_model) = rx.await {
                     controller.games.set_row_data(row, game_model);
-                    controller.display_current_meta(row);
+                    controller.display_current_meta(0);
 
                     upgrade_adapter(&view_handle, |adapter| {
                         adapter.set_current_game(0);
