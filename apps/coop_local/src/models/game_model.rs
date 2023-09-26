@@ -46,9 +46,16 @@ pub struct GameMetaModel {
     pub play_time: u64,
 }
 
+#[derive(Clone, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct GameSettingsModel {
+    /// Command line arguments to run the game with
+    pub arguments: String,
+}
+
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CoopGameModel {
     pub meta: HashMap<String, GameMetaModel>,
+    pub settings: HashMap<String, GameSettingsModel>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
@@ -56,6 +63,7 @@ pub struct GameModel {
     file_model: FileModel,
     icon_model: RgbaIconModel,
     meta_model: GameMetaModel,
+    settings_model: GameSettingsModel,
 }
 
 impl GameModel {
@@ -63,11 +71,13 @@ impl GameModel {
         file_model: impl Into<FileModel>,
         icon_model: RgbaIconModel,
         meta_model: GameMetaModel,
+        settings_model: GameSettingsModel,
     ) -> Self {
         Self {
             file_model: file_model.into(),
             icon_model,
             meta_model,
+            settings_model,
         }
     }
 
@@ -90,6 +100,14 @@ impl GameModel {
     pub fn meta_mut(&mut self) -> &mut GameMetaModel {
         &mut self.meta_model
     }
+
+    pub fn settings(&self) -> &GameSettingsModel {
+        &self.settings_model
+    }
+
+    pub fn settings_mut(&mut self) -> &mut GameSettingsModel {
+        &mut self.settings_model
+    }
 }
 
 #[cfg(test)]
@@ -111,13 +129,20 @@ mod tests {
             GameModel::new(
                 "/test/the/name.app",
                 RgbaIconModel::default(),
-                GameMetaModel::default()
+                GameMetaModel::default(),
+                GameSettingsModel::default()
             )
             .name(),
             "name"
         );
         assert_eq!(
-            GameModel::new("", RgbaIconModel::default(), GameMetaModel::default()).name(),
+            GameModel::new(
+                "",
+                RgbaIconModel::default(),
+                GameMetaModel::default(),
+                GameSettingsModel::default()
+            )
+            .name(),
             ""
         );
     }

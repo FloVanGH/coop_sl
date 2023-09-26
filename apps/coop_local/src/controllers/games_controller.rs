@@ -16,6 +16,9 @@ use tokio::sync::oneshot;
 mod context_menu {
     pub const SHOW_FILES: &str = "show_files";
     pub const ABOUT: &str = "about";
+
+    // items
+    pub const SETTINGS: &str = "settings";
 }
 
 type LoadingCallback = Rc<RefCell<Box<dyn FnMut(bool) + 'static>>>;
@@ -89,7 +92,38 @@ impl GamesController {
                     let controller = controller.clone();
                     move |row| controller.display_current_meta(row as usize)
                 });
-                adapter.on_launch_game(move |row| controller.launch(row as usize))
+                adapter.on_get_item_context_menu({
+                    let controller = controller.clone();
+                    move || controller.get_item_context_menu()
+                });
+
+                adapter.on_item_context_menu_action({
+                    let controller = controller.clone();
+                    move |row, spec| {
+                        controller.execute_item_context_menu_action(row as usize, spec.as_str())
+                    }
+                });
+                adapter.on_launch_game(move |row| controller.launch(row as usize));
+            }
+        });
+
+        upgrade_settings_adapter(&controller.view_handle, {
+            let controller = controller.clone();
+
+            move |adapter| {
+                adapter.on_set_arguments({
+                    let controller = controller.clone();
+
+                    move |row, arguments| {
+                        if let Some(mut game_model) = controller.games.row_data(row as usize) {
+                            game_model.settings_mut().arguments = arguments.into();
+                            controller.update_game_model(row as usize, game_model);
+                        }
+                    }
+                });
+                adapter.on_close(move || {
+                    controller.close_game_settings();
+                });
             }
         });
 
@@ -244,6 +278,20 @@ impl GamesController {
         ])
     }
 
+    fn get_item_context_menu(&self) -> ModelRc<ListViewItem> {
+        VecModel::from_slice(&[ListViewItem {
+            text: "Settings".into(),
+            spec: context_menu::SETTINGS.into(),
+            ..Default::default()
+        }])
+    }
+
+    fn execute_item_context_menu_action(&self, row: usize, spec: &str) {
+        if spec == context_menu::SETTINGS {
+            self.open_game_settings(row);
+        }
+    }
+
     fn execute_context_menu_action(&self, spec: &str) {
         match spec {
             context_menu::SHOW_FILES => {
@@ -258,6 +306,34 @@ impl GamesController {
             }
             _ => {}
         }
+    }
+
+    fn open_game_settings(&self, row: usize) {
+        if let Some(game_model) = self.games.row_data(row) {
+            let arguments: SharedString = game_model.settings().arguments.as_str().into();
+            let title: SharedString = game_model.name().into();
+
+            upgrade_settings_adapter(&self.view_handle, move |adapter| {
+                adapter.set_arguments(arguments);
+                adapter.set_title(title);
+                adapter.set_row(row as i32);
+            });
+
+            upgrade_adapter(&self.view_handle, |adapter| {
+                adapter.set_display_settings(true);
+            });
+        }
+    }
+
+    fn update_game_model(&self, row: usize, game_model: GameModel) {
+        self.repository.update_game(&game_model);
+        self.games.set_row_data(row, game_model);
+    }
+
+    fn close_game_settings(&self) {
+        upgrade_adapter(&self.view_handle, |adapter| {
+            adapter.set_display_settings(false);
+        });
     }
 
     fn launch(&self, row: usize) {
@@ -297,6 +373,15 @@ impl GamesController {
 fn upgrade_adapter(view_handle: &Weak<MainWindow>, func: impl FnOnce(GamesAdapter) + 'static) {
     if let Some(view) = view_handle.upgrade() {
         func(view.global::<GamesAdapter>());
+    }
+}
+
+fn upgrade_settings_adapter(
+    view_handle: &Weak<MainWindow>,
+    func: impl FnOnce(GameSettingsAdapter) + 'static,
+) {
+    if let Some(view) = view_handle.upgrade() {
+        func(view.global::<GameSettingsAdapter>());
     }
 }
 

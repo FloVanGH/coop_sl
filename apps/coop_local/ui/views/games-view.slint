@@ -2,13 +2,72 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, LargeLabel,
-    ListViewItem, HeaderBar, RoundButton, ContextMenu, LoadingIndicator } from "../_imports/coop-widgets.slint";
+    ListViewItem, HeaderBar, RoundButton, ContextMenu, LoadingIndicator, LargeTitle, SmallTitle,
+    LineEdit } from "../_imports/coop-widgets.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
+import { DialogBase } from "../dialogs/dialog-base.slint";
+
+export global GameSettingsAdapter {
+    callback set-arguments(/* row */ int, /* arguments */ string);
+    callback close();
+
+    in property <string> title;
+    in property <string> arguments;
+    in property <int> row;
+}
+
+component GameSettingsDialog {
+    in property <string> title: GameSettingsAdapter.title;
+
+    TouchArea {
+        clicked => {
+            GameSettingsAdapter.close();
+        }
+    }
+
+    DialogBase {
+        x: Space.large;
+        y: Space.large;
+        width: min(400px, root.width * 0.8);
+        title: "\{root.title} (Settings)";
+
+        VerticalLayout {
+            spacing: Space.medium;
+
+            SmallTitle {
+                text: @tr("Arguments");
+            }
+
+            i-arguments := LineEdit {
+                placeholder-text: @tr("Insert command line arguments");
+                text: GameSettingsAdapter.arguments;
+
+                accepted => {
+                    GameSettingsAdapter.set-arguments(GameSettingsAdapter.row, self.text);
+                }
+            }
+        }
+
+        HorizontalLayout {
+            alignment: end;
+
+            i-close-button := Button {
+                text: @tr("close");
+
+                clicked => {
+                    GameSettingsAdapter.close();
+                }
+            }
+        }
+    }
+}
 
 export global GamesAdapter {
     callback back();
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
+    callback get-item-context-menu() -> [ListViewItem];
+    callback item-context-menu-action(/* row */ int, /* spec */ string);
     callback launch-game(/* row */ int);
     callback current-game-changed(/* current-game */ int);
 
@@ -16,12 +75,16 @@ export global GamesAdapter {
     in property <[LauncherItem]> current-game-meta;
     in property <bool> loading;
     in property <string> title;
+    in property <bool> display-settings;
     in-out property <int> current-game;
 }
 
 export component GamesView {
     private property <[ListViewItem]> context-menu;
     private property <float> display-loading;
+    private property <[ListViewItem]> item-context-menu;
+    private property <Point> item-context-menu-pos;
+    private property <int> item-context-menu-item-row;
 
     VerticalLayout {
         HeaderBar {
@@ -79,6 +142,32 @@ export component GamesView {
 
                 current-item-changed(current-game) => {
                     GamesAdapter.current-game-changed(current-game);
+                }
+
+                item-pointer-event(row, event, position) => {
+                    if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
+                        root.item-context-menu = GamesAdapter.get-item-context-menu();
+                        if (root.item-context-menu.length == 0) {
+                            return;
+                        }
+
+                        root.item-context-menu-item-row = row;
+                        root.item-context-menu-pos = position;
+                        i-item-context-menu.show();
+                    }
+                }
+
+                i-item-context-menu := PopupWindow {
+                    x: root.item-context-menu-pos.x;
+                    y: root.item-context-menu-pos.y;
+
+                    ContextMenu {
+                        model: root.item-context-menu;
+
+                        item-clicked(row) => {
+                            GamesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
+                        }
+                    }
                 }
             }
 
@@ -142,6 +231,11 @@ export component GamesView {
                 }
             }
         }
+    }
+
+    if (GamesAdapter.display-settings) : GameSettingsDialog {
+        width: 100%;
+        height: 100%;
     }
 
     if (root.display-loading >= 1.0) : LoadingIndicator {

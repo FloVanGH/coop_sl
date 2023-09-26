@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::models::{CoopGameModel, GameMetaModel, GameModel};
+use crate::models::{CoopGameModel, GameMetaModel, GameModel, GameSettingsModel};
 use crate::services;
 
 use std::fs;
@@ -84,28 +84,43 @@ impl GamesRepository {
         let start_time = time::Instant::now();
 
         #[cfg(target_os = "macos")]
-        if let Ok(join_handle) = Command::new("open")
-            .arg("--wait-apps")
-            .arg(game_model.file_model().path())
-            .spawn()
         {
-            let _ = join_handle.wait_with_output();
+            if game_model.settings().arguments.is_empty() {
+                if let Ok(join_handle) = Command::new("open")
+                    .arg("--wait-apps")
+                    .arg(game_model.file_model().path())
+                    .spawn()
+                {
+                    let _ = join_handle.wait_with_output();
+                }
+            } else if let Ok(join_handle) = Command::new("open")
+                .arg("--wait-apps")
+                .arg(game_model.file_model().path())
+                .arg("--args")
+                .args(game_model.settings().arguments.as_str().split(' '))
+                .spawn()
+            {
+                let _ = join_handle.wait_with_output();
+            }
         }
 
         #[cfg(not(target_os = "macos"))]
-        if let Ok(join_handle) = Command::new(game_model.file_model().path()).spawn() {
-            let _ = join_handle.wait_with_output();
+        {
+            if game_model.settings().arguments.is_empty() {
+                if let Ok(join_handle) = Command::new(game_model.file_model().path()).spawn() {
+                    let _ = join_handle.wait_with_output();
+                }
+            } else if let Ok(join_handle) = Command::new(game_model.file_model().path())
+                .args(game_model.settings().arguments.as_str().split(' '))
+                .spawn()
+            {
+                let _ = join_handle.wait_with_output();
+            }
         }
 
         game_model.meta_mut().play_time += start_time.elapsed().as_secs();
 
-        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
-            coop_game_model
-                .meta
-                .insert(game_model.name().to_string(), game_model.meta().clone());
-        }
-
-        self.save_coop_game_model();
+        self.update_game(game_model);
         Ok(())
     }
 
@@ -160,7 +175,12 @@ impl GamesRepository {
 
             let name = file_model.steam().unwrap_or_default().to_string();
 
-            games.push(GameModel::new(file_model, icon, self.get_meta(&name)?));
+            games.push(GameModel::new(
+                file_model,
+                icon,
+                self.get_meta(&name)?,
+                self.get_settings(&name)?,
+            ));
         }
 
         Ok(games)
@@ -187,6 +207,7 @@ impl GamesRepository {
                 file_model,
                 RgbaIconModel::default(),
                 self.get_meta(&name)?,
+                self.get_settings(&name)?,
             ));
         }
 
@@ -210,6 +231,33 @@ impl GamesRepository {
         }
 
         Ok(GameMetaModel::default())
+    }
+
+    fn get_settings(&self, name: &str) -> io::Result<GameSettingsModel> {
+        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
+            if !coop_game_model.settings.contains_key(name) {
+                coop_game_model
+                    .settings
+                    .insert(name.to_string(), GameSettingsModel::default());
+            }
+
+            return Ok(coop_game_model.settings.get(name).cloned().unwrap());
+        }
+
+        Ok(GameSettingsModel::default())
+    }
+
+    pub fn update_game(&self, game_model: &GameModel) {
+        if let Ok(mut coop_game_model) = self.coop_game_model.lock() {
+            coop_game_model
+                .meta
+                .insert(game_model.name().to_string(), game_model.meta().clone());
+            coop_game_model
+                .settings
+                .insert(game_model.name().to_string(), game_model.settings().clone());
+        }
+
+        self.save_coop_game_model();
     }
 
     fn save_coop_game_model(&self) {
