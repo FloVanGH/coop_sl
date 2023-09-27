@@ -14,6 +14,7 @@ export component ComboBox {
     in property <bool> enabled: true;
     in property <string> placeholder-text;
     out property <ListViewItem> current-value: root.current-index < 0 || root.current-index > root.model.length ? {} : root.model[root.current-index];
+    out property <bool> has-focus: i-focus-scope.has-focus;
     in-out property <int> current-index: -1;
 
     accessible-role: combobox;
