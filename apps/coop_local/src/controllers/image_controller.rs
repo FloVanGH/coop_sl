@@ -9,6 +9,8 @@ use crate::{
     ui::*,
 };
 use slint::*;
+use tokio::runtime::Builder;
+use tokio::sync::oneshot;
 
 mod context_menu {
     pub const REMOVE: &str = "remove";
@@ -57,23 +59,43 @@ impl ImageController {
             return;
         }
 
+        upgrade_adapter(&self.view_handle, |adapter| {
+            adapter.set_image(Image::default());
+            adapter.set_title("".into());
+            adapter.set_loading(true);
+        });
+
         let view_handle = self.view_handle.clone();
         let file_model_clone = file_model.clone();
 
         let _ = slint::spawn_local(async move {
-            if let Ok(image) = image::open(file_model_clone.path()) {
-                let image = image.into_rgba8();
+            let rt = Builder::new_current_thread().enable_all().build().unwrap();
+            let (tx, rx) = oneshot::channel();
 
-                upgrade_adapter(&view_handle, move |adapter| {
+            let _ = std::thread::spawn({
+                let file_model = file_model_clone.clone();
+                move || {
+                    rt.block_on(async move {
+                        let _ = tx.send(image::open(file_model.path()));
+                    });
+                }
+            });
+
+            if let Ok(image) = rx.await {
+                if let Ok(image) = image {
+                    let image = image.into_rgba8();
                     let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
                         image.as_raw(),
                         image.width(),
                         image.height(),
                     );
 
-                    adapter.set_image(Image::from_rgba8(buffer));
-                    adapter.set_title(file_model_clone.name().unwrap_or_default().into());
-                });
+                    upgrade_adapter(&view_handle, move |adapter| {
+                        adapter.set_image(Image::from_rgba8(buffer));
+                        adapter.set_title(file_model_clone.name().unwrap_or_default().into());
+                        adapter.set_loading(false);
+                    });
+                }
             }
         });
 
