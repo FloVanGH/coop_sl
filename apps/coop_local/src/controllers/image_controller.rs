@@ -81,21 +81,19 @@ impl ImageController {
                 }
             });
 
-            if let Ok(image) = rx.await {
-                if let Ok(image) = image {
-                    let image = image.into_rgba8();
-                    let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-                        image.as_raw(),
-                        image.width(),
-                        image.height(),
-                    );
+            if let Ok(Ok(image)) = rx.await {
+                let image = image.into_rgba8();
+                let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+                    image.as_raw(),
+                    image.width(),
+                    image.height(),
+                );
 
-                    upgrade_adapter(&view_handle, move |adapter| {
-                        adapter.set_image(Image::from_rgba8(buffer));
-                        adapter.set_title(file_model_clone.name().unwrap_or_default().into());
-                        adapter.set_loading(false);
-                    });
-                }
+                upgrade_adapter(&view_handle, move |adapter| {
+                    adapter.set_image(Image::from_rgba8(buffer));
+                    adapter.set_title(file_model_clone.name().unwrap_or_default().into());
+                    adapter.set_loading(false);
+                });
             }
         });
 
