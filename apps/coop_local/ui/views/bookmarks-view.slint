@@ -36,9 +36,11 @@ export component BookmarksView {
 
                 root.item-context-menu-item-row = item;
                 root.item-context-menu-parent-row = parent;
+                root.item-context-menu-pos.x = position.x;
+
                 // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
                 root.item-context-menu-pos.y = Size.large + position.y + root.item-context-menu.length * Size.small > root.window-height ?
-                position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
+                    position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
                 i-item-context-menu.show();
                 i-item-context-menu.show();
             }
