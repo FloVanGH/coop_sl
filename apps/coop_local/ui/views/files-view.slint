@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ListViewItem, StandardListView, Icons, HeaderBar, SelectionMode, ContextMenu,
-    RoundButton, LoadingIndicator } from "../_imports/coop-widgets.slint";
+    RoundButton, LoadingIndicator, Size } from "../_imports/coop-widgets.slint";
 
 
 export global FilesAdapter {
@@ -31,6 +31,8 @@ export component FilesView {
     private property <Point> item-context-menu-pos;
     private property <int> item-context-menu-item-row;
     private property <float> display-loading;
+
+    in property <length> window-height;
 
     i-focus-scope := FocusScope {
         width: 0;
@@ -121,7 +123,11 @@ export component FilesView {
                     }
 
                     root.item-context-menu-item-row = row;
-                    root.item-context-menu-pos = position;
+                    root.item-context-menu-pos.x = position.x;
+
+                    // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
+                    root.item-context-menu-pos.y = Size.large + position.y + root.item-context-menu.length * Size.small > root.window-height ?
+                        position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
                     i-item-context-menu.show();
                 }
             }

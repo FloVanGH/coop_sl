@@ -45,6 +45,7 @@ export component MainWindow inherits CoopWindow {
             col: 1;
 
             if (MainAdapter.active-view == ActiveView.Files) : FilesView {
+                window-height: root.height;
                 width: 100%;
                 height: 100%;
             }
