@@ -71,7 +71,9 @@ export component MainWindow inherits CoopWindow {
             parent-width: root.width;
             responsive: true;
 
-            BookmarksView {}
+            BookmarksView {
+                window-height: root.height;
+            }
         }
     }
 
