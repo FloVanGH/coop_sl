@@ -27,10 +27,10 @@ Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/gallery/).
 
 ```toml
 [dependencies]
-slint = { version = "1.2.0" }
+slint = { version = "1.2.2" }
 
 [build-dependencies]
-slint-build = { version = "1.2.0" }
+slint-build = { version = "1.2.2" }
 coop_widgets = { git = "https://codeberg.org/flovansl/coop_sl" }
 ```
 

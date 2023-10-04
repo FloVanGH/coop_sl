@@ -16,12 +16,12 @@ path = "src/main.rs"
 name = "widgets"
 
 [dependencies]
-slint = { version = "1.2.0", default-features = false, features = ["compat-1-2"] }
+slint = { version = "1.2.2", default-features = false, features = ["compat-1-2"] }
 mcu-board-support = { git = "https://github.com/slint-ui/slint", branch = "florian/mcu-test", optional = true }
 slint_coop = { path = "../../platform_support/slint_coop", optional = true }
 
 [build-dependencies]
-slint-build = { version = "1.2.0" }
+slint-build = { version = "1.2.2" }
 book_flip = { path = "../../widgets/book_flip" }
 coop_widgets = { path = "../../widgets/coop_widgets" }
 

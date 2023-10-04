@@ -17,11 +17,11 @@ name = "coop_chat"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slint = { version = "1.2.0", default-features = false, features = ["compat-1-2"] }
+slint = { version = "1.2.2", default-features = false, features = ["compat-1-2"] }
 slint_coop = { path = "../../platform_support/slint_coop", optional = true }
 
 [build-dependencies]
-slint-build = { version = "1.2.0" }
+slint-build = { version = "1.2.2" }
 coop_widgets = { path = "../../widgets/coop_widgets" }
 
 [features]

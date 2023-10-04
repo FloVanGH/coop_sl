@@ -13,4 +13,4 @@ readme = "README.md"
 build = "build.rs"
 
 # [build-dependencies]
-# slint-build = { version = "1.2.0" }
+# slint-build = { version = "1.2.2" }
