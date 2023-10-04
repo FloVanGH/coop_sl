@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 
 # coop_widgets
 
-The goal with `coop_widgets` is to provide a custom widget and components library for [Slint](https://slint.dev/) with a simple, consistence and clean design. The second goal is to serve as an example how to implement a widget library with Slint based on a custom design system. The theme is available in a light and a dark variant.
+`coop_widgets` is a custom widget / third party component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design.
 
-What the `Coop` in `coop_widgets` stands for: cooperation.
+What the `coop` in `coop_widgets` stands for: cooperation.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
@@ -48,7 +48,7 @@ fn main() {
 ```slint,no-preview
 import { CoopWindow, Button } from "_imports/coop_widgets.slint";
 
-export MyApp := CoopWindow {
+export component MyApp inherits CoopWindow {
     preferred-width: 600px;
     preferred-height: 400px;
     title: "MyApp";
@@ -59,64 +59,14 @@ export MyApp := CoopWindow {
 }
 ```
 
-## structure
-
-* widgets: ...
-
-
-## theming
-
-All theme resources of `coop_widgets` like brushes, sizes, spacings and typography can be accessed by using the  `Coop` global.
-
-### brush example
-
-```
-import { Coop } from "_imports/coop_widgets.slint";
-
-MyRect := Rectangle {
-    background: Coop.brush.surface;
-}
-```
-
-### typo example
-
-```
-import { Coop } from "_imports/coop_widgets.slint";
-
-MyText := Text {
-   font_size: Coop.typo.large_label.size;
-   font_weight: Coop.typo.large_label.weight;
-}
-```
-
-### spaces
-
-```
-import { Coop } from "_imports/coop_widgets.slint";
-
-MyLayout := HorizontalLayout {
-   spacing: Coop.space.small;
-   padding: Coop.space.medium;
-}
-```
-
 ## new to slint?
 
 Best to start with these sources:
 
 * getting start: https://slint.dev/#tryout
-* Slint docs (*Slint lang docs included*) : https://docs.rs/slint/latest/slint/
 * Slint examples: https://github.com/slint-ui/slint/tree/master/examples
 * Slint chat: https://chat.slint-ui.com/
-
-## assets
-
-* ForkAwesome
-    * `coop_widgets` uses [ForkAwesome](https://forkaweso.me/Fork-Awesome/) as icon font. The icons are licensed under MIT.
-
 
 ## license
 
 * `coop_widgets` is available under [MIT license](LICENSE-MIT)
-* `Slint` is available under either a [commercial license](https://github.com/slint-ui/slint/blob/master/LICENSES/LicenseRef-Slint-commercial.md)
-or [GNU GPLv3](https://github.com/slint-ui/slint/blob/master/LICENSES/GPL-3.0-only.txt).
