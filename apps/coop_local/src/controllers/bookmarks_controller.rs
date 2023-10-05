@@ -107,6 +107,18 @@ impl BookmarksController {
                         controller.on_open_dir(parent as usize, item as usize);
                     }
                 });
+                adapter.on_open_next_dir({
+                    let controller = controller.clone();
+                    move || {
+                        controller.open_next_dir();
+                    }
+                });
+                adapter.on_open_previous_dir({
+                    let controller = controller.clone();
+                    move || {
+                        controller.open_previous_dir();
+                    }
+                });
                 adapter.on_get_item_context_menu({
                     let controller = controller.clone();
                     move |parent_row, item_row| {
@@ -176,6 +188,10 @@ impl BookmarksController {
     }
 
     pub fn add_bookmark(&self, bookmark: BookmarkModel) {
+        if self.bookmarks.contains(&bookmark) {
+            return;
+        }
+
         let repository = self.repository.clone();
         let bookmarks = self.bookmarks.clone();
 
@@ -277,6 +293,38 @@ impl BookmarksController {
             if let Some(bookmark) = self.locations.row_data(item) {
                 let mut r = self.open_internal_callback.try_borrow_mut().unwrap();
                 r(FileModel::new(bookmark.path()));
+            }
+        }
+    }
+
+    fn open_next_dir(&self) {
+        if let Some(selected_bookmark) = self.selected_bookmark.get() {
+            if selected_bookmark + 1 < self.bookmarks.row_count() {
+                self.on_open_dir(0, selected_bookmark + 1);
+            } else {
+                self.on_open_dir(1, 0);
+            }
+        }
+
+        if let Some(selected_location) = self.selected_location.get() {
+            if selected_location + 1 < self.locations.row_count() {
+                self.on_open_dir(0, selected_location + 1);
+            }
+        }
+    }
+
+    fn open_previous_dir(&self) {
+        if let Some(selected_bookmark) = self.selected_bookmark.get() {
+            if selected_bookmark > 0 {
+                self.on_open_dir(0, selected_bookmark - 1);
+            }
+        }
+
+        if let Some(selected_location) = self.selected_location.get() {
+            if selected_location > 0 {
+                self.on_open_dir(0, selected_location - 1);
+            } else if self.bookmarks.row_count() > 0 {
+                self.on_open_dir(0, self.bookmarks.row_count() - 1);
             }
         }
     }

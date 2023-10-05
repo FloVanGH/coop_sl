@@ -14,6 +14,8 @@ export global FilesAdapter {
     callback item-context-menu-action(/* row */ int, /* spec */ string);
     callback rename-item(/* row */ int, /* text */ string);
     callback update-selection(/* row */ int, /* control */ bool);
+    callback select-next() -> int;
+    callback select-previous() -> int;
     callback select-all();
     callback copy();
     callback paste();
@@ -96,10 +98,24 @@ export component FilesView {
             }
         }
 
-        StandardListView {
+        i-list-view := StandardListView {
             model: FilesAdapter.files;
             selection-mode: SelectionMode.Custom;
             edit-item: FilesAdapter.edit-file;
+
+            key-pressed(event) => {
+                if (event.text == Key.UpArrow) {
+                    i-list-view.bring-into-view(FilesAdapter.select-previous());
+                    return accept;
+                }
+
+                if (event.text == Key.DownArrow) {
+                    i-list-view.bring-into-view(FilesAdapter.select-next());
+                    return accept;
+                }
+
+                reject
+            }
 
             item-pointer-event(row, event, position) => {
                 i-focus-scope.focus();

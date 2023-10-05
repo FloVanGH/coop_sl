@@ -7,6 +7,8 @@ export component SideBarView inherits SideBar {
     in-out property <[GroupListViewItem]> navigation-items <=> i-navigation.model;
     in-out property <{ parent: int, item: int }> current-item <=> i-navigation.current-item;
 
+    forward-focus: i-navigation;
+
     i-navigation := GroupListView {
         vertical-stretch: 1;
         current-item: { item: 0, parent: 0 };

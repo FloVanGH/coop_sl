@@ -87,6 +87,18 @@ impl<T: Clone + Default + PartialEq> ProxyModel<T> {
         }
     }
 
+    pub fn contains(&self, value: &T) -> bool {
+        for row in 0..self.row_count() {
+            if let Some(row_data) = self.row_data(row) {
+                if row_data.eq(value) {
+                    return true;
+                }
+            }
+        }
+
+        false
+    }
+
     pub fn clear(&self) {
         self.source.set_vec(vec![]);
     }

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Duration, Space, LargeTitle, Palette, Radius } from "../_imports/coop-widgets.slint";
+import { Duration, Space, LargeTitle, Palette, Radius, FocusBorder } from "../_imports/coop-widgets.slint";
 
 export global LauncherStyle {
     out property <length> max-item-size: 132px;
@@ -14,6 +14,7 @@ component LauncherItemDelegate  {
 
     in property <bool> selected: false;
     in property <image> image <=> i-image.source;
+    in property <bool> has-focus;
     out property <length> mouse-x <=> touch-area.mouse-x;
     out property <length> mouse-y <=> touch-area.mouse-y;
 
@@ -22,7 +23,7 @@ component LauncherItemDelegate  {
 
     touch-area := TouchArea {}
 
-    Rectangle {
+    i-background := Rectangle {
         border-width: root.selected ? 0px : 1px;
         border-color:  Palette.border;
         background: root.selected ? Palette.accent : Palette.surface;
@@ -35,7 +36,13 @@ component LauncherItemDelegate  {
         }
     }
 
-     animate width { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
+    if (root.has-focus && root.selected) : FocusBorder {
+        width: 100%;
+        height: 100%;
+        border-radius: i-background.border-radius;
+    }
+
+    animate width { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
 }
 
 export struct LauncherItem {
@@ -60,17 +67,17 @@ export component Launcher inherits FocusScope {
 
     i-focus-scope:= FocusScope {
         key-pressed(event) => {
-            if(event.text == Key.RightArrow) {
+            if (event.text == Key.RightArrow) {
                 root.next();
                 return accept;
             }
 
-            if(event.text == Key.LeftArrow) {
+            if (event.text == Key.LeftArrow) {
                 root.previous();
                 return accept;
             }
 
-            if(event.text == Key.Return) {
+            if (event.text == Key.Return) {
                 root.launch(root.current-item);
                 return accept;
             }
@@ -103,6 +110,7 @@ export component Launcher inherits FocusScope {
                 for item[index] in root.model : LauncherItemDelegate {
                     image: item.image;
                     selected: index == root.current-item;
+                    has-focus: root.has-focus;
 
                     clicked => {
                         if(index != root.current-item) {

@@ -5,7 +5,6 @@ import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, 
     ListViewItem, HeaderBar, RoundButton, ContextMenu, LoadingIndicator, LargeTitle, SmallTitle,
     LineEdit } from "../_imports/coop-widgets.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
-import { DialogBase } from "../dialogs/dialog-base.slint";
 
 export global GameSettingsAdapter {
     callback set-arguments(/* row */ int, /* arguments */ string);
@@ -16,46 +15,71 @@ export global GameSettingsAdapter {
     in property <int> row;
 }
 
-component GameSettingsDialog {
-    in property <string> title: GameSettingsAdapter.title;
+component GameSettingsView {
+    private property <[ListViewItem]> context-menu;
 
-    TouchArea {
-        clicked => {
-            GameSettingsAdapter.close();
-        }
-    }
-
-    DialogBase {
-        x: Space.large;
-        y: Space.large;
-        width: min(400px, root.width * 0.8);
-        title: "\{root.title} (Settings)";
+    Rectangle {
+        background: Palette.background;
 
         VerticalLayout {
-            spacing: Space.medium;
+            HeaderBar {
+                action-icon: Icons.arrow-back;
+                action-enabled: true;
+                title: "\{GameSettingsAdapter.title} (Settings)";
 
-            SmallTitle {
-                text: @tr("Arguments");
-            }
+                i-menu-button := RoundButton {
+                    icon: Icons.more-vert;
+                    horizontal-stretch: 0;
 
-            i-arguments := LineEdit {
-                placeholder-text: @tr("Insert command line arguments");
-                text: GameSettingsAdapter.arguments;
+                    clicked => {
+                        root.context-menu = GamesAdapter.get-context-menu();
 
-                accepted => {
-                    GameSettingsAdapter.set-arguments(GameSettingsAdapter.row, self.text);
+                        if (root.context-menu.length == 0) {
+                            return;
+                        }
+
+                        i-context-menu.show();
+                    }
+                }
+
+
+                action => {
+                    GameSettingsAdapter.close();
+                }
+
+                i-context-menu := PopupWindow {
+                    x: i-menu-button.x - (128px - i-menu-button.width);
+                    y: i-menu-button.y + i-menu-button.height;
+
+                    ContextMenu {
+                        min-width: 128px;
+                        model: root.context-menu;
+
+                        item-clicked(row) => {
+                            GamesAdapter.context-menu-action(self.model[row].spec);
+                        }
+                    }
                 }
             }
-        }
 
-        HorizontalLayout {
-            alignment: end;
+            VerticalLayout {
+                x: (parent.width - self.width) / 2;
+                width: min(root.width, 640px);
+                padding: Space.large;
+                spacing: Space.medium;
+                alignment: start;
 
-            i-close-button := Button {
-                text: @tr("close");
+                SmallTitle {
+                    text: @tr("Arguments");
+                }
 
-                clicked => {
-                    GameSettingsAdapter.close();
+                i-arguments := LineEdit {
+                    placeholder-text: @tr("Insert command line arguments");
+                    text: GameSettingsAdapter.arguments;
+
+                    accepted => {
+                        GameSettingsAdapter.set-arguments(GameSettingsAdapter.row, self.text);
+                    }
                 }
             }
         }
@@ -233,7 +257,7 @@ export component GamesView {
         }
     }
 
-    if (GamesAdapter.display-settings) : GameSettingsDialog {
+    if (GamesAdapter.display-settings) : GameSettingsView {
         width: 100%;
         height: 100%;
     }

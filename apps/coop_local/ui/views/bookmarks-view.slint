@@ -5,6 +5,8 @@ import { GroupListView, GroupListViewItem, ListViewItem, ContextMenu, Size } fro
 
 export global BookmarksAdapter {
     callback open-dir(/* parent */ int, /* item */ int);
+    callback open-previous-dir();
+    callback open-next-dir();
     callback get-item-context-menu(/* parent-row */ int, /* item-row */ int) -> [ListViewItem];
     callback item-context-menu-action(/* parent-row */ int, /* item-row */ int, /* spec */ string);
 
@@ -19,9 +21,25 @@ export component BookmarksView {
 
     in property <length> window-height;
 
-    GroupListView {
+    forward-focus: i-group-list-view;
+
+    i-group-list-view := GroupListView {
         selection-mode: Custom;
         model: BookmarksAdapter.bookmarks;
+
+        key-pressed(event) => {
+            if (event.text == Key.UpArrow) {
+                BookmarksAdapter.open-previous-dir();
+                return accept;
+            }
+
+            if (event.text == Key.DownArrow) {
+                BookmarksAdapter.open-next-dir();
+                return accept;
+            }
+
+            reject
+        }
 
         item-pointer-event(parent, item, event, position) => {
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {

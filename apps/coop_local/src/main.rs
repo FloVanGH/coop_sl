@@ -63,7 +63,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
 
             // back is always to files view
             upgrade_adapter(&view_handle, |adapter| {
-                adapter.set_active_view(ActiveView::Files);
+                adapter.set_active_view(View::Files);
             });
 
             files_controller_clone.set_back_enabled(file_model_stack.borrow().len() > 1);
@@ -112,7 +112,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
 
                 // back is always to files view
                 upgrade_adapter(&view_handle, |adapter| {
-                    adapter.set_active_view(ActiveView::Files);
+                    adapter.set_active_view(View::Files);
                 });
 
                 files_controller_clone.set_back_enabled(file_model_stack.borrow().len() > 1);
@@ -157,7 +157,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
                     if is_games {
                         games_controller.show_games(file_model);
                         upgrade_adapter(&view_handle, |adapter| {
-                            adapter.set_active_view(ActiveView::Games);
+                            adapter.set_active_view(View::Games);
                         });
                         return;
                     }
@@ -166,17 +166,17 @@ pub fn main() -> Result<(), slint::PlatformError> {
                 files_controller_clone.set_back_enabled(file_model_stack.borrow().len() > 1);
 
                 upgrade_adapter(&view_handle, |adapter| {
-                    adapter.set_active_view(ActiveView::Files);
+                    adapter.set_active_view(View::Files);
                 });
             } else if file_model.file_type() == FileType::Image {
                 image_controller.show_image(file_model);
                 upgrade_adapter(&view_handle, |adapter| {
-                    adapter.set_active_view(ActiveView::Image);
+                    adapter.set_active_view(View::Image);
                 });
             } else if file_model.file_type() == FileType::Text {
                 text_controller.show_text(file_model);
                 upgrade_adapter(&view_handle, |adapter| {
-                    adapter.set_active_view(ActiveView::Text);
+                    adapter.set_active_view(View::Text);
                 });
             }
         }
@@ -198,12 +198,12 @@ pub fn main() -> Result<(), slint::PlatformError> {
                     let games_controller = games_controller.clone();
 
                     move |adapter| {
-                        if adapter.get_active_view() == ActiveView::Files {
+                        if adapter.get_active_view() == View::Files {
                             files_controller.update();
                         }
 
                         #[cfg(feature = "games")]
-                        if adapter.get_active_view() == ActiveView::Games {
+                        if adapter.get_active_view() == View::Games {
                             games_controller.update();
                         }
                     }

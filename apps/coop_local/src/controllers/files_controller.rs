@@ -140,6 +140,16 @@ impl FilesController {
                     }
                 });
 
+                adapter.on_select_previous({
+                    let controller = controller.clone();
+                    move || controller.select_previous() as i32
+                });
+
+                adapter.on_select_next({
+                    let controller = controller.clone();
+                    move || controller.select_next() as i32
+                });
+
                 adapter.on_select_all({
                     let controller = controller.clone();
                     move || {
@@ -429,6 +439,43 @@ impl FilesController {
         } else {
             self.set_item_selected(row, true);
         }
+    }
+
+    fn select_previous(&self) -> usize {
+        let previous = if let Some(first) = self.selected_items.borrow().last() {
+            i32::max(0, *first as i32 - 1) as usize
+        } else {
+            0
+        };
+
+        self.clear_selection();
+        self.set_item_selected(previous, true);
+
+        if let Some(view_handle) = self.view_handle.upgrade() {
+            view_handle.window().request_redraw();
+        }
+
+        previous
+    }
+
+    fn select_next(&self) -> usize {
+        let next = if let Some(last) = self.selected_items.borrow().last() {
+            i32::max(
+                0,
+                i32::min(self.files.row_count() as i32 - 1, *last as i32 + 1),
+            ) as usize
+        } else {
+            0
+        };
+
+        self.clear_selection();
+        self.set_item_selected(next, true);
+
+        if let Some(view_handle) = self.view_handle.upgrade() {
+            view_handle.window().request_redraw();
+        }
+
+        next
     }
 
     fn select_all(&self) {

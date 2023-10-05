@@ -13,6 +13,19 @@ export component App inherits CoopWindow {
     min-width: 800px;
     min-height: 600px;
     title: "Widgets gallery";
+    forward-focus: i-focus-scope;
+
+    i-focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Tab) {
+                i-side-bar.focus();
+                self.enabled = false;
+                return accept;
+            }
+
+            reject
+        }
+    }
 
     Rectangle {
         background: Palette.background;

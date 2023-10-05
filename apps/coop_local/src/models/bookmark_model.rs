@@ -16,7 +16,7 @@ impl Default for BookmarkType {
     }
 }
 
-#[derive(Clone, Default, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize, Eq)]
 pub struct BookmarkModel {
     bookmark_type: BookmarkType,
     name: String,
@@ -24,6 +24,12 @@ pub struct BookmarkModel {
 
     #[serde(skip)]
     selected: bool,
+}
+
+impl PartialEq for BookmarkModel {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name && self.path == other.path
+    }
 }
 
 impl BookmarkModel {

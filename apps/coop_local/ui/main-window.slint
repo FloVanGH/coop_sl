@@ -22,7 +22,7 @@ export { TextAdapter }
 import { ListViewItem, CoopWindow, Icons, GroupListViewItem, SideBar, LoadingIndicator } from "_imports/coop-widgets.slint";
 export { ListViewItem, Icons, GroupListViewItem }
 
-export enum ActiveView {
+export enum View {
     Files,
     Image,
     Text,
@@ -30,7 +30,7 @@ export enum ActiveView {
 }
 
 export global MainAdapter {
-    in property <ActiveView> active-view: ActiveView.Files;
+    in property <View> active-view: View.Files;
     in property <bool> loading;
 }
 
@@ -39,28 +39,41 @@ export component MainWindow inherits CoopWindow {
     min-width: 316px;
     min-height: 400px;
     preferred-width: 600px;
+    forward-focus: i-focus-scope;
+
+    i-focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Tab) {
+                i-bookmarks-view.focus();
+                self.enabled = false;
+                return accept;
+            }
+
+            reject
+        }
+    }
 
     GridLayout {
         Rectangle {
             col: 1;
 
-            if (MainAdapter.active-view == ActiveView.Files) : FilesView {
+            if (MainAdapter.active-view == View.Files) : FilesView {
                 window-height: root.height;
                 width: 100%;
                 height: 100%;
             }
 
-            if (MainAdapter.active-view == ActiveView.Image) : ImageView {
+            if (MainAdapter.active-view == View.Image) : ImageView {
                 width: 100%;
                 height: 100%;
             }
 
-            if (MainAdapter.active-view == ActiveView.Text) : TextView {
+            if (MainAdapter.active-view == View.Text) : TextView {
                 width: 100%;
                 height: 100%;
             }
 
-            if (MainAdapter.active-view == ActiveView.Games) : GamesView {
+            if (MainAdapter.active-view == View.Games) : GamesView {
                 width: 100%;
                 height: 100%;
             }
@@ -71,7 +84,7 @@ export component MainWindow inherits CoopWindow {
             parent-width: root.width;
             responsive: true;
 
-            BookmarksView {
+            i-bookmarks-view := BookmarksView {
                 window-height: root.height;
             }
         }
