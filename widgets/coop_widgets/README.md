@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # coop_widgets
 
-`coop_widgets` is a custom widget / third party component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design.
+`coop_widgets` is a custom widget and component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design.
 
 What the `coop` in `coop_widgets` stands for: cooperation.
 
@@ -20,7 +20,7 @@ What the `coop` in `coop_widgets` stands for: cooperation.
 
 ## live preview
 
-Check the [Online wasm demo](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery//).
+Check the [Online wasm demo](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery/).
 
 
 ## how to use

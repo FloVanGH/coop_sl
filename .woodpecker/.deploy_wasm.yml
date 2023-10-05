@@ -25,8 +25,8 @@ steps:
       - wasm-pack build --release --target web
 
       # Copy build step output to repository folder
-      - cp -ar pkg/* /tmp/pages/coop_sl/snapshots/examples/gallery/pkg/
-      - cp index.html /tmp/pages/coop_sl/snapshots/examples/gallery/
+      - cp -ar pkg/* /tmp/pages/coop_sl/snapshots/main/demos/gallery/pkg/
+      - cp index.html /tmp/pages/coop_sl/snapshots/main/demos/gallery/
 
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/

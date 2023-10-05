@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 ## coop_widgets
 
-coop_widgets is an alternative widgets and components library for [Slint](https://slint.dev/).
+`coop_widgets` is a custom widget and component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design.
 
 ## Getting Started
 

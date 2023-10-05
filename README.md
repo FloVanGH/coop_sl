@@ -30,7 +30,7 @@ What the `Coop` stands for: cooperation.
     * [slint_coop](platform_support/slint_coop/): Slint platform implementation based on `coop_client` **(on hold)**
 * widgets/
     * [book_flip](widgets/book_flip/): e-book widget for Slint **(on hold)**
-    * [coop_widgets](widgets/coop_widgets/): custom default widget library for Slint **(in active development / pre-release)**
+    * [coop_widgets](widgets/coop_widgets/): `coop_widgets` is a custom widget and component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design. **(in active development / pre-release)**
 
 ## examples
 
@@ -43,7 +43,7 @@ What the `Coop` stands for: cooperation.
 
 | Widgets |
 |---------|
-|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery//) |
+|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery/) |
 
 
 ## New to Slint?
