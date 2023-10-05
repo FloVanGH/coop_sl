@@ -5,7 +5,7 @@ import { PopupBorder } from "../components.slint";
 import { ItemDelegate, ListViewItem } from "list-view.slint";
 
 export component ContextMenu  {
-    callback item-clicked(/* index */ int);
+    callback item-clicked(/* row */ int);
 
     in property <[ListViewItem]> model;
 

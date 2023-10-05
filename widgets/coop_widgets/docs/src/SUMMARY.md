@@ -7,11 +7,19 @@ SPDX-License-Identifier: MIT
 
 - [Introduction](./introduction.md)
 
-# Widgets, Components and Structs
+# Widgets
 
-- [Components](./components.md)
+- [Introduction](widgets/widgets.md)
+    - [Button](widgets/button.md)
+    - [Checkables](widgets/checkables.md)
+    - [ComboBox](widgets/combobox.md)
+    - [ContextMenu](widgets/context-menu.md)
+    - [LineEdit](widgets/line-edit.md)
+
+<!-- # Blub
+
 - [Keyboard](./keyboard.md)
 - [Layouts](./layouts.md)
 - [Structs](./structs.md)
 - [Styling](./styling.md)
-- [Widgets](./widgets.md)
+- [Widgets](./widgets.md) -->

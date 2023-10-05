@@ -5,5 +5,4 @@
 
 cargo clean
 cargo build -p widgets --no-default-features --features=slint_coop
-cargo build -p coop_chat --no-default-features --features=slint_coop
 cargo build -p desktop

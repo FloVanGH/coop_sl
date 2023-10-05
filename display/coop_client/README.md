@@ -12,7 +12,7 @@ Client library that can be used to make an app work with [coop_server](../coop_s
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSES/MIT.txt)
-[![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/docs/coop_client/)
+<!-- [![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/docs/coop_client/) -->
 
 ## Other crates
 

@@ -14,11 +14,13 @@ What the `coop` in `coop_widgets` stands for: cooperation.
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSES/MIT.txt)
-[![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/snapshots/coop_sl/docs/coop_widgets/)
+[![Rust docs](https://img.shields.io/badge/docs-rust-orange.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/main/docs/rust/coop_widgets/)
+[![Rust docs](https://img.shields.io/badge/docs-slint-blue.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/main/docs/slint/coop_widgets/)
+
 
 ## live preview
 
-Check the [Online wasm demo](https://flovansl.codeberg.page/snapshots/gallery/).
+Check the [Online wasm demo](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery//).
 
 
 ## how to use

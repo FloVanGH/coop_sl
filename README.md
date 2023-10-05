@@ -20,7 +20,6 @@ What the `Coop` stands for: cooperation.
 ## Crates
 
 * apps/
-    * [coop_chat](apps/coop_chat/): A visual Slint prototype of a chat app **(on hold)**
     * [coop_local](apps/coop_local/): Cross platform file browser **(in active development / pre-release)**
 * display/
     * [coop_display](display/README.md) is an experimental frame buffer based display server that can be used e.g. to render a standalone app inside of a Slint app.
@@ -44,7 +43,7 @@ What the `Coop` stands for: cooperation.
 
 | Widgets |
 |---------|
-|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/examples/gallery/) |
+|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery//) |
 
 
 ## New to Slint?

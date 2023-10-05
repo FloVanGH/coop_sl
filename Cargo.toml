@@ -3,7 +3,6 @@
 
 [workspace]
 members = [
-   "apps/coop_chat",
    "apps/coop_local",
    "display/coop_client",
    "display/coop_protocol",
@@ -18,7 +17,6 @@ members = [
 ]
 
 default-members = [
-   "apps/coop_chat",
    "apps/coop_local",
    "examples/gallery",
    "widgets/book_flip",

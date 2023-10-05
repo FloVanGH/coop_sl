@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 steps:
-  deploy_docs_coop_widgets:
+  deploy_rust_docs_coop_widgets:
     group: docs
     image: rust
     when:
@@ -20,7 +20,7 @@ steps:
       - git config --global user.name "Woodpecker CI"
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
-      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
+      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/main/docs/rust/
 
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
@@ -35,7 +35,7 @@ steps:
           git push
         fi
     failure: ignore
-  deploy_docs_coop_client:
+  deploy_slint_docs_coop_widgets:
     group: docs
     image: rust
     when:
@@ -43,17 +43,20 @@ steps:
       branch: main
     secrets: [ mail, codeberg_token ]
     environment:
-      - OUTPUT=target/doc
+      - OUTPUT=book
     commands:
       - apt-get update && apt-get install -y cmake
-      # coop_client doc
-      - cargo doc --no-deps -p coop_client
+      - cargo install mdbook
+
+      - cd widgets/coop_widgets/docs
+      - mdbook build
+
       # Git configuration
       - git config --global user.email $MAIL
       - git config --global user.name "Woodpecker CI"
       - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
       # Copy build step output to repository folder
-      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
+      - cp -ar book/* /tmp/pages/coop_sl/snapshots/main/docs/slint/coop_widgets/
 
       # Commit and push all static files with pipeline started timestamp
       - cd /tmp/pages/
@@ -68,135 +71,168 @@ steps:
           git push
         fi
     failure: ignore
-  deploy_docs_book_flip:
-    group: docs
-    image: rust
-    when:
-      event: [push]
-      branch: main
-    secrets: [ mail, codeberg_token ]
-    environment:
-      - OUTPUT=target/doc
-    commands:
-      - apt-get update && apt-get install -y cmake
-      # book_flip doc
-      - cargo doc --no-deps -p book_flip
-      # Git configuration
-      - git config --global user.email $MAIL
-      - git config --global user.name "Woodpecker CI"
-      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
-      # Copy build step output to repository folder
-      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
+  # deploy_docs_coop_client:
+  #   group: docs
+  #   image: rust
+  #   when:
+  #     event: [push]
+  #     branch: main
+  #   secrets: [ mail, codeberg_token ]
+  #   environment:
+  #     - OUTPUT=target/doc
+  #   commands:
+  #     - apt-get update && apt-get install -y cmake
+  #     # coop_client doc
+  #     - cargo doc --no-deps -p coop_client
+  #     # Git configuration
+  #     - git config --global user.email $MAIL
+  #     - git config --global user.name "Woodpecker CI"
+  #     - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+  #     # Copy build step output to repository folder
+  #     - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/main/docs/rust/
 
-      # Commit and push all static files with pipeline started timestamp
-      - cd /tmp/pages/
-      - git add .
-      - |-
-        CHANGES=$(git status --porcelain | wc -l)
+  #     # Commit and push all static files with pipeline started timestamp
+  #     - cd /tmp/pages/
+  #     - git add .
+  #     - |-
+  #       CHANGES=$(git status --porcelain | wc -l)
 
-        git pull
-        if [ "$CHANGES" -gt "0" ]; then
-          git status
-          git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
-          git push
-        fi
-    failure: ignore
-  deploy_docs_coop_protocol:
-    group: docs
-    image: rust
-    when:
-      event: [push]
-      branch: main
-    secrets: [ mail, codeberg_token ]
-    environment:
-      - OUTPUT=target/doc
-    commands:
-      - apt-get update && apt-get install -y cmake
-      # coop_protocol doc
-      - cargo doc --no-deps -p coop_protocol
-      # Git configuration
-      - git config --global user.email $MAIL
-      - git config --global user.name "Woodpecker CI"
-      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
-      # Copy build step output to repository folder
-      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
+  #       git pull
+  #       if [ "$CHANGES" -gt "0" ]; then
+  #         git status
+  #         git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+  #         git push
+  #       fi
+  #   failure: ignore
+  # deploy_docs_book_flip:
+  #   group: docs
+  #   image: rust
+  #   when:
+  #     event: [push]
+  #     branch: main
+  #   secrets: [ mail, codeberg_token ]
+  #   environment:
+  #     - OUTPUT=target/doc
+  #   commands:
+  #     - apt-get update && apt-get install -y cmake
+  #     # book_flip doc
+  #     - cargo doc --no-deps -p book_flip
+  #     # Git configuration
+  #     - git config --global user.email $MAIL
+  #     - git config --global user.name "Woodpecker CI"
+  #     - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+  #     # Copy build step output to repository folder
+  #     - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/main/docs/rust/
 
-      # Commit and push all static files with pipeline started timestamp
-      - cd /tmp/pages/
-      - git add .
-      - |-
-        CHANGES=$(git status --porcelain | wc -l)
+  #     # Commit and push all static files with pipeline started timestamp
+  #     - cd /tmp/pages/
+  #     - git add .
+  #     - |-
+  #       CHANGES=$(git status --porcelain | wc -l)
 
-        git pull
-        if [ "$CHANGES" -gt "0" ]; then
-          git status
-          git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
-          git push
-        fi
-    failure: ignore
-  deploy_docs_coop_server:
-    group: docs
-    image: rust
-    when:
-      event: [push]
-      branch: main
-    secrets: [ mail, codeberg_token ]
-    environment:
-      - OUTPUT=target/doc
-    commands:
-      - apt-get update && apt-get install -y cmake
-      # coop_protocol doc
-      - cargo doc --no-deps -p coop_server
-      # Git configuration
-      - git config --global user.email $MAIL
-      - git config --global user.name "Woodpecker CI"
-      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
-      # Copy build step output to repository folder
-      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
+  #       git pull
+  #       if [ "$CHANGES" -gt "0" ]; then
+  #         git status
+  #         git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+  #         git push
+  #       fi
+  #   failure: ignore
+  # deploy_docs_coop_protocol:
+  #   group: docs
+  #   image: rust
+  #   when:
+  #     event: [push]
+  #     branch: main
+  #   secrets: [ mail, codeberg_token ]
+  #   environment:
+  #     - OUTPUT=target/doc
+  #   commands:
+  #     - apt-get update && apt-get install -y cmake
+  #     # coop_protocol doc
+  #     - cargo doc --no-deps -p coop_protocol
+  #     # Git configuration
+  #     - git config --global user.email $MAIL
+  #     - git config --global user.name "Woodpecker CI"
+  #     - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+  #     # Copy build step output to repository folder
+  #     - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/main/docs/rust/
 
-      # Commit and push all static files with pipeline started timestamp
-      - cd /tmp/pages/
-      - git add .
-      - |-
-        CHANGES=$(git status --porcelain | wc -l)
+  #     # Commit and push all static files with pipeline started timestamp
+  #     - cd /tmp/pages/
+  #     - git add .
+  #     - |-
+  #       CHANGES=$(git status --porcelain | wc -l)
 
-        git pull
-        if [ "$CHANGES" -gt "0" ]; then
-          git status
-          git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
-          git push
-        fi
-    failure: ignore
-  deploy_docs_slint_coop:
-    group: docs
-    image: rust
-    when:
-      event: [push]
-      branch: main
-    secrets: [ mail, codeberg_token ]
-    environment:
-      - OUTPUT=target/doc
-    commands:
-      - apt-get update && apt-get install -y cmake
-      # slint_coop doc
-      - cargo doc --no-deps -p slint_coop
-      # Git configuration
-      - git config --global user.email $MAIL
-      - git config --global user.name "Woodpecker CI"
-      - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
-      # Copy build step output to repository folder
-      - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/docs/
+  #       git pull
+  #       if [ "$CHANGES" -gt "0" ]; then
+  #         git status
+  #         git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+  #         git push
+  #       fi
+  #   failure: ignore
+  # deploy_docs_coop_server:
+  #   group: docs
+  #   image: rust
+  #   when:
+  #     event: [push]
+  #     branch: main
+  #   secrets: [ mail, codeberg_token ]
+  #   environment:
+  #     - OUTPUT=target/doc
+  #   commands:
+  #     - apt-get update && apt-get install -y cmake
+  #     # coop_protocol doc
+  #     - cargo doc --no-deps -p coop_server
+  #     # Git configuration
+  #     - git config --global user.email $MAIL
+  #     - git config --global user.name "Woodpecker CI"
+  #     - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+  #     # Copy build step output to repository folder
+  #     - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/main/docs/rust/
 
-      # Commit and push all static files with pipeline started timestamp
-      - cd /tmp/pages/
-      - git add .
-      - |-
-        CHANGES=$(git status --porcelain | wc -l)
+  #     # Commit and push all static files with pipeline started timestamp
+  #     - cd /tmp/pages/
+  #     - git add .
+  #     - |-
+  #       CHANGES=$(git status --porcelain | wc -l)
 
-        git pull
-        if [ "$CHANGES" -gt "0" ]; then
-          git status
-          git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
-          git push
-        fi
-    failure: ignore
+  #       git pull
+  #       if [ "$CHANGES" -gt "0" ]; then
+  #         git status
+  #         git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+  #         git push
+  #       fi
+  #   failure: ignore
+  # deploy_docs_slint_coop:
+  #   group: docs
+  #   image: rust
+  #   when:
+  #     event: [push]
+  #     branch: main
+  #   secrets: [ mail, codeberg_token ]
+  #   environment:
+  #     - OUTPUT=target/doc
+  #   commands:
+  #     - apt-get update && apt-get install -y cmake
+  #     # slint_coop doc
+  #     - cargo doc --no-deps -p slint_coop
+  #     # Git configuration
+  #     - git config --global user.email $MAIL
+  #     - git config --global user.name "Woodpecker CI"
+  #     - git clone -b main https://$CODEBERG_TOKEN@codeberg.org/flovansl/pages.git /tmp/pages/
+  #     # Copy build step output to repository folder
+  #     - cp -ar $OUTPUT/* /tmp/pages/coop_sl/snapshots/main/docs/rust/
+
+  #     # Commit and push all static files with pipeline started timestamp
+  #     - cd /tmp/pages/
+  #     - git add .
+  #     - |-
+  #       CHANGES=$(git status --porcelain | wc -l)
+
+  #       git pull
+  #       if [ "$CHANGES" -gt "0" ]; then
+  #         git status
+  #         git commit -m "Woodpecker CI ${CI_BUILD_CREATED} [CI SKIP]"
+  #         git push
+  #       fi
+  #   failure: ignore

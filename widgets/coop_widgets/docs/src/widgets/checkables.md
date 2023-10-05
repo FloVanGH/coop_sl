@@ -1,0 +1,67 @@
+<!--
+SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+SPDX-License-Identifier: MIT
+-->
+
+## `CheckBox`
+
+Use a `CheckBox` to let the user select or deselect values, for example in a list with multiple options. Consider using a `Switch` element instead if the action resembles more something that's turned on or off.
+
+### Properties
+
+-   **`checked`**: (_inout_ _bool_): Whether the checkbox is checked or not (default: false).
+-   **`enabled`**: (_in_ _bool_): Defaults to true. When false, the checkbox can't be pressed (default: true)
+-   **`has-focus`**: (_out_ _bool_): Set to true when the checkbox has keyboard focus (default: false).
+-   **`text`** (_in_ _string_): The text written next to the checkbox.
+
+### Callbacks
+
+-   **`toggled(/* checked */ bool)`**: The checkbox value changed
+
+### Example
+
+```slint
+import { CheckBox } from "_imports/coop_widgets.slint";
+
+export component Example inherits Window {
+    width: 200px;
+    height: 25px;
+
+    CheckBox {
+        width: parent.width;
+        height: parent.height;
+        text: "Hello World";
+    }
+}
+```
+
+## `Switch`
+
+A `Switch` is a representation of a physical switch that allows users to turn things on or off. Consider using a `CheckBox` instead if you want the user to select or deselect values, for example in a list with multiple options.
+
+### Properties
+
+-   **`checked`**: (_inout_ _bool_): Whether the switch is checked or not (default: false).
+-   **`enabled`**: (_in_ _bool_): Defaults to true. When false, the switch can't be pressed (default: true).
+-   **`has-focus`**: (_out_ _bool_): Set to true when the switch has keyboard focue (default: false).
+-   **`text`** (_in_ _string_): The text written next to the switch.
+
+### Callbacks
+
+-   **`toggled(/* checked */ bool)`**: The switch value changed
+
+### Example
+
+```slint
+import { Switch } from "_imports/coop_widgets.slint";
+
+export component Example inherits Window {
+    width: 200px;
+    height: 25px;
+    Switch {
+        width: parent.width;
+        height: parent.height;
+        text: "Hello World";
+    }
+}
+```

@@ -12,7 +12,7 @@ Server part of the coop_display, can handle multiple [coop_client](../coop_clien
 </a>
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSES/MIT.txt)
-[![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/docs/coop_server/)
+<!-- [![docs](https://img.shields.io/badge/docs-latest-orange.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/docs/coop_server/) -->
 
 ## Other crates
 

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # co_sl examples
 
-Examples for the crates `pico_engine_ui`, `coop_widgets` and `book_flip`.
+Examples for `coop_widgets` and `book_flip`.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
@@ -19,9 +19,8 @@ Experimental example desktop environment based on `coop_display` and Slint.
 
 ### Run desktop
 
-* Desktop example needs `widgets` and `coop_chat` to be build first with `slint_coop` features
+* Desktop example needs `widgets` to be build first with `slint_coop` features
 * Build widgets: `cargo build -p widgets --no-default-features --features=slint_coop`
-* Build coop_chat: `cargo build -p coop_chat --no-default-features --features=slint_coop`
 * Run desktop:  `cargo run -p desktop`
 
 ## gaming
