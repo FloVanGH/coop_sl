@@ -170,6 +170,20 @@ impl FilesController {
                         controller.paste();
                     }
                 });
+
+                adapter.on_selected_items({
+                    let controller = controller.clone();
+                    move || {
+                        VecModel::from_slice(
+                            &controller
+                                .selected_items
+                                .borrow()
+                                .iter()
+                                .map(|row| *row as i32)
+                                .collect::<Vec<i32>>(),
+                        )
+                    }
+                });
             }
         });
 

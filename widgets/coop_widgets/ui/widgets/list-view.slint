@@ -335,6 +335,10 @@ export component StandardListView  {
             i-list-view.viewport-y -= into-view-item-y + item-height - i-list-view.visible-height;
         }
     }
+
+    public function item-y(row: int) -> length {
+        i-list-view.viewport-y + row * item-height + item-height / 2
+    }
 }
 
 export component GroupListView  {

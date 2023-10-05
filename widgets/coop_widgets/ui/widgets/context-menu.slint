@@ -10,6 +10,11 @@ export component ContextMenu  {
     in property <[ListViewItem]> model;
 
     min-width: 32px;
+    forward-focus: i-focus-scope;
+
+    i-focus-scope := FocusScope {
+
+    }
 
     PopupBorder {
         VerticalLayout {

@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import { ListViewItem, StandardListView, Icons, HeaderBar, SelectionMode, ContextMenu,
-    RoundButton, LoadingIndicator, Size } from "../_imports/coop-widgets.slint";
+    RoundButton, LoadingIndicator, Size, Space } from "../_imports/coop-widgets.slint";
 
 
 export global FilesAdapter {
     callback back();
-    callback open-internal(/* index */ int);
+    callback open-internal(/* row */ int);
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
     callback get-item-context-menu(/* row */ int) -> [ListViewItem];
@@ -19,6 +19,7 @@ export global FilesAdapter {
     callback select-all();
     callback copy();
     callback paste();
+    callback selected-items() -> [int];
 
     in property <string> title: "Root";
     in property <[ListViewItem]> files;
@@ -28,6 +29,8 @@ export global FilesAdapter {
 }
 
 export component FilesView {
+    private property <[int]> selected-items;
+    private property <int> last-selected-item: selected-items[selected-items.length - 1];
     private property <[ListViewItem]> context-menu;
     private property <[ListViewItem]> item-context-menu;
     private property <Point> item-context-menu-pos;
@@ -41,20 +44,7 @@ export component FilesView {
         height: 0;
 
         key-pressed(e) => {
-            if (e.text == "a" && e.modifiers.control) {
-                FilesAdapter.select-all();
-                return accept;
-            }
-
-            if (e.text == "c" && e.modifiers.control) {
-                FilesAdapter.copy();
-            }
-
-            if (e.text == "v" && e.modifiers.control) {
-                FilesAdapter.paste();
-            }
-
-            reject
+           root.key-pressed(e)
         }
     }
 
@@ -104,6 +94,26 @@ export component FilesView {
             edit-item: FilesAdapter.edit-file;
 
             key-pressed(event) => {
+                if (event.text == Key.Return) {
+                    root.selected-items = FilesAdapter.selected-items();
+
+                    if (root.selected-items.length > 0) {
+                        FilesAdapter.open-internal(root.last-selected-item);
+                    }
+
+                    return accept;
+                }
+
+                if (event.text == " ") {
+                    root.selected-items = FilesAdapter.selected-items();
+
+                    if (root.selected-items.length > 0) {
+                        root.open-item-context-menu(root.last-selected-item, { x: Space.medium, y: self.item-y(root.last-selected-item) })
+                    }
+
+                    return accept;
+                }
+
                 if (event.text == Key.UpArrow) {
                     i-list-view.bring-into-view(FilesAdapter.select-previous());
                     return accept;
@@ -114,7 +124,7 @@ export component FilesView {
                     return accept;
                 }
 
-                reject
+                root.key-pressed(event)
             }
 
             item-pointer-event(row, event, position) => {
@@ -133,18 +143,7 @@ export component FilesView {
                 }
 
                 if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                    root.item-context-menu = FilesAdapter.get-item-context-menu(row);
-                    if (root.item-context-menu.length == 0) {
-                        return;
-                    }
-
-                    root.item-context-menu-item-row = row;
-                    root.item-context-menu-pos.x = position.x;
-
-                    // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
-                    root.item-context-menu-pos.y = Size.large + position.y + root.item-context-menu.length * Size.small > root.window-height ?
-                        position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
-                    i-item-context-menu.show();
+                    root.open-item-context-menu(row, position);
                 }
             }
 
@@ -156,7 +155,7 @@ export component FilesView {
                 x: root.item-context-menu-pos.x;
                 y: root.item-context-menu-pos.y;
 
-                ContextMenu {
+                i-blub := ContextMenu {
                     model: root.item-context-menu;
 
                     item-clicked(row) => {
@@ -170,6 +169,38 @@ export component FilesView {
     if (root.display-loading >= 1.0) : LoadingIndicator {
         width: 100%;
         height: 100%;
+    }
+
+    function key-pressed(event: KeyEvent) -> EventResult {
+        if (event.text == "a" && event.modifiers.control) {
+            FilesAdapter.select-all();
+            return accept;
+        }
+
+        if (event.text == "c" && event.modifiers.control) {
+            FilesAdapter.copy();
+        }
+
+        if (event.text == "v" && event.modifiers.control) {
+            FilesAdapter.paste();
+        }
+
+        reject
+    }
+
+    function open-item-context-menu(row: int, position: Point) {
+        root.item-context-menu = FilesAdapter.get-item-context-menu(row);
+        if (root.item-context-menu.length == 0) {
+            return;
+        }
+
+        root.item-context-menu-item-row = row;
+        root.item-context-menu-pos.x = position.x;
+
+        // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
+        root.item-context-menu-pos.y = Size.large + position.y + root.item-context-menu.length * Size.small > root.window-height ?
+            position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
+        i-item-context-menu.show();
     }
 
     states [

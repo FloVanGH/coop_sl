@@ -24,6 +24,10 @@ component LauncherItemDelegate  {
     touch-area := TouchArea {}
 
     i-background := Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: parent.width - 4px;
+        height: parent.height - 4px;
         border-width: root.selected ? 0px : 1px;
         border-color:  Palette.border;
         background: root.selected ? Palette.accent : Palette.surface;
@@ -39,7 +43,7 @@ component LauncherItemDelegate  {
     if (root.has-focus && root.selected) : FocusBorder {
         width: 100%;
         height: 100%;
-        border-radius: i-background.border-radius;
+        border-radius: i-background.border-radius + 2px;
     }
 
     animate width { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
@@ -65,7 +69,7 @@ export component Launcher inherits FocusScope {
     forward-focus: i-focus-scope;
     min-height: max(LauncherStyle.max-item-size, i-layout.min-height);
 
-    i-focus-scope:= FocusScope {
+    i-focus-scope := FocusScope {
         key-pressed(event) => {
             if (event.text == Key.RightArrow) {
                 root.next();
@@ -110,7 +114,7 @@ export component Launcher inherits FocusScope {
                 for item[index] in root.model : LauncherItemDelegate {
                     image: item.image;
                     selected: index == root.current-item;
-                    has-focus: root.has-focus;
+                    has-focus: i-focus-scope.has-focus;
 
                     clicked => {
                         if(index != root.current-item) {
