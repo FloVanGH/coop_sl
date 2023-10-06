@@ -7,10 +7,10 @@ import { Duration, Space, Palette } from "../styling.slint";
 component LoadingStick inherits Rectangle {
     in property <bool> active;
 
-    width: 8px;
+    width: 4px;
     height: 64px;
     background: Palette.surface;
-    border-radius: 4px;
+    border-radius: 2px;
 
     states [
         active when root.active : {
@@ -20,7 +20,7 @@ component LoadingStick inherits Rectangle {
 }
 
 export component LoadingIndicator {
-    private property <int> stick-count: 4;
+    private property <int> stick-count: 6;
     private property <float> active-stick: (root.stick-count + 1) * mod(animation-tick(), 1s) / 1s;
 
     min-width: i-layout.min-width;

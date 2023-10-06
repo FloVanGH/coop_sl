@@ -18,7 +18,7 @@ steps:
       event: [push, pull_request, tag]
       branch: main
     commands:
-      - apt-get update && apt-get install -y cmake
+      - apt-get update && apt-get install -y cmake libudev-dev
       - rustup component add clippy
       - cargo clippy --all-targets -- -D warnings
   license:

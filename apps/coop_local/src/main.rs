@@ -5,6 +5,9 @@ use coop_local::controllers::*;
 use coop_local::models::*;
 use coop_local::repositories::*;
 
+#[cfg(feature = "games")]
+use coop_local::gamepad;
+
 use coop_local::ui::*;
 use slint::*;
 use std::cell::RefCell;
@@ -13,6 +16,9 @@ use std::rc::Rc;
 pub fn main() -> Result<(), slint::PlatformError> {
     let main_window = MainWindow::new()?;
     let view_handle = main_window.as_weak();
+
+    #[cfg(feature = "games")]
+    let gamepad_timer = gamepad::connect(view_handle.clone())?;
 
     let dialog_controller = DialogController::new(view_handle.clone());
     let on_show_about = move || {
@@ -215,6 +221,9 @@ pub fn main() -> Result<(), slint::PlatformError> {
     );
 
     main_window.run()?;
+
+    #[cfg(feature = "games")]
+    gamepad_timer.stop();
 
     Ok(())
 }

@@ -155,7 +155,7 @@ export component FilesView {
                 x: root.item-context-menu-pos.x;
                 y: root.item-context-menu-pos.y;
 
-                i-blub := ContextMenu {
+                ContextMenu {
                     model: root.item-context-menu;
 
                     item-clicked(row) => {
@@ -172,6 +172,11 @@ export component FilesView {
     }
 
     function key-pressed(event: KeyEvent) -> EventResult {
+        if (event.text == Key.Escape) {
+            i-context-menu.close();
+            i-item-context-menu.close();
+            return accept;
+        }
         if (event.text == "a" && event.modifiers.control) {
             FilesAdapter.select-all();
             return accept;

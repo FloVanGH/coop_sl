@@ -8,6 +8,6 @@ steps:
       event: [push, pull_request, tag]
       branch: main
     commands:
-      - apt-get update && apt-get install -y cmake
+      - apt-get update && apt-get install -y cmake libudev-dev
       - cargo build
       - cargo test
