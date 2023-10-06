@@ -15,7 +15,6 @@ export global ImageAdapter {
 }
 
 export component ImageView {
-    private property <[ListViewItem]> context-menu;
     private property <float> display-loading;
 
     VerticalLayout {
@@ -29,9 +28,9 @@ export component ImageView {
                 horizontal-stretch: 0;
 
                 clicked => {
-                    root.context-menu = ImageAdapter.get-context-menu();
+                    i-context-menu.model = ImageAdapter.get-context-menu();
 
-                    if (root.context-menu.length == 0) {
+                    if (i-context-menu.model.length == 0) {
                         return;
                     }
 
@@ -43,17 +42,13 @@ export component ImageView {
                 ImageAdapter.back();
             }
 
-            i-context-menu := PopupWindow {
-                x: i-menu-button.x - (128px - i-menu-button.width);
-                y: i-menu-button.y + i-menu-button.height;
+            i-context-menu := ContextMenu {
+                min-menu-width: 94px;
+                offset-x: -self.min-menu-width;
+                offset-y: i-menu-button.height;
 
-                ContextMenu {
-                    min-width: 128px;
-                    model: root.context-menu;
-
-                    item-clicked(row) => {
-                        ImageAdapter.context-menu-action(self.model[row].spec);
-                    }
+                item-clicked(row) => {
+                    ImageAdapter.context-menu-action(self.model[row].spec);
                 }
             }
         }

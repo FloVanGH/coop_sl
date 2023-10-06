@@ -5,28 +5,84 @@ import { PopupBorder } from "../components.slint";
 import { ItemDelegate, ListViewItem } from "list-view.slint";
 
 export component ContextMenu  {
+    private property <int> current-item;
+
     callback item-clicked(/* row */ int);
 
     in property <[ListViewItem]> model;
+    in property <length> min-menu-width: 32px;
+    in property <length> offset-x;
+    in property <length> offset-y;
+    out property <bool> has-focus: i-focus-scope.has-focus;
 
-    min-width: 32px;
-    forward-focus: i-focus-scope;
+    vertical-stretch: 0;
+    horizontal-stretch: 0;
 
     i-focus-scope := FocusScope {
+        x: 0px;
+        y: 0px;
 
+        key-pressed(event) => {
+            if (event.text == Key.UpArrow) {
+                root.set-current-item(root.current-item - 1);
+                return accept;
+            }
+            if (event.text == Key.DownArrow) {
+                root.set-current-item(root.current-item + 1);
+                return accept;
+            }
+            if (event.text == Key.Return) {
+                root.item-clicked(root.current-item);
+                root.current-item = -1;
+                root.close();
+                return accept;
+            }
+            reject
+        }
     }
 
-    PopupBorder {
-        VerticalLayout {
-            for item[index] in model : ItemDelegate {
-                leading-icon: item.leading-icon;
-                text: item.text;
-                trailing-icon: item.trailing-icon;
+    i-popup-window := PopupWindow {
+        x: root.offset-x;
+        y: root.offset-y;
 
-                clicked => {
-                    root.item-clicked(index);
+        PopupBorder {
+            min-width: root.min-menu-width;
+
+            VerticalLayout {
+                for item[index] in model : ItemDelegate {
+                    leading-icon: item.leading-icon;
+                    text: item.text;
+                    trailing-icon: item.trailing-icon;
+                    selected: root.has-focus && index == root.current-item;
+
+                    clicked => {
+                        root.item-clicked(index);
+                    }
                 }
             }
         }
     }
+
+    function set-current-item(row: int) {
+        if (row < 0 || row >= self.model.length) {
+            return;
+        }
+
+        self.current-item = row;
+    }
+
+    public function show() {
+        i-popup-window.show();
+    }
+
+    public function close() {
+        i-popup-window.close();
+    }
+
+    public function show-and-focus() {
+        i-popup-window.show();
+        i-focus-scope.focus();
+        self.set-current-item(0);
+    }
 }
+

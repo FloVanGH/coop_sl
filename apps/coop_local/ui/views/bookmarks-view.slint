@@ -14,8 +14,6 @@ export global BookmarksAdapter {
 }
 
 export component BookmarksView {
-    private property <[ListViewItem]> item-context-menu;
-    private property <Point> item-context-menu-pos;
     private property <int> item-context-menu-item-row;
     private property <int> item-context-menu-parent-row;
 
@@ -47,34 +45,27 @@ export component BookmarksView {
             }
 
             if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                root.item-context-menu = BookmarksAdapter.get-item-context-menu(parent, item);
-                if (root.item-context-menu.length == 0) {
+                i-context-menu.model = BookmarksAdapter.get-item-context-menu(parent, item);
+
+                if (i-context-menu.model.length == 0) {
                     return;
                 }
 
                 root.item-context-menu-item-row = item;
                 root.item-context-menu-parent-row = parent;
-                root.item-context-menu-pos.x = position.x;
+                i-context-menu.x = position.x;
 
                 // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
-                root.item-context-menu-pos.y = Size.large + position.y + root.item-context-menu.length * Size.small > root.window-height ?
-                    position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
-                i-item-context-menu.show();
-                i-item-context-menu.show();
+                i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
+                    position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
+                i-context-menu.show();
             }
         }
 
-        i-item-context-menu := PopupWindow {
-            x: root.item-context-menu-pos.x;
-            y: root.item-context-menu-pos.y;
-
-            ContextMenu {
-                model: root.item-context-menu;
-
-                item-clicked(row) => {
-                    BookmarksAdapter.item-context-menu-action(root.item-context-menu-parent-row,
-                        root.item-context-menu-item-row, self.model[row].spec);
-                }
+        i-context-menu := ContextMenu {
+            item-clicked(row) => {
+                BookmarksAdapter.item-context-menu-action(root.item-context-menu-parent-row,
+                    root.item-context-menu-item-row, self.model[row].spec);
             }
         }
     }

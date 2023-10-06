@@ -31,13 +31,12 @@ export global FilesAdapter {
 export component FilesView {
     private property <[int]> selected-items;
     private property <int> last-selected-item: selected-items[selected-items.length - 1];
-    private property <[ListViewItem]> context-menu;
-    private property <[ListViewItem]> item-context-menu;
-    private property <Point> item-context-menu-pos;
-    private property <int> item-context-menu-item-row;
     private property <float> display-loading;
+    private property <int> item-context-menu-item-row: -1;
 
     in property <length> window-height;
+
+    forward-focus: i-focus-scope;
 
     i-focus-scope := FocusScope {
         width: 0;
@@ -59,9 +58,9 @@ export component FilesView {
                 horizontal-stretch: 0;
 
                 clicked => {
-                    root.context-menu = FilesAdapter.get-context-menu();
+                    i-context-menu.model = FilesAdapter.get-context-menu();
 
-                    if (root.context-menu.length == 0) {
+                    if (i-context-menu.model.length == 0) {
                         return;
                     }
 
@@ -73,17 +72,13 @@ export component FilesView {
                 FilesAdapter.back();
             }
 
-            i-context-menu := PopupWindow {
-                x: i-menu-button.x - (128px - i-menu-button.width);
-                y: i-menu-button.y + i-menu-button.height;
+            i-context-menu := ContextMenu {
+                min-menu-width: 128px;
+                offset-x: -self.min-menu-width;
+                offset-y: i-menu-button.height;
 
-                ContextMenu {
-                    min-width: 128px;
-                    model: root.context-menu;
-
-                    item-clicked(row) => {
-                        FilesAdapter.context-menu-action(self.model[row].spec);
-                    }
+                item-clicked(row) => {
+                    FilesAdapter.context-menu-action(self.model[row].spec);
                 }
             }
         }
@@ -151,16 +146,12 @@ export component FilesView {
                 FilesAdapter.rename-item(row, text);
             }
 
-            i-item-context-menu := PopupWindow {
-                x: root.item-context-menu-pos.x;
-                y: root.item-context-menu-pos.y;
-
-                ContextMenu {
-                    model: root.item-context-menu;
-
-                    item-clicked(row) => {
-                        FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
+            i-item-context-menu := ContextMenu {
+                item-clicked(row) => {
+                    if (self.has-focus) {
+                        i-list-view.focus();
                     }
+                    FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
                 }
             }
         }
@@ -194,18 +185,24 @@ export component FilesView {
     }
 
     function open-item-context-menu(row: int, position: Point) {
-        root.item-context-menu = FilesAdapter.get-item-context-menu(row);
-        if (root.item-context-menu.length == 0) {
+        i-item-context-menu.model = FilesAdapter.get-item-context-menu(row);
+
+        if (i-item-context-menu.model.length == 0) {
             return;
         }
 
         root.item-context-menu-item-row = row;
-        root.item-context-menu-pos.x = position.x;
+        i-item-context-menu.x = position.x;
 
         // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
-        root.item-context-menu-pos.y = Size.large + position.y + root.item-context-menu.length * Size.small > root.window-height ?
-            position.y + root.window-height - (Size.large + position.y + root.item-context-menu.length * Size.small) : position.y;
-        i-item-context-menu.show();
+        i-item-context-menu.y = Size.large + position.y + i-item-context-menu.model.length * Size.small > root.window-height ?
+            position.y + root.window-height - (Size.large + position.y + i-item-context-menu.model.length * Size.small) : position.y;
+
+        if (i-focus-scope.has-focus || i-list-view.has-focus) {
+            i-item-context-menu.show-and-focus();
+        } else {
+            i-item-context-menu.show();
+        }
     }
 
     states [

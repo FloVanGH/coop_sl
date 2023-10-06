@@ -13,7 +13,6 @@ export global TextAdapter {
 }
 
 export component TextView {
-    private property <[ListViewItem]> context-menu;
     private property <length> visible-width <=> i-scroll-view.visible-width;
     private property <length> visible-height <=> i-scroll-view.visible-height;
     private property <length> viewport-x <=> i-scroll-view.viewport-x;
@@ -32,9 +31,9 @@ export component TextView {
                 horizontal-stretch: 0;
 
                 clicked => {
-                    root.context-menu = TextAdapter.get-context-menu();
+                    i-context-menu.model = TextAdapter.get-context-menu();
 
-                    if (root.context-menu.length == 0) {
+                    if (i-context-menu.model.length == 0) {
                         return;
                     }
 
@@ -46,17 +45,13 @@ export component TextView {
                 TextAdapter.back();
             }
 
-            i-context-menu := PopupWindow {
-                x: i-menu-button.x - (128px - i-menu-button.width);
-                y: i-menu-button.y + i-menu-button.height;
+            i-context-menu := ContextMenu {
+                min-menu-width: 94px;
+                offset-x: -self.min-menu-width;
+                offset-y: i-menu-button.height;
 
-                ContextMenu {
-                    min-width: 128px;
-                    model: root.context-menu;
-
-                    item-clicked(row) => {
-                        TextAdapter.context-menu-action(self.model[row].spec);
-                    }
+                item-clicked(row) => {
+                    TextAdapter.context-menu-action(self.model[row].spec);
                 }
             }
         }
