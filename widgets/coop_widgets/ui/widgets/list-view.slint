@@ -41,7 +41,6 @@ export component ItemDelegate inherits TouchArea {
     in property <image> leading-icon;
     in property <image> trailing-icon;
     in property <bool> edit;
-    in property <bool> has-focus;
     in-out property <string> text;
 
     min-height: max(Size.small, i-layout.min-height);
@@ -84,11 +83,6 @@ export component ItemDelegate inherits TouchArea {
                 width: Icography.small;
             }
         }
-    }
-
-    if (root.selected && root.has-focus) : FocusBorder {
-        width: 100%;
-        height: 100%;
     }
 
     states [
@@ -185,7 +179,6 @@ component GroupItemDelegate {
                     && root.selection-mode == SelectionMode.Single)
                     || (root.selection-mode == SelectionMode.Custom && item.selected);
                 height: self.min-height;
-                has-focus: root.has-focus;
 
                 clicked => {
                     if(root.selection-mode == SelectionMode.None) {
@@ -282,9 +275,11 @@ export component StandardListView  {
     }
 
     Rectangle {
+        y: Space.small;
+        height: parent.height - Space.small;
+
         i-list-view := ListView {
             for item[index] in root.model : ItemDelegate {
-                has-focus: root.has-focus;
                 height: self.min-height;
                 selected: (index == root.current-item && root.selection-mode == SelectionMode.Single)
                     || (item.selected && root.selection-mode == SelectionMode.Custom);
@@ -312,6 +307,14 @@ export component StandardListView  {
         }
 
         @children
+    }
+
+    FocusBorder {
+        y: 0;
+        width: parent.width - Space.large;
+        height: 1px;
+        visible: root.has-focus;
+        border-width: self.height;
     }
 
     public function set-current-item(index: int) {
@@ -397,6 +400,9 @@ export component GroupListView  {
     }
 
     Rectangle {
+        y: Space.small;
+        height: parent.height - Space.small;
+
         i-list-view := ListView {
             for parent-item[par-row] in root.model: VerticalLayout {
                GroupItemDelegate {
@@ -422,6 +428,13 @@ export component GroupListView  {
         }
 
         @children
+    }
+
+    FocusBorder {
+        y: 0;
+        width: parent.width - Space.large;
+        height: 1px;
+        visible: root.has-focus;
     }
 
     public function set-current-item(row: int, par-row: int) {

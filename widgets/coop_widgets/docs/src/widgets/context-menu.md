@@ -18,7 +18,8 @@ SPDX-License-Identifier: MIT
 
 ### Callbacks
 
--   **`item-clicked(/* row */ int)`**: Emitted when an item was clicked
+-   **`item-clicked(/* row */ int)`**: Emitted when an item was clicked.
+-   **`close()`**: Emitted when the context menu is closed.
 
 ### Functions
 

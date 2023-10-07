@@ -8,6 +8,7 @@ export component ContextMenu  {
     private property <int> current-item;
 
     callback item-clicked(/* row */ int);
+    callback closed();
 
     in property <[ListViewItem]> model;
     in property <length> min-menu-width: 32px;
@@ -23,6 +24,10 @@ export component ContextMenu  {
         y: 0px;
 
         key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.close();
+                return accept;
+            }
             if (event.text == Key.UpArrow) {
                 root.set-current-item(root.current-item - 1);
                 return accept;
@@ -77,6 +82,7 @@ export component ContextMenu  {
 
     public function close() {
         i-popup-window.close();
+        root.closed();
     }
 
     public function show-and-focus() {

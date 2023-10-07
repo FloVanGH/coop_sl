@@ -36,16 +36,7 @@ export component FilesView {
 
     in property <length> window-height;
 
-    forward-focus: i-focus-scope;
-
-    i-focus-scope := FocusScope {
-        width: 0;
-        height: 0;
-
-        key-pressed(e) => {
-           root.key-pressed(e)
-        }
-    }
+    forward-focus: i-list-view;
 
     VerticalLayout {
         HeaderBar {
@@ -80,6 +71,10 @@ export component FilesView {
                 item-clicked(row) => {
                     FilesAdapter.context-menu-action(self.model[row].spec);
                 }
+
+                closed => {
+                   i-list-view.focus();
+                }
             }
         }
 
@@ -89,41 +84,11 @@ export component FilesView {
             edit-item: FilesAdapter.edit-file;
 
             key-pressed(event) => {
-                if (event.text == Key.Return) {
-                    root.selected-items = FilesAdapter.selected-items();
-
-                    if (root.selected-items.length > 0) {
-                        FilesAdapter.open-internal(root.last-selected-item);
-                    }
-
-                    return accept;
-                }
-
-                if (event.text == " ") {
-                    root.selected-items = FilesAdapter.selected-items();
-
-                    if (root.selected-items.length > 0) {
-                        root.open-item-context-menu(root.last-selected-item, { x: Space.medium, y: self.item-y(root.last-selected-item) })
-                    }
-
-                    return accept;
-                }
-
-                if (event.text == Key.UpArrow) {
-                    i-list-view.bring-into-view(FilesAdapter.select-previous());
-                    return accept;
-                }
-
-                if (event.text == Key.DownArrow) {
-                    i-list-view.bring-into-view(FilesAdapter.select-next());
-                    return accept;
-                }
-
                 root.key-pressed(event)
             }
 
             item-pointer-event(row, event, position) => {
-                i-focus-scope.focus();
+                i-list-view.focus();
 
                 if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && !event.modifiers.control
                         && !event.modifiers.shift) {
@@ -153,6 +118,10 @@ export component FilesView {
                     }
                     FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
                 }
+
+                closed => {
+                    i-list-view.focus();
+                }
             }
         }
     }
@@ -163,9 +132,35 @@ export component FilesView {
     }
 
     function key-pressed(event: KeyEvent) -> EventResult {
-        if (event.text == Key.Escape) {
-            i-context-menu.close();
-            i-item-context-menu.close();
+        if (event.text == Key.Return) {
+            root.selected-items = FilesAdapter.selected-items();
+
+            if (root.selected-items.length > 0) {
+                FilesAdapter.open-internal(root.last-selected-item);
+            }
+
+            return accept;
+        }
+
+        if (event.text == " ") {
+            root.selected-items = FilesAdapter.selected-items();
+
+            if (root.selected-items.length > 0) {
+                root.open-item-context-menu(root.last-selected-item, { x: Space.medium, y: i-list-view.item-y(root.last-selected-item) })
+            }
+
+            return accept;
+        }
+
+        if (event.text == Key.UpArrow) {
+            i-list-view.bring-into-view(FilesAdapter.select-previous());
+            i-list-view.focus();
+            return accept;
+        }
+
+        if (event.text == Key.DownArrow) {
+            i-list-view.bring-into-view(FilesAdapter.select-next());
+            i-list-view.focus();
             return accept;
         }
         if (event.text == "a" && event.modifiers.control) {
@@ -198,7 +193,7 @@ export component FilesView {
         i-item-context-menu.y = Size.large + position.y + i-item-context-menu.model.length * Size.small > root.window-height ?
             position.y + root.window-height - (Size.large + position.y + i-item-context-menu.model.length * Size.small) : position.y;
 
-        if (i-focus-scope.has-focus || i-list-view.has-focus) {
+        if (i-list-view.has-focus || i-list-view.has-focus) {
             i-item-context-menu.show-and-focus();
         } else {
             i-item-context-menu.show();
