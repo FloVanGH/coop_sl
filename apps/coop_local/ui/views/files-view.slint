@@ -49,13 +49,18 @@ export component FilesView {
                 horizontal-stretch: 0;
 
                 clicked => {
+                    i-list-view.focus();
                     i-context-menu.model = FilesAdapter.get-context-menu();
 
                     if (i-context-menu.model.length == 0) {
                         return;
                     }
 
-                    i-context-menu.show();
+                    if (i-list-view.has-focus) {
+                        i-context-menu.show-and-focus();
+                    } else {
+                        i-context-menu.show();
+                    }
                 }
             }
 
@@ -116,6 +121,7 @@ export component FilesView {
                     if (self.has-focus) {
                         i-list-view.focus();
                     }
+
                     FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
                 }
 

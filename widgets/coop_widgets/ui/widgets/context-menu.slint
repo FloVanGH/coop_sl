@@ -22,6 +22,7 @@ export component ContextMenu  {
     i-focus-scope := FocusScope {
         x: 0px;
         y: 0px;
+        enabled: false;
 
         key-pressed(event) => {
             if (event.text == Key.Escape) {
@@ -61,6 +62,7 @@ export component ContextMenu  {
                     selected: root.has-focus && index == root.current-item;
 
                     clicked => {
+                        i-focus-scope.enabled = false;
                         root.item-clicked(index);
                     }
                 }
@@ -81,11 +83,13 @@ export component ContextMenu  {
     }
 
     public function close() {
+        i-focus-scope.enabled = false;
         i-popup-window.close();
         root.closed();
     }
 
     public function show-and-focus() {
+        i-focus-scope.enabled = true;
         i-popup-window.show();
         i-focus-scope.focus();
         self.set-current-item(0);

@@ -119,7 +119,11 @@ export component GamesView {
                         return;
                     }
 
-                    i-context-menu.show();
+                    if (i-launcher.has-focus) {
+                        i-context-menu.show-and-focus();
+                    } else {
+                        i-context-menu.show();
+                    }
                 }
             }
 
@@ -139,9 +143,7 @@ export component GamesView {
         }
 
         VerticalLayout {
-            padding-left: Space.large;
-            padding-right: Space.large;
-            spacing: Space.large;
+            spacing: Space.medium;
 
             i-launcher := Launcher {
                 vertical-stretch: 0;
@@ -180,6 +182,7 @@ export component GamesView {
                         if (self.has-focus) {
                             i-launcher.focus();
                         }
+
                         GamesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
                     }
                 }
@@ -196,6 +199,8 @@ export component GamesView {
                     }
 
                     VerticalLayout {
+                        padding-left: Space.large;
+                        padding-right: Space.large;
                         spacing: Space.large;
                         alignment: start;
 
@@ -227,7 +232,6 @@ export component GamesView {
                         HorizontalLayout {
                             alignment: start;
                             spacing: Space.medium;
-                            padding-top: Space.medium;
 
                             Button {
                                 text: @tr("Play");

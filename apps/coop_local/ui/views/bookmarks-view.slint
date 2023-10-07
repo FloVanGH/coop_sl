@@ -40,6 +40,8 @@ export component BookmarksView {
         }
 
         item-pointer-event(parent, item, event, position) => {
+            root.focus();
+
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
                 BookmarksAdapter.open-dir(parent, item);
             }

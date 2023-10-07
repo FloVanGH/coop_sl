@@ -274,7 +274,7 @@ export component StandardListView  {
         }
     }
 
-    Rectangle {
+    i-background := Rectangle {
         y: Space.small;
         height: parent.height - Space.small;
 
@@ -310,7 +310,7 @@ export component StandardListView  {
     }
 
     FocusBorder {
-        y: 0;
+        y: i-background.y / 2;
         width: parent.width - Space.large;
         height: 1px;
         visible: root.has-focus;
@@ -399,7 +399,7 @@ export component GroupListView  {
         }
     }
 
-    Rectangle {
+    i-background := Rectangle {
         y: Space.small;
         height: parent.height - Space.small;
 
@@ -431,7 +431,7 @@ export component GroupListView  {
     }
 
     FocusBorder {
-        y: 0;
+        y:  i-background.y / 2;
         width: parent.width - Space.large;
         height: 1px;
         visible: root.has-focus;
