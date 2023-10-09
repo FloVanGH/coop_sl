@@ -7,10 +7,11 @@ SPDX-License-Identifier: MIT
 
 - [Introduction](./introduction.md)
 
-# Widgets
-
-- [Introduction](widgets/widgets.md)
+- [Widgets](widgets/widgets.md)
     - [Button](widgets/button.md)
+    - [OutlineButton](widgets/outline-button.md)
+    - [RoundButton](widgets/round-button.md)
+    - [RoundOutlineButton](widgets/round-outline-button.md)
     - [Checkables](widgets/checkables.md)
     - [ComboBox](widgets/combobox.md)
     - [ContextMenu](widgets/context-menu.md)

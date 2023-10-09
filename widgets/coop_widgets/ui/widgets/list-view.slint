@@ -112,6 +112,7 @@ export component ItemDelegate inherits TouchArea {
 // Delegate for a `GroupListViewItem` it can display a `text` and a list of `ItemModels`.
 component GroupItemDelegate {
     private property <brush> foreground: Palette.foreground;
+    private property <length> item-height: i-item-layout.height / self.model.items.length;
 
     callback item-clicked(/* row */ int);
     callback item-pointer-event(/* row */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
@@ -167,7 +168,7 @@ component GroupItemDelegate {
             animate background { duration: Duration.fast; }
         }
 
-        VerticalLayout {
+        i-item-layout := VerticalLayout {
             for item[item-row] in root.model.items: ItemDelegate {
                 padding-left: i-background-layout.padding-left + i-background-layout.spacing + Icography.medium;
                 padding-right: i-background-layout.padding-right;
@@ -205,6 +206,10 @@ component GroupItemDelegate {
                 animate height { duration: Duration.fast; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
             }
         }
+    }
+
+    public function item-y(row: int) -> length {
+        i-item-layout.absolute-position.y - self.absolute-position.y + row * item-height + item-height / 2
     }
 
     states [
@@ -445,5 +450,10 @@ export component GroupListView  {
 
         self.current-item = { item: row, parent: par-row };
         self.current-item-changed(self.current-item);
+    }
+
+    public function item-y(row: int) -> length {
+        // i-list-view.viewport-y + row * item-height + item-height / 2
+        0px
     }
 }

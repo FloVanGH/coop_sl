@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { GroupListView, GroupListViewItem, ListViewItem, ContextMenu, Size } from "../_imports/coop-widgets.slint";
+import { GroupListView, GroupListViewItem, ListViewItem, ContextMenu, Size, Space } from "../_imports/coop-widgets.slint";
 
 export global BookmarksAdapter {
     callback open-dir(/* parent */ int, /* item */ int);
@@ -9,6 +9,7 @@ export global BookmarksAdapter {
     callback open-next-dir();
     callback get-item-context-menu(/* parent-row */ int, /* item-row */ int) -> [ListViewItem];
     callback item-context-menu-action(/* parent-row */ int, /* item-row */ int, /* spec */ string);
+    callback selected-item() -> { parent: int, item: int };
 
     in property <[GroupListViewItem]> bookmarks;
 }
@@ -16,6 +17,7 @@ export global BookmarksAdapter {
 export component BookmarksView {
     private property <int> item-context-menu-item-row;
     private property <int> item-context-menu-parent-row;
+    private property <{ parent: int, item: int }> selected-item;
 
     in property <length> window-height;
 
@@ -31,6 +33,18 @@ export component BookmarksView {
                 return accept;
             }
 
+            if (event.text == " ") {
+                root.selected-item = BookmarksAdapter.selected-item();
+
+                debug(root.selected-item);
+                if (root.selected-item.parent >= 0 && root.selected-item.item >= 0) {
+                    root.open-item-context-menu(root.selected-item.parent, root.selected-item.item, { x: Space.medium, y: Space.medium })
+                }
+
+                return accept;
+            }
+
+
             if (event.text == Key.DownArrow) {
                 BookmarksAdapter.open-next-dir();
                 return accept;
@@ -39,28 +53,15 @@ export component BookmarksView {
             reject
         }
 
-        item-pointer-event(parent, item, event, position) => {
+        item-pointer-event(par-row, row, event, position) => {
             root.focus();
 
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
-                BookmarksAdapter.open-dir(parent, item);
+                BookmarksAdapter.open-dir(par-row, row);
             }
 
             if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                i-context-menu.model = BookmarksAdapter.get-item-context-menu(parent, item);
-
-                if (i-context-menu.model.length == 0) {
-                    return;
-                }
-
-                root.item-context-menu-item-row = item;
-                root.item-context-menu-parent-row = parent;
-                i-context-menu.x = position.x;
-
-                // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
-                i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
-                    position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
-                i-context-menu.show();
+                open-item-context-menu(row, par-row, position);
             }
         }
 
@@ -69,6 +70,31 @@ export component BookmarksView {
                 BookmarksAdapter.item-context-menu-action(root.item-context-menu-parent-row,
                     root.item-context-menu-item-row, self.model[row].spec);
             }
+            closed => {
+                i-group-list-view.focus();
+            }
+        }
+    }
+
+    function open-item-context-menu(par-row: int, row: int, position: Point) {
+        i-context-menu.model = BookmarksAdapter.get-item-context-menu(par-row, row);
+
+        if (i-context-menu.model.length == 0) {
+            return;
+        }
+
+        root.item-context-menu-item-row = row;
+        root.item-context-menu-parent-row = par-row;
+        i-context-menu.x = position.x;
+
+        // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
+        i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
+            position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
+
+        if (i-group-list-view.has-focus) {
+            i-context-menu.show-and-focus();
+        } else {
+            i-context-menu.show();
         }
     }
 }

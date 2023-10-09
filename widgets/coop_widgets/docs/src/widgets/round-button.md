@@ -3,9 +3,9 @@ SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 SPDX-License-Identifier: MIT
 -->
 
-## `Button`
+## `RoundButton`
 
-A simple button.
+A simple round button that can nether display an icon or a single character.
 
 ### Properties
 
@@ -23,12 +23,12 @@ A simple button.
 ### Example
 
 ```slint
-import { Button } from "_imports/coop_widgets.slint";
+import { RoundButton } from "_imports/coop_widgets.slint";
 
 export component Example inherits Window {
     VerticalBox {
-        Button {
-            text: "Click Me";
+        RoundButton {
+            text: "C";
             clicked => { self.text = "Clicked"; }
         }
     }

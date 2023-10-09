@@ -135,6 +135,11 @@ impl BookmarksController {
                         )
                     }
                 });
+                adapter.on_selected_item({
+                    let controller = controller.clone();
+
+                    move || controller.selected_item()
+                })
             }
         });
 
@@ -327,6 +332,18 @@ impl BookmarksController {
                 self.on_open_dir(0, self.bookmarks.row_count() - 1);
             }
         }
+    }
+
+    fn selected_item(&self) -> (i32, i32) {
+        if let Some(selected_item) = self.selected_bookmark.get() {
+            return (selected_item as i32, 0);
+        }
+
+        if let Some(selected_item) = self.selected_location.get() {
+            return (selected_item as i32, 1);
+        }
+
+        return (-1, -1);
     }
 }
 

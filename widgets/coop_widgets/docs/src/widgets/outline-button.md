@@ -3,9 +3,9 @@ SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 SPDX-License-Identifier: MIT
 -->
 
-## `Button`
+## `OutlineButton`
 
-A simple button.
+A simple button with an outline border.
 
 ### Properties
 
@@ -23,11 +23,11 @@ A simple button.
 ### Example
 
 ```slint
-import { Button } from "_imports/coop_widgets.slint";
+import { OutlineButton } from "_imports/coop_widgets.slint";
 
 export component Example inherits Window {
     VerticalBox {
-        Button {
+        OutlineButton {
             text: "Click Me";
             clicked => { self.text = "Clicked"; }
         }
