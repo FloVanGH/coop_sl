@@ -343,7 +343,7 @@ impl BookmarksController {
             return (selected_item as i32, 1);
         }
 
-        return (-1, -1);
+        (-1, -1)
     }
 }
 

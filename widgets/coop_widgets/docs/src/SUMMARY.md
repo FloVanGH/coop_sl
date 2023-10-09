@@ -12,10 +12,13 @@ SPDX-License-Identifier: MIT
     - [OutlineButton](widgets/outline-button.md)
     - [RoundButton](widgets/round-button.md)
     - [RoundOutlineButton](widgets/round-outline-button.md)
-    - [Checkables](widgets/checkables.md)
+    - [CheckBox](widgets/checkbox.md)
     - [ComboBox](widgets/combobox.md)
     - [ContextMenu](widgets/context-menu.md)
     - [LineEdit](widgets/line-edit.md)
+    - [ListView](widgets/list-view.md)
+    - [Switch](widgets/switch.md)
+    - [ScrollView](widgets/scroll-view.md)
 
 <!-- # Blub
 

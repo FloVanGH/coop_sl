@@ -39,7 +39,8 @@ A widget used to enter a single line of text.
 ### Example
 
 ```slint
-import { LineEdit } from "std-widgets.slint";
+import { LineEdit } from from "_imports/coop_widgets.slint";
+
 export component Example inherits Window {
     width: 200px;
     height: 25px;
