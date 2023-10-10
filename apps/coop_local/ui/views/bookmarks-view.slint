@@ -36,9 +36,8 @@ export component BookmarksView {
             if (event.text == " ") {
                 root.selected-item = BookmarksAdapter.selected-item();
 
-                debug(root.selected-item);
                 if (root.selected-item.parent >= 0 && root.selected-item.item >= 0) {
-                    root.open-item-context-menu(root.selected-item.parent, root.selected-item.item, { x: Space.medium, y: Space.medium })
+                    root.open-item-context-menu(root.selected-item.parent, root.selected-item.item, { x: Space.medium, y: root.height / 2 })
                 }
 
                 return accept;

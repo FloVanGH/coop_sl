@@ -322,12 +322,12 @@ export component StandardListView  {
         border-width: self.height;
     }
 
-    public function set-current-item(index: int) {
-        if (index < 0 || index >= model.length || root.selection-mode == SelectionMode.None || root.selection-mode == SelectionMode.Custom) {
+    public function set-current-item(row: int) {
+        if (row < 0 || row >= model.length || root.selection-mode == SelectionMode.None || root.selection-mode == SelectionMode.Custom) {
             return;
         }
 
-        current-item = index;
+        current-item = row;
         root.current-item-changed(current-item);
         bring-into-view(current-item);
     }

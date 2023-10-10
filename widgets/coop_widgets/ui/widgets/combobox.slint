@@ -142,7 +142,6 @@ export component ComboBox {
 
     function select(index: int) {
         root.current-index = index;
-        root.current-value = root.model[root.current-index];
         root.selected(root.current-index);
     }
 

@@ -6,4 +6,4 @@ authors = ["Florian Blasius"]
 language = "en"
 multilingual = false
 src = "src"
-title = "coop_widgets documentation"
+title = "coop_widgets 0.1 reference"

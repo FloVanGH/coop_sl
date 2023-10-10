@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 ### Properties
 
--   **`model`**: (_in_ _[ListViewItem]_): The model with list items.
+-   **`model`** (_in_ _[`[ListViewItem]`](../structs-enums/list-view-item.md)_): The model of items.
 -   **`min-menu-width`** (_in_ _length_): Defines the minimum width of the context menu.
 -   **`offset-x`** (_in_ _length_): Defines the x offset of the context menu.
 -   **`offset-y`** (_in_ _length_): Defines the y offset of the context menu.

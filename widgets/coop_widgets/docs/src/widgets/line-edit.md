@@ -12,8 +12,8 @@ A widget used to enter a single line of text.
 -   **`enabled`**: (_in_ _bool_): Defaults to true. When false, nothing can be entered selecting text is still enabled as well as editing text programmatically (default value: `false`)
 -   **`has-focus`**: (_out_ _bool_): Set to true when the line edit currently has the focus.
 -   **`has-error`**: (_out_ _bool_): Set to true when the line edit currently has an error.
--   **`horizontal-alignment`** (_in_ _enum [`TextHorizontalAlignment`](../builtins/enums.md#texthorizontalalignment)_): The horizontal alignment of the text.
--   **`input-type`** (_in_ _enum [`InputType`](../builtins/enums.md#inputtype)_): The way to allow special input viewing properties such as password fields (default value: `text`).
+-   **`horizontal-alignment`** (_in_ _enum [`TextHorizontalAlignment`](https://slint.dev/releases/1.2.2/docs/slint/src/language/builtins/enums#texthorizontalalignment)_): The horizontal alignment of the text.
+-   **`input-type`** (_in_ _enum [`InputType`](https://slint.dev/releases/1.2.2/docs/slint/src/language/builtins/enums#inputtype)_): The way to allow special input viewing properties such as password fields (default value: `text`).
 -   **`placeholder-text`**: (_in_ _string_): A placeholder text being shown when there is no text in the edit field
 -   **`read-only`** (_in_ _bool_): When set to true, text editing via keyboard and mouse is disabled but
 -   **`text`** (_in-out_ _string_): The text being edited

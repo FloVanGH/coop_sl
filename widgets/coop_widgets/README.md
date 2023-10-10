@@ -15,7 +15,7 @@ What the `coop` in `coop_widgets` stands for: cooperation.
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSES/MIT.txt)
 [![Rust docs](https://img.shields.io/badge/docs-rust-orange.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/main/docs/rust/coop_widgets/)
-[![Rust docs](https://img.shields.io/badge/docs-slint-blue.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/main/docs/slint/coop_widgets/)
+[![Slint docs](https://img.shields.io/badge/docs-slint-blue.svg)](https://flovansl.codeberg.page/coop_sl/snapshots/main/docs/slint/coop_widgets/)
 
 
 ## live preview

@@ -7,6 +7,9 @@ SPDX-License-Identifier: MIT
 
 - [Introduction](./introduction.md)
 
+- [Struts and enums](structs-enums/structs-enums.md)
+    - [SelectionMode](structs-enums/selection-mode.md)
+    - [ListViewItem](structs-enums/list-view-item.md)
 - [Widgets](widgets/widgets.md)
     - [Button](widgets/button.md)
     - [OutlineButton](widgets/outline-button.md)
@@ -17,13 +20,6 @@ SPDX-License-Identifier: MIT
     - [ContextMenu](widgets/context-menu.md)
     - [LineEdit](widgets/line-edit.md)
     - [ListView](widgets/list-view.md)
+    - [StandardListView](widgets/standard-list-view.md)
     - [Switch](widgets/switch.md)
     - [ScrollView](widgets/scroll-view.md)
-
-<!-- # Blub
-
-- [Keyboard](./keyboard.md)
-- [Layouts](./layouts.md)
-- [Structs](./structs.md)
-- [Styling](./styling.md)
-- [Widgets](./widgets.md) -->
