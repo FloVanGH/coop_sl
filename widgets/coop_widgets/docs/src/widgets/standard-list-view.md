@@ -19,8 +19,8 @@ Like ListView, but with a default delegate, and a `model` property which is a mo
 
 ### Functions
 
--   **`set-current-item(/* row */ int)`**: Sets the current item by the specified index and brings it into view.
--   **`bring-into-view(/* row */ int)`**: If the given item is outside of the current visible area the list view will be scrolled to ensure the item is visible.
+-   **`set-current-item(row: int)`**: Sets the current item by the specified index and brings it into view.
+-   **`bring-into-view(row: int)`**: If the given item is outside of the current visible area the list view will be scrolled to ensure the item is visible.
 
 ### Callbacks
 
