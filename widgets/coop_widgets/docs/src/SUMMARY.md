@@ -7,10 +7,15 @@ SPDX-License-Identifier: MIT
 
 - [Introduction](./introduction.md)
 
-- [Struts and enums](structs-enums/structs-enums.md)
-    - [SelectionMode](structs-enums/selection-mode.md)
-    - [ListViewItem](structs-enums/list-view-item.md)
-    - [GroupListViewItem](structs-enums/group-list-view-item.md)
+- [Enums](enums/enums.md)
+    - [SelectionMode](enums/selection-mode.md)
+
+- [Struts](structs/structs.md)
+    - [ListViewItem](structs/list-view-item.md)
+    - [GroupListViewItem](structs/group-list-view-item.md)
+
+- [Components](components/components.md)
+
 - [Widgets](widgets/widgets.md)
     - [Button](widgets/button.md)
     - [OutlineButton](widgets/outline-button.md)

@@ -4,10 +4,11 @@
 import { Duration, Palette, Size, State } from "../styling.slint";
 import { ButtonBase } from "../base-widgets.slint";
 
-export component Button {
+export component OutlineButton {
     callback clicked <=> i-base.clicked;
 
     in property <string> text;
+    // FIXME: image
     in property <image> icon;
     in property <bool> primary: false;
     out property <bool> has-focus: i-base.has-focus;
@@ -24,28 +25,34 @@ export component Button {
 
     i-base := ButtonBase {
         enabled: root.enabled;
-        background: root.primary ? Palette.primary: Palette.surface;
+        background: root.primary ? Palette.primary: Palette.background;
         text-color: root.primary ? Palette.on-primary: Palette.foreground;
-        icon-color: self.text-color;
+        icon-color: root.primary ? Palette.on-primary: Palette.primary;
+        border-width: 1px;
+        border-color: Palette.border;
         text: root.text;
         icon: root.icon;
 
-        animate background, text-color, container-scale { duration: Duration.fast; }
+        animate background, text-color, icon-color, border-color, container-scale { duration: Duration.fast; }
     }
 
     states [
         disabled when !root.enabled: {
-            i-base.background: Palette.surface-disabled;
+            i-base.background: Palette.background;
+            i-base.border-color: Palette.border-disabled;
             i-base.text-color: Palette.foreground-disabled;
+            i-base.icon-color: Palette.foreground-disabled;
         }
         pressed when i-base.focus-pressed: {
-            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.surface.darker(State.pressed);
+            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.background.darker(State.pressed);
+            i-base.border-color: Palette.border.darker(State.pressed);
             i-base.text-color: root.primary ? Palette.on-primary.darker(State.pressed) : Palette.foreground.darker(State.pressed);
             i-base.container-scale: 0.98;
         }
         hover when i-base.has-hover: {
-            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.surface.darker(State.hover);
-            i-base.text-color:  root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
+            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.background.darker(State.hover);
+            i-base.border-color: Palette.border.darker(State.hover);
+            i-base.text-color: root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
         }
     ]
 }

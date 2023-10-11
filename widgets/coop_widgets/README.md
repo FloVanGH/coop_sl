@@ -20,7 +20,7 @@ What the `coop` in `coop_widgets` stands for: cooperation.
 
 ## live preview
 
-Check the [Online wasm demo](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery/).
+|[![Screenshot of the gallery](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "gallery")](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery/) |
 
 
 ## how to use

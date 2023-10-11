@@ -10,8 +10,8 @@ Like [StandardListView](standard-list-view.md) with parent header items.
 ### Properties
 
 -   **`current-item`** (_in-out_ _{ parent: int, item: int }_): The index of the currently active item.
--   **`model`** (_in_ _[`[GroupListViewItem]`](../structs-enums/group-list-view-item.md)_): The model of items.
--   **`selection-mode`** (_in_ _[`SelectionMode`](../structs-enums/selection-mode.md)_): Defines the selection mode.
+-   **`model`** (_in_ _[`[GroupListViewItem]`](../structs/group-list-view-item.md)_): The model of items.
+-   **`selection-mode`** (_in_ _[`SelectionMode`](../enums/selection-mode.md)_): Defines the selection mode.
 -   **`has-focus`** (_out_ _bool_): True if the list view has focus.
 -   **`enabled`** (_in_ _bool_): True if the list view is enabled.
 

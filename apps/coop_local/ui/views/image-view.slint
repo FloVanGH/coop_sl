@@ -1,8 +1,10 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ScrollView, Space, Palette, Radius, HeaderBar, Icons, RoundButton, ListViewItem,
-    ContextMenu, LoadingIndicator } from "../_imports/coop-widgets.slint";
+import { ScrollView, RoundButton, ContextMenu, LoadingIndicator } from "../_imports/coop-widgets/widgets.slint";
+import { Space, Palette, Radius, Icons } from "../_imports/coop-widgets/styling.slint";
+import { HeaderBar } from "../_imports/coop-widgets/building-blocks.slint";
+import { ListViewItem } from "../_imports/coop-widgets/structs.slint";
 
 export global ImageAdapter {
     callback back();

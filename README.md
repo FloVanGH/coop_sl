@@ -41,9 +41,9 @@ What the `Coop` stands for: cooperation.
 
 ### Live wasm preview of examples
 
-| Widgets |
+| Gallery |
 |---------|
-|[![Screenshot of the Widgets Demo](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Widgets Demo")](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery/) |
+|[![Screenshot of the gallery](https://codeberg.org/flovansl/pages/attachments/2501a785-2b21-40d8-91c7-85fee14f0045 "Gallery")](https://flovansl.codeberg.page/coop_sl/snapshots/main/demos/gallery/) |
 
 
 ## New to Slint?

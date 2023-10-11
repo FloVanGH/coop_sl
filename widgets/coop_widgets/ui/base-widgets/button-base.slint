@@ -1,0 +1,60 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Icography, Radius, Space, Typography } from "../styling.slint";
+import { FocusTouchArea } from "../components/focus-touch-area.slint";
+
+// `ButtonBase` is used as base for buttons that can be clicked.
+export component ButtonBase inherits FocusTouchArea {
+     // FIXME: image
+    in property <image> icon;
+    in property <string> text;
+    in property <brush> text-color;
+    in property <brush> icon-color;
+    in property <brush> border-color;
+    in property <length> border-width;
+    in property <brush> background;
+    in property <length> icon-size: Icography.small;
+    in property <float> container-scale: 1.0;
+    in property <length> border-radius: Radius.large * root.container-scale;
+
+    focus-border-radius: root.border-radius;
+    padding-left: Space.large;
+    padding-right: Space.large;
+    min-width: i-layout.min-width;
+    min-height: i-layout.min-height;
+
+    i-background := Rectangle {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: root.width * root.container-scale;
+        height: root.height * root.container-scale;
+        background: root.background;
+        border-width: root.border-width;
+        border-color: root.border-color;
+        border-radius: root.border-radius;
+    }
+
+    i-layout := HorizontalLayout {
+        spacing: Space.small;
+        padding-left: root.padding-left;
+        padding-right: root.padding-right;
+        alignment: center;
+
+        if (root.icon.width > 0 && root.icon.height > 0) : Image {
+            y: (parent.height - self.height) / 2;
+            width: root.icon-size;
+            colorize: root.icon-color;
+            source: root.icon;
+        }
+
+        if (root.text != "") : Text {
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+            color: root.text-color;
+            font-size: Typography.medium-label.font-size;
+            font-weight: Typography.medium-label.font-weight;
+            text: root.text;
+        }
+    }
+}

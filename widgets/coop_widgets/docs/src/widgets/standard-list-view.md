@@ -6,13 +6,13 @@ SPDX-License-Identifier: MIT
 ## `StandardListView`
 
 Like ListView, but with a default delegate, and a `model` property which is a model of type
-[`ListViewItem`](../structs-enums/list-view-item.md).
+[`ListViewItem`](../structs/list-view-item.md).
 
 ### Properties
 
 -   **`current-item`** (_in-out_ _int_): The index of the currently active item. -1 mean none is selected, which is the default
--   **`model`** (_in_ _[`[ListViewItem]`](../structs-enums/list-view-item.md)_): The model of items.
--   **`selection-mode`** (_in_ _[`SelectionMode`](../structs-enums/selection-mode.md)_): Defines the selection mode.
+-   **`model`** (_in_ _[`[ListViewItem]`](../structs/list-view-item.md)_): The model of items.
+-   **`selection-mode`** (_in_ _[`SelectionMode`](../enums/selection-mode.md)_): Defines the selection mode.
 -   **`edit-item`** (_in_ _int_): Defines the item that is can be edited.
 -   **`has-focus`** (_out_ _bool_): True if the list view has focus.
 -   **`enabled`** (_in_ _bool_): True if the list view is enabled.

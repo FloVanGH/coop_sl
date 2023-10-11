@@ -4,8 +4,10 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { SmallLabel, MediumLabel, LargeLabel, ErrorLabel, SmallTitle, MediumTitle, LargeTitle, Spacer, HorizontalSeparator,
-    VerticalSpacerMedium, LineEdit, CheckBox, Switch, Typography, Space } from "../_imports/coop-widgets.slint";
+import { LineEdit, CheckBox, Switch } from "../_imports/coop-widgets/widgets.slint";
+import { SmallLabel, MediumLabel, LargeLabel, ErrorLabel, SmallTitle, MediumTitle, LargeTitle } from "../_imports/coop-widgets/components.slint";
+import { Spacer, HorizontalSeparator, VerticalSpacerMedium} from "../_imports/coop-widgets/layouts.slint";
+import { Space, Typography } from "../_imports/coop-widgets/styling.slint";
 
 export component TypoPage inherits Page {
     title: "Typography";

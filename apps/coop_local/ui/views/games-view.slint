@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { Space, ScrollView, ExtraLargeTitle, Palette, Button, Icons, Icography, LargeLabel,
-    ListViewItem, HeaderBar, RoundButton, ContextMenu, LoadingIndicator, LargeTitle, SmallTitle,
-    LineEdit } from "../_imports/coop-widgets.slint";
+import { RoundButton, ContextMenu, LineEdit, ScrollView, Button, LoadingIndicator } from "../_imports/coop-widgets/widgets.slint";
+import { HeaderBar } from "../_imports/coop-widgets/building-blocks.slint";
+import { Palette, Icons, Space, Icography } from "../_imports/coop-widgets/styling.slint";
+import { ListViewItem } from "../_imports/coop-widgets/structs.slint";
+import { SmallTitle, ExtraLargeTitle, LargeLabel } from "../_imports/coop-widgets/components.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
 
 export global GameSettingsAdapter {

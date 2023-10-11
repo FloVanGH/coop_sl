@@ -4,9 +4,10 @@
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, Spacer, HorizontalSeparator, ComboBox,
-    VerticalSpacerMedium, LineEdit, CheckBox, Switch, Slider, ProgressIndicator, Popup, SmallLabel, Icons,
-    Space } from "../_imports/coop-widgets.slint";
+import { Button, OutlineButton, RoundButton, RoundOutlineButton, ComboBox, ComboBox, LineEdit, CheckBox, Switch, Slider, ProgressIndicator } from "../_imports/coop-widgets/widgets.slint";
+import { Space, Icons } from "../_imports/coop-widgets/styling.slint";
+import { Popup, SmallLabel } from "../_imports/coop-widgets/components.slint";
+import { Spacer, HorizontalSeparator, VerticalSpacerMedium } from "../_imports/coop-widgets/layouts.slint";
 
 import { AppManager } from "../app-manager.slint";
 
@@ -170,7 +171,7 @@ export component BasicsPage inherits Page {
         }
 
         Row {
-            VerticalSpacerMedium {}
+            Rectangle {}
         }
 
         // RoundButton
@@ -651,6 +652,7 @@ export component BasicsPage inherits Page {
 
                     layout := VerticalLayout {
                         padding: Space.medium;
+
                         SmallLabel {
                             text: "Popup content";
                         }

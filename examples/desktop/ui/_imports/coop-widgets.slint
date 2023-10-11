@@ -1,28 +1,33 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Duration, Icography, Icons, Radius, ColorVariant, ColorTheme, CoopPalette, CosmicPalette, Palette, Size, State, Space, Typography } from "/Users/flovansl/Projects/flovansl/co_sl/widgets/coop_widgets/ui/styling.slint";
+import { Duration, Icography, Icons, Radius, ColorVariant, ColorTheme, CoopPalette, CosmicPalette, Palette, Size, State, Space, Typography } from "coop-widgets/styling.slint";
 export { Duration, Icography, Icons, Radius, ColorVariant, ColorTheme, CoopPalette, CosmicPalette, Palette, Size, State, Space, Typography }
 
-import { HeaderBar, SideBar } from "/Users/flovansl/Projects/flovansl/co_sl/widgets/coop_widgets/ui/building-blocks.slint";
+import { HeaderBar, SideBar } from "coop-widgets/building-blocks.slint";
 export { HeaderBar, SideBar }
 
 import { CoopWindow, FocusTouchArea, FocusBorder, SmallLabel, MediumLabel, LargeLabel, ErrorLabel, SmallTitle, MediumTitle, LargeTitle, Popup, PopupBorder,
-    ThemedWindow, ExtraLargeTitle } from "/Users/flovansl/Projects/flovansl/co_sl/widgets/coop_widgets/ui/components.slint";
+    ThemedWindow, ExtraLargeTitle } from "coop-widgets/components.slint";
 export { CoopWindow, FocusTouchArea, FocusBorder, SmallLabel, MediumLabel, LargeLabel, ErrorLabel, SmallTitle, MediumTitle, LargeTitle, Popup, PopupBorder, ThemedWindow,
     ExtraLargeTitle }
 
-import { Button, OutlineButton, RoundButton, ComboBox, ListViewItem, GroupListViewItem, ListView, GroupListView, ItemDelegate, LoadingIndicator, ContextMenu,
-    ScrollView, LineEdit, RoundOutlineButton, Switch, CheckBox, CheckableBase, Slider, StandardTableView, ProgressIndicator, StandardListView,
-    SelectionMode } from "/Users/flovansl/Projects/flovansl/co_sl/widgets/coop_widgets/ui/widgets.slint";
-export { Button, ComboBox, OutlineButton, RoundButton, ListViewItem, GroupListViewItem, ListView, GroupListView, ItemDelegate, ContextMenu,
-        ScrollView, LineEdit, RoundOutlineButton, CheckBox, Switch, CheckableBase, Slider, StandardTableView, ProgressIndicator, StandardListView,
-        SelectionMode, LoadingIndicator }
+import { Button, OutlineButton, RoundButton, ComboBox, ListView, GroupListView, LoadingIndicator, ContextMenu,
+    ScrollView, LineEdit, RoundOutlineButton, Switch, CheckBox, Slider, StandardTableView, ProgressIndicator, StandardListView } from "coop-widgets/widgets.slint";
+export { Button, ComboBox, OutlineButton, RoundButton,ListView, GroupListView, ContextMenu,
+        ScrollView, LineEdit, RoundOutlineButton, CheckBox, Switch, Slider, StandardTableView, ProgressIndicator, StandardListView,
+        LoadingIndicator }
 
-import { VirtualKeyboard, VirtualKeyboardHandler, KeyModel } from "/Users/flovansl/Projects/flovansl/co_sl/widgets/coop_widgets/ui/keyboard.slint";
+import { VirtualKeyboard, VirtualKeyboardHandler, KeyModel } from "coop-widgets/keyboard.slint";
 export { VirtualKeyboard, VirtualKeyboardHandler, KeyModel }
 
 import { CenterLayout, FormElement, VerticalSeparator, HorizontalSeparator, Spacer, VerticalSpacerSmall, VerticalSpacerMedium, VerticalSpacerLarge,
-    HorizontalSpacerSmall, HorizontalSpacerMedium, HorizontalSpacerLarge, VerticalBox, HorizontalBox  } from "/Users/flovansl/Projects/flovansl/co_sl/widgets/coop_widgets/ui/layouts.slint";
+    HorizontalSpacerSmall, HorizontalSpacerMedium, HorizontalSpacerLarge, VerticalBox, HorizontalBox  } from "coop-widgets/layouts.slint";
 export { CenterLayout, FormElement, VerticalSeparator, HorizontalSeparator, Spacer, VerticalSpacerSmall, VerticalSpacerMedium, VerticalSpacerLarge,
         HorizontalSpacerSmall, HorizontalSpacerMedium, HorizontalSpacerLarge, VerticalBox, HorizontalBox }
+
+import { ListViewItem, GroupListViewItem } from "coop-widgets/structs.slint";
+export { ListViewItem, GroupListViewItem }
+
+import { SelectionMode } from "coop-widgets/enums.slint";
+export { SelectionMode }

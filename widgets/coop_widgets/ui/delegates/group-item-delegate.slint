@@ -1,0 +1,125 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Palette, Space, Icons, State, Size, Duration, Icography } from "../styling.slint";
+import { GroupListViewItem } from "../structs.slint";
+import { SelectionMode } from "../enums.slint";
+import { ItemDelegate } from "item-delegate.slint";
+import { LargeLabel } from "../components.slint";
+
+// Delegate for a `GroupListViewItem` it can display a `text` and a list of `ItemModels`.
+export component GroupItemDelegate {
+    private property <brush> foreground: Palette.foreground;
+    private property <length> item-height: i-item-layout.height / self.model.items.length;
+
+    callback item-clicked(/* row */ int);
+    callback item-pointer-event(/* row */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
+
+    in property <GroupListViewItem> model;
+    in property <int> item-row;
+    in property <SelectionMode> selection-mode: SelectionMode.Single;
+    in-out property <{ parent: int, item: int }> current-item: { parent: -1, item: -1};
+    in-out property <bool> expanded: true;
+    in property <bool> has-focus;
+
+    min-height: max(Size.small, i-layout.min-height);
+
+    i-layout := VerticalLayout {
+        spacing: root.expanded ? Space.medium : 0;
+
+        i-background := Rectangle {
+            height: Size.small;
+
+            i-background-layout := HorizontalLayout {
+                padding-left: Space.medium;
+                padding-right: Space.medium;
+                spacing: Space.medium;
+
+                Image {
+                    y: (parent.height - self.height) / 2;
+                    source: Icons.arrow-drop-down;
+                    colorize: root.foreground;
+
+                    states [
+                        collapsed when !root.expanded: {
+                            source: Icons.arrow-right;
+                        }
+                    ]
+                }
+
+                LargeLabel  {
+                    color: root.foreground;
+                    text: root.model.text;
+                    vertical-alignment: center;
+                    horizontal-alignment: left;
+                    horizontal-stretch: 1;
+                }
+            }
+
+            // The item is expandable if it has items.
+            i-touch-area := TouchArea {
+                clicked => {
+                    root.expanded = !root.expanded;
+                }
+            }
+
+            animate background { duration: Duration.fast; }
+        }
+
+        i-item-layout := VerticalLayout {
+            for item[item-row] in root.model.items: ItemDelegate {
+                padding-left: i-background-layout.padding-left + i-background-layout.spacing + Icography.medium;
+                padding-right: i-background-layout.padding-right;
+                leading-icon: item.leading-icon;
+                highlighted: item.highlighted;
+                text: item.text;
+                trailing-icon: item.trailing-icon;
+                selected: (root.item-row == root.current-item.parent && item-row == root.current-item.item
+                    && root.selection-mode == SelectionMode.Single)
+                    || (root.selection-mode == SelectionMode.Custom && item.selected);
+                height: self.min-height;
+
+                clicked => {
+                    if(root.selection-mode == SelectionMode.None) {
+                        return;
+                    }
+                    root.current-item = { parent: root.item-row, item: item-row };
+                    root.item-clicked(item-row);
+                }
+
+                pointer-event(pe) => {
+                    root.item-pointer-event(item-row, pe, {
+                        x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
+                        y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
+                    });
+                }
+
+                states [
+                    collapsed when !root.expanded : {
+                        height: 0;
+                        opacity: 0;
+                    }
+                ]
+
+                animate height { duration: Duration.fast; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
+            }
+        }
+    }
+
+    public function item-y(row: int) -> length {
+        i-item-layout.absolute-position.y - self.absolute-position.y + row * item-height + item-height / 2
+    }
+
+    states [
+        pressed when i-touch-area.pressed: {
+            i-background.background: Palette.background.darker(State.pressed);
+            foreground: Palette.foreground.darker(State.pressed);
+        }
+        hover when i-touch-area.has-hover: {
+            i-background.background: Palette.background.darker(State.hover);
+            foreground: Palette.foreground.darker(State.hover);
+        }
+    ]
+
+    animate foreground { duration: Duration.fast; }
+}

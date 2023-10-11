@@ -3,9 +3,11 @@
 
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { Palette, StandardTableView, HorizontalSeparator, ScrollView, ListView, VerticalSpacerMedium,
-    GroupListView, GroupListViewItem, Switch, HeaderBar, Palette, Icons, StandardListView, Space, ColorVariant }
-    from "../_imports/coop-widgets.slint";
+import { StandardTableView, ScrollView, ListView, GroupListView, Switch, StandardListView } from "../_imports/coop-widgets/widgets.slint";
+import { HeaderBar } from "../_imports/coop-widgets/building-blocks.slint";
+import { HorizontalSeparator, VerticalSpacerMedium } from "../_imports/coop-widgets/layouts.slint";
+import { Palette, Icons, ColorVariant, Space } from "../_imports/coop-widgets/styling.slint";
+import { GroupListViewItem } from "../_imports/coop-widgets/structs.slint";
 
 export component ListPage inherits GridLayout {
     Row {
