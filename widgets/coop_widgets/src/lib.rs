@@ -46,11 +46,6 @@ where
         &sub_import_path,
     )?;
     create_import_file(
-        &Path::new(ui_lib_path).join("keyboard.slint"),
-        ui_lib_path,
-        &sub_import_path,
-    )?;
-    create_import_file(
         &Path::new(ui_lib_path).join("structs.slint"),
         ui_lib_path,
         &sub_import_path,

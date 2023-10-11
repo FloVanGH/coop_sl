@@ -6,19 +6,21 @@ import { FocusBorder } from "../components/focus-border.slint";
 import { SmallLabel } from "../components/label.slint";
 
 export component Slider {
+    private property <bool> vertical: orientation == Orientation.vertical;
+
     callback changed(/* value */ float);
 
     in property <bool> enabled <=> i-touch-area.enabled;
-    in property<float> maximum: 100;
-    in property<float> minimum;
+    in property <float> maximum: 100;
+    in property <float> minimum;
+    in property <Orientation> orientation: horizontal;
     out property <bool> has-focus <=> i-focus-scope.has-focus;
     in-out property <float> value;
 
-    min-width: Size.large;
-    min-height: Size.small;
-    horizontal-stretch: 1;
-    vertical-stretch: 0;
-
+    min-width: vertical ? 20px : 0px;
+    min-height: vertical ? 0px : 20px;
+    vertical-stretch: vertical ? 1 : 0;
+    horizontal-stretch: vertical ? 0 : 1;
     accessible-role: slider;
     accessible-value: root.value;
     accessible-value-minimum: root.minimum;
@@ -26,9 +28,8 @@ export component Slider {
     accessible-value-step: (root.maximum - root.minimum) / 100;
 
     i-background := Rectangle {
-        y: (parent.height - self.height) / 2;
-        width: 100%;
-        height: Size.extra-extra-small;
+        width: vertical ? Size.extra-extra-small : parent.width;
+        height: vertical ? parent.height : Size.extra-extra-small;
         background: Palette.surface;
         border-radius: Radius.extra-extra-small;
 
@@ -36,10 +37,10 @@ export component Slider {
     }
 
     i-track := Rectangle {
-        x: 0;
-        y: (parent.height - self.height) / 2;
-        width: i-thumb.x + (i-thumb.width / 2);
-        height: i-background.height;
+        x: vertical ? (parent.width - self.width) / 2 : 0;
+        y: vertical ? 0 : (parent.height - self.height) / 2;
+        width: vertical ? i-background.width : i-thumb.x + (i-thumb.width / 2);
+        height: vertical ? i-thumb.y + (i-thumb.height / 2) : i-background.height;
         background: Palette.primary;
         border-radius: i-background.border-radius;
 
@@ -47,8 +48,8 @@ export component Slider {
     }
 
     i-thumb := Rectangle {
-        x: (parent.width - self.width) * (root.value - root.minimum) / (root.maximum - root.minimum);
-        y: (parent.height - self.height) / 2;
+        x: vertical ? (parent.width - self.width) / 2 : (parent.width - self.width) * (root.value - root.minimum) / (root.maximum - root.minimum);
+        y: vertical ? (parent.height - self.height) * (root.value - root.minimum) / (root.maximum - root.minimum) : (parent.height - self.height) / 2;
         width: Size.small;
         height: self.width;
         border-radius: max(self.width, self.height) / 2;

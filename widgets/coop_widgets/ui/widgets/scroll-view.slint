@@ -3,12 +3,73 @@
 
 import { Radius, Duration, Size, Space, Palette } from "../styling.slint";
 
-component ScrollIndicator inherits Rectangle {
-    border-radius: Radius.extra-extra-small;
-    background: Palette.foreground;
-    opacity: 0;
+export component ScrollBar inherits Rectangle {
+    private property <length> track-size: root.horizontal ? root.width - 2 * root.offset : root.height - 2 * offset;
+    private property <length> step-size: 10px;
+    private property <length> offset: 2px;
+    private property <length> pad: 2px;
 
-    animate opacity { duration: Duration.medium; }
+    in property <bool> enabled;
+    out property <bool> has-hover: i-touch-area.has-hover;
+    in-out property <bool> horizontal;
+    in-out property <length> maximum;
+    in-out property <length> page-size;
+    in-out property <length> value;
+
+    background: transparent;
+
+    i-border := Rectangle {
+        x: 0;
+        y: 0;
+        width: !root.horizontal ? 0.8px : parent.width;
+        height: !root.horizontal ? parent.height : 0.8px;
+        background: transparent;
+    }
+
+    i-thumb := Rectangle {
+        width: !root.horizontal ? parent.width - 2 * root.pad : root.maximum <= 0phx ? 0phx : max(32px, root.track-size * root.page-size / (root.maximum + root.page-size));
+        height: root.horizontal ? parent.height - 2 * root.pad : root.maximum <= 0phx ? 0phx : max(32px, root.track-size * (root.page-size / (root.maximum + root.page-size)));
+        x: !root.horizontal ? (parent.width - self.width) / 2 : root.offset + (root.track-size - i-thumb.width) * (-root.value / root.maximum);
+        y: root.horizontal ? (parent.height - self.height) / 2 : root.offset + (root.track-size - i-thumb.height) * (-root.value / root.maximum);
+        border-radius: (root.horizontal ? self.height : self.width) / 2;
+        background: Palette.foreground;
+        opacity: 0.6;
+        border-width: 0.8px;
+
+        animate width, height { duration: 100ms; easing: ease-out; }
+    }
+
+    i-touch-area := TouchArea {
+        property <length> pressed-value;
+
+        width: parent.width;
+        height: parent.height;
+
+        pointer-event(event) => {
+            if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                self.pressed-value = -root.value;
+            }
+        }
+
+        moved => {
+            if (self.enabled && self.pressed) {
+                root.value = -max(0px, min(root.maximum, self.pressed-value + (
+                    root.horizontal ? (i-touch-area.mouse-x - i-touch-area.pressed-x) * (root.maximum / (root.track-size - i-thumb.width))
+                               : (i-touch-area.mouse-y - i-touch-area.pressed-y) * (root.maximum / (root.track-size - i-thumb.height))
+                )));
+            }
+        }
+    }
+
+    states [
+        hover when i-touch-area.has-hover : {
+            background: Palette.foreground.with-alpha(0.2);
+            i-border.background: Palette.foreground.with-alpha(0.2);
+            pad: 4px;
+        }
+    ]
+
+    animate width, height, pad, background { duration: 150ms; easing: ease-out; }
 }
 
 export component ScrollView {
@@ -33,39 +94,33 @@ export component ScrollView {
     i-flickable := Flickable {
         width: 100%;
         height: 100%;
+        viewport-y <=> i-vertical-bar.value;
+        viewport-x <=> i-horizontal-bar.value;
 
         @children
     }
 
-    i-ver-scroll := ScrollIndicator {
-        property <length> padding-height: root.height - 2 * Space.small - (root.horizontal-scroll-bar-visible ? i-hor-scroll.height : 0);
-        property <length> max: root.viewport-height - root.height;
-
-        x: parent.width - self.width - Space.small;
-        y: Space.small + (self.padding-height - self.height) * (-root.viewport-y / self.max);
-        width: 4px;
-        height: self.max <= 0phx ? 0phx : self.padding-height * (root.height / root.viewport-height);
-
-        states [
-            visible when root.vertical-scroll-bar-visible : {
-                opacity: 0.3;
-            }
-        ]
+    i-vertical-bar := ScrollBar {
+        enabled: root.enabled;
+        x: parent.width  - self.width;
+        y: 0;
+        width: self.has-hover ? 16px : 8px;
+        height: i-horizontal-bar.visible ? parent.height - i-horizontal-bar.height : parent.height;
+        horizontal: false;
+        maximum: i-flickable.viewport-height - i-flickable.height;
+        page-size: i-flickable.height;
+        visible: i-flickable.viewport-height > i-flickable.height;
     }
 
-    i-hor-scroll := ScrollIndicator {
-        property <length> padding-width: root.width - 2 * Space.small - (root.vertical-scroll-bar-visible ? i-ver-scroll.width : 0);
-        property <length> max: root.viewport-width - root.width;
-
-        x: Space.small + (self.padding-width - self.width) * (-root.viewport-x / self.max);
-        y: parent.height - self.height - Space.small;
-        width: self.max <= 0phx ? 0phx: self.padding-width * (root.height / root.viewport-height);
-        height: 4px;
-
-        states [
-            visible when root.horizontal-scroll-bar-visible : {
-                opacity: 0.3;
-            }
-        ]
+    i-horizontal-bar := ScrollBar {
+        enabled: root.enabled;
+        width: i-vertical-bar.visible ? parent.width - i-vertical-bar.width : parent.width;
+        height: self.has-hover ? 16px : 8px;
+        y: parent.height - self.height;
+        x: 0;
+        horizontal: true;
+        maximum:  i-flickable.viewport-width - i-flickable.width;
+        page-size:  i-flickable.width;
+        visible: i-flickable.viewport-width > i-flickable.width;
     }
 }

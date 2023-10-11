@@ -6,3 +6,23 @@ SPDX-License-Identifier: MIT
 # unreleased (0.1)
 
 ## Added
+
+### Widgets
+
+* Button
+* CheckBox
+* ComboBox
+* ContextMenu
+* GroupListView
+* LineEdit
+* LoadingIndicator
+* OutlineButton
+* ProgressIndicator
+* RoundButton
+* RoundOutlineButton
+* ScrollView
+* Slider
+* StandardListView
+* StandardTableView
+* Switch
+* VirtualKeyboard

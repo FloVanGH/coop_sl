@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
 
 
-import { HeaderBarButton, HeaderBar } from "header_bar.slint";
+import { HeaderBarButton, HeaderBar } from "header-bar.slint";
 import { WindowModel, DisplayView, DisplayViewAdapter } from "display/display.slint";
 import { Launcher } from "launcher.slint";
 import { PopupBorder, SmallLabel, RoundButton, Icons, Space, Duration } from "_imports/coop-widgets.slint";
@@ -16,34 +16,34 @@ export component Desktop inherits Window {
     width: 1020px;
     height: 720px;
 
-    private property <bool> logged_in;
+    private property <bool> logged-in;
 
-    if(!root.logged_in) : Login {
+    if(!root.logged-in) : Login {
         login(user, password) => {
-            // root.logged_in = user == "user" && password == "password";
-            root.logged_in
+            // root.logged-in = user == "user" && password == "password";
+            root.logged-in
         }
     }
 
-    if(root.logged_in) : Rectangle {
+    if(root.logged-in) : Rectangle {
         VerticalLayout {
-            i_header_bar := HeaderBar {
+            i-header-bar := HeaderBar {
                 HeaderBarButton {
                     y: (parent.height - self.height) / 2;
                     icon: Icons.arrow-drop-down;
 
-                    clicked => { i_menu.open = true; }
+                    clicked => { i-menu.open = true; }
                 }
                }
 
-            i_wm := DisplayView {
+            i-wm := DisplayView {
 
             }
 
             Launcher {
-                front_path: DisplayViewAdapter.front_path;
+                front-path: DisplayViewAdapter.front-path;
                 open(path) => {
-                    i_wm.open(path);
+                    i-wm.open(path);
                 }
                 vertical-stretch: 0;
 
@@ -57,21 +57,21 @@ export component Desktop inherits Window {
         }
 
         TouchArea {
-            visible: i_menu.open;
-            pointer_event(e) => {
-                if(self.mouse_x >= i_menu.x && self.mouse_x <= i_menu.x + i_menu.width && self.mouse_y >= i_menu.y && self.mouse_y <= i_menu.y + i_menu.height) {
+            visible: i-menu.open;
+            pointer-event(e) => {
+                if(self.mouse-x >= i-menu.x && self.mouse-x <= i-menu.x + i-menu.width && self.mouse-y >= i-menu.y && self.mouse-y <= i-menu.y + i-menu.height) {
                     return;
                 }
                 if (e.kind == PointerEventKind.down) {
-                    i_menu.open = false;
+                    i-menu.open = false;
                 }
             }
 
-            i_menu := VerticalLayout {
+            i-menu := VerticalLayout {
                 property <bool> open;
                 alignment: start;
                 x: root.width - self.width - Space.small;
-                y: i_header_bar.height + Space.small;
+                y: i-header-bar.height + Space.small;
 
                 width: 200px;
                 opacity: 0.0;
@@ -85,29 +85,29 @@ export component Desktop inherits Window {
                         spacing: Space.medium;
                         // Row {
                         //     SmallLabel {
-                        //         vertical_alignment: center;
+                        //         vertical-alignment: center;
                         //         text: "Window tilling";
                         //     }
 
                         //     Switch {
-                        //         selected_changed(selected) => {
-                        //            i_window_manager.window_tilling = selected;
+                        //         selected-changed(selected) => {
+                        //            i-window-manager.window-tilling = selected;
                         //         }
                         //     }
                         // }
 
                         Row {
                             SmallLabel {
-                                vertical_alignment: center;
+                                vertical-alignment: center;
                                 text: "Logout";
                             }
 
-                            i_logout_button := RoundButton {
+                            i-logout-button := RoundButton {
                                 // icon: Icons;
 
                                 clicked => {
-                                    root.logged_in = false;
-                                    i_menu.open = false;
+                                    root.logged-in = false;
+                                    i-menu.open = false;
                                 }
                             }
                         }
@@ -115,7 +115,7 @@ export component Desktop inherits Window {
                 }
 
                 states [
-                    open when i_menu.open : {
+                    open when i-menu.open : {
                         opacity: 1.0;
                     }
                 ]

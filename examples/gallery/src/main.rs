@@ -59,7 +59,7 @@ mod virtual_keyboard {
 
     pub fn init(app: &App) {
         let weak = app.as_weak();
-        app.global::<VirtualKeyboardHandler>().on_key_pressed({
+        app.global::<VirtualKeyboardAdapter>().on_key_pressed({
             move |key| {
                 weak.unwrap()
                     .window()

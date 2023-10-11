@@ -2,20 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 import { Palette } from "../styling.slint";
-import { OutlineButton } from "../widgets.slint";
+import { OutlineButton } from "outline-button.slint";
 import { Icons } from "../styling.slint";
+import { KeyModel } from "../structs.slint";
 
 component VirtualKeyboardButton inherits OutlineButton {
     horizontal-stretch: 0;
 }
 
-export struct KeyModel {
-    key: string,
-    shift-key: string,
-}
-
-export global VirtualKeyboardHandler {
-    callback key_pressed(/* key */ string);
+export global VirtualKeyboardAdapter {
+    callback key-pressed(/* key */ string);
 
     in property <[[[KeyModel]]]> default-key-sets: [
        [
@@ -119,14 +115,14 @@ export component VirtualKeyboard  {
         padding: 8px;
         spacing: 4px;
 
-        for row[index] in VirtualKeyboardHandler.keys : HorizontalLayout {
+        for row[index] in VirtualKeyboardAdapter.keys : HorizontalLayout {
             spacing: 4px;
 
             if (index == 0) : VirtualKeyboardButton {
                 text: "ESC";
 
                 clicked => {
-                    VirtualKeyboardHandler.key-pressed(Key.Escape);
+                    VirtualKeyboardAdapter.key-pressed(Key.Escape);
                 }
             }
 
@@ -134,7 +130,7 @@ export component VirtualKeyboard  {
                 text: "Tab";
 
                 clicked => {
-                    VirtualKeyboardHandler.key-pressed(Key.Tab);
+                    VirtualKeyboardAdapter.key-pressed(Key.Tab);
                 }
             }
 
@@ -151,7 +147,7 @@ export component VirtualKeyboard  {
                 text: root.shift ? km.shift-key : km.key;
 
                 clicked() => {
-                    VirtualKeyboardHandler.key-pressed(self.text);
+                    VirtualKeyboardAdapter.key-pressed(self.text);
                     root.shift = false;
                 }
             }
@@ -160,7 +156,7 @@ export component VirtualKeyboard  {
                 icon: Icons.arrow-back;
 
                 clicked => {
-                    VirtualKeyboardHandler.key-pressed(Key.Backspace);
+                    VirtualKeyboardAdapter.key-pressed(Key.Backspace);
                 }
             }
 
@@ -168,7 +164,7 @@ export component VirtualKeyboard  {
                 icon: Icons.keyboard-return;
 
                 clicked => {
-                    VirtualKeyboardHandler.key-pressed(Key.Return);
+                    VirtualKeyboardAdapter.key-pressed(Key.Return);
                 }
             }
 
@@ -189,7 +185,7 @@ export component VirtualKeyboard  {
                 icon: Icons.calculate;
 
                 clicked => {
-                    VirtualKeyboardHandler.switch-keyboard();
+                    VirtualKeyboardAdapter.switch-keyboard();
                 }
             }
             VirtualKeyboardButton {
@@ -198,21 +194,21 @@ export component VirtualKeyboard  {
 
                 clicked => {
                     root.shift = false;
-                    VirtualKeyboardHandler.key-pressed(self.text);
+                    VirtualKeyboardAdapter.key-pressed(self.text);
                 }
             }
             VirtualKeyboardButton {
                 icon: Icons.arrow-back;
 
                 clicked => {
-                    VirtualKeyboardHandler.key-pressed(Key.LeftArrow);
+                    VirtualKeyboardAdapter.key-pressed(Key.LeftArrow);
                 }
             }
             VirtualKeyboardButton {
                 icon: Icons.arrow-forward;
 
                 clicked => {
-                    VirtualKeyboardHandler.key-pressed(Key.RightArrow);
+                    VirtualKeyboardAdapter.key-pressed(Key.RightArrow);
                 }
             }
         }
