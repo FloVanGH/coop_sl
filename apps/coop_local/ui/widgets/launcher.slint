@@ -80,7 +80,7 @@ export component Launcher inherits Rectangle {
                 return accept;
             }
 
-            return accept;
+            return reject;
         }
     }
 
@@ -94,6 +94,7 @@ export component Launcher inherits Rectangle {
     }
 
     i-background := Rectangle {
+        border-radius: Radius.medium;
         clip: true;
         background: transparent;
         x: Space.large;
@@ -132,14 +133,6 @@ export component Launcher inherits Rectangle {
 
             animate viewport-x { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0);  }
         }
-    }
-
-    FocusBorder {
-        y: i-background.y / 2;
-        width: parent.width - Space.large;
-        height: 1px;
-        visible: i-focus-scope.has-focus;
-        border-width: self.height;
     }
 
     function set-current-item(index: int) {

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Size, Space } from "../styling.slint";
+import { Size, Space, Radius } from "../styling.slint";
 import { GroupListViewItem } from "../structs.slint";
 import { SelectionMode } from "../enums.slint";
 import { FocusBorder } from "../components.slint";
@@ -66,6 +66,8 @@ export component GroupListView  {
     i-background := Rectangle {
         y: Space.small;
         height: parent.height - Space.small;
+        border-radius: Radius.medium;
+        clip: true;
 
         i-list-view := ListView {
             for parent-item[par-row] in root.model: VerticalLayout {
@@ -94,11 +96,10 @@ export component GroupListView  {
         @children
     }
 
-    FocusBorder {
-        y:  i-background.y / 2;
-        width: parent.width - Space.large;
-        height: 1px;
-        visible: root.has-focus;
+    if (root.has-focus) : FocusBorder {
+        width: 100%;
+        height: 100%;
+        border-radius: i-background.border-radius;
     }
 
     public function set-current-item(row: int, par-row: int) {

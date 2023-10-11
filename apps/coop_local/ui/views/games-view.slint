@@ -3,9 +3,9 @@
 
 import { RoundButton, ContextMenu, LineEdit, ScrollView, Button, LoadingIndicator } from "../_imports/coop-widgets/widgets.slint";
 import { HeaderBar } from "../_imports/coop-widgets/building-blocks.slint";
-import { Palette, Icons, Space, Icography } from "../_imports/coop-widgets/styling.slint";
+import { Palette, Icons, Space, Icography, Radius } from "../_imports/coop-widgets/styling.slint";
 import { ListViewItem } from "../_imports/coop-widgets/structs.slint";
-import { SmallTitle, ExtraLargeTitle, LargeLabel } from "../_imports/coop-widgets/components.slint";
+import { SmallTitle, ExtraLargeTitle, LargeLabel, FocusBorder } from "../_imports/coop-widgets/components.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
 
 export global GameSettingsAdapter {
@@ -144,111 +144,122 @@ export component GamesView {
             }
         }
 
-        VerticalLayout {
-            spacing: Space.medium;
+        i-background := Rectangle {
+            border-radius: Radius.medium;
+            clip: true;
 
-            i-launcher := Launcher {
-                vertical-stretch: 0;
-                model: GamesAdapter.games;
-                current-item <=> GamesAdapter.current-game;
+            VerticalLayout {
+                spacing: Space.medium;
 
-                launch(index) => {
-                    GamesAdapter.launch-game(index);
-                }
+                i-launcher := Launcher {
+                    vertical-stretch: 0;
+                    model: GamesAdapter.games;
+                    current-item <=> GamesAdapter.current-game;
 
-                current-item-changed(current-game) => {
-                    GamesAdapter.current-game-changed(current-game);
-                }
+                    launch(index) => {
+                        GamesAdapter.launch-game(index);
+                    }
 
-                item-pointer-event(row, event, position) => {
-                    if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                        i-item-context-menu.model = GamesAdapter.get-item-context-menu();
-                        if (i-item-context-menu.model.length == 0) {
-                            return;
+                    current-item-changed(current-game) => {
+                        GamesAdapter.current-game-changed(current-game);
+                    }
+
+                    item-pointer-event(row, event, position) => {
+                        if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
+                            i-item-context-menu.model = GamesAdapter.get-item-context-menu();
+                            if (i-item-context-menu.model.length == 0) {
+                                return;
+                            }
+
+                            root.item-context-menu-item-row = row;
+                            i-item-context-menu.x = position.x;
+                            i-item-context-menu.y = position.y;
+
+                            if (i-launcher.has-focus) {
+                                i-item-context-menu.show-and-focus();
+                            } else {
+                                i-item-context-menu.show();
+                            }
                         }
+                    }
 
-                        root.item-context-menu-item-row = row;
-                        i-item-context-menu.x = position.x;
-                        i-item-context-menu.y = position.y;
+                    i-item-context-menu := ContextMenu {
+                        item-clicked(row) => {
+                            if (self.has-focus) {
+                                i-launcher.focus();
+                            }
 
-                        if (i-launcher.has-focus) {
-                            i-item-context-menu.show-and-focus();
-                        } else {
-                            i-item-context-menu.show();
+                            GamesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
                         }
                     }
                 }
 
-                i-item-context-menu := ContextMenu {
-                    item-clicked(row) => {
-                        if (self.has-focus) {
-                            i-launcher.focus();
+                ScrollView {
+                    vertical-stretch: 1;
+
+                    Rectangle {
+                        TouchArea {
+                            clicked => {
+                                i-launcher.focus();
+                            }
                         }
 
-                        GamesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
+                        VerticalLayout {
+                            padding-left: Space.large;
+                            padding-right: Space.large;
+                            spacing: Space.large;
+                            alignment: start;
+
+                            ExtraLargeTitle {
+                                text: GamesAdapter.games[GamesAdapter.current-game].text;
+                                horizontal-alignment: left;
+                            }
+
+                            for item in GamesAdapter.current-game-meta : HorizontalLayout {
+                                alignment: start;
+                                spacing: Space.medium;
+
+                                Image {
+                                    source: item.image;
+                                    colorize: Palette.primary;
+                                    width: Icography.small;
+                                }
+
+                                i-label := LargeLabel {
+                                    text: item.text;
+                                    vertical-alignment: center;
+                                    horizontal-alignment: left;
+                                    color: Palette.foreground;
+                                    horizontal-stretch: 1;
+                                    overflow: elide;
+                                }
+                            }
+
+                            HorizontalLayout {
+                                alignment: start;
+                                spacing: Space.medium;
+
+                                Button {
+                                    text: @tr("Play");
+
+                                    clicked => {
+                                        GamesAdapter.launch-game(GamesAdapter.current-game);
+                                    }
+                                }
+
+                                // Button {
+                                //     icon: Icons.filled-settings;
+                                // }
+                            }
+                        }
                     }
                 }
             }
 
-            ScrollView {
-                vertical-stretch: 1;
-
-                Rectangle {
-                    TouchArea {
-                        clicked => {
-                            i-launcher.focus();
-                        }
-                    }
-
-                    VerticalLayout {
-                        padding-left: Space.large;
-                        padding-right: Space.large;
-                        spacing: Space.large;
-                        alignment: start;
-
-                        ExtraLargeTitle {
-                            text: GamesAdapter.games[GamesAdapter.current-game].text;
-                            horizontal-alignment: left;
-                        }
-
-                        for item in GamesAdapter.current-game-meta : HorizontalLayout {
-                            alignment: start;
-                            spacing: Space.medium;
-
-                            Image {
-                                source: item.image;
-                                colorize: Palette.primary;
-                                width: Icography.small;
-                            }
-
-                            i-label := LargeLabel {
-                                text: item.text;
-                                vertical-alignment: center;
-                                horizontal-alignment: left;
-                                color: Palette.foreground;
-                                horizontal-stretch: 1;
-                                overflow: elide;
-                            }
-                        }
-
-                        HorizontalLayout {
-                            alignment: start;
-                            spacing: Space.medium;
-
-                            Button {
-                                text: @tr("Play");
-
-                                clicked => {
-                                    GamesAdapter.launch-game(GamesAdapter.current-game);
-                                }
-                            }
-
-                            // Button {
-                            //     icon: Icons.filled-settings;
-                            // }
-                        }
-                    }
-                }
+            if (i-launcher.has-focus) : FocusBorder {
+                width: 100%;
+                height: 100%;
+                border-radius: i-background.border-radius;
             }
         }
     }
