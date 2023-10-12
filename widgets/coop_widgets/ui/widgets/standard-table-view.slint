@@ -145,13 +145,13 @@ export component StandardTableView {
     in-out property <int> current-row: -1;
 
     min-width: 400px;
-    min-height: 200px;
+    min-height: 100px;
     horizontal-stretch: 1;
     vertical-stretch: 1;
 
     i-background := Rectangle {
         border-radius: Radius.medium;
-        clip: true;
+        clip: i-focus-scope.has-focus;
 
         VerticalLayout {
             spacing: Space.small;

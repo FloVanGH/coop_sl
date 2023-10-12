@@ -67,7 +67,7 @@ export component GroupListView  {
         y: Space.small;
         height: parent.height - Space.small;
         border-radius: Radius.medium;
-        clip: true;
+        clip: root.has-focus;
 
         i-list-view := ListView {
             for parent-item[par-row] in root.model: VerticalLayout {

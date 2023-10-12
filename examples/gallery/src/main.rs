@@ -14,10 +14,47 @@ mod generated_code {
     slint::include_modules!();
 }
 
+use alloc::rc::Rc;
 pub use generated_code::*;
+
+use slint::VecModel;
 
 fn app() -> App {
     let app = App::new().unwrap();
+
+    let tab_items = Rc::new(VecModel::default());
+    tab_items.extend_from_slice(&[
+        TabItem {
+            text: "Tab 1".into(),
+            ..Default::default()
+        },
+        TabItem {
+            text: "Tab 2".into(),
+            closable: true,
+            ..Default::default()
+        },
+        TabItem {
+            text: "Tab 3".into(),
+            closable: true,
+            ..Default::default()
+        },
+        TabItem {
+            text: "Tab 4".into(),
+            closable: true,
+            ..Default::default()
+        },
+    ]);
+
+    app.global::<ListPageAdapter>().on_close_tab_item({
+        let tab_items = tab_items.clone();
+
+        move |index| {
+            tab_items.remove(index as usize);
+        }
+    });
+
+    app.global::<ListPageAdapter>()
+        .set_tab_items(tab_items.into());
 
     virtual_keyboard::init(&app);
 

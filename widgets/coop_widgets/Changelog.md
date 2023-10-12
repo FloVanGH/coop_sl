@@ -16,6 +16,7 @@ SPDX-License-Identifier: MIT
 * GroupListViewItem
 * KeyModel
 * ListViewItem
+* TabItem
 * TextStyle
 
 ### Styling
@@ -48,4 +49,5 @@ SPDX-License-Identifier: MIT
 * StandardListView
 * StandardTableView
 * Switch
+* TabView
 * VirtualKeyboard

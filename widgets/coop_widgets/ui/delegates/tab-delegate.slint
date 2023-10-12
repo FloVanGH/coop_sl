@@ -1,0 +1,72 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Palette, Duration, Space, Size, State, Icography, Icons } from "../styling.slint";
+import { LargeLabel } from "../components.slint";
+import { ActionButton } from "../widgets/line-edit.slint";
+
+export component TabDelegate inherits TouchArea {
+    private property <brush> foreground: Palette.foreground;
+    private property <brush> text-color: root.foreground;
+
+    callback close();
+
+    in property <bool> selected;
+    in property <image> icon;
+    in property <string> text;
+    in property <bool> closeable;
+
+    min-width: max(Size.small, i-layout.min-width);
+    min-height: max(Size.small, i-layout.min-height);
+    padding-right: Space.medium;
+    padding-left: Space.medium;
+
+    i-background := Rectangle {
+       i-layout := HorizontalLayout {
+            padding-left: root.padding-left;
+            padding-right: root.padding-right;
+            spacing: Space.medium;
+
+            if (root.icon.width > 0 && root.icon.height > 0) : Image {
+                source: root.icon;
+                colorize: root.foreground;
+                width: Icography.small;
+            }
+
+            LargeLabel {
+                text <=> root.text;
+                vertical-alignment: center;
+                color: root.foreground;
+            }
+
+            if (root.closeable) : ActionButton {
+                y: (parent.height - self.height) / 2;
+                icon: Icons.clear;
+
+                clicked => {
+                    root.close();
+                }
+            }
+        }
+    }
+
+    states [
+        disabled when !root.enabled: {
+            root.text-color: Palette.foreground-disabled;
+        }
+
+        pressed when root.pressed: {
+            i-background.background: Palette.background.darker(State.pressed);
+            foreground: Palette.foreground.darker(State.pressed);
+        }
+        hover when root.has-hover: {
+            i-background.background: Palette.background.darker(State.hover);
+            foreground: Palette.foreground.darker(State.hover);
+        }
+        selected when root.selected: {
+            i-background.background: Palette.background.darker(State.selected);
+        }
+    ]
+
+    animate foreground { duration: Duration.fast; }
+}

@@ -3,16 +3,28 @@
 
 import { RowTitle, ColumnTitle } from "titles.slint";
 
-import { StandardTableView, ScrollView, ListView, GroupListView, Switch, StandardListView } from "../_imports/coop-widgets/widgets.slint";
+import { StandardTableView, ScrollView, ListView, GroupListView, Switch, StandardListView, TabView,
+    Button } from "../_imports/coop-widgets/widgets.slint";
 import { HeaderBar } from "../_imports/coop-widgets/building-blocks.slint";
-import { HorizontalSeparator, VerticalSpacerMedium } from "../_imports/coop-widgets/layouts.slint";
+import { HorizontalSeparator, VerticalSpacerMedium, VerticalBox, Spacer } from "../_imports/coop-widgets/layouts.slint";
 import { Palette, Icons, ColorVariant, Space } from "../_imports/coop-widgets/styling.slint";
-import { GroupListViewItem } from "../_imports/coop-widgets/structs.slint";
+import { GroupListViewItem, TabItem } from "../_imports/coop-widgets/structs.slint";
+
+export global ListPageAdapter {
+    callback close-tab-item(/* index */ int);
+
+    in property <[TabItem]> tab-items: [
+        { icon: Icons.add, text: "Tab 1" },
+        { icon: Icons.add, text: "Tab 2" },
+        { icon: Icons.add, text: "Tab 3" },
+    ];
+}
 
 export component ListPage inherits GridLayout {
     Row {
         i-header-bar := HeaderBar {
             title: "Lists";
+
             VerticalLayout {
                 alignment: center;
 
@@ -152,13 +164,57 @@ export component ListPage inherits GridLayout {
                         { title: @tr("Kind"), horizontal-stretch: 0, min-width: 128px },
                     ];
                     rows: [
-                        [ { leading-icon: Icons.folder,highlighted: true, text: "src" }, { text: "2022.11.10" }, { text: "---" }, { text: "Folder" }, ],
+                        [ { leading-icon: Icons.folder, highlighted: true, text: "src" }, { text: "2022.11.10" }, { text: "---" }, { text: "Folder" }, ],
                         [ { leading-icon: Icons.description, text: "test.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
                         [ { leading-icon: Icons.description, text: "test2.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
                         [ { leading-icon: Icons.description, text: "test3.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
                         [ { leading-icon: Icons.description, text: "test4.slint" }, { text: "2022.11.10" }, { text: "17 KB" }, { text: "Document" }, ],
                     ];
                 }
+            }
+
+            Row {
+                VerticalSpacerMedium {}
+            }
+
+            // TabView
+            Row {
+                RowTitle {
+                    text: "TabView";
+                }
+            }
+
+            Row {
+                HorizontalSeparator {
+                    colspan: 4;
+                }
+            }
+
+            Row {
+                i-tab-view := TabView {
+                    colspan: 4;
+
+                    model: ListPageAdapter.tab-items;
+
+                    for tab-item[index] in self.model : Rectangle {
+                        if (index == i-tab-view.current-item) : VerticalBox {
+                            alignment: start;
+
+                            ColumnTitle {
+                                text: tab-item.text;
+                            }
+                        }
+                    }
+
+                    close-item(index) => {
+                        ListPageAdapter.close-tab-item(index);
+                    }
+                }
+            }
+
+            // Fills the remaining available space
+            Row {
+                Spacer {}
             }
         }
     }

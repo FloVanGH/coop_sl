@@ -4,7 +4,7 @@
 import { Radius, Palette, Icography, Size, State, Space, Typography } from "../styling.slint";
 import { FocusBorder } from "../components.slint";
 
-component ActionButton inherits TouchArea {
+export component ActionButton inherits TouchArea {
     in property <image> icon <=> i-icon.source;
 
     width: i-icon.width;

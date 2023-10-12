@@ -9,11 +9,13 @@ SPDX-License-Identifier: MIT
 
 - [Enums](enums/enums.md)
     - [SelectionMode](enums/selection-mode.md)
+    - [Position](enums/position.md)
 
 - [Struts](structs/structs.md)
     - [ListViewItem](structs/list-view-item.md)
     - [KeyModel](structs/key-model.md)
     - [GroupListViewItem](structs/group-list-view-item.md)
+    - [TabItem](structs/tab-item.md)
     - [TextStyle](structs/text-style.md)
 
 - [Components](components/components.md)
@@ -40,5 +42,6 @@ SPDX-License-Identifier: MIT
     - [StandardListView](widgets/standard-list-view.md)
     - [StandardTableView](widgets/standard-table-view.md)
     - [Switch](widgets/switch.md)
+    - [TabView](widgets/tab-view.md)
     - [VirtualKeyboard](widgets/virtual-keyboard.md)
 

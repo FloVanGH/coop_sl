@@ -2,12 +2,16 @@
 // SPDX-License-Identifier: MIT
 
 import { CoopWindow, VirtualKeyboard, VirtualKeyboardAdapter, GroupListViewItem, Palette, Icons } from "_imports/coop-widgets.slint";
-import { BasicsPage, TypoPage, BrushesPage, ListPage, BookFlipPage } from "pages/pages.slint";
+import { BasicsPage, TypoPage, BrushesPage, ListPage, ListPageAdapter, BookFlipPage } from "pages/pages.slint";
 import { AppManager } from "app-manager.slint";
 import { SideBarView } from "side-bar-view.slint";
 
+import { TabItem } from "_imports/coop-widgets/structs.slint";
+
 export { VirtualKeyboardAdapter }
 export { AppManager }
+export { ListPageAdapter }
+export { TabItem }
 
 export component App inherits CoopWindow {
     min-width: 800px;

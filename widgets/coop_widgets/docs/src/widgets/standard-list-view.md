@@ -24,7 +24,7 @@ Like ListView, but with a default delegate, and a `model` property which is a mo
 
 ### Callbacks
 
--   **`current-item-changed(/* row */ int)`**: Emitted when the current item has changed because the user modified it
+-   **`current-item-changed(/* current-item */ int)`**: Emitted when the current item has changed because the user modified it
 -   **`item-pointer-event(/* row */ int, /* event */ PointerEvent, /* position */ Point)`**: Emitted on any mouse pointer event similar to `TouchArea`. Arguments are item index associated with the event, the `PointerEvent` itself and the mouse position within the listview.
 -   **`item-accepted(/* row */ int, /* text */ string)`**: Emitted when the text of the item is edited and after the enter is pressed.
 -   **`key-pressed(/* event */ KeyEvent)`**: Emitted when there is a key press event on the listview.
