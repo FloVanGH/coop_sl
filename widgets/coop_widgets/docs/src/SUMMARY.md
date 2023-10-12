@@ -14,8 +14,14 @@ SPDX-License-Identifier: MIT
     - [ListViewItem](structs/list-view-item.md)
     - [KeyModel](structs/key-model.md)
     - [GroupListViewItem](structs/group-list-view-item.md)
+    - [TextStyle](structs/text-style.md)
 
 - [Components](components/components.md)
+
+- [Styling](styling/styling.md)
+    - [Duration](styling/duration.md)
+    - [Icography](styling/icography.md)
+    - [Icons](styling/icons.md)
 
 - [Widgets](widgets/widgets.md)
     - [Button](widgets/button.md)

@@ -7,6 +7,29 @@ SPDX-License-Identifier: MIT
 
 ## Added
 
+### Enums
+
+* SelectionMode
+
+### Structs
+
+* GroupListViewItem
+* KeyModel
+* ListViewItem
+* TextStyle
+
+### Styling
+
+* Duration
+* Icography
+* Icons
+* Palette
+* Radius
+* Size
+* Space
+* State
+* Typography
+
 ### Widgets
 
 * Button
