@@ -58,6 +58,7 @@ export component SideBar {
         i-layout := VerticalLayout {
             padding-top: Space.medium;
             padding-bottom: Space.medium;
+            padding-right: 2px;
             spacing: Space.medium;
 
             if (root.on-break-point || root.title != "") : HorizontalLayout {
@@ -83,6 +84,13 @@ export component SideBar {
             }
 
             @children
+        }
+
+        Rectangle {
+            background: Palette.border;
+            width: 1px;
+            height: 100%;
+            x: parent.width - self.width;
         }
     }
 

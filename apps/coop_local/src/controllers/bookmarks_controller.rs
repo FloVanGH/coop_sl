@@ -303,6 +303,11 @@ impl BookmarksController {
     }
 
     fn open_next_dir(&self) {
+        if self.selected_bookmark.get().is_none() && self.selected_location.get().is_none() {
+            self.on_open_dir(0, 0);
+            return;
+        }
+
         if let Some(selected_bookmark) = self.selected_bookmark.get() {
             if selected_bookmark + 1 < self.bookmarks.row_count() {
                 self.on_open_dir(0, selected_bookmark + 1);
@@ -319,6 +324,11 @@ impl BookmarksController {
     }
 
     fn open_previous_dir(&self) {
+        if self.selected_bookmark.get().is_none() && self.selected_location.get().is_none() {
+            self.on_open_dir(0, 0);
+            return;
+        }
+
         if let Some(selected_bookmark) = self.selected_bookmark.get() {
             if selected_bookmark > 0 {
                 self.on_open_dir(0, selected_bookmark - 1);

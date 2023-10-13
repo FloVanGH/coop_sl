@@ -1,39 +1,46 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Radius } from "../styling.slint";
+import { Radius, Palette, Size } from "../styling.slint";
 import { Position } from "../enums.slint";
 import { TabItem } from "../structs.slint";
 import { TabDelegate } from "../delegates.slint";
 import { FocusBorder } from "../components.slint";
 import { ScrollView } from "scroll-view.slint";
 
-component TabBar inherits ScrollView {
+component TabBar inherits Rectangle {
     callback tab-item-clicked(/* index */ int);
     callback close-tab-item(/* index */ int);
 
     in property <[TabItem]> model;
     in-out property <int> current-item: 0;
+    in property <bool> enabled <=> i-scroll-view.enabled;
 
     vertical-stretch: 0;
     preferred-width: 100%;
+    background: Palette.background-alt;
+    min-height: max(Size.small, i-layout.min-height);
 
-    HorizontalLayout {
-        alignment: start;
+    i-scroll-view := ScrollView {
+        width: 100%;
 
-        for tab-item[index] in root.model : TabDelegate {
-            text: tab-item.text;
-            icon: tab-item.icon;
-            enabled: root.enabled;
-            selected: index == root.current-item;
-            closeable: tab-item.closable;
+        i-layout := HorizontalLayout {
+            alignment: start;
 
-            clicked => {
-                root.tab-item-clicked(index);
-            }
+            for tab-item[index] in root.model : TabDelegate {
+                text: tab-item.text;
+                icon: tab-item.icon;
+                enabled: root.enabled;
+                selected: index == root.current-item;
+                closeable: tab-item.closable;
 
-            close => {
-                root.close-tab-item(index);
+                clicked => {
+                    root.tab-item-clicked(index);
+                }
+
+                close => {
+                    root.close-tab-item(index);
+                }
             }
         }
     }

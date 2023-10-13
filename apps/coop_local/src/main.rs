@@ -134,7 +134,11 @@ pub fn main() -> Result<(), slint::PlatformError> {
     text_controller.on_back(on_back.clone());
     text_controller.on_show_about(on_show_about.clone());
 
-    let image_controller = ImageController::new(view_handle.clone(), files_repository);
+    let image_controller = ImageController::new(
+        view_handle.clone(),
+        files_repository,
+        ImageRepository::new(),
+    );
     image_controller.on_back(on_back);
     image_controller.on_show_about(on_show_about);
 
@@ -154,10 +158,10 @@ pub fn main() -> Result<(), slint::PlatformError> {
                 return;
             }
 
-            file_model_stack.borrow_mut().push(file_model.clone());
-            bookmark_controller_clone.select(file_model.path());
-
             if file_model.is_dir() {
+                file_model_stack.borrow_mut().push(file_model.clone());
+                bookmark_controller_clone.select(file_model.path());
+
                 #[cfg(feature = "games")]
                 if let Ok(is_games) = games_repository.is_games_dir(file_model.path()) {
                     if is_games {
@@ -175,15 +179,19 @@ pub fn main() -> Result<(), slint::PlatformError> {
                     adapter.set_active_view(View::Files);
                 });
             } else if file_model.file_type() == FileType::Image {
+                file_model_stack.borrow_mut().push(file_model.clone());
                 image_controller.show_image(file_model);
                 upgrade_adapter(&view_handle, |adapter| {
                     adapter.set_active_view(View::Image);
                 });
             } else if file_model.file_type() == FileType::Text {
+                file_model_stack.borrow_mut().push(file_model.clone());
                 text_controller.show_text(file_model);
                 upgrade_adapter(&view_handle, |adapter| {
                     adapter.set_active_view(View::Text);
                 });
+            } else {
+                files_controller_clone.open(file_model);
             }
         }
     };

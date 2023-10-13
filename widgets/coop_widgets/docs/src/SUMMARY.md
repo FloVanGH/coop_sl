@@ -7,6 +7,9 @@ SPDX-License-Identifier: MIT
 
 - [Introduction](./introduction.md)
 
+- [Building Blocks](building-blocks/building-blocks.md)
+    - [ControlBar](building-blocks/control-bar.md)
+
 - [Enums](enums/enums.md)
     - [SelectionMode](enums/selection-mode.md)
     - [Position](enums/position.md)

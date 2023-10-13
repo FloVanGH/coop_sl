@@ -4,7 +4,7 @@
 use std::{env, fs, io, path::*};
 
 fn main() -> io::Result<()> {
-    let ui_lib_name = "coop-widgets";
+    let ui_lib_name = "coop_widgets";
     let ui_lib_path = "ui";
     let ui_lib_file = format!("{ui_lib_path}/lib.slint");
 

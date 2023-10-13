@@ -11,3 +11,6 @@ pub use file_repository::*;
 mod games_repository;
 #[cfg(feature = "games")]
 pub use games_repository::*;
+
+mod image_repository;
+pub use image_repository::*;

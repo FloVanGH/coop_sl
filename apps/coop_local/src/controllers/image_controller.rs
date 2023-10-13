@@ -1,11 +1,15 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::{Cell, RefCell},
+    collections::HashMap,
+    rc::Rc,
+};
 
 use crate::{
     models::{FileModel, FileType},
-    repositories::FilesRepository,
+    repositories::{FilesRepository, ImageRepository},
     ui::*,
 };
 use slint::*;
@@ -21,17 +25,27 @@ mod context_menu {
 pub struct ImageController {
     view_handle: Weak<MainWindow>,
     files_repository: FilesRepository,
-    file_model: Rc<RefCell<Option<FileModel>>>,
+    image_repository: ImageRepository,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
+    current_item: Rc<Cell<usize>>,
+    images: Rc<RefCell<Vec<FileModel>>>,
+    image_cache: Rc<RefCell<HashMap<FileModel, Image>>>,
 }
 
 impl ImageController {
-    pub fn new(view_handle: Weak<MainWindow>, files_repository: FilesRepository) -> Self {
+    pub fn new(
+        view_handle: Weak<MainWindow>,
+        files_repository: FilesRepository,
+        image_repository: ImageRepository,
+    ) -> Self {
         let controller = Self {
             view_handle,
             files_repository,
-            file_model: Rc::new(RefCell::new(None)),
+            image_repository,
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
+            current_item: Rc::new(Cell::new(0)),
+            images: Rc::new(RefCell::new(vec![])),
+            image_cache: Rc::new(RefCell::new(HashMap::new())),
         };
 
         upgrade_adapter(&controller.view_handle, {
@@ -48,6 +62,16 @@ impl ImageController {
                     let controller = controller.clone();
                     move |spec| controller.execute_context_menu_action(spec.as_str())
                 });
+
+                adapter.on_next({
+                    let controller = controller.clone();
+                    move || controller.next()
+                });
+
+                adapter.on_previous({
+                    let controller = controller.clone();
+                    move || controller.previous()
+                });
             }
         });
 
@@ -59,45 +83,57 @@ impl ImageController {
             return;
         }
 
-        upgrade_adapter(&self.view_handle, |adapter| {
-            adapter.set_image(Image::default());
-            adapter.set_title("".into());
-            adapter.set_loading(true);
-        });
+        if let Some(parent_file_model) = file_model.parent().map(FileModel::new) {
+            self.images.borrow_mut().clear();
+            self.current_item.set(0);
+            self.image_cache.borrow_mut().clear();
 
-        let view_handle = self.view_handle.clone();
-        let file_model_clone = file_model.clone();
-
-        let _ = slint::spawn_local(async move {
-            let rt = Builder::new_current_thread().enable_all().build().unwrap();
-            let (tx, rx) = oneshot::channel();
-
-            let _ = std::thread::spawn({
-                let file_model = file_model_clone.clone();
-                move || {
-                    rt.block_on(async move {
-                        let _ = tx.send(image::open(file_model.path()));
-                    });
-                }
+            upgrade_adapter(&self.view_handle, |adapter| {
+                adapter.set_image(Image::default());
+                adapter.set_title("".into());
+                adapter.set_loading(true);
             });
 
-            if let Ok(Ok(image)) = rx.await {
-                let image = image.into_rgba8();
-                let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-                    image.as_raw(),
-                    image.width(),
-                    image.height(),
-                );
+            let view_handle = self.view_handle.clone();
+            let file_model_clone = file_model.clone();
+            let repository = self.image_repository.clone();
+            let controller = self.clone();
 
-                upgrade_adapter(&view_handle, move |adapter| {
-                    adapter.set_image(Image::from_rgba8(buffer));
-                    adapter.set_title(file_model_clone.name().unwrap_or_default().into());
-                    adapter.set_loading(false);
+            let _ = slint::spawn_local(async move {
+                let rt = Builder::new_current_thread().enable_all().build().unwrap();
+                let (tx, rx) = oneshot::channel();
+
+                let _ = std::thread::spawn({
+                    let file_model = file_model_clone.clone();
+                    move || {
+                        rt.block_on(async move {
+                            let _ = tx
+                                .send(repository.image_list(&parent_file_model, &file_model).await);
+                        });
+                    }
                 });
-            }
-        });
 
-        *self.file_model.borrow_mut() = Some(file_model);
+                if let Ok(Ok(mut images)) = rx.await {
+                    if images.is_empty() {
+                        upgrade_adapter(&view_handle, move |adapter| {
+                            adapter.set_loading(false);
+                            adapter.invoke_back();
+                        });
+
+                        return;
+                    }
+
+                    let single_image = images.len() == 1;
+
+                    upgrade_adapter(&view_handle, move |adapter| {
+                        adapter.set_single_image(single_image);
+                    });
+
+                    controller.images.borrow_mut().append(&mut images);
+                    controller.load_image(0);
+                }
+            });
+        }
     }
 
     pub fn on_back(&self, func: impl FnMut() + 'static) {
@@ -113,8 +149,8 @@ impl ImageController {
     fn get_context_menu(&self) -> ModelRc<ListViewItem> {
         let items = VecModel::default();
 
-        if let Some(file_model) = &*self.file_model.borrow() {
-            if let Ok(readonly) = file_model.readonly() {
+        if let Some(current_image) = self.images.borrow().get(self.current_item.get()) {
+            if let Ok(readonly) = current_image.readonly() {
                 if !readonly {
                     items.push(ListViewItem {
                         text: "Move to bin".into(),
@@ -134,6 +170,59 @@ impl ImageController {
         Rc::new(items).into()
     }
 
+    fn load_image(&self, index: usize) {
+        if let Some(file_model) = self.images.borrow().get(index).cloned() {
+            if let Some(image) = self.image_cache.borrow().get(&file_model).cloned() {
+                upgrade_adapter(&self.view_handle, move |adapter| {
+                    adapter.set_image(image);
+                    adapter.set_title(file_model.name().unwrap_or_default().into());
+                    adapter.set_loading(false);
+                });
+            } else {
+                upgrade_adapter(&self.view_handle, |adapter| {
+                    adapter.set_loading(true);
+                });
+
+                let view_handle = self.view_handle.clone();
+                let repository = self.image_repository.clone();
+                let image_cache = self.image_cache.clone();
+
+                let _ = slint::spawn_local(async move {
+                    let rt = Builder::new_current_thread().enable_all().build().unwrap();
+                    let (tx, rx) = oneshot::channel();
+
+                    let _ = std::thread::spawn({
+                        let file_model = file_model.clone();
+                        move || {
+                            rt.block_on(async move {
+                                let _ = tx.send(repository.load_image(&file_model).await);
+                            });
+                        }
+                    });
+
+                    if let Ok(Ok(image)) = rx.await {
+                        let image = image.into_rgba8();
+                        let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+                            image.as_raw(),
+                            image.width(),
+                            image.height(),
+                        );
+                        let image = Image::from_rgba8(buffer);
+                        image_cache
+                            .borrow_mut()
+                            .insert(file_model.clone(), image.clone());
+
+                        upgrade_adapter(&view_handle, move |adapter| {
+                            adapter.set_image(image);
+                            adapter.set_title(file_model.name().unwrap_or_default().into());
+                            adapter.set_loading(false);
+                        });
+                    }
+                });
+            }
+        }
+    }
+
     fn execute_context_menu_action(&self, spec: &str) {
         match spec {
             context_menu::REMOVE => self.remove(),
@@ -147,15 +236,44 @@ impl ImageController {
     }
 
     fn remove(&self) {
-        if let Some(file_model) = &*self.file_model.borrow() {
-            self.files_repository.remove(file_model);
+        let current_index = self.current_item.get();
+        let current_image = self.images.borrow().get(current_index).cloned();
+        if let Some(current_image) = current_image {
+            if self.files_repository.remove(&current_image) {
+                self.images.borrow_mut().remove(current_index);
+                self.image_cache.borrow_mut().remove(&current_image);
+            }
         }
 
-        upgrade_adapter(&self.view_handle, move |adapter| {
-            adapter.invoke_back();
-        });
+        if self.images.borrow().is_empty() {
+            upgrade_adapter(&self.view_handle, move |adapter| {
+                adapter.invoke_back();
+            });
+        } else {
+            self.previous();
+        }
+    }
 
-        *self.file_model.borrow_mut() = None;
+    fn next(&self) {
+        let mut next = self.current_item.get() + 1;
+
+        if next >= self.images.borrow().len() {
+            next = 0;
+        }
+
+        self.current_item.set(next);
+        self.load_image(next);
+    }
+
+    fn previous(&self) {
+        let mut previous = self.current_item.get() as i32 - 1;
+
+        if previous < 0 {
+            previous = self.images.borrow().len() as i32 - 1;
+        }
+
+        self.current_item.set(previous as usize);
+        self.load_image(previous as usize);
     }
 }
 

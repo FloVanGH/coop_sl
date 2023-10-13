@@ -1,0 +1,24 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Palette, Size } from "../styling.slint";
+import { HorizontalBox } from "../layouts.slint";
+
+export component ControlBar {
+    callback action();
+
+    in property <LayoutAlignment> alignment <=> i-layout.alignment;
+
+    vertical-stretch: 0;
+    min-height: max(Size.large, i-layout.min-height);
+
+    Rectangle {
+        background: Palette.background-alt;
+
+        i-layout := HorizontalBox {
+            alignment: center;
+
+            @children
+        }
+    }
+}

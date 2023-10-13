@@ -275,6 +275,10 @@ impl FilesController {
         *self.add_bookmark_callback.borrow_mut() = Box::new(callback);
     }
 
+    pub fn open(&self, file_model: FileModel) {
+        let _ = self.repository.open(file_model);
+    }
+
     fn get_context_menu(&self) -> ModelRc<ListViewItem> {
         let items = VecModel::default();
 
@@ -382,7 +386,7 @@ impl FilesController {
         match spec {
             context_menu::OPEN => {
                 if let Some(file_model) = self.files.row_data(row) {
-                    let _ = self.repository.open(file_model);
+                    self.open(file_model);
                 }
             }
 
