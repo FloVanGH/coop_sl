@@ -649,6 +649,13 @@ impl FilesController {
                 );
                 true
             }
+            3 => {
+                *self.files_proxy_model.borrow_mut() = files_model_ext::sort_by_date_modified(
+                    ascending,
+                    files_model_ext::filter_hidden_files(self.files_model.clone().into()),
+                );
+                true
+            }
             _ => false,
         };
 
@@ -779,6 +786,17 @@ mod files_model_ext {
                 l.len().cmp(&r.len())
             } else {
                 r.len().cmp(&l.len())
+            }
+        }))
+        .into()
+    }
+
+    pub fn sort_by_date_modified(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
+        Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
+            if ascending {
+                l.modified().cmp(&r.modified())
+            } else {
+                r.modified().cmp(&l.modified())
             }
         }))
         .into()
