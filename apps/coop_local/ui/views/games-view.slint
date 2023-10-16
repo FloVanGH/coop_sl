@@ -86,8 +86,8 @@ export global GamesAdapter {
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
     callback get-item-context-menu() -> [ListViewItem];
-    callback item-context-menu-action(/* row */ int, /* spec */ string);
-    callback launch-game(/* row */ int);
+    callback item-context-menu-action(/* index */ int, /* spec */ string);
+    callback launch-game(/* index */ int);
     callback current-game-changed(/* current-game */ int);
 
     in property <[LauncherItem]> games;

@@ -28,7 +28,8 @@ pub struct GamesController {
     repository: GamesRepository,
     root_file: Rc<RefCell<Option<FileModel>>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
-    games: Rc<VecModel<GameModel>>,
+    games_model: Rc<VecModel<GameModel>>,
+    games_proxy_model: Rc<RefCell<ModelRc<GameModel>>>,
     meta: Rc<VecModel<LauncherItem>>,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     show_files_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
@@ -37,53 +38,35 @@ pub struct GamesController {
 
 impl GamesController {
     pub fn new(view_handle: Weak<MainWindow>, repository: GamesRepository) -> Self {
+        let games_model = Rc::new(VecModel::default());
+        let games_proxy_model = Rc::new(RefCell::new(
+            Rc::new(games_model.clone().sort_by(|l: &GameModel, r: &GameModel| {
+                r.meta().last_time_played.cmp(&l.meta().last_time_played)
+            }))
+            .into(),
+        ));
+        let meta = Rc::new(VecModel::default());
+
         let controller = Self {
             view_handle,
             repository,
             root_file: Rc::new(RefCell::new(None)),
             root_modified: Rc::new(Cell::new(None)),
-            games: Rc::new(VecModel::default()),
-            meta: Rc::new(VecModel::default()),
+            games_model,
+            games_proxy_model,
+            meta: meta.clone(),
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             show_files_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             loading_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
         };
+        controller.update_view_files_model();
 
         upgrade_adapter(&controller.view_handle, {
             let controller = controller.clone();
 
             // connect show context menu
             move |adapter| {
-                adapter.set_games(
-                    Rc::new(
-                        controller
-                            .games
-                            .clone()
-                            .sort_by(|l: &GameModel, r: &GameModel| {
-                                r.meta().last_time_played.cmp(&l.meta().last_time_played)
-                            })
-                            .map(|g: GameModel| {
-                                let image = if g.icon().width() == 0 || g.icon().height() == 0 {
-                                    Image::default()
-                                } else {
-                                    Image::from_rgba8(
-                                        SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-                                            g.icon().data(),
-                                            g.icon().width(),
-                                            g.icon().height(),
-                                        ),
-                                    )
-                                };
-
-                                LauncherItem {
-                                    image,
-                                    text: g.name().into(),
-                                }
-                            }),
-                    )
-                    .into(),
-                );
-                adapter.set_current_game_meta(controller.meta.clone().into());
+                adapter.set_current_game_meta(meta.into());
                 adapter.on_get_context_menu({
                     let controller = controller.clone();
                     move || controller.get_context_menu()
@@ -120,7 +103,9 @@ impl GamesController {
                     let controller = controller.clone();
 
                     move |row, arguments| {
-                        if let Some(mut game_model) = controller.games.row_data(row as usize) {
+                        if let Some(mut game_model) =
+                            controller.games_proxy_model.borrow().row_data(row as usize)
+                        {
                             game_model.settings_mut().arguments = arguments.into();
                             controller.update_game_model(row as usize, game_model);
                         }
@@ -162,7 +147,7 @@ impl GamesController {
         });
 
         if let Ok(games) = self.repository.games(file_model.path()) {
-            self.games.set_vec(games);
+            self.games_model.set_vec(games);
         }
 
         upgrade_adapter(&self.view_handle, move |adapter| {
@@ -184,7 +169,7 @@ impl GamesController {
             }
 
             let root_file = root_file.clone();
-            let games_model = self.games.clone();
+            let games_model = self.games_model.clone();
             let repository: GamesRepository = self.repository.clone();
             self.root_modified.set(root_file.modified());
 
@@ -218,7 +203,7 @@ impl GamesController {
     }
 
     fn display_current_meta(&self, row: usize) {
-        if let Some(game_model) = self.games.row_data(row) {
+        if let Some(game_model) = self.games_proxy_model.borrow().row_data(row) {
             let mut last_time_played = "--".to_string();
 
             if game_model.meta().last_time_played > 0 {
@@ -314,7 +299,7 @@ impl GamesController {
     }
 
     fn open_game_settings(&self, row: usize) {
-        if let Some(game_model) = self.games.row_data(row) {
+        if let Some(game_model) = self.games_proxy_model.borrow().row_data(row) {
             let arguments: SharedString = game_model.settings().arguments.as_str().into();
             let title: SharedString = game_model.name().into();
 
@@ -332,7 +317,9 @@ impl GamesController {
 
     fn update_game_model(&self, row: usize, game_model: GameModel) {
         self.repository.update_game(&game_model);
-        self.games.set_row_data(row, game_model);
+        self.games_proxy_model
+            .borrow()
+            .set_row_data(row, game_model);
     }
 
     fn close_game_settings(&self) {
@@ -341,14 +328,14 @@ impl GamesController {
         });
     }
 
-    fn launch(&self, row: usize) {
+    fn launch(&self, index: usize) {
         let repository = self.repository.clone();
         let controller = self.clone();
         let view_handle = self.view_handle.clone();
         let loading_callback = self.loading_callback.clone();
         loading_callback.borrow_mut()(true);
 
-        if let Some(mut game_model) = self.games.row_data(row) {
+        if let Some(mut game_model) = self.games_proxy_model.borrow().row_data(index) {
             let _ = slint::spawn_local(async move {
                 let rt = Builder::new_current_thread().enable_all().build().unwrap();
                 let (tx, rx) = oneshot::channel();
@@ -361,7 +348,10 @@ impl GamesController {
                 });
 
                 if let Ok(game_model) = rx.await {
-                    controller.games.set_row_data(row, game_model);
+                    controller
+                        .games_proxy_model
+                        .borrow()
+                        .set_row_data(index, game_model);
                     controller.display_current_meta(0);
 
                     upgrade_adapter(&view_handle, |adapter| {
@@ -372,6 +362,32 @@ impl GamesController {
                 }
             });
         }
+    }
+
+    fn update_view_files_model(&self) {
+        let games_proxy_model = self.games_proxy_model.borrow().clone();
+
+        upgrade_adapter(&self.view_handle, move |adapter| {
+            adapter.set_games(
+                Rc::new(games_proxy_model.map(|g: GameModel| {
+                    let image = if g.icon().width() == 0 || g.icon().height() == 0 {
+                        Image::default()
+                    } else {
+                        Image::from_rgba8(SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+                            g.icon().data(),
+                            g.icon().width(),
+                            g.icon().height(),
+                        ))
+                    };
+
+                    LauncherItem {
+                        image,
+                        text: g.name().into(),
+                    }
+                }))
+                .into(),
+            )
+        });
     }
 }
 
