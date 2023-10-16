@@ -17,8 +17,8 @@ export global BookmarksAdapter {
 export component BookmarksView {
     callback item-clicked();
 
-    private property <int> item-context-menu-item-row;
-    private property <int> item-context-menu-parent-row;
+    private property <int> item-context-menu-item-index;
+    private property <int> item-context-menu-par-index;
     private property <{ parent: int, item: int }> selected-item;
 
     in property <length> window-height;
@@ -54,23 +54,23 @@ export component BookmarksView {
             reject
         }
 
-        item-pointer-event(par-row, row, event, position) => {
+        item-pointer-event(par-index, index, event, position) => {
             root.focus();
 
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
-                BookmarksAdapter.open-dir(par-row, row);
+                BookmarksAdapter.open-dir(par-index, index);
                 root.item-clicked();
             }
 
             if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                open-item-context-menu(row, par-row, position);
+                open-item-context-menu(par-index, index, position);
             }
         }
 
         i-context-menu := ContextMenu {
             item-clicked(row) => {
-                BookmarksAdapter.item-context-menu-action(root.item-context-menu-parent-row,
-                    root.item-context-menu-item-row, self.model[row].spec);
+                BookmarksAdapter.item-context-menu-action(root.item-context-menu-par-index,
+                    root.item-context-menu-item-index, self.model[row].spec);
             }
             closed => {
                 i-group-list-view.focus();
@@ -78,15 +78,15 @@ export component BookmarksView {
         }
     }
 
-    function open-item-context-menu(par-row: int, row: int, position: Point) {
-        i-context-menu.model = BookmarksAdapter.get-item-context-menu(par-row, row);
+    function open-item-context-menu(par-index: int, index: int, position: Point) {
+        i-context-menu.model = BookmarksAdapter.get-item-context-menu(par-index, index);
 
         if (i-context-menu.model.length == 0) {
             return;
         }
 
-        root.item-context-menu-item-row = row;
-        root.item-context-menu-parent-row = par-row;
+        root.item-context-menu-item-index = index;
+        root.item-context-menu-par-index = par-index;
         i-context-menu.x = position.x;
 
         // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
