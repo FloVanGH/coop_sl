@@ -11,3 +11,6 @@ pub use bookmark_model::*;
 mod game_model;
 #[cfg(feature = "games")]
 pub use game_model::*;
+
+mod text_model;
+pub use text_model::*;

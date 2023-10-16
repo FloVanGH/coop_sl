@@ -130,7 +130,11 @@ pub fn main() -> Result<(), slint::PlatformError> {
         games_controller
     };
 
-    let text_controller = TextController::new(view_handle.clone(), files_repository.clone());
+    let text_controller = TextController::new(
+        view_handle.clone(),
+        files_repository.clone(),
+        TextRepository::new(),
+    );
     text_controller.on_back(on_back.clone());
     text_controller.on_show_about(on_show_about.clone());
 
@@ -180,13 +184,13 @@ pub fn main() -> Result<(), slint::PlatformError> {
                 });
             } else if file_model.file_type() == FileType::Image {
                 file_model_stack.borrow_mut().push(file_model.clone());
-                image_controller.show_image(file_model);
+                image_controller.load_image(file_model);
                 upgrade_adapter(&view_handle, |adapter| {
                     adapter.set_active_view(View::Image);
                 });
             } else if file_model.file_type() == FileType::Text {
                 file_model_stack.borrow_mut().push(file_model.clone());
-                text_controller.show_text(file_model);
+                text_controller.load_text(file_model);
                 upgrade_adapter(&view_handle, |adapter| {
                     adapter.set_active_view(View::Text);
                 });

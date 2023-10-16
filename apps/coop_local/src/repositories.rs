@@ -14,3 +14,6 @@ pub use games_repository::*;
 
 mod image_repository;
 pub use image_repository::*;
+
+mod text_repository;
+pub use text_repository::*;

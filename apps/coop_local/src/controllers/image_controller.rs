@@ -78,7 +78,7 @@ impl ImageController {
         controller
     }
 
-    pub fn show_image(&self, file_model: FileModel) {
+    pub fn load_image(&self, file_model: FileModel) {
         if file_model.file_type() != FileType::Image {
             return;
         }
@@ -130,7 +130,7 @@ impl ImageController {
                     });
 
                     controller.images.borrow_mut().append(&mut images);
-                    controller.load_image(0);
+                    controller.show_image(0);
                 }
             });
         }
@@ -170,7 +170,7 @@ impl ImageController {
         Rc::new(items).into()
     }
 
-    fn load_image(&self, index: usize) {
+    fn show_image(&self, index: usize) {
         if let Some(file_model) = self.images.borrow().get(index).cloned() {
             if let Some(image) = self.image_cache.borrow().get(&file_model).cloned() {
                 upgrade_adapter(&self.view_handle, move |adapter| {
@@ -262,7 +262,7 @@ impl ImageController {
         }
 
         self.current_item.set(next);
-        self.load_image(next);
+        self.show_image(next);
     }
 
     fn previous(&self) {
@@ -273,7 +273,7 @@ impl ImageController {
         }
 
         self.current_item.set(previous as usize);
-        self.load_image(previous as usize);
+        self.show_image(previous as usize);
     }
 }
 

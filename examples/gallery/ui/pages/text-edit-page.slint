@@ -1,0 +1,70 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Page } from "page.slint";
+import { RowTitle, ColumnTitle } from "titles.slint";
+import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
+import { Switch, TextEdit } from "../_imports/coop_widgets/widgets.slint";
+import { Space, Icons, ColorVariant, Palette } from "../_imports/coop_widgets/styling.slint";
+import { Popup, SmallLabel } from "../_imports/coop_widgets/components.slint";
+import { Spacer, HorizontalSeparator, VerticalSpacerMedium } from "../_imports/coop_widgets/layouts.slint";
+
+import { AppManager } from "../app-manager.slint";
+
+export component TextEditPage inherits VerticalLayout {
+    i-header-bar := HeaderBar {
+        title: "Text Edit";
+
+        VerticalLayout {
+            alignment: center;
+
+            Switch {
+                on-icon: Icons.light-mode;
+                off-icon: Icons.mode-night;
+                checked: !Palette.dark-color-scheme;
+
+                toggled(checked) => {
+                    Palette.set-color-variant(checked ? ColorVariant.Light : ColorVariant.Dark);
+                }
+            }
+        }
+    }
+
+    GridLayout {
+        padding: Space.large;
+        spacing: Space.medium;
+
+        Row {
+            ColumnTitle {
+                text: "Word-Wrap";
+            }
+
+            ColumnTitle {
+                text: "No-Wrap";
+            }
+        }
+
+        Row {
+            HorizontalSeparator {
+                colspan: 2;
+            }
+        }
+
+        Row {
+            i-text-edit := TextEdit {
+                text: @tr("This is our TextEdit widget, which allows for editing text that spans over multiple paragraphs.\nFor example this line starts in a new paragraph.\n\nWhen the amount of lines - due to wrapping and number of paragraphs - exceeds the available vertical height, a vertical scrollbar is shown that allows scrolling.\nYou may want to enter a bit of text here then in order to make them visible.");
+                wrap: word-wrap;
+            }
+
+            TextEdit {
+                text <=> i-text-edit.text;
+                wrap: no-wrap;
+            }
+        }
+
+        // Fills the remaining available space
+        Row {
+            Spacer {}
+        }
+    }
+}

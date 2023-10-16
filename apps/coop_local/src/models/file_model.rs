@@ -59,9 +59,8 @@ impl FileModel {
             match extension.to_ascii_lowercase().as_str() {
                 "png" | "jpg" | "jpeg" | "gif" | "ico" => return FileType::Image,
                 "txt" | "slint" | "cpp" | "h" | "hpp" | "md" | "lua" | "java" | "dart" | "toml"
-                | "js" | "rs" | "ts" | "json" | "yml" | "xml" | "xaml" | "cs" | "c" | "sh" => {
-                    return FileType::Text
-                }
+                | "lock" | "ini" | "js" | "rs" | "ts" | "json" | "yml" | "xml" | "xaml" | "cs"
+                | "c" | "sh" => return FileType::Text,
                 "mp3" | "acc" | "wav" | "flac" => return FileType::Audio,
                 "mp4" | "mov" | "wmv" | "avi" | "avchd" | "flv" | "mpg" | "mpeg" => {
                     return FileType::Video

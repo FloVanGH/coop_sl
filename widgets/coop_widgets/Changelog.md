@@ -51,4 +51,5 @@ SPDX-License-Identifier: MIT
 * StandardTableView
 * Switch
 * TabView
+* TextEdit
 * VirtualKeyboard

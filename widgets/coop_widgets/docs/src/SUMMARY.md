@@ -47,5 +47,6 @@ SPDX-License-Identifier: MIT
     - [StandardTableView](widgets/standard-table-view.md)
     - [Switch](widgets/switch.md)
     - [TabView](widgets/tab-view.md)
+    - [TextEdit](widgets/text-edit.md)
     - [VirtualKeyboard](widgets/virtual-keyboard.md)
 

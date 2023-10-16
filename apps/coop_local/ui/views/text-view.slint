@@ -1,30 +1,37 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ScrollView, Space, Palette, Typography, ListViewItem, HeaderBar, RoundButton, Icons, ContextMenu } from "../_imports/coop_widgets.slint";
+
+import { ListViewItem, HeaderBar } from "../_imports/coop_widgets.slint";
+import { Space, Palette, Typography, Icons } from "../_imports/coop_widgets/styling.slint";
+import { HeaderBar, ControlBar } from "../_imports/coop_widgets/building-blocks.slint";
+import { ScrollView, RoundButton, ContextMenu, TextEdit, LoadingIndicator } from "../_imports/coop_widgets/widgets.slint";
 
 export global TextAdapter {
     callback back();
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
+    callback previous();
+    callback next();
+    callback update-text(/* text */ string);
 
     in property <string> title;
     in-out property <string> text;
+    in property <bool> loading;
+    in property <bool> single-text;
+    in property <bool> has-changes;
+    in property <bool> read-only: true;
 }
 
 export component TextView {
-    private property <length> visible-width <=> i-scroll-view.visible-width;
-    private property <length> visible-height <=> i-scroll-view.visible-height;
-    private property <length> viewport-x <=> i-scroll-view.viewport-x;
-    private property <length> viewport-y <=> i-scroll-view.viewport-y;
-    in-out property <length> viewport-width <=> i-scroll-view.viewport-width;
-    in-out property <length> viewport-height <=> i-scroll-view.viewport-height;
+    private property <float> display-loading;
+    private property <bool> text-loaded: TextAdapter.text != "";
 
     VerticalLayout {
         HeaderBar {
             action-icon: Icons.arrow-back;
             action-enabled: true;
-            title: TextAdapter.title;
+            title: TextAdapter.has-changes ? "\{TextAdapter.title}*" : TextAdapter.title;
 
             i-menu-button := RoundButton {
                 icon: Icons.more-vert;
@@ -56,37 +63,48 @@ export component TextView {
             }
         }
 
-        i-scroll-view := ScrollView {
-            VerticalLayout {
-                padding: Space.large;
+        i-text-Edit := TextEdit {
+            x: 1px;
+            width: root.width - 1px;
+            text <=> TextAdapter.text;
+            read-only: TextAdapter.read-only;
 
-                i-text-input := TextInput {
-                    enabled: true;
-                    color: Palette.foreground;
-                    font-size: Typography.large-label.font-size;
-                    font-weight: Typography.large-label.font-weight;
-                    selection-background-color: Palette.selection;
-                    selection-foreground-color: self.color;
-                    single-line: false;
-                    wrap: word-wrap;
-                    read-only: true;
-                    text <=> TextAdapter.text;
+            edited(text) => {
+                TextAdapter.update-text(text);
+            }
+        }
 
-                    cursor-position-changed(cpos) => {
-                        if (cpos.x + root.viewport-x < 12px) {
-                            root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  - cpos.x + 12px ));
-                        } else if (cpos.x + root.viewport-x > i-scroll-view.visible-width - 12px) {
-                            root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  i-scroll-view.visible-width - cpos.x - 12px ));
-                        }
-                        if (cpos.y + root.viewport-y < 12px) {
-                            root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  - cpos.y + 12px ));
-                        } else if (cpos.y + root.viewport-y > i-scroll-view.visible-height - 12px - 20px) {
-                            // FIXME: font-height hardcoded to 20px
-                            root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  i-scroll-view.visible-height - cpos.y - 12px - 20px));
-                        }
-                    }
+        if (!TextAdapter.single-text) : ControlBar {
+            RoundButton {
+                icon: Icons.arrow-back;
+
+                clicked => {
+                    TextAdapter.previous();
+                }
+            }
+
+            RoundButton {
+                icon: Icons.arrow-forward;
+
+                clicked => {
+                    TextAdapter.next();
                 }
             }
         }
     }
+
+    if (root.display-loading >= 1.0) : LoadingIndicator {
+        width: 100%;
+        height: 100%;
+    }
+
+    states [
+        loading when TextAdapter.loading : {
+            display-loading: 1.0;
+
+            in {
+                animate display-loading { duration: 500ms; }
+            }
+        }
+    ]
 }
