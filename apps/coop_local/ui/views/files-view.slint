@@ -15,7 +15,7 @@ export global FilesAdapter {
     callback get-item-context-menu(/* row */ int) -> [ListViewItem];
     callback item-context-menu-action(/* row */ int, /* spec */ string);
     callback rename-item(/* row */ int, /* text */ string);
-    callback update-selection(/* row */ int, /* control */ bool);
+    callback update-selection(/* row */ int, /* control */ bool, /* shift*/ bool);
     callback select-next() -> int;
     callback select-previous() -> int;
     callback select-all();
@@ -115,7 +115,7 @@ export component FilesView {
 
                 if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && (event.modifiers.control
                         || event.modifiers.shift)) {
-                    FilesAdapter.update-selection(row, event.modifiers.control);
+                    FilesAdapter.update-selection(row, event.modifiers.control, event.modifiers.shift);
                     return;
                 }
 

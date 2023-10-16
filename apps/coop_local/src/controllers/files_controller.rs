@@ -42,6 +42,7 @@ pub struct FilesController {
     root_file: Rc<RefCell<FileModel>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
     selected_items: Rc<RefCell<BTreeSet<usize>>>,
+    last_non_shift_selection: Rc<Cell<usize>>,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     add_bookmark_callback: FileCallback,
 }
@@ -71,6 +72,7 @@ impl FilesController {
             games_repository,
             root_modified,
             selected_items: Rc::new(RefCell::new(BTreeSet::default())),
+            last_non_shift_selection: Rc::new(Cell::new(0)),
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             add_bookmark_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
         };
@@ -110,8 +112,8 @@ impl FilesController {
 
                 adapter.on_update_selection({
                     let controller = controller.clone();
-                    move |row, control| {
-                        controller.update_selection(row as usize, control);
+                    move |row, control, shift| {
+                        controller.update_selection(row as usize, control, shift);
                     }
                 });
 
@@ -221,6 +223,7 @@ impl FilesController {
     }
 
     pub fn show_files(&self, root_file: FileModel) {
+        self.last_non_shift_selection.set(0);
         self.clear_selection();
         self.root_modified.set(root_file.modified());
         *self.root_file.borrow_mut() = root_file;
@@ -436,15 +439,39 @@ impl FilesController {
         }
     }
 
-    fn update_selection(&self, row: usize, control: bool) {
-        if !control {
+    fn update_selection(&self, row: usize, control: bool, shift: bool) {
+        if !control && !shift {
             return;
         }
 
-        if self.selected_items.borrow().contains(&row) {
-            self.set_item_selected(row, false);
-        } else {
+        if control {
+            if self.selected_items.borrow().contains(&row) {
+                self.last_non_shift_selection.set(0);
+                self.set_item_selected(row, false);
+            } else {
+                self.last_non_shift_selection.set(row);
+                self.set_item_selected(row, true);
+            }
+
+            return;
+        }
+
+        let last_non_shift_selection = self.last_non_shift_selection.get();
+        self.clear_selection();
+
+        if last_non_shift_selection.eq(&row) {
             self.set_item_selected(row, true);
+            return;
+        }
+
+        if last_non_shift_selection < row {
+            for r in last_non_shift_selection..(row + 1) {
+                self.set_item_selected(r, true);
+            }
+        } else {
+            for r in row..(last_non_shift_selection + 1) {
+                self.set_item_selected(r, true);
+            }
         }
     }
 

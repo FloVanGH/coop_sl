@@ -38,7 +38,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
     bookmarks_controller.select(initial_location.as_str());
     let initial_location = FileModel::new(initial_location);
 
-    let file_model_stack = Rc::new(RefCell::new(vec![initial_location.clone()]));
+    let file_model_stack = Rc::new(RefCell::<Vec<FileModel>>::new(vec![]));
 
     let files_repository = FilesRepository::new();
 
@@ -46,7 +46,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
     let games_repository = GamesRepository::new();
 
     let files_controller = FilesController::new(
-        initial_location,
+        initial_location.clone(),
         view_handle.clone(),
         files_repository.clone(),
         #[cfg(feature = "games")]
@@ -201,7 +201,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
     };
 
     files_controller.on_open_internal(open_internal.clone());
-    bookmarks_controller.on_open_internal(open_internal);
+    bookmarks_controller.on_open_internal(open_internal.clone());
 
     let update_timer = Timer::default();
     update_timer.start(
@@ -231,6 +231,8 @@ pub fn main() -> Result<(), slint::PlatformError> {
             }
         },
     );
+
+    open_internal(initial_location);
 
     main_window.run()?;
 
