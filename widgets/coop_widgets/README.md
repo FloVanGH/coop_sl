@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 
 What the `coop` in `coop_widgets` stands for: cooperation.
 
-<a href="https://codeberg.org/flovansl/coop_sl">
+<a href="https://codeberg.org/flovansl/co_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
 </a>
 <a href=https://slint.dev">
@@ -36,7 +36,7 @@ slint = { version = "1.2.2" }
 
 [build-dependencies]
 slint-build = { version = "1.2.2" }
-coop_widgets = { git = "https://codeberg.org/flovansl/coop_sl" }
+coop_widgets = { git = "https://codeberg.org/flovansl/co_sl" }
 ```
 
 2. Call `coop_widgets::generate_import()` from your `build.rs` file. It will generate an import file `../$MY_PROJECT_PATH/ui/_imports/coop_widgets.slint`:

@@ -9,7 +9,7 @@ authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "Internal shared references"
 publish = false
-repository = "https://codeberg.org/flovansl/coop_sl"
+repository = "https://codeberg.org/flovansl/co_sl"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

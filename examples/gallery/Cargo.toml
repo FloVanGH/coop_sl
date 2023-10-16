@@ -9,7 +9,7 @@ build = "build.rs"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
 description = "Gallery for coop_widgets and book_flip."
 publish = false
-repository = "https://codeberg.org/flovansl/coop_sl"
+repository = "https://codeberg.org/flovansl/co_sl"
 
 [[bin]]
 path = "src/main.rs"

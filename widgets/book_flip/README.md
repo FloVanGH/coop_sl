@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 e-book widget for Slint.
 
-<a href="https://codeberg.org/flovansl/coop_sl">
+<a href="https://codeberg.org/flovansl/co_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
 </a>
 <a href=https://slint.dev">

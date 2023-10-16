@@ -8,7 +8,7 @@ edition = "2021"
 authors = ["Florian Blasius <co_sl@tutanota.com>"]
 license = "MIT"
 description = "e-book widget for Slint."
-repository = "https://codeberg.org/flovansl/coop_sl"
+repository = "https://codeberg.org/flovansl/co_sl"
 readme = "README.md"
 build = "build.rs"
 
