@@ -14,8 +14,8 @@ export component StandardListView  {
     private property <length> into-view-item-y: i-list-view.viewport-y + into-view-item * item-height;
 
     callback current-item-changed(/* current-item */ int);
-    callback item-pointer-event(/* item-row */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
-    callback item-accepted(/* row */ int, /* text */ string);
+    callback item-pointer-event(/* index */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
+    callback item-accepted(/* index */ int, /* text */ string);
     callback key-pressed(/* event */ KeyEvent) -> EventResult;
 
     in property <[ListViewItem]> model;
@@ -99,18 +99,19 @@ export component StandardListView  {
         border-radius: i-background.border-radius;
     }
 
-    public function set-current-item(row: int) {
-        if (row < 0 || row >= model.length || root.selection-mode == SelectionMode.None || root.selection-mode == SelectionMode.Custom) {
+    public function set-current-item(index: int) {
+        if (index < 0 || index >= model.length || root.selection-mode == SelectionMode.None
+            || root.selection-mode == SelectionMode.Custom) {
             return;
         }
 
-        current-item = row;
+        current-item = index;
         root.current-item-changed(current-item);
         bring-into-view(current-item);
     }
 
-    public function bring-into-view(row: int) {
-        into-view-item = row;
+    public function bring-into-view(index: int) {
+        into-view-item = index;
 
         if (into-view-item-y < 0) {
             i-list-view.viewport-y += 0 - into-view-item-y;

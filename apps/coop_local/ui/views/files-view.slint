@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { StandardListView, ContextMenu,  RoundButton, LoadingIndicator } from "../_imports/coop_widgets/widgets.slint";
+import { StandardTableView, ContextMenu,  RoundButton, LoadingIndicator } from "../_imports/coop_widgets/widgets.slint";
 import { Size, Space, Icons } from "../_imports/coop_widgets/styling.slint";
-import { ListViewItem } from "../_imports/coop_widgets/structs.slint";
+import { TableRowItem, ListViewItem } from "../_imports/coop_widgets/structs.slint";
 import { SelectionMode } from "../_imports/coop_widgets/enums.slint";
 import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
 
@@ -22,11 +22,13 @@ export global FilesAdapter {
     callback copy();
     callback paste();
     callback selected-items() -> [int];
+    callback sort-ascending(/* column-index */ int) -> bool;
+    callback sort-descending(/* column-index */ int) -> bool;
 
     in property <string> title: "Root";
-    in property <[ListViewItem]> files;
+    in property <[TableRowItem]> files;
     in property <bool> back-enabled;
-    in property <int> edit-file: -1;
+    in property <{ row: int, column: int }> edit-file: { row: -1, column: -1 };
     in property <bool> loading;
 }
 
@@ -38,7 +40,7 @@ export component FilesView {
 
     in property <length> window-height;
 
-    forward-focus: i-list-view;
+    forward-focus: i-table-view;
 
     VerticalLayout {
         HeaderBar {
@@ -51,14 +53,14 @@ export component FilesView {
                 horizontal-stretch: 0;
 
                 clicked => {
-                    i-list-view.focus();
+                    i-table-view.focus();
                     i-context-menu.model = FilesAdapter.get-context-menu();
 
                     if (i-context-menu.model.length == 0) {
                         return;
                     }
 
-                    if (i-list-view.has-focus) {
+                    if (i-table-view.has-focus) {
                         i-context-menu.show-and-focus();
                     } else {
                         i-context-menu.show();
@@ -80,22 +82,30 @@ export component FilesView {
                 }
 
                 closed => {
-                   i-list-view.focus();
+                   i-table-view.focus();
                 }
             }
         }
 
-        i-list-view := StandardListView {
-            model: FilesAdapter.files;
+        i-table-view := StandardTableView {
+            x: 1px;
+            width: root.width - 1px;
+            rows: FilesAdapter.files;
             selection-mode: SelectionMode.Custom;
-            edit-item: FilesAdapter.edit-file;
+            edit-item <=> FilesAdapter.edit-file;
+            columns: [
+                { horizontal-stretch: 0, min-width: 32px },
+                { title: @tr("Name"), horizontal-stretch: 1 },
+                { title: @tr("Size"), horizontal-stretch: 0, min-width: 64px },
+                { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 120px },
+            ];
 
             key-pressed(event) => {
                 root.key-pressed(event)
             }
 
-            item-pointer-event(row, event, position) => {
-                i-list-view.focus();
+            row-pointer-event(row, event, position) => {
+                i-table-view.focus();
 
                 if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && !event.modifiers.control
                         && !event.modifiers.shift) {
@@ -114,21 +124,29 @@ export component FilesView {
                 }
             }
 
-            item-accepted(row, text) => {
+            item-accepted(row, column, text) => {
                 FilesAdapter.rename-item(row, text);
+            }
+
+            sort-ascending(column-index) => {
+                FilesAdapter.sort-ascending(column-index);
+            }
+
+            sort-descending(column-index) => {
+                FilesAdapter.sort-descending(column-index);
             }
 
             i-item-context-menu := ContextMenu {
                 item-clicked(row) => {
                     if (self.has-focus) {
-                        i-list-view.focus();
+                        i-table-view.focus();
                     }
 
                     FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
                 }
 
                 closed => {
-                    i-list-view.focus();
+                    i-table-view.focus();
                 }
             }
         }
@@ -154,21 +172,21 @@ export component FilesView {
             root.selected-items = FilesAdapter.selected-items();
 
             if (root.selected-items.length > 0) {
-                root.open-item-context-menu(root.last-selected-item, { x: Space.medium, y: i-list-view.item-y(root.last-selected-item) })
+                root.open-item-context-menu(root.last-selected-item, { x: Space.medium, y: i-table-view.row-y(root.last-selected-item) })
             }
 
             return accept;
         }
 
         if (event.text == Key.UpArrow) {
-            i-list-view.bring-into-view(FilesAdapter.select-previous());
-            i-list-view.focus();
+            i-table-view.bring-row-into-view(FilesAdapter.select-previous());
+            i-table-view.focus();
             return accept;
         }
 
         if (event.text == Key.DownArrow) {
-            i-list-view.bring-into-view(FilesAdapter.select-next());
-            i-list-view.focus();
+            i-table-view.bring-row-into-view(FilesAdapter.select-next());
+            i-table-view.focus();
             return accept;
         }
         if (event.text == "a" && event.modifiers.control) {
@@ -201,7 +219,7 @@ export component FilesView {
         i-item-context-menu.y = Size.large + position.y + i-item-context-menu.model.length * Size.small > root.window-height ?
             position.y + root.window-height - (Size.large + position.y + i-item-context-menu.model.length * Size.small) : position.y;
 
-        if (i-list-view.has-focus || i-list-view.has-focus) {
+        if (i-table-view.has-focus || i-table-view.has-focus) {
             i-item-context-menu.show-and-focus();
         } else {
             i-item-context-menu.show();

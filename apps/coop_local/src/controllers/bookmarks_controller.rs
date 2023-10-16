@@ -9,7 +9,6 @@ use std::{cell::Cell, io};
 use crate::models::FileModel;
 use crate::{
     models::{BookmarkModel, BookmarkType},
-    proxy_model::ProxyModel,
     repositories::BookmarksRepository,
     services::SettingsService,
     ui::*,
@@ -24,8 +23,8 @@ type FileCallback = Rc<RefCell<Box<dyn FnMut(FileModel) + 'static>>>;
 
 #[derive(Clone)]
 pub struct BookmarksController {
-    bookmarks: Rc<ProxyModel<BookmarkModel>>,
-    locations: Rc<ProxyModel<BookmarkModel>>,
+    bookmarks: Rc<VecModel<BookmarkModel>>,
+    locations: Rc<VecModel<BookmarkModel>>,
     repository: BookmarksRepository,
     selected_bookmark: Rc<Cell<Option<usize>>>,
     selected_location: Rc<Cell<Option<usize>>>,
@@ -35,8 +34,8 @@ pub struct BookmarksController {
 
 impl BookmarksController {
     pub fn new(view_handle: Weak<MainWindow>) -> io::Result<Self> {
-        let bookmarks = Rc::new(ProxyModel::default());
-        let locations = Rc::new(ProxyModel::default());
+        let bookmarks = Rc::new(VecModel::default());
+        let locations = Rc::new(VecModel::default());
 
         let view_handle_copy = view_handle.clone();
         let view_handle_copy_locations = view_handle.clone();
@@ -193,7 +192,7 @@ impl BookmarksController {
     }
 
     pub fn add_bookmark(&self, bookmark: BookmarkModel) {
-        if self.bookmarks.contains(&bookmark) {
+        if self.bookmarks.iter().any(|b| b.eq(&bookmark)) {
             return;
         }
 
@@ -202,7 +201,7 @@ impl BookmarksController {
 
         let _ = slint::spawn_local(async move {
             if repository.add_bookmark(&bookmark).is_ok() {
-                bookmarks.push_to_source(bookmark);
+                bookmarks.push(bookmark);
             }
         });
     }
@@ -229,7 +228,7 @@ impl BookmarksController {
                 if let Some(bookmark) = bookmarks.row_data(r) {
                     if !Path::new(bookmark.path()).exists() && repository.remove_bookmark(r).is_ok()
                     {
-                        bookmarks.remove_from_source(bookmark);
+                        bookmarks.remove(r);
                     }
                 }
             }
@@ -237,7 +236,7 @@ impl BookmarksController {
             for r in (0..locations.row_count()).rev() {
                 if let Some(location) = locations.row_data(r) {
                     if !Path::new(location.path()).exists() {
-                        locations.remove_from_source(location);
+                        locations.remove(r);
                     }
                 }
             }
@@ -254,9 +253,7 @@ impl BookmarksController {
         }
 
         if self.repository.remove_bookmark(item_row).is_ok() {
-            if let Some(bookmark_model) = self.bookmarks.row_data(item_row) {
-                self.bookmarks.remove_from_source(bookmark_model);
-            }
+            self.bookmarks.remove(item_row);
         }
     }
 
@@ -277,8 +274,8 @@ impl BookmarksController {
         let bookmarks = self.bookmarks.clone();
         let locations = self.locations.clone();
 
-        bookmarks.set_vec_to_source(repository.bookmarks());
-        locations.set_vec_to_source(repository.locations());
+        bookmarks.set_vec(repository.bookmarks());
+        locations.set_vec(repository.locations());
     }
 
     fn on_open_dir(&self, parent: usize, item: usize) {

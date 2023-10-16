@@ -79,13 +79,19 @@ export component MainWindow inherits CoopWindow {
             }
         }
 
-        SideBar {
+        i-sidebar := SideBar {
             col: 0;
             parent-width: root.width;
             responsive: true;
 
             i-bookmarks-view := BookmarksView {
                 window-height: root.height;
+
+                item-clicked => {
+                    if (i-sidebar.expanded) {
+                        i-sidebar.expanded = false;
+                    }
+                }
             }
         }
     }

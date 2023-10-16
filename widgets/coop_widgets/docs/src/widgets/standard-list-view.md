@@ -19,15 +19,15 @@ Like ListView, but with a default delegate, and a `model` property which is a mo
 
 ### Functions
 
--   **`set-current-item(row: int)`**: Sets the current item by the specified index and brings it into view.
--   **`bring-into-view(row: int)`**: If the given item is outside of the current visible area the list view will be scrolled to ensure the item is visible.
+-   **`set-current-item(index: int)`**: Sets the current item by the specified index and brings it into view.
+-   **`bring-into-view(index: int)`**: If the given item is outside of the current visible area the list view will be scrolled to ensure the item is visible.
 
 ### Callbacks
 
 -   **`current-item-changed(/* current-item */ int)`**: Emitted when the current item has changed because the user modified it
--   **`item-pointer-event(/* row */ int, /* event */ PointerEvent, /* position */ Point)`**: Emitted on any mouse pointer event similar to `TouchArea`. Arguments are item index associated with the event, the `PointerEvent` itself and the mouse position within the listview.
--   **`item-accepted(/* row */ int, /* text */ string)`**: Emitted when the text of the item is edited and after the enter is pressed.
--   **`key-pressed(/* event */ KeyEvent)`**: Emitted when there is a key press event on the listview.
+-   **`item-pointer-event(/* index */ int, /* event */ PointerEvent, /* position */ Point)`**: Emitted on any mouse pointer event similar to `TouchArea`. Arguments are item index associated with the event, the `PointerEvent` itself and the mouse position within the listview.
+-   **`item-accepted(/* index */ int, /* text */ string)`**: Emitted when the text of the item is edited and after the enter is pressed.
+-   **`key-pressed(/* event */ KeyEvent)`**: Emitted when there is a key press event on the list view.
 
 ### Example
 

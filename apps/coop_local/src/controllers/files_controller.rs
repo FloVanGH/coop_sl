@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::models::{FileModel, FileType};
-use crate::proxy_model::ProxyModel;
 use crate::repositories::FilesRepository;
 
 #[cfg(feature = "games")]
 use crate::repositories::GamesRepository;
 
 use crate::ui::*;
+use chrono::{DateTime, Utc};
 use slint::*;
 use std::cell::{Cell, RefCell};
 use std::collections::BTreeSet;
@@ -33,7 +33,8 @@ type FileCallback = Rc<RefCell<Box<dyn FnMut(&FileModel) + 'static>>>;
 
 #[derive(Clone)]
 pub struct FilesController {
-    files: Rc<ProxyModel<FileModel>>,
+    files_model: Rc<VecModel<FileModel>>,
+    files_proxy_model: Rc<RefCell<ModelRc<FileModel>>>,
     view_handle: Weak<MainWindow>,
     repository: FilesRepository,
     #[cfg(feature = "games")]
@@ -52,45 +53,18 @@ impl FilesController {
         files_repository: FilesRepository,
         #[cfg(feature = "games")] games_repository: GamesRepository,
     ) -> Self {
-        let files = Rc::new(
-            ProxyModel::default()
-                .as_sort_by(|l: &FileModel, r: &FileModel| {
-                    if l.file_type() != r.file_type()
-                        && (l.file_type() == FileType::Dir || r.file_type() == FileType::Dir)
-                    {
-                        return l.file_type().cmp(&r.file_type());
-                    }
-                    l.name()
-                        .unwrap_or_default()
-                        .to_lowercase()
-                        .cmp(&r.name().unwrap_or_default().to_lowercase())
-                })
-                .as_filter_by(|f| !f.hidden()),
-        );
-
-        // connect files of controller and view
-        let view_handle_copy = view_handle.clone();
-        upgrade_adapter(&view_handle, {
-            let files = files.clone();
-            move |adapter| {
-                adapter.set_files(
-                    Rc::new(files.map(move |f: FileModel| ListViewItem {
-                        leading_icon: item_type_to_icon(&view_handle_copy, f.file_type()),
-                        text: f.name().unwrap_or_default().into(),
-                        highlighted: f.is_dir(),
-                        selected: f.selected(),
-                        ..Default::default()
-                    }))
-                    .into(),
-                );
-            }
-        });
+        let files_model = Rc::new(VecModel::default());
+        let files_proxy_model = Rc::new(RefCell::new(files_model_ext::sort_by_type(
+            true,
+            files_model_ext::filter_hidden_files(files_model.clone().into()),
+        )));
 
         let root_modified = Rc::new(Cell::new(root_file.modified()));
 
         let controller = Self {
             root_file: Rc::new(RefCell::new(root_file)),
-            files,
+            files_model,
+            files_proxy_model,
             view_handle,
             repository: files_repository,
             #[cfg(feature = "games")]
@@ -100,6 +74,7 @@ impl FilesController {
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             add_bookmark_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
         };
+        controller.update_view_files_model();
 
         upgrade_adapter(&controller.view_handle, {
             let controller = controller.clone();
@@ -184,6 +159,16 @@ impl FilesController {
                         )
                     }
                 });
+
+                adapter.on_sort_ascending({
+                    let controller = controller.clone();
+                    move |column_index| controller.sort(true, column_index as usize)
+                });
+
+                adapter.on_sort_descending({
+                    let controller = controller.clone();
+                    move |column_index| controller.sort(false, column_index as usize)
+                });
             }
         });
 
@@ -202,7 +187,7 @@ impl FilesController {
             return;
         }
 
-        let files_model = self.files.clone();
+        let files_model = self.files_model.clone();
         let repository: FilesRepository = self.repository.clone();
         let root_file = self.root_file.borrow().clone();
         self.root_modified.set(root_file.modified());
@@ -210,12 +195,12 @@ impl FilesController {
         let _ = slint::spawn_local(async move {
             if let Ok(mut repo_files) = repository.files(&root_file) {
                 if repo_files.is_empty() {
-                    files_model.clear();
+                    files_model.set_vec(vec![]);
                     return;
                 }
 
-                for row in (0..files_model.row_count_from_source()).rev() {
-                    if let Some(file_model) = files_model.row_data_from_source(row) {
+                for row in (0..files_model.row_count()).rev() {
+                    if let Some(file_model) = files_model.row_data(row) {
                         if repo_files.contains(&file_model) {
                             repo_files
                                 .remove(repo_files.iter().position(|f| f.eq(&file_model)).unwrap());
@@ -223,13 +208,13 @@ impl FilesController {
                         }
 
                         // file is no longer in the real directory but still in the ui (remove it)
-                        files_model.remove_from_source(file_model);
+                        files_model.remove(row);
                     }
                 }
 
                 // add new files to proxy
                 for file in repo_files {
-                    files_model.push_to_source(file);
+                    files_model.push(file);
                 }
             }
         });
@@ -256,11 +241,11 @@ impl FilesController {
     }
 
     pub fn on_open_internal(&self, mut func: impl FnMut(FileModel) + 'static) {
-        let files = self.files.clone();
+        let files_proxy_model = self.files_proxy_model.clone();
 
         upgrade_adapter(&self.view_handle, move |adapter| {
             adapter.on_open_internal(move |row| {
-                if let Some(file_model) = files.row_data(row as usize) {
+                if let Some(file_model) = files_proxy_model.borrow().row_data(row as usize) {
                     func(file_model);
                 }
             });
@@ -341,7 +326,7 @@ impl FilesController {
     fn get_item_context_menu(&self, row: usize) -> ModelRc<ListViewItem> {
         let items = VecModel::default();
 
-        if let Some(file_model) = self.files.row_data(row) {
+        if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
             items.push(ListViewItem {
                 text: "Open".into(),
                 spec: context_menu::OPEN.into(),
@@ -385,30 +370,31 @@ impl FilesController {
     fn execute_item_context_menu_action(&self, row: usize, spec: &str) {
         match spec {
             context_menu::OPEN => {
-                if let Some(file_model) = self.files.row_data(row) {
+                if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
                     self.open(file_model);
                 }
             }
 
             context_menu::REMOVE => {
                 if !self.selected_items.borrow().contains(&row) {
-                    if let Some(file_model) = self.files.row_data(row) {
+                    if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
                         if self.repository.remove(&file_model) {
-                            self.files.remove_from_source(file_model);
+                            files_model_ext::remove(&self.files_model, &file_model);
                         }
                     }
                 } else {
                     let mut remove_files = vec![];
 
                     for r in self.selected_items.borrow().iter().rev() {
-                        if let Some(file_model) = self.files.row_data(*r) {
+                        if let Some(file_model) = self.files_proxy_model.borrow().row_data(*r) {
                             remove_files.push(file_model);
                         }
                     }
 
                     self.repository.remove_all(&remove_files);
-                    for file in remove_files {
-                        self.files.remove_from_source(file);
+
+                    for file_model in remove_files {
+                        files_model_ext::remove(&self.files_model, &file_model);
                     }
                 }
 
@@ -420,12 +406,13 @@ impl FilesController {
             }
             context_menu::RENAME => {
                 upgrade_adapter(&self.view_handle, move |adapter| {
-                    adapter.set_edit_file(row as i32);
+                    // editable is only column 1 (name)
+                    adapter.set_edit_file((1, row as i32));
                 });
             }
             context_menu::ADD_BOOKMARK => {
                 if let Ok(mut callback) = self.add_bookmark_callback.try_borrow_mut() {
-                    if let Some(file_model) = self.files.row_data(row) {
+                    if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
                         callback(&file_model);
                     }
                 }
@@ -435,14 +422,16 @@ impl FilesController {
     }
 
     fn rename_item(&self, row: usize, new_name: &str) {
-        if let Some(file_model) = self.files.row_data(row) {
+        if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
             if let Ok(renamed_file) = self.repository.rename(file_model, new_name.into()) {
-                self.files.set_row_data(row, renamed_file);
+                self.files_proxy_model
+                    .borrow()
+                    .set_row_data(row, renamed_file);
                 self.root_modified.set(self.root_file.borrow().modified());
             }
 
             upgrade_adapter(&self.view_handle, |adapter| {
-                adapter.set_edit_file(-1);
+                adapter.set_edit_file((-1, -1));
             });
         }
     }
@@ -480,7 +469,10 @@ impl FilesController {
         let next = if let Some(last) = self.selected_items.borrow().last() {
             i32::max(
                 0,
-                i32::min(self.files.row_count() as i32 - 1, *last as i32 + 1),
+                i32::min(
+                    self.files_proxy_model.borrow().row_count() as i32 - 1,
+                    *last as i32 + 1,
+                ),
             ) as usize
         } else {
             0
@@ -497,13 +489,13 @@ impl FilesController {
     }
 
     fn select_all(&self) {
-        for r in 0..self.files.row_count() {
+        for r in 0..self.files_proxy_model.borrow().row_count() {
             self.set_item_selected(r, true);
         }
     }
 
     fn set_item_selected(&self, row: usize, selected: bool) {
-        if let Some(mut file_model) = self.files.row_data(row) {
+        if let Some(mut file_model) = self.files_proxy_model.borrow().row_data(row) {
             if selected {
                 self.selected_items.borrow_mut().insert(row);
             } else {
@@ -512,15 +504,19 @@ impl FilesController {
 
             file_model.set_selected(selected);
 
-            self.files.set_row_data(row, file_model);
+            self.files_proxy_model
+                .borrow()
+                .set_row_data(row, file_model);
         }
     }
 
     fn clear_selection(&self) {
         for row in self.selected_items.borrow().iter() {
-            if let Some(mut file_model) = self.files.row_data(*row) {
+            if let Some(mut file_model) = self.files_proxy_model.borrow().row_data(*row) {
                 file_model.set_selected(false);
-                self.files.set_row_data(*row, file_model);
+                self.files_proxy_model
+                    .borrow()
+                    .set_row_data(*row, file_model);
             }
         }
 
@@ -545,13 +541,16 @@ impl FilesController {
                 .repository
                 .create_new_folder(&self.root_file.borrow(), name.as_str())
             {
-                self.files.push_to_source(new_folder.clone());
+                self.files_model.push(new_folder.clone());
                 self.root_modified.set(self.root_file.borrow().modified());
 
                 // FIXME: faster way to get the new added row
-                if let Some(row) = self.files.row_of(&new_folder) {
+                if let Some(row) =
+                    files_model_ext::row_of(&self.files_proxy_model.borrow(), &new_folder)
+                {
                     upgrade_adapter(&self.view_handle, move |adapter| {
-                        adapter.set_edit_file(row as i32);
+                        // editable is only column 1 (name)
+                        adapter.set_edit_file((1, row as i32));
                     });
                 }
             }
@@ -566,7 +565,7 @@ impl FilesController {
             .repository
             .create_empty_text_file(&self.root_file.borrow(), "coop_game.toml")
         {
-            self.files.push_to_source(new_file.clone());
+            self.files_model.push(new_file.clone());
             self.root_modified.set(self.root_file.borrow().modified());
         }
     }
@@ -574,7 +573,7 @@ impl FilesController {
     fn copy(&self, row: Option<usize>) {
         if let Some(row) = row {
             if !self.selected_items.borrow().contains(&row) {
-                if let Some(file_model) = self.files.row_data(row) {
+                if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
                     self.repository.copy(&[file_model]);
                     return;
                 }
@@ -584,7 +583,7 @@ impl FilesController {
         let mut copy_files = vec![];
 
         for r in self.selected_items.borrow().iter().rev() {
-            if let Some(file_model) = self.files.row_data(*r) {
+            if let Some(file_model) = self.files_proxy_model.borrow().row_data(*r) {
                 copy_files.push(file_model);
             }
         }
@@ -599,7 +598,7 @@ impl FilesController {
 
         if let Ok(new_files) = self.repository.paste(&self.root_file.borrow()) {
             for new_file in new_files {
-                self.files.push_to_source(new_file);
+                self.files_model.push(new_file);
             }
 
             self.root_modified.set(self.root_file.borrow().modified());
@@ -607,7 +606,7 @@ impl FilesController {
     }
 
     fn load_files(&self) {
-        let files_model = self.files.clone();
+        let files_model = self.files_model.clone();
         let repository: FilesRepository = self.repository.clone();
         let root_file = self.root_file.borrow().clone();
         let view_handle = self.view_handle.clone();
@@ -618,7 +617,7 @@ impl FilesController {
 
         let _ = slint::spawn_local(async move {
             if let Ok(repo_files) = repository.files(&root_file) {
-                files_model.set_vec_to_source(repo_files);
+                files_model.set_vec(repo_files);
             }
 
             upgrade_adapter(&view_handle, |adapter| {
@@ -631,6 +630,81 @@ impl FilesController {
         let title = self.root_file.borrow().name().unwrap_or_default().into();
         upgrade_adapter(&self.view_handle, move |adapter| {
             adapter.set_title(title);
+        });
+    }
+
+    fn sort(&self, ascending: bool, column_index: usize) -> bool {
+        let sorted = match column_index {
+            1 => {
+                *self.files_proxy_model.borrow_mut() = files_model_ext::sort_by_name(
+                    ascending,
+                    files_model_ext::filter_hidden_files(self.files_model.clone().into()),
+                );
+                true
+            }
+            2 => {
+                *self.files_proxy_model.borrow_mut() = files_model_ext::sort_by_size(
+                    ascending,
+                    files_model_ext::filter_hidden_files(self.files_model.clone().into()),
+                );
+                true
+            }
+            _ => false,
+        };
+
+        if sorted {
+            self.update_view_files_model();
+        }
+
+        sorted
+    }
+
+    fn update_view_files_model(&self) {
+        let files_proxy_model = self.files_proxy_model.borrow().clone();
+        let view_handle = self.view_handle.clone();
+
+        upgrade_adapter(&self.view_handle, move |adapter| {
+            adapter.set_files(
+                Rc::new(files_proxy_model.map(move |f: FileModel| TableRowItem {
+                    model: VecModel::from_slice(&[
+                        ListViewItem {
+                            leading_icon: item_type_to_icon(&view_handle, f.file_type()),
+                            highlighted: f.is_dir(),
+                            ..Default::default()
+                        },
+                        ListViewItem {
+                            text: f.name().unwrap_or_default().into(),
+                            ..Default::default()
+                        },
+                        ListViewItem {
+                            text: {
+                                if !f.is_dir() {
+                                    if let Some(len) = f.len() {
+                                        std::format!("{} kb", (len as f64 * 0.001).round() as u64)
+                                            .into()
+                                    } else {
+                                        SharedString::from("--")
+                                    }
+                                } else {
+                                    SharedString::from("--")
+                                }
+                            },
+                            ..Default::default()
+                        },
+                        ListViewItem {
+                            text: if let Some(modified) = f.modified() {
+                                let date_time: DateTime<Utc> = modified.into();
+                                date_time.format("%Y-%m-%d %H:%M").to_string().into()
+                            } else {
+                                "--".into()
+                            },
+                            ..Default::default()
+                        },
+                    ]),
+                    selected: f.selected(),
+                }))
+                .into(),
+            )
         });
     }
 }
@@ -654,4 +728,85 @@ fn item_type_to_icon(view_handle: &Weak<MainWindow>, file_type: FileType) -> Ima
     }
 
     Image::default()
+}
+
+mod files_model_ext {
+    use super::*;
+
+    pub fn filter_hidden_files(model: ModelRc<FileModel>) -> ModelRc<FileModel> {
+        Rc::new(model.filter(|f| !f.hidden())).into()
+    }
+
+    pub fn sort_by_type(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
+        Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
+            if l.file_type() != r.file_type()
+                && (l.file_type() == FileType::Dir || r.file_type() == FileType::Dir)
+            {
+                if ascending {
+                    return l.file_type().cmp(&r.file_type());
+                } else {
+                    return r.file_type().cmp(&l.file_type());
+                }
+            }
+            l.name()
+                .unwrap_or_default()
+                .to_lowercase()
+                .cmp(&r.name().unwrap_or_default().to_lowercase())
+        }))
+        .into()
+    }
+
+    pub fn sort_by_name(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
+        Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
+            if ascending {
+                l.name()
+                    .unwrap_or_default()
+                    .to_lowercase()
+                    .cmp(&r.name().unwrap_or_default().to_lowercase())
+            } else {
+                r.name()
+                    .unwrap_or_default()
+                    .to_lowercase()
+                    .cmp(&l.name().unwrap_or_default().to_lowercase())
+            }
+        }))
+        .into()
+    }
+
+    pub fn sort_by_size(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
+        Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
+            if ascending {
+                l.len().cmp(&r.len())
+            } else {
+                r.len().cmp(&l.len())
+            }
+        }))
+        .into()
+    }
+
+    pub fn remove(model: &Rc<VecModel<FileModel>>, value: &FileModel) -> Option<FileModel> {
+        for i in 0..model.row_count() {
+            if let Some(source_value) = model.row_data(i) {
+                if !source_value.eq(value) {
+                    continue;
+                }
+            }
+
+            return Some(model.remove(i));
+        }
+
+        None
+    }
+
+    pub fn row_of(model: &ModelRc<FileModel>, data: &FileModel) -> Option<usize> {
+        // FIXME: find faster way to get row of an item
+        for row in 0..model.row_count() {
+            if let Some(row_data) = model.row_data(row) {
+                if row_data.eq(data) {
+                    return Some(row);
+                }
+            }
+        }
+        None
+    }
 }

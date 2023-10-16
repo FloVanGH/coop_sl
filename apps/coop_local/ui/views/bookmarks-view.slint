@@ -15,6 +15,8 @@ export global BookmarksAdapter {
 }
 
 export component BookmarksView {
+    callback item-clicked();
+
     private property <int> item-context-menu-item-row;
     private property <int> item-context-menu-parent-row;
     private property <{ parent: int, item: int }> selected-item;
@@ -57,6 +59,7 @@ export component BookmarksView {
 
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
                 BookmarksAdapter.open-dir(par-row, row);
+                root.item-clicked();
             }
 
             if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {

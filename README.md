@@ -10,7 +10,10 @@ This repository is the home of my personal [Slint](https://slint.dev/) projects.
 What the `Coop` stands for: cooperation.
 
 <a href="https://codeberg.org/flovansl/coop_sl">
-    <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="40">
+    <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
+</a>
+<a href=https://slint.dev">
+    <img alt="#MadeWithSlint" src="https://raw.githubusercontent.com/slint-ui/slint/master/logo//MadeWithSlint-logo-light.svg" height="60">
 </a>
 
 [![CI](https://ci.codeberg.org/api/badges/flovansl/co_sl/status.svg?branch=main)](https://ci.codeberg.org/flovansl/co_sl)

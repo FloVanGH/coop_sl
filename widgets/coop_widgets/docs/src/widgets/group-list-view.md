@@ -21,8 +21,8 @@ Like [StandardListView](standard-list-view.md) with parent header items.
 
 ### Callbacks
 
--   **`current-item-changed(/* row */ { parent: int, item: int })`**: Emitted when the current item has changed because the user modified it
--   **`item-pointer-event(int /* par-row */, int /* item-row */, PointerEvent /* event */, Point /* absolute mouse position */)`**: Emitted on any mouse pointer event similar to `TouchArea`. Arguments are item index associated with the event, the `PointerEvent` itself and the mouse position within the listview.
+-   **`current-item-changed(/* index */ { parent: int, item: int })`**: Emitted when the current item has changed because the user modified it
+-   **`item-pointer-event(int /* par-index */, int /* item-index */, PointerEvent /* event */, Point /* absolute mouse position */)`**: Emitted on any mouse pointer event similar to `TouchArea`. Arguments are item index associated with the event, the `PointerEvent` itself and the mouse position within the listview.
 -   **`key-pressed(/* event */ KeyEvent)`**: Emitted when there is a key press event on the listview.
 
 ### Example

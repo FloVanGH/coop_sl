@@ -54,6 +54,9 @@ export component SideBar {
         width: 160px;
         background: Palette.background-alt;
         clip: true;
+        drop-shadow-color: Palette.shadow;
+        drop-shadow-blur: 4px;
+        drop-shadow-offset-x: 1px;
 
         i-layout := VerticalLayout {
             padding-top: Space.medium;
@@ -87,7 +90,7 @@ export component SideBar {
         }
 
         Rectangle {
-            background: Palette.border;
+            background: Palette.shadow;
             width: 1px;
             height: 100%;
             x: parent.width - self.width;

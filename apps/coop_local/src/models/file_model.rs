@@ -123,6 +123,20 @@ impl FileModel {
         None
     }
 
+    pub fn len(&self) -> Option<u64> {
+        if let Ok(file) = self.as_readable_file() {
+            if let Ok(meta) = file.metadata() {
+                return Some(meta.len());
+            }
+        }
+
+        None
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len().map_or_else(|| false, |size| size > 0)
+    }
+
     pub fn set_selected(&mut self, selected: bool) {
         self.selected = selected;
     }

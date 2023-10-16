@@ -17,6 +17,7 @@ SPDX-License-Identifier: MIT
 * KeyModel
 * ListViewItem
 * TabItem
+* TableRowItem
 * TextStyle
 
 ### Styling

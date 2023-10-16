@@ -7,6 +7,13 @@ SPDX-License-Identifier: GPL-3.0-only
 
 A cross platform file browser build with [Slint](https://slint.dev/).
 
+<a href="https://codeberg.org/flovansl/coop_sl">
+    <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
+</a>
+<a href=https://slint.dev">
+    <img alt="#MadeWithSlint" src="https://raw.githubusercontent.com/slint-ui/slint/master/logo//MadeWithSlint-logo-light.svg" height="60">
+</a>
+
 [![GNU GPLv3](https://img.shields.io/badge/license-GPLv3-green.svg)](../../LICENSES/GPL-3.0-only.txt)
 
 ## About

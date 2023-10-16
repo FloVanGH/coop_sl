@@ -6,7 +6,6 @@ pub mod controllers;
 pub mod gamepad;
 
 pub mod models;
-pub mod proxy_model;
 pub mod repositories;
 pub mod services;
 pub mod ui;

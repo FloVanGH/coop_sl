@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::models::{FileModel, GameModel};
-use crate::proxy_model::ProxyModel;
 use crate::repositories::GamesRepository;
 use crate::ui::*;
 use chrono::{Local, LocalResult, TimeZone};
@@ -29,7 +28,7 @@ pub struct GamesController {
     repository: GamesRepository,
     root_file: Rc<RefCell<Option<FileModel>>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
-    games: Rc<ProxyModel<GameModel>>,
+    games: Rc<VecModel<GameModel>>,
     meta: Rc<VecModel<LauncherItem>>,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     show_files_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
@@ -43,11 +42,7 @@ impl GamesController {
             repository,
             root_file: Rc::new(RefCell::new(None)),
             root_modified: Rc::new(Cell::new(None)),
-            games: Rc::new(
-                ProxyModel::default().as_sort_by(|l: &GameModel, r: &GameModel| {
-                    r.meta().last_time_played.cmp(&l.meta().last_time_played)
-                }),
-            ),
+            games: Rc::new(VecModel::default()),
             meta: Rc::new(VecModel::default()),
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             show_files_callback: Rc::new(RefCell::new(Box::new(|| {}))),
@@ -60,22 +55,32 @@ impl GamesController {
             // connect show context menu
             move |adapter| {
                 adapter.set_games(
-                    Rc::new(controller.games.clone().map(|g: GameModel| {
-                        let image = if g.icon().width() == 0 || g.icon().height() == 0 {
-                            Image::default()
-                        } else {
-                            Image::from_rgba8(SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
-                                g.icon().data(),
-                                g.icon().width(),
-                                g.icon().height(),
-                            ))
-                        };
+                    Rc::new(
+                        controller
+                            .games
+                            .clone()
+                            .sort_by(|l: &GameModel, r: &GameModel| {
+                                r.meta().last_time_played.cmp(&l.meta().last_time_played)
+                            })
+                            .map(|g: GameModel| {
+                                let image = if g.icon().width() == 0 || g.icon().height() == 0 {
+                                    Image::default()
+                                } else {
+                                    Image::from_rgba8(
+                                        SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
+                                            g.icon().data(),
+                                            g.icon().width(),
+                                            g.icon().height(),
+                                        ),
+                                    )
+                                };
 
-                        LauncherItem {
-                            image,
-                            text: g.name().into(),
-                        }
-                    }))
+                                LauncherItem {
+                                    image,
+                                    text: g.name().into(),
+                                }
+                            }),
+                    )
                     .into(),
                 );
                 adapter.set_current_game_meta(controller.meta.clone().into());
@@ -157,7 +162,7 @@ impl GamesController {
         });
 
         if let Ok(games) = self.repository.games(file_model.path()) {
-            self.games.set_vec_to_source(games);
+            self.games.set_vec(games);
         }
 
         upgrade_adapter(&self.view_handle, move |adapter| {
@@ -186,12 +191,12 @@ impl GamesController {
             let _ = slint::spawn_local(async move {
                 if let Ok(mut repo_games) = repository.games(root_file.path()) {
                     if repo_games.is_empty() {
-                        games_model.clear();
+                        games_model.set_vec(vec![]);
                         return;
                     }
 
-                    for row in (0..games_model.row_count_from_source()).rev() {
-                        if let Some(game_model) = games_model.row_data_from_source(row) {
+                    for row in (0..games_model.row_count()).rev() {
+                        if let Some(game_model) = games_model.row_data(row) {
                             if repo_games.contains(&game_model) {
                                 repo_games.remove(
                                     repo_games.iter().position(|g| g.eq(&game_model)).unwrap(),
@@ -200,12 +205,12 @@ impl GamesController {
                             }
 
                             // game is no longer in the real directory but still in the ui (remove it)
-                            games_model.remove_from_source(game_model);
+                            games_model.remove(row);
                         }
                     }
 
                     for game in repo_games {
-                        games_model.push_to_source(game);
+                        games_model.push(game);
                     }
                 }
             });

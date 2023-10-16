@@ -19,6 +19,7 @@ SPDX-License-Identifier: MIT
     - [KeyModel](structs/key-model.md)
     - [GroupListViewItem](structs/group-list-view-item.md)
     - [TabItem](structs/tab-item.md)
+    - [TableRowItem](structs/table-row-item.md)
     - [TextStyle](structs/text-style.md)
 
 - [Components](components/components.md)

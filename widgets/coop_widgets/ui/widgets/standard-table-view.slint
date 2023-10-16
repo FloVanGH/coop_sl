@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 import { Duration, Icography, Radius, Palette, State, Space, Size, Icons } from "../styling.slint";
-import { LargeLabel } from "../components/label.slint";
+import { SelectionMode } from "../enums.slint";
 import { ListView } from "list-view.slint";
-import { ListViewItem } from "../structs.slint";
+import { LineEdit } from "line-edit.slint";
+import { ListViewItem, TableRowItem } from "../structs.slint";
 import { Spacer } from "../layouts/spacer.slint";
-import { FocusBorder } from "../components.slint";
+import { FocusBorder, LargeLabel } from "../components.slint";
 
 component TableViewColumn inherits Rectangle {
     callback clicked <=> i-touch-area.clicked;
@@ -85,6 +86,7 @@ component TableViewColumn inherits Rectangle {
 
 component TableViewCell inherits Rectangle {
     clip: true;
+    min-height: Size.small;
 
     HorizontalLayout {
         padding-left: Space.medium;
@@ -130,17 +132,23 @@ component TableViewRow inherits Rectangle {
 
 export component StandardTableView {
     private property <length> min-header-height: Size.small;
-    private property <length> item-height: i-list-view.viewport-height / rows.length;
-    private property <length> current-item-y: i-list-view.viewport-y + current-row * item-height;
+    private property <int> into-view-row;
+    private property <length> row-height: i-list-view.viewport-height / rows.length;
+    private property <length> into-view-row-y: i-list-view.viewport-y + into-view-row * row-height;
 
-    callback sort-ascending(/* column-index */ int);
-    callback sort-descending(/* column-index */ int);
+    callback sort-ascending(/* column-index */ int) -> bool;
+    callback sort-descending(/* column-index */ int) -> bool;
     callback row-pointer-event(/* row-index */ int,  /* event */ PointerEvent, /* absolute mouse position */ Point);
     callback current-row-changed(/* current-row */ int);
+    callback key-pressed(/* event */ KeyEvent) -> EventResult;
+    callback item-accepted(/* row-index */ int, /* column-index */ int, /* text */ string);
 
-    in property <[[ListViewItem]]> rows;
+    in property <[TableRowItem]> rows;
     in property <bool> zebra-pattern;
+    in property <SelectionMode> selection-mode: SelectionMode.Single;
+    in property <{ row: int, column: int}> edit-item: { row: -1, column: -1 };
     out property <int> current-sort-column: -1;
+    out property <bool> has-focus: i-focus-scope.has-focus;
     in-out property <[TableColumn]> columns;
     in-out property <int> current-row: -1;
 
@@ -148,10 +156,33 @@ export component StandardTableView {
     min-height: 100px;
     horizontal-stretch: 1;
     vertical-stretch: 1;
+    forward-focus: i-focus-scope;
+
+    i-focus-scope := FocusScope {
+        x: 0;
+        width: 0; // Do not react on clicks
+
+        key-pressed(event) => {
+            if (root.key-pressed(event) == accept) {
+                return accept;
+            }
+
+            if (root.selection-mode != SelectionMode.Custom) {
+                if (event.text == Key.UpArrow) {
+                    root.set-current-row(root.current-row - 1);
+                    return accept;
+                } else if (event.text == Key.DownArrow) {
+                    root.set-current-row(root.current-row + 1);
+                    return accept;
+                }
+            }
+
+            reject
+        }
+    }
 
     i-background := Rectangle {
         border-radius: Radius.medium;
-        clip: i-focus-scope.has-focus;
 
         VerticalLayout {
             spacing: Space.small;
@@ -193,17 +224,19 @@ export component StandardTableView {
             i-list-view := ListView {
                 vertical-stretch: 1;
 
-                for row[idx] in root.rows : TableViewRow {
-                    selected: idx == root.current-row;
-                    alternative-background: mod(idx, 2) != 0 && root.zebra-pattern;
+                for row[row-index] in root.rows : TableViewRow {
+                    alternative-background: mod(row-index, 2) != 0 && root.zebra-pattern;
+                    selected: (row-index == root.current-row && root.selection-mode == SelectionMode.Single)
+                        || (row.selected && root.selection-mode == SelectionMode.Custom);
 
-                    for cell[index] in row : TableViewCell {
-                        private property <bool> has_inner_focus;
+                    for cell[column-index] in row.model : TableViewCell {
+                        private property <bool> edit: row-index == root.edit-item.row && column-index == root.edit-item.column;
 
-                        horizontal-stretch: root.columns[index].horizontal-stretch;
-                        min-width: max(columns[index].min-width, columns[index].width);
+                        horizontal-stretch: root.columns[column-index].horizontal-stretch;
+                        min-width: max(columns[column-index].min-width, columns[column-index].width);
                         preferred-width: self.min-width;
-                        max-width: (index < columns.length && columns[index].width >= 1px) ? max(columns[index].min-width, columns[index].width) : 100000px;
+                        max-width: (column-index < columns.length && columns[column-index].width >= 1px) ?
+                            max(columns[column-index].min-width, columns[column-index].width) : 100000px;
 
                         if (cell.leading-icon.width > 0 && cell.leading-icon.height > 0) : Image {
                             source: cell.leading-icon;
@@ -211,12 +244,23 @@ export component StandardTableView {
                             colorize: cell.highlighted ? Palette.primary : Palette.foreground;
                         }
 
-                        if (cell.text != "") : LargeLabel {
+                        if (!edit && cell.text != "") : LargeLabel {
                             text: cell.text;
                             vertical-alignment: center;
                             horizontal-alignment: left;
                             horizontal-stretch: 1;
                             overflow: elide;
+                        }
+
+                        if (edit) : LineEdit {
+                            y: (parent.height - self.height) / 2;
+                            height: Size.extra-small;
+                            text: cell.text;
+                            horizontal-stretch: 1;
+
+                            accepted(text) => {
+                                root.item-accepted(row-index, column-index, text);
+                            }
                         }
 
                         if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
@@ -227,11 +271,11 @@ export component StandardTableView {
                     }
 
                     clicked => {
-                        root.set-current-row(idx);
+                        root.set-current-row(row-index);
                     }
 
                     pointer-event(event) => {
-                        root.row-pointer-event(idx, event, {
+                        root.row-pointer-event(row-index, event, {
                             x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
                             y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
                         });
@@ -239,19 +283,8 @@ export component StandardTableView {
                 }
             }
         }
-    }
 
-    i-focus-scope := FocusScope {
-        key-pressed(event) => {
-            if (event.text == Key.UpArrow) {
-                root.set-current-row(root.current-row - 1);
-                return accept;
-            } else if (event.text == Key.DownArrow) {
-                root.set-current-row(root.current-row + 1);
-                return accept;
-            }
-            reject
-        }
+        @children
     }
 
     if (i-focus-scope.has-focus) : FocusBorder {
@@ -266,30 +299,43 @@ export component StandardTableView {
         }
 
         if(root.columns[index].sort-order == SortOrder.ascending) {
-            root.columns[index].sort-order = SortOrder.descending;
-            root.sort-descending(index);
+            if (root.sort-descending(index)) {
+                root.columns[index].sort-order = SortOrder.descending;
+            }
         } else {
-            root.columns[index].sort-order = SortOrder.ascending;
-            root.sort-ascending(index);
+            if (root.sort-ascending(index)) {
+                root.columns[index].sort-order = SortOrder.ascending;
+            }
         }
 
         root.current-sort-column = index;
     }
 
     public function set-current-row(index: int) {
-        if (index < 0 || index >= rows.length) {
+        if (index < 0 || index >= root.rows.length || root.selection-mode == SelectionMode.None
+            || root.selection-mode == SelectionMode.Custom) {
             return;
         }
 
         current-row = index;
         root.current-row-changed(current-row);
 
-        if (current-item-y < 0) {
-            i-list-view.viewport-y += 0 - current-item-y;
+        bring-row-into-view(current-row);
+    }
+
+    public function bring-row-into-view(index: int) {
+        into-view-row = index;
+
+        if (into-view-row-y < 0) {
+            i-list-view.viewport-y += 0 - into-view-row-y;
         }
 
-        if (current-item-y + item-height > i-list-view.visible-height) {
-            i-list-view.viewport-y -= current-item-y + item-height - i-list-view.visible-height;
+        if (into-view-row-y + row-height > i-list-view.visible-height) {
+            i-list-view.viewport-y -= into-view-row-y + row-height - i-list-view.visible-height;
         }
+    }
+
+    public function row-y(index: int) -> length {
+        i-list-view.viewport-y + index * row-height + row-height / 2
     }
 }
