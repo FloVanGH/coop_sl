@@ -14,7 +14,8 @@ export enum ColorVariant {
 
 export enum ColorTheme {
     Coop,
-    Cosmic
+    Cosmic,
+    Cupertino
 }
 
 export global CoopPalette {
@@ -55,6 +56,26 @@ export global CosmicPalette {
     out property <brush> on-accent: Settings.dark-color-scheme ? #000000: #FFFFFF;
     out property <brush> selection: Settings.dark-color-scheme ? #94EBEB4d: #00496D4d;
     out property <brush> focus: Settings.dark-color-scheme ? #dfdfdf: #2d2d2d;
+}
+
+export global CupertinoPalette {
+    out property <brush> background: Settings.dark-color-scheme ? #282828 : #ffffff;
+    out property <brush> background-alt: Settings.dark-color-scheme ? #2c2c2c : #00000005;
+    out property <brush> foreground: Settings.dark-color-scheme ? #ffffff : #000000;
+    out property <brush> foreground-disabled: Settings.dark-color-scheme ?  #ffffff40 : #00000040;
+    out property <brush> surface: Settings.dark-color-scheme ?  #616161 : #ffffff;
+    out property <brush> surface-disabled: Settings.dark-color-scheme ? #61616180 : #ffffff80;
+    out property <brush> on-surface :#f0f0f0;
+    out property <brush> primary: accent;
+    out property <brush> on-primary: on-accent;
+    out property <brush> border: Settings.dark-color-scheme ? #ffffff26 : #00000026;
+    out property <brush> border-disabled: Settings.dark-color-scheme ? #ffffff14 : #00000014;
+    out property <brush> shadow: #00000026;
+    out property <brush> error: Settings.dark-color-scheme ? #FF453A : #FF3B30;
+    out property <brush> accent: Settings.dark-color-scheme ? #0055d1 : #007AFF;
+    out property <brush> on-accent: #f0f0f0;
+    out property <brush> selection: Settings.dark-color-scheme ? #0055d14D : #007AFF4D;
+    out property <brush> focus: Settings.dark-color-scheme ? #487aff : #66A1E3;
 }
 
 export global Palette {
@@ -109,6 +130,28 @@ export global Palette {
             on-accent = CosmicPalette.on-accent;
             selection = CosmicPalette.selection;
             selection = CosmicPalette.focus;
+
+            return;
+        }
+
+        if (theme == ColorTheme.Cupertino) {
+            background = CupertinoPalette.background;
+            background-alt = CupertinoPalette.background-alt;
+            foreground = CupertinoPalette.foreground;
+            foreground-disabled = CupertinoPalette.foreground-disabled;
+            surface = CupertinoPalette.surface;
+            surface-disabled = CupertinoPalette.surface-disabled;
+            on-surface = CupertinoPalette.on-surface;
+            primary = CupertinoPalette.primary;
+            on-primary = CupertinoPalette.on-primary;
+            border = CupertinoPalette.border;
+            border-disabled = CupertinoPalette.border-disabled;
+            shadow = CupertinoPalette.shadow;
+            error = CupertinoPalette.error;
+            accent = CupertinoPalette.accent;
+            on-accent = CupertinoPalette.on-accent;
+            selection = CupertinoPalette.selection;
+            selection = CupertinoPalette.focus;
 
             return;
         }

@@ -32,6 +32,7 @@ export component Page inherits GridLayout {
                 model: [
                     { text: "Coop" },
                     { text: "Cosmic" },
+                    { text: "Cupertino" },
                 ];
 
                 selected (index) => {
@@ -42,6 +43,10 @@ export component Page inherits GridLayout {
 
                     if (index == 1) {
                         Palette.set-color-theme(ColorTheme.Cosmic);
+                    }
+
+                    if (index == 2) {
+                        Palette.set-color-theme(ColorTheme.Cupertino);
                     }
                 }
             }
