@@ -14,8 +14,8 @@ Similar to [`LineEdit`](line-edit.md)`, but can be used to enter several lines o
 -   **`has-focus`**: (_in_out_ _bool_): Set to true when the widget currently has the focus
 -   **`enabled`**: (_in_ _bool_): Defaults to true. When false, nothing can be entered
 -   **`read-only`** (_in_ _bool_): When set to true, text editing via keyboard and mouse is disabled but selecting text is still enabled as well as editing text programmatically (default value: `false`)
--   **`wrap`** (_in_ _enum [`TextWrap`](../builtins/enums.md#textwrap)_): The way the text wraps (default: word-wrap).
--   **`horizontal-alignment`** (_in_ _enum [`TextHorizontalAlignment`](../builtins/enums.md#texthorizontalalignment)_): The horizontal alignment of the text.
+-   **`wrap`** (_in_ _enum [`TextWrap`](https://slint.dev/releases/1.2.2/docs/slint/src/language/builtins/enums#textwrap)_): The way the text wraps (default: word-wrap).
+-   **`horizontal-alignment`** (_in_ _enum [`TextHorizontalAlignment`](https://slint.dev/releases/1.2.2/docs/slint/src/language/builtins/enums#texthorizontalalignment)_): The horizontal alignment of the text.
 
 ### Functions
 
