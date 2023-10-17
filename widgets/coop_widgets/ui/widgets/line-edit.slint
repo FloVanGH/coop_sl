@@ -143,7 +143,7 @@ export component LineEdit {
         x: (parent.width - self.width) / 2;
         y: (parent.height - self.height) / 2;
         border-radius: i-background.border-radius + 2px;
-        border-color: !root.has-error ? Palette.foreground : Palette.error;
+        border-color: !root.has-error ? Palette.focus : Palette.error;
     }
 
     public function select-all() {
