@@ -27,7 +27,7 @@ export component Page inherits GridLayout {
             ComboBox {
                 width: 128px;
                 placeholder-text: @tr("Select theme:");
-                current-index: Palette.current-color-theme == ColorTheme.Coop ? 0 : 1;
+                current-index: Palette.current-color-theme == ColorTheme.Coop ? 0 : Palette.current-color-theme == ColorTheme.Cosmic ? 1 : 2;
 
                 model: [
                     { text: "Coop" },

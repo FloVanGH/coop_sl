@@ -33,6 +33,16 @@ export component TextView {
             action-enabled: true;
             title: TextAdapter.has-changes ? "\{TextAdapter.title}*" : TextAdapter.title;
 
+            i-context-menu := ContextMenu {
+                min-menu-width: 94px;
+                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
+                offset-y: i-menu-button.height;
+
+                item-clicked(row) => {
+                    TextAdapter.context-menu-action(self.model[row].spec);
+                }
+            }
+
             i-menu-button := RoundButton {
                 icon: Icons.more-vert;
                 horizontal-stretch: 0;
@@ -50,16 +60,6 @@ export component TextView {
 
             action => {
                 TextAdapter.back();
-            }
-
-            i-context-menu := ContextMenu {
-                min-menu-width: 94px;
-                offset-x: -self.min-menu-width;
-                offset-y: i-menu-button.height;
-
-                item-clicked(row) => {
-                    TextAdapter.context-menu-action(self.model[row].spec);
-                }
             }
         }
 

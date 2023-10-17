@@ -30,6 +30,12 @@ export global FilesAdapter {
     in property <bool> back-enabled;
     in property <{ row: int, column: int }> edit-file: { row: -1, column: -1 };
     in property <bool> loading;
+    in property <[TableColumn]> columns: [
+        { horizontal-stretch: 0, min-width: 32px },
+        { title: @tr("Name"), horizontal-stretch: 1 },
+        { title: @tr("Size"), horizontal-stretch: 0, min-width: 64px },
+        { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 120px },
+    ];
 }
 
 export component FilesView {
@@ -47,6 +53,20 @@ export component FilesView {
             action-icon: Icons.arrow-back;
             action-enabled: FilesAdapter.back-enabled;
             title: FilesAdapter.title;
+
+            i-context-menu := ContextMenu {
+                min-menu-width: 128px;
+                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
+                offset-y: i-menu-button.height;
+
+                item-clicked(row) => {
+                    FilesAdapter.context-menu-action(self.model[row].spec);
+                }
+
+                closed => {
+                   i-table-view.focus();
+                }
+            }
 
             i-menu-button := RoundButton {
                 icon: Icons.more-vert;
@@ -71,20 +91,6 @@ export component FilesView {
             action => {
                 FilesAdapter.back();
             }
-
-            i-context-menu := ContextMenu {
-                min-menu-width: 128px;
-                offset-x: -self.min-menu-width;
-                offset-y: i-menu-button.height;
-
-                item-clicked(row) => {
-                    FilesAdapter.context-menu-action(self.model[row].spec);
-                }
-
-                closed => {
-                   i-table-view.focus();
-                }
-            }
         }
 
         i-table-view := StandardTableView {
@@ -93,12 +99,7 @@ export component FilesView {
             rows: FilesAdapter.files;
             selection-mode: SelectionMode.Custom;
             edit-item <=> FilesAdapter.edit-file;
-            columns: [
-                { horizontal-stretch: 0, min-width: 32px },
-                { title: @tr("Name"), horizontal-stretch: 1 },
-                { title: @tr("Size"), horizontal-stretch: 0, min-width: 64px },
-                { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 120px },
-            ];
+            columns: FilesAdapter.columns;
 
             key-pressed(event) => {
                 root.key-pressed(event)

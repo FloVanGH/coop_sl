@@ -30,6 +30,16 @@ export component ImageView {
             action-enabled: true;
             title: ImageAdapter.title;
 
+            i-context-menu := ContextMenu {
+                min-menu-width: 94px;
+                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
+                offset-y: i-menu-button.height;
+
+                item-clicked(row) => {
+                    ImageAdapter.context-menu-action(self.model[row].spec);
+                }
+            }
+
             i-menu-button := RoundButton {
                 icon: Icons.more-vert;
                 horizontal-stretch: 0;
@@ -47,16 +57,6 @@ export component ImageView {
 
             action => {
                 ImageAdapter.back();
-            }
-
-            i-context-menu := ContextMenu {
-                min-menu-width: 94px;
-                offset-x: -self.min-menu-width;
-                offset-y: i-menu-button.height;
-
-                item-clicked(row) => {
-                    ImageAdapter.context-menu-action(self.model[row].spec);
-                }
             }
         }
 

@@ -248,7 +248,8 @@ impl FilesController {
 
         upgrade_adapter(&self.view_handle, move |adapter| {
             adapter.on_open_internal(move |row| {
-                if let Some(file_model) = files_proxy_model.borrow().row_data(row as usize) {
+                let file_model = files_proxy_model.borrow().row_data(row as usize);
+                if let Some(file_model) = file_model {
                     func(file_model);
                 }
             });
@@ -662,6 +663,13 @@ impl FilesController {
 
     fn sort(&self, ascending: bool, column_index: usize) -> bool {
         let sorted = match column_index {
+            0 => {
+                *self.files_proxy_model.borrow_mut() = files_model_ext::sort_by_type(
+                    ascending,
+                    files_model_ext::filter_hidden_files(self.files_model.clone().into()),
+                );
+                true
+            }
             1 => {
                 *self.files_proxy_model.borrow_mut() = files_model_ext::sort_by_name(
                     ascending,
@@ -773,9 +781,7 @@ mod files_model_ext {
 
     pub fn sort_by_type(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
         Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
-            if l.file_type() != r.file_type()
-                && (l.file_type() == FileType::Dir || r.file_type() == FileType::Dir)
-            {
+            if l.file_type() != r.file_type() {
                 if ascending {
                     return l.file_type().cmp(&r.file_type());
                 } else {
@@ -809,22 +815,35 @@ mod files_model_ext {
 
     pub fn sort_by_size(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
         Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
-            if ascending {
-                l.len().cmp(&r.len())
-            } else {
-                r.len().cmp(&l.len())
+            if l.len() != r.len() {
+                if ascending {
+                    return l.len().cmp(&r.len());
+                } else {
+                    return r.len().cmp(&l.len());
+                }
             }
+            l.name()
+                .unwrap_or_default()
+                .to_lowercase()
+                .cmp(&r.name().unwrap_or_default().to_lowercase())
         }))
         .into()
     }
 
     pub fn sort_by_date_modified(ascending: bool, model: ModelRc<FileModel>) -> ModelRc<FileModel> {
         Rc::new(model.sort_by(move |l: &FileModel, r: &FileModel| {
-            if ascending {
-                l.modified().cmp(&r.modified())
-            } else {
-                r.modified().cmp(&l.modified())
+            if l.modified() != r.modified() {
+                if ascending {
+                    return l.modified().cmp(&r.modified());
+                } else {
+                    return r.modified().cmp(&l.modified());
+                }
             }
+
+            l.name()
+                .unwrap_or_default()
+                .to_lowercase()
+                .cmp(&r.name().unwrap_or_default().to_lowercase())
         }))
         .into()
     }
