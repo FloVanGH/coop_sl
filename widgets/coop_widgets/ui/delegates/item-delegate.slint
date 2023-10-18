@@ -17,6 +17,7 @@ export component ItemDelegate inherits TouchArea {
     in property <image> leading-icon;
     in property <image> trailing-icon;
     in property <bool> edit;
+    in property <bool> has-drag-hover;
     in-out property <string> text;
 
     min-height: max(Size.small, i-layout.min-height);
@@ -72,7 +73,7 @@ export component ItemDelegate inherits TouchArea {
             foreground: Palette.foreground.darker(State.pressed);
             icon-color: highlighted ? Palette.primary.darker(State.pressed) : Palette.foreground.darker(State.pressed);
         }
-        hover when root.has-hover: {
+        hover when root.has-hover || root.has-drag-hover: {
             i-background.background: Palette.background.darker(State.hover);
             foreground: Palette.foreground.darker(State.hover);
             icon-color: highlighted ? Palette.primary.darker(State.hover) : Palette.foreground.darker(State.hover);

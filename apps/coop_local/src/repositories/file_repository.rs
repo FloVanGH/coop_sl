@@ -9,6 +9,8 @@ use std::io::Write;
 use std::path::Path;
 use std::rc::Rc;
 
+use tokio::runtime::Builder;
+
 #[derive(Clone)]
 pub struct FilesRepository {
     clipboard: Rc<RefCell<Vec<FileModel>>>,
@@ -208,5 +210,41 @@ impl FilesRepository {
         }
 
         false
+    }
+
+    pub async fn move_files(&self, files: Vec<FileModel>, target: FileModel) {
+        if !target.is_dir() {
+            return;
+        }
+
+        let rt = Builder::new_current_thread().enable_all().build().unwrap();
+
+        std::thread::spawn(move || {
+            rt.block_on(async move {
+                let mut handles = vec![];
+
+                for file in files {
+                    handles.push(tokio::spawn({
+                        let target = target.clone();
+
+                        async move {
+                            let copy_file_path =
+                                target.as_path().join(file.name().unwrap_or_default());
+
+                            if file.is_dir() {
+                                if copy_dir::copy_dir(file.path(), copy_file_path.as_path()).is_ok()
+                                {
+                                    let _ = fs::remove_dir_all(file.path());
+                                }
+                            } else if fs::copy(file.path(), copy_file_path.as_path()).is_ok() {
+                                let _ = fs::remove_file(file.path());
+                            }
+                        }
+                    }));
+                }
+
+                futures::future::join_all(handles).await;
+            });
+        });
     }
 }

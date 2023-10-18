@@ -16,6 +16,7 @@ Like ListView, but with a default delegate, and a `model` property which is a mo
 -   **`edit-item`** (_in_ _int_): Defines the item that is can be edited.
 -   **`has-focus`** (_out_ _bool_): True if the list view has focus.
 -   **`enabled`** (_in_ _bool_): True if the list view is enabled.
+-   **`drag-drop-enabled`** (_in_ _bool_): If set to `true` drop event is enabled.
 
 ### Functions
 
@@ -28,6 +29,7 @@ Like ListView, but with a default delegate, and a `model` property which is a mo
 -   **`item-pointer-event(/* index */ int, /* event */ PointerEvent, /* position */ Point)`**: Emitted on any mouse pointer event similar to `TouchArea`. Arguments are item index associated with the event, the `PointerEvent` itself and the mouse position within the listview.
 -   **`item-accepted(/* index */ int, /* text */ string)`**: Emitted when the text of the item is edited and after the enter is pressed.
 -   **`key-pressed(/* event */ KeyEvent)`**: Emitted when there is a key press event on the list view.
+-   **`drop-event(/* event */ `[DropEvent](../structs/drop-event.md)`)`**: Emitted when a row is dropped on an other row.
 
 ### Example
 

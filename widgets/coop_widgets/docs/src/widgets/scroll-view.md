@@ -21,6 +21,7 @@ using for loops may be added in the future and is tracked in issue #407.
 -   **`viewport-width`** and **`viewport-height`** (_in-out_ _length_): The `width` and `length` properties of the viewport
 -   **`viewport-x`** and **`viewport-y`** (_in-out_ _length_): The `x` and `y` properties of the viewport. Usually these are negative
 -   **`visible-width`** and **`visible-height`** (_out_ _length_): The size of the visible area of the ScrollView (not including the scrollbar)
+-   **`interactive`** (_in_ bool_): When true, the viewport can be scrolled by clicking on it and dragging it with the cursor. (default value: true)
 
 ### Example
 

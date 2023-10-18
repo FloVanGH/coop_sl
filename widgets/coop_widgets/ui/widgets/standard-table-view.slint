@@ -3,11 +3,12 @@
 
 import { Duration, Icography, Radius, Palette, State, Space, Size, Icons } from "../styling.slint";
 import { SelectionMode } from "../enums.slint";
-import { ListView } from "list-view.slint";
+import { ListViewExtension } from "../extensions.slint";
 import { LineEdit } from "line-edit.slint";
-import { ListViewItem, TableRowItem } from "../structs.slint";
+import { DropEvent, ListViewItem, TableRowItem } from "../structs.slint";
 import { Spacer } from "../layouts/spacer.slint";
 import { FocusBorder, LargeLabel } from "../components.slint";
+import { ListView } from "list-view.slint";
 
 component TableViewColumn inherits Rectangle {
     callback clicked <=> i-touch-area.clicked;
@@ -100,9 +101,11 @@ component TableViewCell inherits Rectangle {
 component TableViewRow inherits Rectangle {
     callback clicked <=> i-touch-area.clicked;
     callback pointer-event <=> i-touch-area.pointer-event;
+    callback moved <=> i-touch-area.moved;
 
     in property<bool> selected;
     in property <bool> alternative-background;
+    in property <bool> has-drag-hover;
     out property<length> mouse-x <=> i-touch-area.mouse-x;
     out property<length> mouse-y <=> i-touch-area.mouse-y;
 
@@ -121,7 +124,7 @@ component TableViewRow inherits Rectangle {
         pressed when i-touch-area.pressed : {
             root.background: Palette.background.darker(State.pressed);
         }
-        hover when i-touch-area.has-hover : {
+        hover when i-touch-area.has-hover || root.has-drag-hover : {
             root.background: Palette.background.darker(State.hover);
         }
         selected when root.selected : {
@@ -132,25 +135,24 @@ component TableViewRow inherits Rectangle {
 
 export component StandardTableView {
     private property <length> min-header-height: Size.small;
-    private property <int> into-view-row;
-    private property <length> row-height: i-list-view.viewport-height / rows.length;
-    private property <length> into-view-row-y: i-list-view.viewport-y + into-view-row * row-height;
 
     callback sort-ascending(/* column-index */ int) -> bool;
     callback sort-descending(/* column-index */ int) -> bool;
     callback row-pointer-event(/* row-index */ int,  /* event */ PointerEvent, /* absolute mouse position */ Point);
-    callback current-row-changed(/* current-row */ int);
+    callback current-row-changed <=> i-list-view-extension.current-item-changed;
     callback key-pressed(/* event */ KeyEvent) -> EventResult;
     callback item-accepted(/* row-index */ int, /* column-index */ int, /* text */ string);
+    callback drop-event <=> i-list-view-extension.drop-event;
 
     in property <[TableRowItem]> rows;
     in property <bool> zebra-pattern;
-    in property <SelectionMode> selection-mode: SelectionMode.Single;
+    in property <SelectionMode> selection-mode <=> i-list-view-extension.selection-mode;
     in property <{ row: int, column: int}> edit-item: { row: -1, column: -1 };
+    in property <bool> drag-drop-enabled <=> i-list-view-extension.drag-drop-enabled;
     out property <int> current-sort-column: -1;
     out property <bool> has-focus: i-focus-scope.has-focus;
     in-out property <[TableColumn]> columns;
-    in-out property <int> current-row: -1;
+    in-out property <int> current-row <=> i-list-view-extension.current-item;
 
     min-width: 400px;
     min-height: 100px;
@@ -221,64 +223,150 @@ export component StandardTableView {
                 }
             }
 
-            i-list-view := ListView {
+            i-list-view-extension := ListViewExtension {
                 vertical-stretch: 1;
+                drag-ghost-height: Size.small;
+                item-count: root.rows.length;
+                visible-width: i-list-view.visible-width;
+                visible-height: i-list-view.visible-height;
+                viewport-width <=> i-list-view.viewport-width;
+                viewport-height <=> i-list-view.viewport-height;
+                viewport-x <=> i-list-view.viewport-x;
+                viewport-y <=> i-list-view.viewport-y;
 
-                for row[row-index] in root.rows : TableViewRow {
-                    alternative-background: mod(row-index, 2) != 0 && root.zebra-pattern;
-                    selected: (row-index == root.current-row && root.selection-mode == SelectionMode.Single)
-                        || (row.selected && root.selection-mode == SelectionMode.Custom);
+                i-list-view := ListView {
+                    interactive: !root.drag-drop-enabled;
 
-                    for cell[column-index] in row.model : TableViewCell {
-                        private property <bool> edit: row-index == root.edit-item.row && column-index == root.edit-item.column;
+                    for row[row-index] in root.rows : TableViewRow {
+                        private property <bool> left-pressed;
+                        private property <length> pressed-x;
+                        private property <length> pressed-y;
 
-                        horizontal-stretch: root.columns[column-index].horizontal-stretch;
-                        min-width: max(columns[column-index].min-width, columns[column-index].width);
-                        preferred-width: self.min-width;
-                        max-width: (column-index < columns.length && columns[column-index].width >= 1px) ?
-                            max(columns[column-index].min-width, columns[column-index].width) : 100000px;
+                        alternative-background: mod(row-index, 2) != 0 && root.zebra-pattern;
+                        selected: (row-index == root.current-row && root.selection-mode == SelectionMode.Single)
+                            || (row.selected && root.selection-mode == SelectionMode.Custom);
+                        has-drag-hover: i-list-view-extension.dragging && row-index == i-list-view-extension.drag-hover-index;
 
-                        if (cell.leading-icon.width > 0 && cell.leading-icon.height > 0) : Image {
-                            source: cell.leading-icon;
-                            width: Icography.small;
-                            colorize: cell.highlighted ? Palette.primary : Palette.foreground;
-                        }
+                        for cell[column-index] in row.model : TableViewCell {
+                            private property <bool> edit: row-index == root.edit-item.row && column-index == root.edit-item.column;
 
-                        if (!edit && cell.text != "") : LargeLabel {
-                            text: cell.text;
-                            vertical-alignment: center;
-                            horizontal-alignment: left;
-                            horizontal-stretch: 1;
-                            overflow: elide;
-                        }
+                            horizontal-stretch: root.columns[column-index].horizontal-stretch;
+                            min-width: max(columns[column-index].min-width, columns[column-index].width);
+                            preferred-width: self.min-width;
+                            max-width: (column-index < columns.length && columns[column-index].width >= 1px) ?
+                                max(columns[column-index].min-width, columns[column-index].width) : 100000px;
 
-                        if (edit) : LineEdit {
-                            y: (parent.height - self.height) / 2;
-                            height: Size.extra-small;
-                            text: cell.text;
-                            horizontal-stretch: 1;
+                            if (cell.leading-icon.width > 0 && cell.leading-icon.height > 0) : Image {
+                                source: cell.leading-icon;
+                                width: Icography.small;
+                                colorize: cell.highlighted ? Palette.primary : Palette.foreground;
+                            }
 
-                            accepted(text) => {
-                                root.item-accepted(row-index, column-index, text);
+                            if (!edit && cell.text != "") : LargeLabel {
+                                text: cell.text;
+                                vertical-alignment: center;
+                                horizontal-alignment: left;
+                                horizontal-stretch: 1;
+                                overflow: elide;
+                            }
+
+                            if (edit) : LineEdit {
+                                y: (parent.height - self.height) / 2;
+                                height: Size.extra-small;
+                                text: cell.text;
+                                horizontal-stretch: 1;
+
+                                accepted(text) => {
+                                    root.item-accepted(row-index, column-index, text);
+                                }
+                            }
+
+                            if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
+                                source: cell.trailing-icon;
+                                colorize: Palette.foreground;
+                                width: Icography.small;
                             }
                         }
 
-                        if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
-                            source: cell.trailing-icon;
-                            colorize: Palette.foreground;
-                            width: Icography.small;
+                        clicked => {
+                            root.set-current-row(row-index);
+                        }
+
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                self.pressed-x = self.mouse-x;
+                                self.pressed-y = self.mouse-y;
+                                self.left-pressed = true;
+                            } else {
+                                self.left-pressed = false;
+                            }
+
+                            if (i-list-view-extension.dragging && event.kind == PointerEventKind.up && event.button == PointerEventButton.left) {
+                                i-list-view-extension.drop();
+                                return;
+                            }
+
+                            if (self.mouse-x < 0 || self.mouse-y < 0 || self.mouse-x > self.width || self.mouse-y > self.height) {
+                                return;
+                            }
+
+                            root.row-pointer-event(row-index, event, {
+                                x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
+                                y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
+                            });
+                        }
+
+                        moved => {
+                            if (!root.drag-drop-enabled || (self.mouse-x - self.pressed-x == 0 && self.mouse-y - self.pressed-y == 0)) {
+                                return;
+                            }
+
+                            if (!i-list-view-extension.dragging && self.left-pressed) {
+                                i-list-view-extension.start-drag(row-index);
+                            }
+
+                            i-list-view-extension.update-drag-position(self.absolute-position.x + self.mouse-x - root.absolute-position.x,
+                                self.absolute-position.y + self.mouse-y - root.absolute-position.y);
                         }
                     }
+                }
 
-                    clicked => {
-                        root.set-current-row(row-index);
-                    }
+                // drag ghost
+                if (i-list-view-extension.dragging) : Rectangle {
+                    x: i-list-view-extension.drag-position-x;
+                    y: i-list-view-extension.drag-position-y;
+                    width: i-list-view.width;
+                    height: i-list-view-extension.drag-ghost-height;
+                    background: Palette.background.darker(State.pressed);
 
-                    pointer-event(event) => {
-                        root.row-pointer-event(row-index, event, {
-                            x: self.absolute-position.x + self.mouse-x - root.absolute-position.x,
-                            y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
-                        });
+                    HorizontalLayout {
+                        for cell[column-index] in root.rows[i-list-view-extension.drag-source].model : TableViewCell {
+                            horizontal-stretch: root.columns[column-index].horizontal-stretch;
+                            min-width: max(columns[column-index].min-width, columns[column-index].width);
+                            preferred-width: self.min-width;
+                            max-width: (column-index < columns.length && columns[column-index].width >= 1px) ?
+                                max(columns[column-index].min-width, columns[column-index].width) : 100000px;
+
+                            if (cell.leading-icon.width > 0 && cell.leading-icon.height > 0) : Image {
+                                source: cell.leading-icon;
+                                width: Icography.small;
+                                colorize: cell.highlighted ? Palette.primary : Palette.foreground;
+                            }
+
+                            if (cell.text != "") : LargeLabel {
+                                text: cell.text;
+                                vertical-alignment: center;
+                                horizontal-alignment: left;
+                                horizontal-stretch: 1;
+                                overflow: elide;
+                            }
+
+                            if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
+                                source: cell.trailing-icon;
+                                colorize: Palette.foreground;
+                                width: Icography.small;
+                            }
+                        }
                     }
                 }
             }
@@ -312,30 +400,14 @@ export component StandardTableView {
     }
 
     public function set-current-row(index: int) {
-        if (index < 0 || index >= root.rows.length || root.selection-mode == SelectionMode.None
-            || root.selection-mode == SelectionMode.Custom) {
-            return;
-        }
-
-        current-row = index;
-        root.current-row-changed(current-row);
-
-        bring-row-into-view(current-row);
+       i-list-view-extension.set-current-item(index);
     }
 
     public function bring-row-into-view(index: int) {
-        into-view-row = index;
-
-        if (into-view-row-y < 0) {
-            i-list-view.viewport-y += 0 - into-view-row-y;
-        }
-
-        if (into-view-row-y + row-height > i-list-view.visible-height) {
-            i-list-view.viewport-y -= into-view-row-y + row-height - i-list-view.visible-height;
-        }
+        i-list-view-extension.bring-into-view(index);
     }
 
     public function row-y(index: int) -> length {
-        i-list-view.viewport-y + index * row-height + row-height / 2
+        i-list-view-extension.item-y(index)
     }
 }

@@ -20,6 +20,7 @@ Same as [`ListView`](list-view.md), and in addition:
 -   **`edit-item`** (_in_ _{ row: int, column: int}_): Defines the cell that is can be edited.
 -   **`has-focus`** (_out_ _bool_): True if the table view has focus.
 -   **`current-row`** (_in-out_ _int_): The index of the currently active row. -1 mean none is selected, which is the default.
+-   **`drag-drop-enabled`** (_in_ _bool_): If set to `true` drop event is enabled.
 
 ### Callbacks
 
@@ -29,6 +30,7 @@ Same as [`ListView`](list-view.md), and in addition:
 -   **`current-row-changed((/* current-row */ int)`**: Emitted when the current row has changed because the user modified it.
 -   **`key-pressed(/* event */ KeyEvent)`**: Emitted when there is a key press event on the table view.
 -   **`item-accepted(/* row */ int, /* column */ int, /* text */ string)`**: Emitted when the text of the item is edited and after the enter is pressed.
+-   **`drop-event(/* event */ `[DropEvent](../structs/drop-event.md)`)`**: Emitted when a row is dropped on an other row.
 
 ### Functions
 

@@ -171,6 +171,13 @@ impl FilesController {
                     let controller = controller.clone();
                     move |column_index| controller.sort(false, column_index as usize)
                 });
+
+                adapter.on_move_files({
+                    let controller = controller.clone();
+                    move |source_row, target_row| {
+                        controller.move_files(source_row as usize, target_row as usize)
+                    }
+                });
             }
         });
 
@@ -192,6 +199,7 @@ impl FilesController {
         let files_model = self.files_model.clone();
         let repository: FilesRepository = self.repository.clone();
         let root_file = self.root_file.borrow().clone();
+        let view_handle = self.view_handle.clone();
         self.root_modified.set(root_file.modified());
 
         let _ = slint::spawn_local(async move {
@@ -219,6 +227,8 @@ impl FilesController {
                     files_model.push(file);
                 }
             }
+
+            adapter::request_redraw(&view_handle);
         });
     }
 
@@ -486,9 +496,7 @@ impl FilesController {
         self.clear_selection();
         self.set_item_selected(previous, true);
 
-        if let Some(view_handle) = self.view_handle.upgrade() {
-            view_handle.window().request_redraw();
-        }
+        adapter::request_redraw(&self.view_handle);
 
         previous
     }
@@ -509,9 +517,7 @@ impl FilesController {
         self.clear_selection();
         self.set_item_selected(next, true);
 
-        if let Some(view_handle) = self.view_handle.upgrade() {
-            view_handle.window().request_redraw();
-        }
+        adapter::request_redraw(&self.view_handle);
 
         next
     }
@@ -639,18 +645,14 @@ impl FilesController {
         let root_file = self.root_file.borrow().clone();
         let view_handle = self.view_handle.clone();
 
-        upgrade_adapter(&view_handle, |adapter| {
-            adapter.set_loading(true);
-        });
+        adapter::set_loading(&view_handle, true);
 
         let _ = slint::spawn_local(async move {
             if let Ok(repo_files) = repository.files(&root_file) {
                 files_model.set_vec(repo_files);
             }
 
-            upgrade_adapter(&view_handle, |adapter| {
-                adapter.set_loading(false);
-            });
+            adapter::set_loading(&view_handle, false);
         });
     }
 
@@ -748,6 +750,48 @@ impl FilesController {
                 .into(),
             )
         });
+    }
+
+    fn move_files(&self, source_row: usize, target_row: usize) {
+        if !self
+            .files_proxy_model
+            .borrow()
+            .row_data(target_row)
+            .is_some_and(|f| f.is_dir())
+        {
+            return;
+        }
+
+        adapter::set_loading(&self.view_handle, true);
+
+        let target = self.files_proxy_model.borrow().row_data(target_row);
+
+        if let Some(target) = target {
+            let mut files = vec![];
+
+            for i in self.selected_items.borrow().iter() {
+                if let Some(file_model) = self.files_proxy_model.borrow().row_data(*i) {
+                    files.push(file_model);
+                }
+            }
+
+            if !self.selected_items.borrow().contains(&source_row) {
+                if let Some(file_model) = self.files_proxy_model.borrow().row_data(source_row) {
+                    files.push(file_model);
+                }
+            }
+
+            let view_handle = self.view_handle.clone();
+            let repository = self.repository.clone();
+
+            let _ = slint::spawn_local(async move {
+                repository.move_files(files, target).await;
+
+                adapter::set_loading(&view_handle, false);
+            });
+
+            self.clear_selection();
+        }
     }
 }
 
@@ -872,5 +916,21 @@ mod files_model_ext {
             }
         }
         None
+    }
+}
+
+mod adapter {
+    use super::*;
+
+    pub fn set_loading(view_handle: &Weak<MainWindow>, loading: bool) {
+        upgrade_adapter(view_handle, move |adapter| {
+            adapter.set_loading(loading);
+        })
+    }
+
+    pub fn request_redraw(view_handle: &Weak<MainWindow>) {
+        if let Some(main_window) = view_handle.upgrade() {
+            main_window.window().request_redraw();
+        }
     }
 }

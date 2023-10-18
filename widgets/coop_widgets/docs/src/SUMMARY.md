@@ -15,6 +15,7 @@ SPDX-License-Identifier: MIT
     - [Position](enums/position.md)
 
 - [Struts](structs/structs.md)
+    - [DropEvent](structs/drop-event.md)
     - [ListViewItem](structs/list-view-item.md)
     - [KeyModel](structs/key-model.md)
     - [GroupListViewItem](structs/group-list-view-item.md)

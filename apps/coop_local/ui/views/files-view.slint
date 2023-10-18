@@ -9,13 +9,13 @@ import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
 
 export global FilesAdapter {
     callback back();
-    callback open-internal(/* row */ int);
+    callback open-internal(/* row-index */ int);
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
-    callback get-item-context-menu(/* row */ int) -> [ListViewItem];
-    callback item-context-menu-action(/* row */ int, /* spec */ string);
-    callback rename-item(/* row */ int, /* text */ string);
-    callback update-selection(/* row */ int, /* control */ bool, /* shift*/ bool);
+    callback get-item-context-menu(/* row-index */ int) -> [ListViewItem];
+    callback item-context-menu-action(/* row-index */ int, /* spec */ string);
+    callback rename-item(/* row-index */ int, /* text */ string);
+    callback update-selection(/* row-index */ int, /* control */ bool, /* shift*/ bool);
     callback select-next() -> int;
     callback select-previous() -> int;
     callback select-all();
@@ -24,6 +24,7 @@ export global FilesAdapter {
     callback selected-items() -> [int];
     callback sort-ascending(/* column-index */ int) -> bool;
     callback sort-descending(/* column-index */ int) -> bool;
+    callback move-files(/* source-row */ int, /* target-row*/ int);
 
     in property <string> title: "Root";
     in property <[TableRowItem]> files;
@@ -100,6 +101,21 @@ export component FilesView {
             selection-mode: SelectionMode.Custom;
             edit-item <=> FilesAdapter.edit-file;
             columns: FilesAdapter.columns;
+            drag-drop-enabled: true;
+
+            i-item-context-menu := ContextMenu {
+                item-clicked(row) => {
+                    if (self.has-focus) {
+                        i-table-view.focus();
+                    }
+
+                    FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
+                }
+
+                closed => {
+                    i-table-view.focus();
+                }
+            }
 
             key-pressed(event) => {
                 root.key-pressed(event)
@@ -108,7 +124,7 @@ export component FilesView {
             row-pointer-event(row, event, position) => {
                 i-table-view.focus();
 
-                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && !event.modifiers.control
+                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up && !event.modifiers.control
                         && !event.modifiers.shift) {
                     FilesAdapter.open-internal(row);
                     return;
@@ -137,18 +153,8 @@ export component FilesView {
                 FilesAdapter.sort-descending(column-index);
             }
 
-            i-item-context-menu := ContextMenu {
-                item-clicked(row) => {
-                    if (self.has-focus) {
-                        i-table-view.focus();
-                    }
-
-                    FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
-                }
-
-                closed => {
-                    i-table-view.focus();
-                }
+            drop-event(event) => {
+                FilesAdapter.move-files(event.source, event.target);
             }
         }
     }

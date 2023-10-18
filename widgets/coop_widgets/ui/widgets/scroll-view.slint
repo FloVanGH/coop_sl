@@ -77,6 +77,7 @@ export component ScrollView {
     private property <bool> horizontal-scroll-bar-visible: root.viewport-width > root.width;
 
     in property <bool> enabled: true;
+    in property <bool> interactive <=> i-flickable.interactive;
     out property <length> visible-width <=> i-flickable.width;
     out property <length> visible-height <=> i-flickable.height;
     in-out property <length> viewport-width <=> i-flickable.viewport-width;
