@@ -184,8 +184,6 @@ export component StandardTableView {
     }
 
     i-background := Rectangle {
-        border-radius: Radius.medium;
-
         VerticalLayout {
             spacing: Space.small;
 
@@ -369,16 +367,16 @@ export component StandardTableView {
                         }
                     }
                 }
+
+                if (i-focus-scope.has-focus) : FocusBorder {
+                    width: 100%;
+                    height: 100%;
+                    border-radius: Radius.medium;
+                }
             }
         }
 
         @children
-    }
-
-    if (i-focus-scope.has-focus) : FocusBorder {
-        width: 100%;
-        height: 100%;
-        border-radius: i-background.border-radius;
     }
 
     function sort(index: int) {

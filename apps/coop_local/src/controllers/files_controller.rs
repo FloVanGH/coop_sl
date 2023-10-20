@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
+use crate::item_selector::{ItemSelector, Selectable};
 use crate::models::{FileModel, FileType};
 use crate::repositories::FilesRepository;
 
@@ -11,7 +12,6 @@ use crate::ui::*;
 use chrono::{DateTime, Utc};
 use slint::*;
 use std::cell::{Cell, RefCell};
-use std::collections::BTreeSet;
 use std::rc::Rc;
 use std::time::SystemTime;
 
@@ -35,13 +35,13 @@ type FileCallback = Rc<RefCell<Box<dyn FnMut(&FileModel) + 'static>>>;
 pub struct FilesController {
     files_model: Rc<VecModel<FileModel>>,
     files_proxy_model: Rc<RefCell<ModelRc<FileModel>>>,
+    item_selector: Rc<RefCell<ItemSelector<FileModel>>>,
     view_handle: Weak<MainWindow>,
     repository: FilesRepository,
     #[cfg(feature = "games")]
     games_repository: GamesRepository,
     root_file: Rc<RefCell<FileModel>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
-    selected_items: Rc<RefCell<BTreeSet<usize>>>,
     last_non_shift_selection: Rc<Cell<usize>>,
     show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     add_bookmark_callback: FileCallback,
@@ -60,18 +60,22 @@ impl FilesController {
             files_model_ext::filter_hidden_files(files_model.clone().into()),
         )));
 
+        let item_selector = Rc::new(RefCell::new(ItemSelector::new(
+            files_proxy_model.borrow().clone(),
+        )));
+
         let root_modified = Rc::new(Cell::new(root_file.modified()));
 
         let controller = Self {
             root_file: Rc::new(RefCell::new(root_file)),
             files_model,
             files_proxy_model,
+            item_selector,
             view_handle,
             repository: files_repository,
             #[cfg(feature = "games")]
             games_repository,
             root_modified,
-            selected_items: Rc::new(RefCell::new(BTreeSet::default())),
             last_non_shift_selection: Rc::new(Cell::new(0)),
             show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             add_bookmark_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
@@ -110,10 +114,10 @@ impl FilesController {
                     move |row, new_name| controller.rename_item(row as usize, new_name.as_str())
                 });
 
-                adapter.on_update_selection({
+                adapter.on_toggle_selection({
                     let controller = controller.clone();
-                    move |row, control, shift| {
-                        controller.update_selection(row as usize, control, shift);
+                    move |row| {
+                        controller.toggle_selection(row as usize);
                     }
                 });
 
@@ -125,6 +129,23 @@ impl FilesController {
                 adapter.on_select_next({
                     let controller = controller.clone();
                     move || controller.select_next() as i32
+                });
+
+                adapter.on_shift_selection({
+                    let controller = controller.clone();
+                    move |row| {
+                        controller.shift_selection(row as usize);
+                    }
+                });
+
+                adapter.on_shift_selection_next({
+                    let controller = controller.clone();
+                    move || controller.shift_selection_next() as i32
+                });
+
+                adapter.on_shift_selection_previous({
+                    let controller = controller.clone();
+                    move || controller.shift_selection_previous() as i32
                 });
 
                 adapter.on_select_all({
@@ -150,16 +171,7 @@ impl FilesController {
 
                 adapter.on_selected_items({
                     let controller = controller.clone();
-                    move || {
-                        VecModel::from_slice(
-                            &controller
-                                .selected_items
-                                .borrow()
-                                .iter()
-                                .map(|row| *row as i32)
-                                .collect::<Vec<i32>>(),
-                        )
-                    }
+                    move || VecModel::from_slice(&controller.item_selector.borrow().as_vec())
                 });
 
                 adapter.on_sort_ascending({
@@ -390,7 +402,9 @@ impl FilesController {
             }
 
             context_menu::REMOVE => {
-                if !self.selected_items.borrow().contains(&row) {
+                let contains_row = self.item_selector.borrow().is_selected(&row);
+
+                if !contains_row {
                     if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
                         if self.repository.remove(&file_model) {
                             files_model_ext::remove(&self.files_model, &file_model);
@@ -399,7 +413,7 @@ impl FilesController {
                 } else {
                     let mut remove_files = vec![];
 
-                    for r in self.selected_items.borrow().iter().rev() {
+                    for r in self.item_selector.borrow().selected_rows().iter().rev() {
                         if let Some(file_model) = self.files_proxy_model.borrow().row_data(*r) {
                             remove_files.push(file_model);
                         }
@@ -450,111 +464,48 @@ impl FilesController {
         }
     }
 
-    fn update_selection(&self, row: usize, control: bool, shift: bool) {
-        if !control && !shift {
-            return;
-        }
-
-        if control {
-            if self.selected_items.borrow().contains(&row) {
-                self.last_non_shift_selection.set(0);
-                self.set_item_selected(row, false);
-            } else {
-                self.last_non_shift_selection.set(row);
-                self.set_item_selected(row, true);
-            }
-
-            return;
-        }
-
-        let last_non_shift_selection = self.last_non_shift_selection.get();
-        self.clear_selection();
-
-        if last_non_shift_selection.eq(&row) {
-            self.set_item_selected(row, true);
-            return;
-        }
-
-        if last_non_shift_selection < row {
-            for r in last_non_shift_selection..(row + 1) {
-                self.set_item_selected(r, true);
-            }
-        } else {
-            for r in row..(last_non_shift_selection + 1) {
-                self.set_item_selected(r, true);
-            }
-        }
+    fn toggle_selection(&self, row: usize) {
+        self.item_selector.borrow_mut().toggle_selection(row);
+        adapter::request_redraw(&self.view_handle);
     }
 
     fn select_previous(&self) -> usize {
-        let previous = if let Some(first) = self.selected_items.borrow().last() {
-            i32::max(0, *first as i32 - 1) as usize
-        } else {
-            0
-        };
-
-        self.clear_selection();
-        self.set_item_selected(previous, true);
-
+        let previous = self.item_selector.borrow_mut().select_previous();
         adapter::request_redraw(&self.view_handle);
-
         previous
     }
 
     fn select_next(&self) -> usize {
-        let next = if let Some(last) = self.selected_items.borrow().last() {
-            i32::max(
-                0,
-                i32::min(
-                    self.files_proxy_model.borrow().row_count() as i32 - 1,
-                    *last as i32 + 1,
-                ),
-            ) as usize
-        } else {
-            0
-        };
-
-        self.clear_selection();
-        self.set_item_selected(next, true);
-
+        let next = self.item_selector.borrow_mut().select_next();
         adapter::request_redraw(&self.view_handle);
+        next
+    }
 
+    fn shift_selection(&self, row: usize) {
+        self.item_selector.borrow_mut().shift_selection(row);
+        adapter::request_redraw(&self.view_handle);
+    }
+
+    fn shift_selection_previous(&self) -> usize {
+        let previous = self.item_selector.borrow_mut().shift_selection_previous();
+        adapter::request_redraw(&self.view_handle);
+        previous
+    }
+
+    fn shift_selection_next(&self) -> usize {
+        let next = self.item_selector.borrow_mut().shift_selection_next();
+        adapter::request_redraw(&self.view_handle);
         next
     }
 
     fn select_all(&self) {
-        for r in 0..self.files_proxy_model.borrow().row_count() {
-            self.set_item_selected(r, true);
-        }
-    }
-
-    fn set_item_selected(&self, row: usize, selected: bool) {
-        if let Some(mut file_model) = self.files_proxy_model.borrow().row_data(row) {
-            if selected {
-                self.selected_items.borrow_mut().insert(row);
-            } else {
-                self.selected_items.borrow_mut().remove(&row);
-            }
-
-            file_model.set_selected(selected);
-
-            self.files_proxy_model
-                .borrow()
-                .set_row_data(row, file_model);
-        }
+        self.item_selector.borrow_mut().select_all();
+        adapter::request_redraw(&self.view_handle);
     }
 
     fn clear_selection(&self) {
-        for row in self.selected_items.borrow().iter() {
-            if let Some(mut file_model) = self.files_proxy_model.borrow().row_data(*row) {
-                file_model.set_selected(false);
-                self.files_proxy_model
-                    .borrow()
-                    .set_row_data(*row, file_model);
-            }
-        }
-
-        self.selected_items.borrow_mut().clear();
+        self.item_selector.borrow_mut().clear_selection();
+        adapter::request_redraw(&self.view_handle);
     }
 
     fn create_new_folder(&self) {
@@ -606,7 +557,7 @@ impl FilesController {
 
     fn copy(&self, row: Option<usize>) {
         if let Some(row) = row {
-            if !self.selected_items.borrow().contains(&row) {
+            if !self.item_selector.borrow().is_selected(&row) {
                 if let Some(file_model) = self.files_proxy_model.borrow().row_data(row) {
                     self.repository.copy(&[file_model]);
                     return;
@@ -616,7 +567,7 @@ impl FilesController {
 
         let mut copy_files = vec![];
 
-        for r in self.selected_items.borrow().iter().rev() {
+        for r in self.item_selector.borrow().selected_rows().iter().rev() {
             if let Some(file_model) = self.files_proxy_model.borrow().row_data(*r) {
                 copy_files.push(file_model);
             }
@@ -705,6 +656,8 @@ impl FilesController {
 
     fn update_view_files_model(&self) {
         let files_proxy_model = self.files_proxy_model.borrow().clone();
+        *self.item_selector.borrow_mut() =
+            ItemSelector::new(self.files_proxy_model.borrow().clone());
         let view_handle = self.view_handle.clone();
 
         upgrade_adapter(&self.view_handle, move |adapter| {
@@ -769,13 +722,13 @@ impl FilesController {
         if let Some(target) = target {
             let mut files = vec![];
 
-            for i in self.selected_items.borrow().iter() {
+            for i in self.item_selector.borrow().selected_rows().iter() {
                 if let Some(file_model) = self.files_proxy_model.borrow().row_data(*i) {
                     files.push(file_model);
                 }
             }
 
-            if !self.selected_items.borrow().contains(&source_row) {
+            if !self.item_selector.borrow().is_selected(&source_row) {
                 if let Some(file_model) = self.files_proxy_model.borrow().row_data(source_row) {
                     files.push(file_model);
                 }

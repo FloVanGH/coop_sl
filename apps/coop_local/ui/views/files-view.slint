@@ -15,9 +15,12 @@ export global FilesAdapter {
     callback get-item-context-menu(/* row-index */ int) -> [ListViewItem];
     callback item-context-menu-action(/* row-index */ int, /* spec */ string);
     callback rename-item(/* row-index */ int, /* text */ string);
-    callback update-selection(/* row-index */ int, /* control */ bool, /* shift*/ bool);
+    callback toggle-selection(/* row-index */ int);
     callback select-next() -> int;
     callback select-previous() -> int;
+    callback shift-selection(/* row-index*/ int);
+    callback shift-selection-next() -> int;
+    callback shift-selection-previous() -> int;
     callback select-all();
     callback copy();
     callback paste();
@@ -132,7 +135,12 @@ export component FilesView {
 
                 if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && (event.modifiers.control
                         || event.modifiers.shift)) {
-                    FilesAdapter.update-selection(row, event.modifiers.control, event.modifiers.shift);
+                    if (event.modifiers.control) {
+                        FilesAdapter.toggle-selection(row);
+                    } else if(event.modifiers.shift) {
+                        FilesAdapter.shift-selection(row);
+                    }
+
                     return;
                 }
 
@@ -186,13 +194,22 @@ export component FilesView {
         }
 
         if (event.text == Key.UpArrow) {
-            i-table-view.bring-row-into-view(FilesAdapter.select-previous());
+            if (event.modifiers.shift) {
+                i-table-view.bring-row-into-view(FilesAdapter.shift-selection-previous());
+            } else {
+                i-table-view.bring-row-into-view(FilesAdapter.select-previous());
+            }
+
             i-table-view.focus();
             return accept;
         }
 
         if (event.text == Key.DownArrow) {
-            i-table-view.bring-row-into-view(FilesAdapter.select-next());
+            if (event.modifiers.shift) {
+                i-table-view.bring-row-into-view(FilesAdapter.shift-selection-next());
+            } else {
+                i-table-view.bring-row-into-view(FilesAdapter.select-next());
+            }
             i-table-view.focus();
             return accept;
         }

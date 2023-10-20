@@ -3,6 +3,8 @@
 
 use std::{fs, io::Result, path::Path, time::SystemTime};
 
+use crate::item_selector::Selectable;
+
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Eq, Ord)]
 pub enum FileType {
     Dir,
@@ -135,13 +137,15 @@ impl FileModel {
     pub fn is_empty(&self) -> bool {
         self.len().map_or_else(|| false, |size| size > 0)
     }
+}
 
-    pub fn set_selected(&mut self, selected: bool) {
-        self.selected = selected;
+impl Selectable for FileModel {
+    fn selected(&self) -> bool {
+        self.selected
     }
 
-    pub fn selected(&self) -> bool {
-        self.selected
+    fn set_selected(&mut self, selected: bool) {
+        self.selected = selected;
     }
 }
 
