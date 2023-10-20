@@ -27,7 +27,7 @@ The project is mainly a hobby project of myself. I have started it to evaluate a
 Now I'm on to create a file browser that fits my personal needs and taste. So it will be including extra features like. a game launcher, music player and image viewer.
 Also if there are some features implemented now the project is still in early stage. As mentioned it's mainly a personal project but if someone else is interested in `coop_local` you can check further topics and progress on https://codeberg.org/flovansl/co_sl/issues/33.
 
- <img alt="coop_local" src="https://codeberg.org/flovansl/pages//attachments/9ba12373-c14d-4016-a875-401b9c3df3d0" width="120" />
+ <img alt="coop_local" src="https://codeberg.org/flovansl/pages//attachments/9ba12373-c14d-4016-a875-401b9c3df3d0" width="320" />
 
 ## Features
 
