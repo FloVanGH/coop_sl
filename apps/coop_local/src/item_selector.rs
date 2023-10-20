@@ -126,8 +126,9 @@ impl<T: Selectable> ItemSelector<T> {
             self.selection_end += 1;
         } else {
             let mut next = self.selection_end + 1;
+            let start = next;
 
-            for r in next..(self.model.row_count()) {
+            for r in start..(self.model.row_count()) {
                 if !self.selected_items.contains(&r) {
                     break;
                 }
@@ -159,8 +160,9 @@ impl<T: Selectable> ItemSelector<T> {
             self.selection_end -= 1;
         } else if self.selection_end > 0 {
             let mut previous = self.selection_end - 1;
+            let start = previous;
 
-            for r in (1..(previous + 1)).rev() {
+            for r in (1..(start + 1)).rev() {
                 if !self.selected_items.contains(&r) {
                     break;
                 }

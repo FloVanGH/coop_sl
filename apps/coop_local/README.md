@@ -49,6 +49,26 @@ Also if there are some features implemented now the project is still in early st
 
 coop_local can be controlled by mouse, touchpad, touchscreen and a game controller.
 
+## Implementation details
+
+### Architecture
+
+The application architecture of `coop_local` is based on the [MVC pattern](https://en.wikipedia.org/wiki/Model–view–controller). The following structure is used in the whole application:
+
+* `{ViewName}View`: the Slint component that represents the `View` (location `ui/views/{view-name}-view.slint`).
+* `{ViewName}Adapter`: a global that defines the interface between the view and the controller (location `ui/views/{view-name}-view.slint`).
+* `{ViewName}Controller`: a rust struct that represents the `Controller` (location `src/controller/{view_name}_controller.rs`).
+* `{ModelName}Model`: a rust struct that represents the `Model` (location `src/models/{model_name}_model.rs`).
+* `{RepositoryName}Repository`: reads and changes data convert it into a model and provide it to the controller (location `src/repositories/{_repository_name}_repository.rs`).
+
+#### Example
+
+* `FilesView`: Slint component that displays the files of the current directory in a `StandardTableView`.
+* `FilesAdapter`: Slint global that defines the interface between `FilesView` and `FilesController`.
+* `FilesController`: Rust struct that set / update the list of `FileModel` of `FilesView` and reacting to input from the `FilesView`.
+* `FileRepository`: Reads, copy, remove and rename files. Creates a list of `FileModels`. Is used by `FilesController`.
+* `FileModel`: Represents a single file.
+
 ## Dependencies
 
 ### Linux
