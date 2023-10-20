@@ -40,6 +40,7 @@ fn key_from_button(button: Button) -> SharedString {
         Button::South => Key::Return.into(),
         Button::East => Key::Escape.into(),
         Button::RightTrigger => Key::Tab.into(),
+        Button::RightTrigger2 => Key::Shift.into(),
         Button::North => " ".into(),
         Button::DPadUp => Key::UpArrow.into(),
         Button::DPadDown => Key::DownArrow.into(),
@@ -86,6 +87,10 @@ mod tests {
         assert_eq!(
             key_from_button(Button::RightTrigger),
             SharedString::from(Key::Tab)
+        );
+        assert_eq!(
+            key_from_button(Button::RightTrigger2),
+            SharedString::from(Key::Shift)
         );
         assert_eq!(key_from_button(Button::North), SharedString::from(" "));
         assert_eq!(

@@ -31,10 +31,19 @@ Also if there are some features implemented now the project is still in early st
 
 ## Features
 
-* View, copy, remove files and folders
+* Create bookmarks
+* View, copy, rename, remove files and folders
+* Create new folder
 * View images
 * View and edit texts
 * Integrated game launcher
+* Advanced keyboard navigation
+    * Optimized tab navigation
+    * Toggle selection of single entries with mouse left button and ctrl/command key
+    * Select multiple files at once with mouse left button and shift key
+    * Move selected entry with arrow key up and down
+    * Add more entries to selection with shift key and arrow up / down key
+* Optimized to use with a gamepad
 
 ## Input
 

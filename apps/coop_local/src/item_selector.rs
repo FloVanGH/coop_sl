@@ -125,7 +125,15 @@ impl<T: Selectable> ItemSelector<T> {
             self.unselect(self.selection_end);
             self.selection_end += 1;
         } else {
-            let next = self.selection_end + 1;
+            let mut next = self.selection_end + 1;
+
+            for r in next..(self.model.row_count()) {
+                if !self.selected_items.contains(&r) {
+                    break;
+                }
+
+                next += 1;
+            }
 
             if !self.is_out_of_bounds(next) {
                 self.select(next);
@@ -150,7 +158,16 @@ impl<T: Selectable> ItemSelector<T> {
             self.unselect(self.selection_end);
             self.selection_end -= 1;
         } else if self.selection_end > 0 {
-            let previous = self.selection_end - 1;
+            let mut previous = self.selection_end - 1;
+
+            for r in (1..(previous + 1)).rev() {
+                if !self.selected_items.contains(&r) {
+                    break;
+                }
+
+                previous -= 1;
+            }
+
             self.select(previous);
             self.selection_end = previous;
         }
@@ -583,6 +600,13 @@ mod tests {
         assert_eq!(selector.selection_start, 0);
         assert_eq!(selector.selection_end, 9);
         assert_eq!(selector.len(), 10);
+
+        selector.clear_selection();
+        selector.toggle_selection(4);
+        selector.toggle_selection(5);
+        selector.toggle_selection(3);
+        assert_eq!(selector.shift_selection_next(), 6);
+        assert_eq!(selector.len(), 4);
     }
 
     #[test]
@@ -628,5 +652,12 @@ mod tests {
         assert_eq!(selector.selection_start, 0);
         assert_eq!(selector.selection_end, 8);
         assert_eq!(selector.len(), 9);
+
+        selector.clear_selection();
+        selector.toggle_selection(3);
+        selector.toggle_selection(4);
+        selector.toggle_selection(5);
+        assert_eq!(selector.shift_selection_previous(), 2);
+        assert_eq!(selector.len(), 4);
     }
 }
