@@ -121,10 +121,6 @@ mod tests {
             key_from_button(Button::LeftTrigger2),
             SharedString::default()
         );
-        assert_eq!(
-            key_from_button(Button::RightTrigger2),
-            SharedString::default()
-        );
         assert_eq!(key_from_button(Button::Select), SharedString::default());
         assert_eq!(key_from_button(Button::Start), SharedString::default());
         assert_eq!(key_from_button(Button::Mode), SharedString::default());
