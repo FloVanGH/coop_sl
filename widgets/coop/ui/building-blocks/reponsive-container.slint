@@ -1,0 +1,65 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { RoundButton } from "../widgets/round-button.slint";
+import { Icons, Palette, Space, Size, Duration } from "../styling.slint";
+
+export component ResponsiveContainer {
+    private property <bool> on-break-point: root.reference-width < root.break-point;
+
+    in property <length> reference-width;
+    in property <length> break-point: 444px;
+    out property <bool> on-break: root.reference-width < root.break-point;
+    in-out property <bool> expand-shrunken;
+    out property <length> expand-button-width: 2 *  i-layout.padding + i-expand-button.width;
+
+    preferred-width: 100%;
+    preferred-height: 100%;
+    vertical-stretch: 1;
+    horizontal-stretch: 1;
+
+    Rectangle {
+        width: 100%;
+        height: 100%;
+
+        @children
+    }
+
+    i-expander := Rectangle {
+        x: 0px;
+        y: 0px;
+        width: i-layout.min-width;
+        height: i-layout.min-height;
+        background: Palette.background-alt;
+        opacity: 0;
+
+        i-layout := HorizontalLayout {
+            padding: Space.small;
+
+            i-expand-button := RoundButton {
+                enabled: root.on-break;
+                icon: Icons.reorder;
+                icon-background: Palette.background-alt;
+
+                clicked => {
+                    root.toggle-expand-shrunken();
+                }
+            }
+        }
+
+        animate opacity { duration: Duration.fast;}
+    }
+
+    function toggle-expand-shrunken() {
+        root.expand-shrunken = !root.expand-shrunken;
+    }
+
+    states [
+        not-break when !root.on-break : {
+            root.expand-shrunken: false;
+        }
+        on-break when root.on-break : {
+            i-expander.opacity: 1;
+        }
+    ]
+}

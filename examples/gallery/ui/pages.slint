@@ -1,0 +1,38 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { BasicsPage, TypoPage, BrushesPage, ListPage, ListPageAdapter, BookFlipPage, TextEditPage } from "pages/pages.slint";
+
+export component Pages {
+    in property <{ parent: int, item: int }> current-navigation-item;
+    in property <length> header-offset;
+
+    preferred-width: 100%;
+    preferred-height: 100%;
+    horizontal-stretch: 1;
+    vertical-stretch: 1;
+
+    if (root.current-navigation-item.parent == 0 && root.current-navigation-item.item == 0) : BasicsPage {
+        header-offset: root.header-offset;
+    }
+
+    if (root.current-navigation-item.parent == 0 && root.current-navigation-item.item == 1) : ListPage {
+        header-offset: root.header-offset;
+    }
+
+    if (root.current-navigation-item.parent == 0 && root.current-navigation-item.item == 2) : TextEditPage {
+        header-offset: root.header-offset;
+    }
+
+    if (root.current-navigation-item.parent == 0 && root.current-navigation-item.item == 3) : BookFlipPage {
+        header-offset: root.header-offset;
+    }
+
+    if (root.current-navigation-item.parent == 1 && root.current-navigation-item.item == 0) : BrushesPage {
+        header-offset: root.header-offset;
+    }
+
+    if (root.current-navigation-item.parent == 1 && root.current-navigation-item.item == 1) : TypoPage {
+        header-offset: root.header-offset;
+    }
+}

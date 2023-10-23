@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { SideBar, GroupListView, GroupListViewItem } from "_imports/coop_widgets.slint";
+import { SideBar, GroupListView, GroupListViewItem } from "@coop/lib.slint";
 
 export component SideBarView inherits SideBar {
+    callback current-item-changed <=> i-navigation.current-item-changed;
+
     in-out property <[GroupListViewItem]> navigation-items <=> i-navigation.model;
     in-out property <{ parent: int, item: int }> current-item <=> i-navigation.current-item;
 
@@ -12,9 +14,5 @@ export component SideBarView inherits SideBar {
     i-navigation := GroupListView {
         vertical-stretch: 1;
         current-item: { item: 0, parent: 0 };
-
-        current-item-changed => {
-            root.expanded = false;
-         }
     }
 }

@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { RoundButton, ContextMenu, LineEdit, ScrollView, Button, LoadingIndicator } from "../_imports/coop_widgets/widgets.slint";
-import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
-import { Palette, Icons, Space, Icography, Radius } from "../_imports/coop_widgets/styling.slint";
-import { ListViewItem } from "../_imports/coop_widgets/structs.slint";
-import { SmallTitle, ExtraLargeTitle, LargeLabel, FocusBorder } from "../_imports/coop_widgets/components.slint";
+import { RoundButton, ContextMenu, LineEdit, ScrollView, Button, LoadingIndicator } from "@coop/widgets.slint";
+import { HeaderBar } from "@coop/building-blocks.slint";
+import { Palette, Icons, Space, Icography, Radius } from "@coop/styling.slint";
+import { ListViewItem } from "@coop/structs.slint";
+import { SmallTitle, ExtraLargeTitle, LargeLabel, FocusBorder } from "@coop/components.slint";
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
 
 export global GameSettingsAdapter {
@@ -18,6 +18,8 @@ export global GameSettingsAdapter {
 }
 
 component GameSettingsView {
+    in property <length> header-offest;
+
     Rectangle {
         background: Palette.background;
 
@@ -26,6 +28,7 @@ component GameSettingsView {
                 action-icon: Icons.arrow-back;
                 action-enabled: true;
                 title: "\{GameSettingsAdapter.title} (Settings)";
+                offset: root.header-offest;
 
                 i-menu-button := RoundButton {
                     icon: Icons.more-vert;
@@ -102,6 +105,8 @@ export component GamesView {
     private property <float> display-loading;
     private property <int> item-context-menu-item-row;
 
+    in property <length> header-offest;
+
     forward-focus: i-launcher;
 
     VerticalLayout {
@@ -109,6 +114,7 @@ export component GamesView {
             action-icon: Icons.arrow-back;
             action-enabled: true;
             title: GamesAdapter.title;
+            offset: root.header-offest;
 
             i-context-menu := ContextMenu {
                 min-menu-width: 94px;

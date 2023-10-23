@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { ScrollView, RoundButton, ContextMenu, LoadingIndicator, RoundButton } from "../_imports/coop_widgets/widgets.slint";
-import { FocusBorder } from "../_imports/coop_widgets/components.slint";
-import { Space, Palette, Radius, Icons } from "../_imports/coop_widgets/styling.slint";
-import { HeaderBar, ControlBar } from "../_imports/coop_widgets/building-blocks.slint";
-import { ListViewItem } from "../_imports/coop_widgets/structs.slint";
+import { ScrollView, RoundButton, ContextMenu, LoadingIndicator, RoundButton } from "@coop/widgets.slint";
+import { FocusBorder } from "@coop/components.slint";
+import { Space, Palette, Radius, Icons } from "@coop/styling.slint";
+import { HeaderBar, ControlBar } from "@coop/building-blocks.slint";
+import { ListViewItem } from "@coop/structs.slint";
 
 export global ImageAdapter {
     callback back();
@@ -24,11 +24,14 @@ export component ImageView {
     private property <float> display-loading;
     private property <bool> image-loaded: ImageAdapter.image.width > 0 && ImageAdapter.image.height > 0;
 
+    in property <length> header-offest;
+
     VerticalLayout {
         i-header-bar := HeaderBar {
             action-icon: Icons.arrow-back;
             action-enabled: true;
             title: ImageAdapter.title;
+            offset: root.header-offest;
 
             i-context-menu := ContextMenu {
                 min-menu-width: 94px;

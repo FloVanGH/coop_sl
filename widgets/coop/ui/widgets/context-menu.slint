@@ -1,0 +1,99 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { PopupBorder } from "../components.slint";
+import { ItemDelegate } from "../_internal/delegates.slint";
+import { ListViewItem } from "../structs.slint";
+
+export component ContextMenu  {
+    private property <int> current-item;
+
+    callback item-clicked(/* row */ int);
+    callback closed();
+
+    in property <[ListViewItem]> model;
+    in property <length> min-menu-width: 32px;
+    in property <length> offset-x;
+    in property <length> offset-y;
+    out property <bool> has-focus: i-focus-scope.has-focus;
+
+    vertical-stretch: 0;
+    horizontal-stretch: 0;
+
+    i-focus-scope := FocusScope {
+        x: 0px;
+        y: 0px;
+        enabled: false;
+
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.close();
+                return accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.set-current-item(root.current-item - 1);
+                return accept;
+            }
+            if (event.text == Key.DownArrow) {
+                root.set-current-item(root.current-item + 1);
+                return accept;
+            }
+            if (event.text == Key.Return) {
+                root.item-clicked(root.current-item);
+                root.current-item = -1;
+                root.close();
+                return accept;
+            }
+            reject
+        }
+    }
+
+    i-popup-window := PopupWindow {
+        x: root.offset-x;
+        y: root.offset-y;
+
+        PopupBorder {
+            min-width: root.min-menu-width;
+
+            VerticalLayout {
+                for item[index] in model : ItemDelegate {
+                    leading-icon: item.leading-icon;
+                    text: item.text;
+                    trailing-icon: item.trailing-icon;
+                    selected: root.has-focus && index == root.current-item;
+
+                    clicked => {
+                        i-focus-scope.enabled = false;
+                        root.item-clicked(index);
+                    }
+                }
+            }
+        }
+    }
+
+    function set-current-item(row: int) {
+        if (row < 0 || row >= self.model.length) {
+            return;
+        }
+
+        self.current-item = row;
+    }
+
+    public function show() {
+        i-popup-window.show();
+    }
+
+    public function close() {
+        i-focus-scope.enabled = false;
+        i-popup-window.close();
+        root.closed();
+    }
+
+    public function show-and-focus() {
+        i-focus-scope.enabled = true;
+        i-popup-window.show();
+        i-focus-scope.focus();
+        self.set-current-item(0);
+    }
+}
+

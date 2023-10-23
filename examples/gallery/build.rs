@@ -1,21 +1,19 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-fn generate_imports() {
-    book_flip::generate_import().unwrap();
-    coop_widgets::generate_import().unwrap();
-}
+use std::collections::HashMap;
 
 const APP: &str = "ui/app.slint";
 
 #[cfg(feature = "default")]
 fn main() {
-    use slint_build::CompilerConfiguration;
+    let mut import_paths = HashMap::new();
+    import_paths.extend(coop::import_paths());
+    import_paths.extend(book_flip::import_paths());
 
-    generate_imports();
     slint_build::compile_with_config(
         APP,
-        CompilerConfiguration::new().with_style("fluent".into()),
+        slint_build::CompilerConfiguration::new().with_library_paths(import_paths),
     )
     .unwrap();
 }
@@ -26,9 +24,13 @@ fn main() {
     feature = "slint_coop"
 ))]
 fn main() {
-    generate_imports();
+    let mut import_paths = HashMap::new();
+    import_paths.extend(coop::import_paths().into_iter());
+    import_paths.extend(book_flip::import_paths().into_iter());
+
     let config = slint_build::CompilerConfiguration::new()
-        .embed_resources(slint_build::EmbedResourcesKind::EmbedForSoftwareRenderer);
+        .embed_resources(slint_build::EmbedResourcesKind::EmbedForSoftwareRenderer)
+        .with_library_paths(import_paths);
     slint_build::compile_with_config(APP, config).unwrap();
     slint_build::print_rustc_flags().unwrap();
 }

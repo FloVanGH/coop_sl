@@ -5,9 +5,7 @@ SPDX-License-Identifier: MIT
 
 # coop_sl
 
-This repository is the home of my personal [Slint](https://slint.dev/) projects. It contains a custom library with a set of default widgets, complex custom widgets, additional platforms supports, an experimental game engine and some apps.
-
-What the `Coop` stands for: cooperation.
+This repository is the home of my personal [Slint](https://slint.dev/) projects.
 
 <a href="https://codeberg.org/flovansl/co_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
@@ -33,12 +31,12 @@ What the `Coop` stands for: cooperation.
     * [slint_coop](platform_support/slint_coop/): Slint platform implementation based on `coop_client` **(on hold)**
 * widgets/
     * [book_flip](widgets/book_flip/): e-book widget for Slint **(on hold)**
-    * [coop_widgets](widgets/coop_widgets/): `coop_widgets` is a custom widget and component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design. **(in active development / pre-release)**
+    * [coop](widgets/coop/): `coop` is a custom widget and component library for [Slint](https://slint.dev/) with a custom simple, consistence and clean design. **(in active development / pre-release)**
 
 ## examples
 
 * [desktop](examples/desktop/): experimental example desktop environment based on `coop_display` and Slint
-* [gallery](examples/gallery/): gallery example showing the widget of `book_flip` and `co_widget`
+* [gallery](examples/gallery/): gallery example showing the widget of `book_flip` and `coop`
 
 > Check out the [README](examples/README.md) for more details.
 

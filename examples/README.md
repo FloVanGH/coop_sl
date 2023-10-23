@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 
 # coop_sl examples
 
-Examples for `coop_widgets` and `book_flip`.
+Examples for `coop` and `book_flip`.
 
 <a href="https://codeberg.org/flovansl/co_sl">
     <img alt="Get it on Codeberg" src="https://get-it-on.codeberg.org/get-it-on-blue-on-white.png" height="60">
@@ -28,7 +28,7 @@ Experimental example desktop environment based on `coop_display` and Slint.
 
 ## gallery
 
-Example gallery that shows all widgets of `coop_widgets` and `book_flip`. It can be run on multiple platforms.
+Example gallery that shows all widgets of `coop` and `book_flip`. It can be run on multiple platforms.
 
 ## live wasm preview
 

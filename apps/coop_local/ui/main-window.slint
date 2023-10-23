@@ -1,33 +1,32 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { BookmarksView, BookmarksAdapter } from "views/bookmarks-view.slint";
+import { BookmarksAdapter } from "views/bookmarks-view.slint";
 export { BookmarksAdapter }
 
 import { DialogView, DialogAdapter } from "views/dialog-view.slint";
 export { DialogAdapter }
 
-import { FilesView, FilesAdapter } from "views/files-view.slint";
+import { FilesAdapter } from "views/files-view.slint";
 export { FilesAdapter }
 
-import { GamesView, GamesAdapter, GameSettingsAdapter } from "views/games-view.slint";
+import { GamesAdapter, GameSettingsAdapter } from "views/games-view.slint";
 export { GamesAdapter, GameSettingsAdapter }
 
-import { ImageView, ImageAdapter } from "views/image-view.slint";
+import { ImageAdapter } from "views/image-view.slint";
 export { ImageAdapter }
 
-import { TextView, TextAdapter } from "views/text-view.slint";
+import { TextAdapter } from "views/text-view.slint";
 export { TextAdapter }
 
-import { ListViewItem, CoopWindow, Icons, GroupListViewItem, SideBar, LoadingIndicator } from "_imports/coop_widgets.slint";
+import { ListViewItem, CoopWindow, Icons, GroupListViewItem, LoadingIndicator } from "@coop/lib.slint";
 export { ListViewItem, Icons, GroupListViewItem }
 
-export enum View {
-    Files,
-    Image,
-    Text,
-    Games
-}
+import { OverlayTouchArea } from "@coop/components.slint";
+import { Duration } from "@coop/styling.slint";
+import { ResponsiveContainer } from "@coop/building-blocks.slint";
+import { View, Views } from "views.slint";
+import { SideBarView } from "views/sidebar-view.slint";
 
 export global MainAdapter {
     in property <View> active-view: View.Files;
@@ -39,59 +38,44 @@ export component MainWindow inherits CoopWindow {
     min-width: 316px;
     min-height: 400px;
     preferred-width: 600px;
-    forward-focus: i-focus-scope;
 
-    i-focus-scope := FocusScope {
-        key-pressed(event) => {
-            if (event.text == Key.Tab) {
-                i-bookmarks-view.focus();
-                self.enabled = false;
-                return accept;
+    i-responsive-container := ResponsiveContainer {
+        reference-width: parent.width;
+
+        if (!i-responsive-container.on-break) : HorizontalLayout {
+            SideBarView {
+                resizable: true;
+                collapse-title: true;
             }
 
-            reject
-        }
-    }
-
-    GridLayout {
-        Rectangle {
-            col: 1;
-
-            if (MainAdapter.active-view == View.Files) : FilesView {
-                window-height: root.height;
-                width: 100%;
-                height: 100%;
-            }
-
-            if (MainAdapter.active-view == View.Image) : ImageView {
-                width: 100%;
-                height: 100%;
-            }
-
-            if (MainAdapter.active-view == View.Text) : TextView {
-                width: 100%;
-                height: 100%;
-            }
-
-            if (MainAdapter.active-view == View.Games) : GamesView {
-                width: 100%;
-                height: 100%;
+            Views {
+                active-view: MainAdapter.active-view;
             }
         }
 
-        i-sidebar := SideBar {
-            col: 0;
-            parent-width: root.width;
-            responsive: true;
+        if (i-responsive-container.on-break) : Rectangle {
+            width: 100%;
+            height: 100%;
 
-            i-bookmarks-view := BookmarksView {
-                window-height: root.height;
+            Views {
+                active-view: MainAdapter.active-view;
+                header-offest: i-responsive-container.expand-button-width;
+            }
+
+            if (i-responsive-container.expand-shrunken) : OverlayTouchArea {
+                clicked => {
+                    i-responsive-container.expand-shrunken = false;
+                }
+            }
+
+            SideBarView {
+                x: i-responsive-container.expand-shrunken ? 0 : -self.width;
 
                 item-clicked => {
-                    if (i-sidebar.expanded) {
-                        i-sidebar.expanded = false;
-                    }
+                    i-responsive-container.expand-shrunken = false;
                 }
+
+                animate x { duration: Duration.fast;}
             }
         }
     }
@@ -101,8 +85,5 @@ export component MainWindow inherits CoopWindow {
         height: 100%;
     }
 
-    if (MainAdapter.loading) : LoadingIndicator {
-        width: 100%;
-        height: 100%;
-    }
+    if (MainAdapter.loading) : LoadingIndicator {}
 }

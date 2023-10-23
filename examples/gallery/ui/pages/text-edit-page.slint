@@ -3,15 +3,17 @@
 
 import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
-import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
-import { Switch, TextEdit } from "../_imports/coop_widgets/widgets.slint";
-import { Space, Icons, ColorVariant, Palette } from "../_imports/coop_widgets/styling.slint";
-import { Popup, SmallLabel } from "../_imports/coop_widgets/components.slint";
-import { Spacer, HorizontalSeparator, VerticalSpacerMedium } from "../_imports/coop_widgets/layouts.slint";
+import { HeaderBar } from "@coop/building-blocks.slint";
+import { Switch, TextEdit } from "@coop/widgets.slint";
+import { Space, Icons, ColorVariant, Palette } from "@coop/styling.slint";
+import { Popup, SmallLabel } from "@coop/components.slint";
+import { Spacer, HorizontalSeparator, VerticalSpacerMedium } from "@coop/layouts.slint";
 
 import { AppManager } from "../app-manager.slint";
 
 export component TextEditPage inherits VerticalLayout {
+    in property <length> header-offset <=> i-header-bar.offset;
+
     i-header-bar := HeaderBar {
         title: "Text Edit";
 

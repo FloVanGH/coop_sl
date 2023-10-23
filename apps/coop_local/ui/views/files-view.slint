@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { StandardTableView, ContextMenu,  RoundButton, LoadingIndicator } from "../_imports/coop_widgets/widgets.slint";
-import { Size, Space, Icons } from "../_imports/coop_widgets/styling.slint";
-import { TableRowItem, ListViewItem } from "../_imports/coop_widgets/structs.slint";
-import { SelectionMode } from "../_imports/coop_widgets/enums.slint";
-import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
+import { StandardTableView, ContextMenu,  RoundButton, LoadingIndicator } from "@coop/widgets.slint";
+import { Size, Space, Icons } from "@coop/styling.slint";
+import { TableRowItem, ListViewItem } from "@coop/structs.slint";
+import { SelectionMode } from "@coop/enums.slint";
+import { HeaderBar } from "@coop/building-blocks.slint";
 
 export global FilesAdapter {
     callback back();
@@ -49,6 +49,7 @@ export component FilesView {
     private property <int> item-context-menu-item-row: -1;
 
     in property <length> window-height;
+    in property <length> header-offest;
 
     forward-focus: i-table-view;
 
@@ -57,6 +58,7 @@ export component FilesView {
             action-icon: Icons.arrow-back;
             action-enabled: FilesAdapter.back-enabled;
             title: FilesAdapter.title;
+            offset: root.header-offest;
 
             i-context-menu := ContextMenu {
                 min-menu-width: 128px;

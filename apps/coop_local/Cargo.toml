@@ -16,7 +16,7 @@ path = "src/main.rs"
 name = "coop_local"
 
 [dependencies]
-slint = { version = "1.2.2", default-features = false, features = ["compat-1-2"] }
+slint = { git = "https://github.com/slint-ui/slint", default-features = false, features = ["compat-1-2"] }
 tokio = { version = "1", features = ["full"] }
 futures = "0.3.28"
 
@@ -38,8 +38,8 @@ chrono = { version = "0.4.26", optional = true }
 gilrs = { version = "0.10.2", optional = true }
 
 [build-dependencies]
-slint-build = { version = "1.2.2" }
-coop_widgets = { path = "../../widgets/coop_widgets" }
+slint-build = { git = "https://github.com/slint-ui/slint" }
+coop = { path = "../../widgets/coop" }
 
 [features]
 default = ["slint/std", "slint/backend-winit", "slint/renderer-winit-femtovg", "slint/accessibility", "games"]

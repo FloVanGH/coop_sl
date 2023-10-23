@@ -11,6 +11,7 @@ use wasm_bindgen::prelude::*;
 
 #[allow(clippy::all)]
 mod generated_code {
+    #![allow(dead_code)]
     slint::include_modules!();
 }
 

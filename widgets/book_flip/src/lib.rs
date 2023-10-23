@@ -1,31 +1,19 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-use std::{env, fs, io, io::Write, path::Path};
+use std::env;
+use std::path::PathBuf;
 
-/// Generates a import file for the widget library on the given path e.g. `my_project/my_ui/_my_imports`.
-pub fn generate_import_with_custom_ui_path<P>(ui_path: P) -> io::Result<()>
-where
-    P: AsRef<Path>,
-{
-    let import_path = ui_path.as_ref().to_path_buf();
-    let ui_lib_name = env!("UI_LIB_NAME");
-    let ui_lib_path = env!("UI_LIB_PATH");
-    let ui_lib_file = env!("UI_LIB_FILE");
+use std::collections::HashMap;
 
-    let import_file_content = fs::read_to_string(ui_lib_file)
-        .map(|c| c.replace("from \"", format!("from \"{ui_lib_path}/").as_str()))?;
+const LIB_NAME: &str = "book-flip.slint";
 
-    if !import_path.exists() {
-        fs::create_dir_all(import_path.clone())?;
-    }
+pub fn import_paths() -> HashMap<String, PathBuf> {
+    let mut import_paths = HashMap::new();
 
-    let mut import_file = fs::File::create(import_path.join(format!("{ui_lib_name}.slint")))?;
+    let ui_lib_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui/lib.slint");
 
-    import_file.write_all(import_file_content.as_bytes())
-}
+    import_paths.insert(LIB_NAME.to_string(), ui_lib_path);
 
-/// Generates a import file for the widget library on a default ui path `my_project/ui/_imports`.
-pub fn generate_import() -> io::Result<()> {
-    generate_import_with_custom_ui_path(env::current_dir()?.join("ui/_imports"))
+    import_paths
 }

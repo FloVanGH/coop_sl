@@ -1,0 +1,11 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
+// SPDX-License-Identifier: GPL-3.0-only
+
+import { SideBar } from "@coop/building-blocks.slint";
+import { BookmarksView } from "bookmarks-view.slint";
+
+export component SideBarView inherits SideBar {
+    callback item-clicked <=> i-bookmarks-view.item-clicked;
+
+    i-bookmarks-view := BookmarksView {}
+}

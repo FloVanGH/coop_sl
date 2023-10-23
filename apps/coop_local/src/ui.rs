@@ -3,6 +3,7 @@
 
 #[allow(clippy::all)]
 mod inner {
+    #![allow(dead_code)]
     slint::include_modules!();
 }
 

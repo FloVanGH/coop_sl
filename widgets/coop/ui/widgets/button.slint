@@ -1,0 +1,51 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Duration, Palette, Size, State } from "../styling.slint";
+import { ButtonBase } from "../_internal/base-widgets.slint";
+
+export component Button {
+    callback clicked <=> i-base.clicked;
+
+    in property <string> text;
+    in property <image> icon;
+    in property <bool> primary: false;
+    out property <bool> has-focus: i-base.has-focus;
+    out property <bool> pressed: self.enabled && i-base.pressed;
+    in-out property <bool> enabled: true;
+
+    accessible-role: button;
+    accessible-label: root.text;
+    min-width: max(Size.medium, i-base.min-width);
+    min-height: max(Size.medium, i-base.min-height);
+    vertical-stretch: 0;
+    horizontal-stretch: 1;
+    forward-focus: i-base;
+
+    i-base := ButtonBase {
+        enabled: root.enabled;
+        background: root.primary ? Palette.primary: Palette.surface;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: self.text-color;
+        text: root.text;
+        icon: root.icon;
+
+        animate background, text-color, container-scale { duration: Duration.fast; }
+    }
+
+    states [
+        disabled when !root.enabled: {
+            i-base.background: Palette.surface-disabled;
+            i-base.text-color: Palette.foreground-disabled;
+        }
+        pressed when i-base.focus-pressed: {
+            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.surface.darker(State.pressed);
+            i-base.text-color: root.primary ? Palette.on-primary.darker(State.pressed) : Palette.foreground.darker(State.pressed);
+            i-base.container-scale: 0.98;
+        }
+        hover when i-base.has-hover: {
+            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.surface.darker(State.hover);
+            i-base.text-color:  root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
+        }
+    ]
+}

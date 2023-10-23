@@ -1,0 +1,53 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Duration, Palette, Size, State } from "../styling.slint";
+import { ButtonBase } from "../_internal/base-widgets.slint";
+
+export component RoundOutlineButton {
+    callback clicked <=> i-base.clicked;
+
+    in property <image> icon <=> i-base.icon;
+    in property <string> text <=> i-base.text;
+    in property <bool> primary: false;
+    out property <bool> has-focus: i-base.has-focus;
+    out property <bool> pressed: self.enabled && i-base.pressed;
+    in-out property <bool> enabled: true;
+
+    accessible-role: button;
+    // min-width: max(Size.medium, i-base.min-width);
+    min-height: max(Size.medium, i-base.min-height);
+    width: self.height;
+    vertical-stretch: 0;
+    horizontal-stretch: 0;
+
+    i-base := ButtonBase {
+        enabled: root.enabled;
+        background: root.primary ? Palette.primary: Palette.background;
+        border-width: 1px;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: self.text-color;
+        border-color: Palette.border;
+        padding-left: 0px;
+        padding-right: 0px;
+        border-radius: max(self.width, self.height) / 2;
+
+        animate background, text-color, icon-color, border-color { duration: Duration.fast; }
+    }
+
+    states [
+        disabled when !root.enabled: {
+            i-base.background: Palette.background;
+            i-base.border-color: Palette.border-disabled;
+            i-base.text-color: Palette.foreground-disabled;
+        }
+        pressed when i-base.focus-pressed: {
+            i-base.background: root.primary ? Palette.primary.darker(State.pressed) : Palette.background.darker(State.pressed);
+            i-base.border-color: Palette.border.darker(State.pressed);
+        }
+        hover when i-base.has-hover: {
+            i-base.background: root.primary ? Palette.primary.darker(State.hover) : Palette.background.darker(State.hover);
+            i-base.border-color: Palette.border.darker(State.hover);
+        }
+    ]
+}

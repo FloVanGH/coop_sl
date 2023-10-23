@@ -1,12 +1,16 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { CoopWindow, VirtualKeyboard, VirtualKeyboardAdapter, GroupListViewItem, Palette, Icons } from "_imports/coop_widgets.slint";
-import { BasicsPage, TypoPage, BrushesPage, ListPage, ListPageAdapter, BookFlipPage, TextEditPage } from "pages/pages.slint";
+import { VirtualKeyboard, VirtualKeyboardAdapter } from "@coop/widgets.slint";
+import { ResponsiveContainer } from "@coop/building-blocks.slint";
+import { Duration, Palette, Icons  } from "@coop/styling.slint";
+import { OverlayTouchArea, CoopWindow } from "@coop/components.slint";
+import { TabItem, GroupListViewItem } from "@coop/structs.slint";
+import { ListPageAdapter } from "pages/pages.slint";
 import { AppManager } from "app-manager.slint";
 import { SideBarView } from "side-bar-view.slint";
 
-import { TabItem } from "_imports/coop_widgets/structs.slint";
+import { Pages } from "pages.slint";
 
 export { VirtualKeyboardAdapter }
 export { AppManager }
@@ -14,70 +18,74 @@ export { ListPageAdapter }
 export { TabItem }
 
 export component App inherits CoopWindow {
-    min-width: 800px;
+    private property <GroupListViewItem> widgets: {
+        text: "Widgets",
+        items: [
+            { leading-icon: Icons.home, text: "Basics", highlighted: true },
+            { leading-icon: Icons.list, text: "Lists", highlighted: true },
+            { leading-icon: Icons.pin, text: "TextEdit", highlighted: true },
+            { leading-icon: Icons.book, text: "Book flip", highlighted: true },
+        ]
+    };
+
+    private property <GroupListViewItem> resources: {
+        text: "Resources",
+        items: [
+            { leading-icon: Icons.brush, text: "Brushes", highlighted: true },
+            { leading-icon: Icons.format-size, text: "Typography", highlighted: true },
+        ]
+    };
+    private property <{ parent: int, item: int }> current-navigation-item;
+
+    min-width: 400px;
     min-height: 600px;
-    title: "Widgets gallery";
-    forward-focus: i-focus-scope;
+    preferred-width: 800px;
+    title: "Gallery";
+    background: Palette.background;
 
-    i-focus-scope := FocusScope {
-        key-pressed(event) => {
-            if (event.text == Key.Tab) {
-                i-side-bar.focus();
-                self.enabled = false;
-                return accept;
+    i-responsive-container := ResponsiveContainer {
+        reference-width: parent.width;
+
+        if (!i-responsive-container.on-break) : HorizontalLayout {
+            SideBarView {
+                title: root.title;
+                navigation-items: [root.widgets, root.resources];
+                resizable: true;
+                current-item <=> root.current-navigation-item;
             }
 
-            reject
-        }
-    }
-
-    Rectangle {
-        background: Palette.background;
-    }
-
-    Rectangle {
-        GridLayout {
-            Rectangle {
-                col: 1;
-
-                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 0) : BasicsPage {}
-                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 1) : ListPage {}
-                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 2) : TextEditPage {}
-                if (i-side-bar.current-item.parent == 0 && i-side-bar.current-item.item == 3) : BookFlipPage {}
-                if (i-side-bar.current-item.parent == 1 && i-side-bar.current-item.item == 0) : BrushesPage {}
-                if (i-side-bar.current-item.parent == 1 && i-side-bar.current-item.item == 1) : TypoPage {}
-            }
-
-            i-side-bar := SideBarView {
-                col: 0;
-                parent-width: root.width;
-                title: "Gallery";
-                responsive: true;
-
-                property <GroupListViewItem> widgets: {
-                    text: "Widgets",
-                    items: [
-                        { leading-icon: Icons.home, text: "Basics", highlighted: true },
-                        { leading-icon: Icons.list, text: "Lists", highlighted: true },
-                        { leading-icon: Icons.pin, text: "TextEdit", highlighted: true },
-                        { leading-icon: Icons.book, text: "Book flip", highlighted: true },
-                    ]
-                };
-
-                property <GroupListViewItem> resources: {
-                    text: "Resources",
-                    items: [
-                        { leading-icon: Icons.brush, text: "Brushes", highlighted: true },
-                        { leading-icon: Icons.format-size, text: "Typography", highlighted: true },
-                    ]
-                };
-
-                navigation-items: [self.widgets, self.resources];
+            Pages {
+                current-navigation-item: root.current-navigation-item;
             }
         }
 
-        if (AppManager.keyboard-enabled) : VirtualKeyboard {
-            y: TextInputInterface.text-input-focused ? parent.height - self.height : parent.height;
+        if (i-responsive-container.on-break) : Rectangle {
+            width: 100%;
+            height: 100%;
+
+            Pages {
+                current-navigation-item: root.current-navigation-item;
+                header-offset: i-responsive-container.expand-button-width;
+            }
+
+            if (i-responsive-container.expand-shrunken) : OverlayTouchArea {
+                clicked => {
+                    i-responsive-container.expand-shrunken = false;
+                }
+            }
+
+            SideBarView {
+                x: i-responsive-container.expand-shrunken ? 0 : -self.width;
+                title: root.title;
+                navigation-items: [root.widgets, root.resources];
+                current-item <=> root.current-navigation-item;
+
+                current-item-changed => {
+                    i-responsive-container.expand-shrunken = false;
+                }
+
+                animate x { duration: Duration.fast;}
+            }
         }
     }
 }

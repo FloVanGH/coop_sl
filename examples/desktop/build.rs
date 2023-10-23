@@ -2,6 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 fn main() {
-    coop_widgets::generate_import().unwrap();
+    coop::generate_import().unwrap();
     slint_build::compile("ui/app.slint").unwrap();
 }

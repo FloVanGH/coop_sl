@@ -1,0 +1,67 @@
+// SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+import { Palette, Size, Space } from "../styling.slint";
+import { MediumTitle } from "../components/label.slint";
+import { Spacer } from "../layouts/spacer.slint";
+
+export component SideBar {
+    private property <length> side-bar-min-width: 160px;
+    private property <length> side-bar-max-width: 320px;
+
+    in property <string> title;
+    in property <bool> resizable;
+    in property <bool> collapse-title;
+
+    width: self.side-bar-min-width;
+    preferred-height: 100%;
+    horizontal-stretch: 0;
+
+    i-content := Rectangle {
+        width: 100%;
+        height: 100%;
+        background: Palette.background-alt;
+        clip: true;
+        drop-shadow-color: Palette.shadow;
+        drop-shadow-blur: 4px;
+        drop-shadow-offset-x: 1px;
+
+        i-layout := VerticalLayout {
+            padding-bottom: Space.medium;
+            padding-right: 2px;
+
+            if (!root.collapse-title) : MediumTitle {
+                x: 40px;
+                text: root.title;
+                vertical-alignment: center;
+                horizontal-alignment: left;
+                min-height: 40px;
+            }
+
+            @children
+        }
+
+        Rectangle {
+            background: Palette.shadow;
+            width: 1px;
+            height: 100%;
+            x: parent.width - self.width;
+
+            if (root.resizable) : TouchArea {
+                mouse-cursor: MouseCursor.col-resize;
+
+                moved => {
+                    root.resize(root.width + (self.mouse-x - self.pressed-x));
+                }
+            }
+        }
+    }
+
+    function resize(new-width: length) {
+        if (!root.resizable) {
+            return;
+        }
+
+        root.width = min(root.side-bar-max-width, max(root.side-bar-min-width, new-width));
+    }
+}

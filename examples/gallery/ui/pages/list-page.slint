@@ -4,11 +4,11 @@
 import { RowTitle, ColumnTitle } from "titles.slint";
 
 import { StandardTableView, ScrollView, ListView, GroupListView, Switch, StandardListView, TabView,
-    Button } from "../_imports/coop_widgets/widgets.slint";
-import { HeaderBar } from "../_imports/coop_widgets/building-blocks.slint";
-import { HorizontalSeparator, VerticalSpacerMedium, VerticalBox, Spacer } from "../_imports/coop_widgets/layouts.slint";
-import { Palette, Icons, ColorVariant, Space } from "../_imports/coop_widgets/styling.slint";
-import { GroupListViewItem, TabItem } from "../_imports/coop_widgets/structs.slint";
+    Button } from "@coop/widgets.slint";
+import { HeaderBar } from "@coop/building-blocks.slint";
+import { HorizontalSeparator, VerticalSpacerMedium, VerticalBox, Spacer } from "@coop/layouts.slint";
+import { Palette, Icons, ColorVariant, Space } from "@coop/styling.slint";
+import { GroupListViewItem, TabItem } from "@coop/structs.slint";
 
 export global ListPageAdapter {
     callback close-tab-item(/* index */ int);
@@ -21,6 +21,11 @@ export global ListPageAdapter {
 }
 
 export component ListPage inherits GridLayout {
+    in property <length> header-offset <=> i-header-bar.offset;
+
+    preferred-width: 100%;
+    preferred-height: 100%;
+
     Row {
         i-header-bar := HeaderBar {
             title: "Lists";

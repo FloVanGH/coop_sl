@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2022 Florian Blasius <co_sl@tutanota.com>
+# SPDX-License-Identifier: MIT
+
+[package]
+name = "coop"
+version = "0.1.0"
+edition = "2021"
+authors = ["Florian Blasius <co_sl@tutanota.com>"]
+license = "MIT"
+description = "Custom widget library for Slint"
+repository = "https://codeberg.org/flovansl/co_sl"
+readme = "README.md"

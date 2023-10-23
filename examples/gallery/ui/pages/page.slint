@@ -3,29 +3,30 @@
 
 import { AppManager } from "../app-manager.slint";
 
-import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Icons, ComboBox, Palette, ColorTheme, ColorVariant } from "../_imports/coop_widgets.slint";
+import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Icons, ComboBox, Palette, ColorTheme, ColorVariant } from "@coop/lib.slint";
 
 export component Page inherits GridLayout {
-    in-out property <string> title <=> i_header_bar.title;
+    in-out property <string> title <=> i-header-bar.title;
     in-out property <bool> keyboard_check_box: true;
     in-out property <bool> disabled_check_box: true;
+    in property <length> header-offset <=> i-header-bar.offset;
 
     Row {
-        i_header_bar := HeaderBar {
+        i-header-bar := HeaderBar {
             if (root.keyboard_check_box) : CheckBox {
                 y: (parent.height - self.height) / 2;
-                text: "Keyboard enabled";
+                text: "Keyboard";
                 checked <=> AppManager.keyboard_enabled;
             }
 
             if (root.disabled_check_box) : CheckBox {
                 y: (parent.height - self.height) / 2;
-                text: "Widgets enabled";
+                text: "Widgets";
                 checked <=> AppManager.widgets_enabled;
             }
 
             ComboBox {
-                width: 128px;
+                width: 94px;
                 placeholder-text: @tr("Select theme:");
                 current-index: Palette.current-color-theme == ColorTheme.Coop ? 0 : Palette.current-color-theme == ColorTheme.Cosmic ? 1 : 2;
 

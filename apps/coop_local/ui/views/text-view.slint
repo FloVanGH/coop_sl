@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 
-import { ListViewItem, HeaderBar } from "../_imports/coop_widgets.slint";
-import { Space, Palette, Typography, Icons } from "../_imports/coop_widgets/styling.slint";
-import { HeaderBar, ControlBar } from "../_imports/coop_widgets/building-blocks.slint";
-import { ScrollView, RoundButton, ContextMenu, TextEdit, LoadingIndicator } from "../_imports/coop_widgets/widgets.slint";
+import { ListViewItem, HeaderBar } from "@coop/lib.slint";
+import { Space, Palette, Typography, Icons } from "@coop/styling.slint";
+import { HeaderBar, ControlBar } from "@coop/building-blocks.slint";
+import { ScrollView, RoundButton, ContextMenu, TextEdit, LoadingIndicator } from "@coop/widgets.slint";
 
 export global TextAdapter {
     callback back();
@@ -26,12 +26,14 @@ export global TextAdapter {
 export component TextView {
     private property <float> display-loading;
     private property <bool> text-loaded: TextAdapter.text != "";
+    in property <length> header-offest;
 
     VerticalLayout {
         HeaderBar {
             action-icon: Icons.arrow-back;
             action-enabled: true;
             title: TextAdapter.has-changes ? "\{TextAdapter.title}*" : TextAdapter.title;
+            offset: root.header-offest;
 
             i-context-menu := ContextMenu {
                 min-menu-width: 94px;
@@ -63,14 +65,16 @@ export component TextView {
             }
         }
 
-        i-text-Edit := TextEdit {
-            x: 1px;
-            width: root.width - 1px;
-            text <=> TextAdapter.text;
-            read-only: TextAdapter.read-only;
+        HorizontalLayout {
+            padding: Space.large;
 
-            edited(text) => {
-                TextAdapter.update-text(text);
+            i-text-Edit := TextEdit {
+                text <=> TextAdapter.text;
+                read-only: TextAdapter.read-only;
+
+                edited(text) => {
+                    TextAdapter.update-text(text);
+                }
             }
         }
 

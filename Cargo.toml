@@ -11,7 +11,7 @@ members = [
    "examples/gallery",
    "platform_support/slint_coop",
    "widgets/book_flip",
-   "widgets/coop_widgets",
+   "widgets/coop",
    "internal/shared",
    "internal/platforms_support"
 ]
@@ -20,7 +20,7 @@ default-members = [
    "apps/coop_local",
    "examples/gallery",
    "widgets/book_flip",
-   "widgets/coop_widgets",
+   "widgets/coop",
    "internal/shared",
    "internal/platforms_support"
 ]
