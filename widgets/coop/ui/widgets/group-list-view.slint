@@ -97,8 +97,9 @@ export component GroupListView  {
     }
 
     if (root.has-focus) : FocusBorder {
+        y: i-background.y;
         width: 100%;
-        height: 100%;
+        height: i-background.height;
         border-radius: i-background.border-radius;
     }
 
