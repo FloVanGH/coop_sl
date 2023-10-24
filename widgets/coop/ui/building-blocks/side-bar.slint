@@ -28,7 +28,7 @@ export component SideBar {
 
         i-layout := VerticalLayout {
             padding-bottom: Space.medium;
-            padding-right: 2px;
+            padding-right: i-resizer.width;
 
             if (!root.collapse-title) : MediumTitle {
                 x: 40px;
@@ -41,7 +41,7 @@ export component SideBar {
             @children
         }
 
-        Rectangle {
+        i-resizer := Rectangle {
             background: Palette.shadow;
             width: 3px;
             height: 100%;

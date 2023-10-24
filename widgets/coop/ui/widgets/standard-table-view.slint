@@ -315,7 +315,7 @@ export component StandardTableView {
                         }
 
                         moved => {
-                            if (!root.drag-drop-enabled || (self.mouse-x - self.pressed-x < 3px && self.mouse-y - self.pressed-y < 3px)) {
+                            if (!root.drag-drop-enabled || (abs((self.mouse-x - self.pressed-x) / 1px) < 3 && abs((self.mouse-y - self.pressed-y) / 1px) < 3)) {
                                 return;
                             }
 
