@@ -110,6 +110,8 @@ export component GamesView {
     forward-focus: i-launcher;
 
     VerticalLayout {
+        padding-bottom: 1px;
+
         HeaderBar {
             action-icon: Icons.arrow-back;
             action-enabled: true;
@@ -151,6 +153,8 @@ export component GamesView {
         }
 
         i-background := Rectangle {
+            x: 0;
+            width: parent.width - 1px;
             border-radius: Radius.medium;
             clip: true;
 

@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 fn main() {
-    coop::generate_import().unwrap();
-    slint_build::compile("ui/app.slint").unwrap();
+    slint_build::compile_with_config(
+        "ui/app.slint",
+        slint_build::CompilerConfiguration::new().with_library_paths(coop::import_paths()),
+    )
+    .unwrap();
 }

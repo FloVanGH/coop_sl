@@ -1,33 +1,49 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-import { GroupListView, GroupListViewItem, ListViewItem, ContextMenu, Size, Space } from "@coop/lib.slint";
+import { StandardListView, ListViewItem, ContextMenu, Size, Space, Icons } from "@coop/lib.slint";
 
 export global BookmarksAdapter {
-    callback open-dir(/* parent */ int, /* item */ int);
+    callback open-dir(/* index */ int);
     callback open-previous-dir();
     callback open-next-dir();
-    callback get-item-context-menu(/* parent-row */ int, /* item-row */ int) -> [ListViewItem];
-    callback item-context-menu-action(/* parent-row */ int, /* item-row */ int, /* spec */ string);
-    callback selected-item() -> { parent: int, item: int };
+    callback get-item-context-menu(/* index */ int) -> [ListViewItem];
+    callback item-context-menu-action(/* index */ int, /* spec */ string);
+    callback selected-item() -> int;
+    callback reorder(/* source */ int, /* target */ int);
 
-    in property <[GroupListViewItem]> bookmarks;
+    in property <[ListViewItem]> bookmarks : [
+        { leading-icon: Icons.videogame-asset, text: "Games", highlighted: true },
+        { leading-icon: Icons.folder, text: "Document", highlighted: true },
+        { leading-icon: Icons.folder, text: "Pictures", highlighted: true },
+    ];
 }
 
 export component BookmarksView {
     callback item-clicked();
 
     private property <int> item-context-menu-item-index;
-    private property <int> item-context-menu-par-index;
-    private property <{ parent: int, item: int }> selected-item;
+    private property <int> selected-item;
 
     in property <length> window-height;
 
-    forward-focus: i-group-list-view;
+    forward-focus: i-list-view;
 
-    i-group-list-view := GroupListView {
+    i-list-view := StandardListView {
+
         selection-mode: Custom;
         model: BookmarksAdapter.bookmarks;
+        drag-drop-enabled: true;
+
+        i-context-menu := ContextMenu {
+            item-clicked(row) => {
+                BookmarksAdapter.item-context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
+            }
+
+            closed => {
+                i-list-view.focus();
+            }
+        }
 
         key-pressed(event) => {
             if (event.text == Key.UpArrow) {
@@ -38,8 +54,8 @@ export component BookmarksView {
             if (event.text == " ") {
                 root.selected-item = BookmarksAdapter.selected-item();
 
-                if (root.selected-item.parent >= 0 && root.selected-item.item >= 0) {
-                    root.open-item-context-menu(root.selected-item.parent, root.selected-item.item, { x: Space.medium, y: root.height / 2 })
+                if (root.selected-item >= 0) {
+                    root.open-item-context-menu(root.selected-item, { x: Space.medium, y: i-list-view.item-y(root.selected-item) })
                 }
 
                 return accept;
@@ -54,46 +70,39 @@ export component BookmarksView {
             reject
         }
 
-        item-pointer-event(par-index, index, event, position) => {
+        item-pointer-event(index, event, position) => {
             root.focus();
 
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up) {
-                BookmarksAdapter.open-dir(par-index, index);
+                BookmarksAdapter.open-dir(index);
                 root.item-clicked();
             }
 
             if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                open-item-context-menu(par-index, index, position);
+                open-item-context-menu(index, position);
             }
         }
 
-        i-context-menu := ContextMenu {
-            item-clicked(row) => {
-                BookmarksAdapter.item-context-menu-action(root.item-context-menu-par-index,
-                    root.item-context-menu-item-index, self.model[row].spec);
-            }
-            closed => {
-                i-group-list-view.focus();
-            }
+        drop-event(event) => {
+            BookmarksAdapter.reorder(event.source, event.target);
         }
     }
 
-    function open-item-context-menu(par-index: int, index: int, position: Point) {
-        i-context-menu.model = BookmarksAdapter.get-item-context-menu(par-index, index);
+    function open-item-context-menu(index: int, position: Point) {
+        i-context-menu.model = BookmarksAdapter.get-item-context-menu(index);
 
         if (i-context-menu.model.length == 0) {
             return;
         }
 
         root.item-context-menu-item-index = index;
-        root.item-context-menu-par-index = par-index;
         i-context-menu.x = position.x;
 
         // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
         i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
             position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
 
-        if (i-group-list-view.has-focus) {
+        if (i-list-view.has-focus) {
             i-context-menu.show-and-focus();
         } else {
             i-context-menu.show();

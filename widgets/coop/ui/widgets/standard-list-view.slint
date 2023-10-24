@@ -126,7 +126,7 @@ export component StandardListView  {
                     }
 
                     moved => {
-                        if (!root.drag-drop-enabled || (self.mouse-x - self.pressed-x == 0 && self.mouse-y - self.pressed-y == 0)) {
+                        if (!root.drag-drop-enabled || (self.mouse-x - self.pressed-x < 3px && self.mouse-y - self.pressed-y < 3px)) {
                             return;
                         }
 
@@ -168,8 +168,9 @@ export component StandardListView  {
     }
 
     if (root.has-focus) : FocusBorder {
+        y: i-background.y;
         width: 100%;
-        height: 100%;
+        height: i-background.height;
         border-radius: i-background.border-radius;
     }
 

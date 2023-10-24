@@ -26,11 +26,20 @@ pub struct BookmarksRepository {
 
 impl BookmarksRepository {
     pub fn new(settings_service: SettingsService) -> Self {
-        let bookmarks = if let Ok(bookmarks) = settings_service.load::<BookmarksVec>(BOOKMARKS) {
+        let mut bookmarks = if let Ok(bookmarks) = settings_service.load::<BookmarksVec>(BOOKMARKS)
+        {
             bookmarks
         } else {
             BookmarksVec::default()
         };
+
+        if bookmarks.bookmarks.is_empty() {
+            bookmarks.bookmarks.push(root());
+
+            if let Some(volumes) = volumes() {
+                bookmarks.bookmarks.push(volumes);
+            }
+        }
 
         Self {
             settings_service,
@@ -45,6 +54,28 @@ impl BookmarksRepository {
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
         bookmark_vec.bookmarks.push(bookmark.clone());
         self.settings_service.save(BOOKMARKS, &*bookmark_vec)
+    }
+
+    pub fn reorder(&self, source: usize, target: usize) -> io::Result<bool> {
+        if source == target {
+            return Ok(false);
+        }
+
+        let mut bookmark_vec = self
+            .bookmarks
+            .lock()
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
+
+        if source >= bookmark_vec.bookmarks.len() || target >= bookmark_vec.bookmarks.len() {
+            return Ok(false);
+        }
+
+        let bookmark = bookmark_vec.bookmarks.remove(source);
+        bookmark_vec.bookmarks.insert(target, bookmark);
+
+        self.settings_service.save(BOOKMARKS, &*bookmark_vec)?;
+
+        Ok(true)
     }
 
     pub fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel> {
@@ -66,14 +97,25 @@ impl BookmarksRepository {
 
         vec![]
     }
+}
 
-    pub fn locations(&self) -> Vec<BookmarkModel> {
-        let root = if cfg!(target_os = "windows") {
-            BookmarkModel::new(BookmarkType::Root, "C", "C:\\")
-        } else {
-            BookmarkModel::new(BookmarkType::Root, "root", "/")
-        };
-
-        vec![root]
+pub fn root() -> BookmarkModel {
+    if cfg!(target_os = "windows") {
+        BookmarkModel::new(BookmarkType::Root, "C", "C:\\", true)
+    } else {
+        BookmarkModel::new(BookmarkType::Root, "root", "/", true)
     }
+}
+
+pub fn volumes() -> Option<BookmarkModel> {
+    if cfg!(target_os = "macos") {
+        return Some(BookmarkModel::new(
+            BookmarkType::Volume,
+            "Volumes",
+            "/Volumes",
+            true,
+        ));
+    }
+
+    None
 }

@@ -7,5 +7,9 @@ import { BookmarksView } from "bookmarks-view.slint";
 export component SideBarView inherits SideBar {
     callback item-clicked <=> i-bookmarks-view.item-clicked;
 
-    i-bookmarks-view := BookmarksView {}
+    in property <length> window-height;
+
+    i-bookmarks-view := BookmarksView {
+        window-height: root.window-height;
+    }
 }

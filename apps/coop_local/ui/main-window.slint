@@ -46,10 +46,12 @@ export component MainWindow inherits CoopWindow {
             SideBarView {
                 resizable: true;
                 collapse-title: true;
+                window-height: root.height;
             }
 
             Views {
                 active-view: MainAdapter.active-view;
+                window-height: root.height;
             }
         }
 
@@ -60,6 +62,7 @@ export component MainWindow inherits CoopWindow {
             Views {
                 active-view: MainAdapter.active-view;
                 header-offest: i-responsive-container.expand-button-width;
+                window-height: root.height;
             }
 
             if (i-responsive-container.expand-shrunken) : OverlayTouchArea {
@@ -70,6 +73,7 @@ export component MainWindow inherits CoopWindow {
 
             SideBarView {
                 x: i-responsive-container.expand-shrunken ? 0 : -self.width;
+                window-height: root.height;
 
                 item-clicked => {
                     i-responsive-container.expand-shrunken = false;

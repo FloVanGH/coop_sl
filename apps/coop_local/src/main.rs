@@ -87,13 +87,28 @@ pub fn main() -> Result<(), slint::PlatformError> {
     files_controller.on_add_bookmark({
         let bookmarks_controller = bookmarks_controller.clone();
 
+        #[cfg(feature = "games")]
+        let games_repository = games_repository.clone();
+
         move |file_model| {
-            // FIXME
+            #[cfg(feature = "games")]
+            if let Ok(is_games) = games_repository.is_games_dir(file_model.path()) {
+                if is_games {
+                    bookmarks_controller.add_bookmark(BookmarkModel::new(
+                        coop_local::models::BookmarkType::Game,
+                        file_model.name().unwrap_or_default(),
+                        file_model.path(),
+                        false,
+                    ));
+                    return;
+                }
+            }
             bookmarks_controller.add_bookmark(BookmarkModel::new(
                 coop_local::models::BookmarkType::Dir,
                 file_model.name().unwrap_or_default(),
                 file_model.path(),
-            ))
+                false,
+            ));
         }
     });
 

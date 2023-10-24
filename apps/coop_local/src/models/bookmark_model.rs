@@ -8,6 +8,7 @@ pub enum BookmarkType {
     Root,
     Dir,
     Game,
+    Volume,
 }
 
 impl Default for BookmarkType {
@@ -21,6 +22,7 @@ pub struct BookmarkModel {
     bookmark_type: BookmarkType,
     name: String,
     path: String,
+    unremovable: bool,
 
     #[serde(skip)]
     selected: bool,
@@ -37,11 +39,13 @@ impl BookmarkModel {
         bookmark_type: BookmarkType,
         name: impl Into<String>,
         path: impl Into<String>,
+        unremovable: bool,
     ) -> Self {
         Self {
             bookmark_type,
             name: name.into(),
             path: path.into(),
+            unremovable,
             selected: false,
         }
     }
@@ -65,6 +69,10 @@ impl BookmarkModel {
     pub fn selected(&self) -> bool {
         self.selected
     }
+
+    pub fn unremovable(&self) -> bool {
+        self.unremovable
+    }
 }
 
 #[cfg(test)]
@@ -74,7 +82,7 @@ mod tests {
     #[test]
     fn test_bookmark_model() {
         let mut bookmark_model =
-            BookmarkModel::new(BookmarkType::Dir, "Bookmark", "Path/to/bookmark");
+            BookmarkModel::new(BookmarkType::Dir, "Bookmark", "Path/to/bookmark", false);
 
         assert_eq!(bookmark_model.name(), "Bookmark");
         assert_eq!(bookmark_model.path(), "Path/to/bookmark");

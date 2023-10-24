@@ -40,6 +40,7 @@ Provides a subset of [Material Icons](https://fonts.google.com/icons).
 -   **`visibility-off`** (_out_ _image_): Visibility off icon.
 -   **`visibility`** (_out_ _image_): Visibility icon.
 -   **`menu`** (_out_ _image_): Menu icon.
+-   **`storage`** (_out_ _image_): Storage icon.
 -   **`filled-audio-file`** (_out_ _image_): Filled audio file icon.
 -   **`filled-av-timer`** (_out_ _image_): Filled av timer icon.
 -   **`filled-calendar-month`** (_out_ _image_): Filled calendar month icon.
