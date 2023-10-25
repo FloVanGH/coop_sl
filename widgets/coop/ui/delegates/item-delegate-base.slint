@@ -1,0 +1,28 @@
+// SPDX-FileCopyrightText: 2023 Florian Blasius <co-sl@tutanota.com>
+// SPDX-License-Identifier: MIT
+
+export component ItemDelegateBase {
+    callback clicked <=> i-touch-area.clicked;
+    callback pointer-event <=> i-touch-area.pointer-event;
+    callback moved <=> i-touch-area.moved;
+
+    in property <bool> selected;
+    in property <bool> has-drag-hover;
+    in property <bool> enabled <=> i-touch-area.enabled;
+    in property <length> border-radius <=> i-background.border-radius;
+    out property <length> mouse-x <=> i-touch-area.mouse-x;
+    out property <length> mouse-y <=> i-touch-area.mouse-y;
+    out property <length> pressed-x <=> i-touch-area.pressed-x;
+    out property <length> pressed-y <=> i-touch-area.pressed-y;
+    out property <bool> has-hover <=> i-touch-area.has-hover;
+    out property <bool> pressed <=> i-touch-area.pressed;
+    in-out property <brush> background;
+
+    i-touch-area := TouchArea {}
+
+    i-background := Rectangle {
+        background: root.background;
+
+        @children
+    }
+}

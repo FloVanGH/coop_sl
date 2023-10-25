@@ -8,6 +8,7 @@ import { LineEdit } from "line-edit.slint";
 import { DropEvent, ListViewItem, TableRowItem } from "../structs.slint";
 import { Spacer } from "../layouts/spacer.slint";
 import { FocusBorder, LargeLabel } from "../components.slint";
+import { ItemDelegateBase } from "../_internal/delegates.slint";
 import { ListView } from "list-view.slint";
 
 component TableViewColumn inherits Rectangle {
@@ -98,37 +99,27 @@ component TableViewCell inherits Rectangle {
     }
 }
 
-component TableViewRow inherits Rectangle {
-    callback clicked <=> i-touch-area.clicked;
-    callback pointer-event <=> i-touch-area.pointer-event;
-    callback moved <=> i-touch-area.moved;
-
-    in property<bool> selected;
+component TableViewRow inherits ItemDelegateBase {
     in property <bool> alternative-background;
-    in property <bool> has-drag-hover;
-    out property<length> mouse-x <=> i-touch-area.mouse-x;
-    out property<length> mouse-y <=> i-touch-area.mouse-y;
 
     min-width: i-layout.min-width;
     min-height: max(Size.small, i-layout.min-height);
     border-radius: 4px;
     background: root.alternative-background ? Palette.background-alt : transparent;
 
-    i-touch-area := TouchArea {}
-
     i-layout := HorizontalLayout {
        @children
     }
 
     states [
-        pressed when i-touch-area.pressed : {
+        pressed when root.pressed : {
             root.background: Palette.background.darker(State.pressed);
-        }
-        hover when i-touch-area.has-hover || root.has-drag-hover : {
-            root.background: Palette.background.darker(State.hover);
         }
         selected when root.selected : {
             root.background: Palette.background.darker(State.selected);
+        }
+        hover when root.has-hover || root.has-drag-hover : {
+            root.background: Palette.background.darker(State.hover);
         }
     ]
 }
@@ -237,8 +228,6 @@ export component StandardTableView {
 
                     for row[row-index] in root.rows : TableViewRow {
                         private property <bool> left-pressed;
-                        private property <length> pressed-x;
-                        private property <length> pressed-y;
 
                         alternative-background: mod(row-index, 2) != 0 && root.zebra-pattern;
                         selected: (row-index == root.current-row && root.selection-mode == SelectionMode.Single)
@@ -292,8 +281,6 @@ export component StandardTableView {
 
                         pointer-event(event) => {
                             if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
-                                self.pressed-x = self.mouse-x;
-                                self.pressed-y = self.mouse-y;
                                 self.left-pressed = true;
                             } else {
                                 self.left-pressed = false;

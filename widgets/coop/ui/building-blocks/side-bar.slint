@@ -24,7 +24,6 @@ export component SideBar {
         clip: true;
         drop-shadow-color: Palette.shadow;
         drop-shadow-blur: 4px;
-        drop-shadow-offset-x: 1px;
 
         i-layout := VerticalLayout {
             padding-bottom: Space.medium;
@@ -41,19 +40,22 @@ export component SideBar {
             @children
         }
 
-        i-resizer := Rectangle {
-            background: Palette.shadow;
+        if (root.resizable) : TouchArea {
+            mouse-cursor: MouseCursor.col-resize;
             width: 3px;
             height: 100%;
             x: parent.width - self.width;
 
-            if (root.resizable) : TouchArea {
-                mouse-cursor: MouseCursor.col-resize;
-
-                moved => {
-                    root.resize(root.width + (self.mouse-x - self.pressed-x));
-                }
+            moved => {
+                root.resize(root.width + (self.mouse-x - self.pressed-x));
             }
+        }
+
+        i-resizer := Rectangle {
+            background: Palette.shadow;
+            width: 1px;
+            height: 100%;
+            x: parent.width - self.width;
         }
     }
 
