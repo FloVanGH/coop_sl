@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
+use coop_local::bookmarks_adapter;
 use coop_local::controllers::*;
 use coop_local::models::*;
 use coop_local::repositories::*;
@@ -8,6 +9,7 @@ use coop_local::repositories::*;
 #[cfg(feature = "games")]
 use coop_local::gamepad;
 
+use coop_local::services::SettingsService;
 use coop_local::ui::*;
 use slint::*;
 use std::cell::RefCell;
@@ -25,10 +27,84 @@ pub fn main() -> Result<(), slint::PlatformError> {
         dialog_controller.show_about();
     };
 
-    let bookmarks_controller = BookmarksController::new(view_handle.clone())
-        .map_err(|e| PlatformError::Other(e.to_string()))?;
+    // bookmarks
+    let settings_service =
+        SettingsService::new().map_err(|e| PlatformError::Other(e.to_string()))?;
+    let bookmarks_repository = BookmarksRepository::new(settings_service);
+    let bookmarks_controller = Rc::new(BookmarksController::new(bookmarks_repository));
 
-    let initial_location = if let Some(bookmark) = bookmarks_controller.get_first_bookmark() {
+    bookmarks_adapter::connect(&view_handle, &bookmarks_controller, {
+        let view_handle = view_handle.clone();
+        move |adapter, controller| {
+            adapter.set_bookmarks(bookmarks_adapter::map_bookmarks(
+                view_handle,
+                controller.bookmarks(),
+            ));
+        }
+    });
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_open_dir(move |item| {
+                controller.open_dir(item as usize);
+            });
+        },
+    );
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_open_next_dir(move || {
+                controller.open_next_dir();
+            });
+        },
+    );
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_open_previous_dir(move || {
+                controller.open_previous_dir();
+            });
+        },
+    );
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_get_item_context_menu(move |index| {
+                controller.get_item_context_menu(index as usize)
+            });
+        },
+    );
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_item_context_menu_action(move |index, spec| {
+                controller.execute_item_context_menu_action(index as usize, spec.as_str());
+            });
+        },
+    );
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_selected_item(move || controller.selected_item());
+        },
+    );
+    bookmarks_adapter::connect(
+        &view_handle,
+        &bookmarks_controller,
+        |adapter, controller| {
+            adapter.on_reorder(move |source, target| {
+                controller.reorder(source as usize, target as usize);
+            });
+        },
+    );
+
+    let initial_location = if let Some(bookmark) = bookmarks_controller.first_bookmark_path() {
         bookmark
     } else if cfg!(windows) {
         "C://".to_string()

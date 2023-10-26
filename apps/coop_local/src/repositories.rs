@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
+mod bookmarks_repository_mock;
+pub use bookmarks_repository_mock::*;
+
 mod bookmarks_repository;
 pub use bookmarks_repository::*;
 
@@ -17,3 +20,5 @@ pub use image_repository::*;
 
 mod text_repository;
 pub use text_repository::*;
+
+pub mod traits;

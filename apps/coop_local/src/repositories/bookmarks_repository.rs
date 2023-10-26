@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
+use super::traits;
 use crate::{
     models::{BookmarkModel, BookmarkType},
     services::SettingsService,
@@ -18,7 +19,6 @@ pub struct BookmarksVec {
     bookmarks: Vec<BookmarkModel>,
 }
 
-#[derive(Clone)]
 pub struct BookmarksRepository {
     settings_service: SettingsService,
     bookmarks: Arc<Mutex<BookmarksVec>>,
@@ -46,17 +46,19 @@ impl BookmarksRepository {
             bookmarks: Arc::new(Mutex::new(bookmarks)),
         }
     }
+}
 
-    pub fn add_bookmark(&self, bookmark: &BookmarkModel) -> io::Result<()> {
+impl traits::BookmarksRepository for BookmarksRepository {
+    fn add_bookmark(&self, bookmark: BookmarkModel) -> io::Result<()> {
         let mut bookmark_vec = self
             .bookmarks
             .lock()
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
-        bookmark_vec.bookmarks.push(bookmark.clone());
+        bookmark_vec.bookmarks.push(bookmark);
         self.settings_service.save(BOOKMARKS, &*bookmark_vec)
     }
 
-    pub fn reorder(&self, source: usize, target: usize) -> io::Result<bool> {
+    fn reorder(&self, source: usize, target: usize) -> io::Result<bool> {
         if source == target {
             return Ok(false);
         }
@@ -78,7 +80,7 @@ impl BookmarksRepository {
         Ok(true)
     }
 
-    pub fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel> {
+    fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel> {
         let mut bookmark_vec = self
             .bookmarks
             .lock()
@@ -90,7 +92,7 @@ impl BookmarksRepository {
         Ok(removed_bookmark)
     }
 
-    pub fn bookmarks(&self) -> Vec<BookmarkModel> {
+    fn bookmarks(&self) -> Vec<BookmarkModel> {
         if let Ok(bookmarks) = self.bookmarks.lock() {
             return bookmarks.bookmarks.clone();
         }
