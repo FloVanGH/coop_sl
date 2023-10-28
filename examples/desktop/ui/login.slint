@@ -4,10 +4,10 @@
 import { Button, LineEdit, CenterLayout, LargeTitle, ErrorLabel, FormElement, PopupBorder, Space, Palette } from "@coop/lib.slint";
 
 export component Login inherits Rectangle {
-    pure callback login(string, string) -> bool;
-
     in-out property <image> logo <=> i_logo.source;
     in-out property <bool> login_error;
+
+    pure callback login(string, string) -> bool;
 
     background: Palette.background;
 

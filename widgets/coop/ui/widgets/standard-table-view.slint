@@ -125,16 +125,6 @@ component TableViewRow inherits ItemDelegateBase {
 }
 
 export component StandardTableView {
-    private property <length> min-header-height: Size.small;
-
-    callback sort-ascending(/* column-index */ int) -> bool;
-    callback sort-descending(/* column-index */ int) -> bool;
-    callback row-pointer-event(/* row-index */ int,  /* event */ PointerEvent, /* absolute mouse position */ Point);
-    callback current-row-changed <=> i-list-view-extension.current-item-changed;
-    callback key-pressed(/* event */ KeyEvent) -> EventResult;
-    callback item-accepted(/* row-index */ int, /* column-index */ int, /* text */ string);
-    callback drop-event <=> i-list-view-extension.drop-event;
-
     in property <[TableRowItem]> rows;
     in property <bool> zebra-pattern;
     in property <SelectionMode> selection-mode <=> i-list-view-extension.selection-mode;
@@ -145,6 +135,46 @@ export component StandardTableView {
     in-out property <[TableColumn]> columns;
     in-out property <int> current-row <=> i-list-view-extension.current-item;
 
+    callback sort-ascending(/* column-index */ int) -> bool;
+    callback sort-descending(/* column-index */ int) -> bool;
+    callback row-pointer-event(/* row-index */ int,  /* event */ PointerEvent, /* absolute mouse position */ Point);
+    callback current-row-changed <=> i-list-view-extension.current-item-changed;
+    callback key-pressed(/* event */ KeyEvent) -> EventResult;
+    callback item-accepted(/* row-index */ int, /* column-index */ int, /* text */ string);
+    callback drop-event <=> i-list-view-extension.drop-event;
+
+    public function set-current-row(index: int) {
+        i-list-view-extension.set-current-item(index);
+    }
+
+    public function bring-row-into-view(index: int) {
+        i-list-view-extension.bring-into-view(index);
+    }
+
+    public function row-y(index: int) -> length {
+        i-list-view-extension.item-y(index)
+    }
+
+    private property <length> min-header-height: Size.small;
+
+    function sort(index: int) {
+        if (root.current-sort-column != index) {
+            root.columns[root.current-sort-column].sort-order = SortOrder.unsorted;
+        }
+
+        if(root.columns[index].sort-order == SortOrder.ascending) {
+            if (root.sort-descending(index)) {
+                root.columns[index].sort-order = SortOrder.descending;
+            }
+        } else {
+            if (root.sort-ascending(index)) {
+                root.columns[index].sort-order = SortOrder.ascending;
+            }
+        }
+
+        root.current-sort-column = index;
+    }
+
     min-width: 400px;
     min-height: 100px;
     horizontal-stretch: 1;
@@ -152,9 +182,6 @@ export component StandardTableView {
     forward-focus: i-focus-scope;
 
     i-focus-scope := FocusScope {
-        x: 0;
-        width: 0; // Do not react on clicks
-
         key-pressed(event) => {
             if (root.key-pressed(event) == accept) {
                 return accept;
@@ -172,6 +199,9 @@ export component StandardTableView {
 
             reject
         }
+
+        x: 0;
+        width: 0; // Do not react on clicks
     }
 
     i-background := Rectangle {
@@ -189,6 +219,14 @@ export component StandardTableView {
                     min-height: root.min-header-height;
 
                     for column[index] in root.columns : TableViewColumn {
+                        clicked => {
+                            root.sort(index);
+                        }
+
+                        adjust-size(diff) => {
+                            column.width = max(1px, self.width + diff);
+                        }
+
                         sort-order: column.sort-order;
                         horizontal-stretch: column.horizontal-stretch;
                         min-width: max(column.min-width, column.width);
@@ -199,14 +237,6 @@ export component StandardTableView {
                             vertical-alignment: center;
                             text: column.title;
                             overflow: elide;
-                        }
-
-                        clicked => {
-                            root.sort(index);
-                        }
-
-                        adjust-size(diff) => {
-                            column.width = max(1px, self.width + diff);
                         }
                     }
                 }
@@ -227,54 +257,6 @@ export component StandardTableView {
                     interactive: !root.drag-drop-enabled;
 
                     for row[row-index] in root.rows : TableViewRow {
-                        private property <bool> left-pressed;
-
-                        alternative-background: mod(row-index, 2) != 0 && root.zebra-pattern;
-                        selected: (row-index == root.current-row && root.selection-mode == SelectionMode.Single)
-                            || (row.selected && root.selection-mode == SelectionMode.Custom);
-                        has-drag-hover: i-list-view-extension.dragging && row-index == i-list-view-extension.drag-hover-index;
-
-                        for cell[column-index] in row.model : TableViewCell {
-                            private property <bool> edit: row-index == root.edit-item.row && column-index == root.edit-item.column;
-
-                            horizontal-stretch: root.columns[column-index].horizontal-stretch;
-                            min-width: max(columns[column-index].min-width, columns[column-index].width);
-                            preferred-width: self.min-width;
-                            max-width: (column-index < columns.length && columns[column-index].width >= 1px) ?
-                                max(columns[column-index].min-width, columns[column-index].width) : 100000px;
-
-                            if (cell.leading-icon.width > 0 && cell.leading-icon.height > 0) : Image {
-                                source: cell.leading-icon;
-                                width: Icography.small;
-                                colorize: cell.highlighted ? Palette.primary : Palette.foreground;
-                            }
-
-                            if (!edit && cell.text != "") : LargeLabel {
-                                text: cell.text;
-                                vertical-alignment: center;
-                                horizontal-alignment: left;
-                                horizontal-stretch: 1;
-                                overflow: elide;
-                            }
-
-                            if (edit) : LineEdit {
-                                y: (parent.height - self.height) / 2;
-                                height: Size.extra-small;
-                                text: cell.text;
-                                horizontal-stretch: 1;
-
-                                accepted(text) => {
-                                    root.item-accepted(row-index, column-index, text);
-                                }
-                            }
-
-                            if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
-                                source: cell.trailing-icon;
-                                colorize: Palette.foreground;
-                                width: Icography.small;
-                            }
-                        }
-
                         clicked => {
                             root.set-current-row(row-index);
                         }
@@ -312,6 +294,54 @@ export component StandardTableView {
 
                             i-list-view-extension.update-drag-position(self.absolute-position.x + self.mouse-x - root.absolute-position.x,
                                 self.absolute-position.y + self.mouse-y - root.absolute-position.y);
+                        }
+
+                        private property <bool> left-pressed;
+
+                        alternative-background: mod(row-index, 2) != 0 && root.zebra-pattern;
+                        selected: (row-index == root.current-row && root.selection-mode == SelectionMode.Single)
+                            || (row.selected && root.selection-mode == SelectionMode.Custom);
+                        has-drag-hover: i-list-view-extension.dragging && row-index == i-list-view-extension.drag-hover-index;
+
+                        for cell[column-index] in row.model : TableViewCell {
+                            private property <bool> edit: row-index == root.edit-item.row && column-index == root.edit-item.column;
+
+                            horizontal-stretch: root.columns[column-index].horizontal-stretch;
+                            min-width: max(columns[column-index].min-width, columns[column-index].width);
+                            preferred-width: self.min-width;
+                            max-width: (column-index < columns.length && columns[column-index].width >= 1px) ?
+                                max(columns[column-index].min-width, columns[column-index].width) : 100000px;
+
+                            if (cell.leading-icon.width > 0 && cell.leading-icon.height > 0) : Image {
+                                source: cell.leading-icon;
+                                width: Icography.small;
+                                colorize: cell.highlighted ? Palette.primary : Palette.foreground;
+                            }
+
+                            if (!edit && cell.text != "") : LargeLabel {
+                                text: cell.text;
+                                vertical-alignment: center;
+                                horizontal-alignment: left;
+                                horizontal-stretch: 1;
+                                overflow: elide;
+                            }
+
+                            if (edit) : LineEdit {
+                                accepted(text) => {
+                                    root.item-accepted(row-index, column-index, text);
+                                }
+
+                                y: (parent.height - self.height) / 2;
+                                height: Size.extra-small;
+                                text: cell.text;
+                                horizontal-stretch: 1;
+                            }
+
+                            if (cell.trailing-icon.width > 0 && cell.trailing-icon.height > 0) : Image {
+                                source: cell.trailing-icon;
+                                colorize: Palette.foreground;
+                                width: Icography.small;
+                            }
                         }
                     }
                 }
@@ -364,35 +394,5 @@ export component StandardTableView {
         }
 
         @children
-    }
-
-    function sort(index: int) {
-        if (root.current-sort-column != index) {
-            root.columns[root.current-sort-column].sort-order = SortOrder.unsorted;
-        }
-
-        if(root.columns[index].sort-order == SortOrder.ascending) {
-            if (root.sort-descending(index)) {
-                root.columns[index].sort-order = SortOrder.descending;
-            }
-        } else {
-            if (root.sort-ascending(index)) {
-                root.columns[index].sort-order = SortOrder.ascending;
-            }
-        }
-
-        root.current-sort-column = index;
-    }
-
-    public function set-current-row(index: int) {
-       i-list-view-extension.set-current-item(index);
-    }
-
-    public function bring-row-into-view(index: int) {
-        i-list-view-extension.bring-into-view(index);
-    }
-
-    public function row-y(index: int) -> length {
-        i-list-view-extension.item-y(index)
     }
 }

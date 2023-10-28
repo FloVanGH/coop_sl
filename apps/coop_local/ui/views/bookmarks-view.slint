@@ -4,6 +4,12 @@
 import { StandardListView, ListViewItem, ContextMenu, Size, Space, Icons } from "@coop/lib.slint";
 
 export global BookmarksAdapter {
+    in property <[ListViewItem]> bookmarks : [
+        { leading-icon: Icons.videogame-asset, text: "Games", highlighted: true },
+        { leading-icon: Icons.folder, text: "Document", highlighted: true },
+        { leading-icon: Icons.folder, text: "Pictures", highlighted: true },
+    ];
+
     callback open-dir(/* index */ int);
     callback open-previous-dir();
     callback open-next-dir();
@@ -11,40 +17,40 @@ export global BookmarksAdapter {
     callback item-context-menu-action(/* index */ int, /* spec */ string);
     callback selected-item() -> int;
     callback reorder(/* source */ int, /* target */ int);
-
-    in property <[ListViewItem]> bookmarks : [
-        { leading-icon: Icons.videogame-asset, text: "Games", highlighted: true },
-        { leading-icon: Icons.folder, text: "Document", highlighted: true },
-        { leading-icon: Icons.folder, text: "Pictures", highlighted: true },
-    ];
 }
 
 export component BookmarksView {
+    in property <length> window-height;
+
     callback item-clicked();
 
     private property <int> item-context-menu-item-index;
     private property <int> selected-item;
 
-    in property <length> window-height;
+    function open-item-context-menu(index: int, position: Point) {
+        i-context-menu.model = BookmarksAdapter.get-item-context-menu(index);
+
+        if (i-context-menu.model.length == 0) {
+            return;
+        }
+
+        root.item-context-menu-item-index = index;
+        i-context-menu.x = position.x;
+
+        // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
+        i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
+            position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
+
+        if (i-list-view.has-focus) {
+            i-context-menu.show-and-focus();
+        } else {
+            i-context-menu.show();
+        }
+    }
 
     forward-focus: i-list-view;
 
     i-list-view := StandardListView {
-
-        selection-mode: Custom;
-        model: BookmarksAdapter.bookmarks;
-        drag-drop-enabled: true;
-
-        i-context-menu := ContextMenu {
-            item-clicked(row) => {
-                BookmarksAdapter.item-context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
-            }
-
-            closed => {
-                i-list-view.focus();
-            }
-        }
-
         key-pressed(event) => {
             if (event.text == Key.UpArrow) {
                 BookmarksAdapter.open-previous-dir();
@@ -86,26 +92,19 @@ export component BookmarksView {
         drop-event(event) => {
             BookmarksAdapter.reorder(event.source, event.target);
         }
-    }
 
-    function open-item-context-menu(index: int, position: Point) {
-        i-context-menu.model = BookmarksAdapter.get-item-context-menu(index);
+        selection-mode: Custom;
+        model: BookmarksAdapter.bookmarks;
+        drag-drop-enabled: true;
 
-        if (i-context-menu.model.length == 0) {
-            return;
-        }
+        i-context-menu := ContextMenu {
+            item-clicked(row) => {
+                BookmarksAdapter.item-context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
+            }
 
-        root.item-context-menu-item-index = index;
-        i-context-menu.x = position.x;
-
-        // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
-        i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
-            position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
-
-        if (i-list-view.has-focus) {
-            i-context-menu.show-and-focus();
-        } else {
-            i-context-menu.show();
+            closed => {
+                i-list-view.focus();
+            }
         }
     }
 }

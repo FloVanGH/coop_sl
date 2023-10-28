@@ -6,8 +6,6 @@ import { ScrollView } from "scroll-view.slint";
 import { FocusBorder } from "../components.slint";
 
 export component TextEdit {
-    callback edited(/* text */ string);
-
     in property <TextWrap> wrap <=> i-text-input.wrap;
     in property <TextHorizontalAlignment> horizontal-alignment <=> i-text-input.horizontal-alignment;
     in property <bool> read-only <=> i-text-input.read-only;
@@ -22,50 +20,7 @@ export component TextEdit {
     in-out property <length> viewport-width <=> i-scroll-view.viewport-width;
     in-out property <length> viewport-height <=> i-scroll-view.viewport-height;
 
-    forward-focus: i-text-input;
-    horizontal-stretch: 1;
-    vertical-stretch: 1;
-
-    i-scroll-view := ScrollView {
-        VerticalLayout {
-            padding: Space.large;
-
-            i-text-input := TextInput {
-                enabled: true;
-                color: Palette.foreground;
-                font-size: Typography.large-label.font-size;
-                font-weight: Typography.large-label.font-weight;
-                selection-background-color: Palette.selection;
-                selection-foreground-color: self.color;
-                single-line: false;
-                wrap: word-wrap;
-
-                cursor-position-changed(cpos) => {
-                    if (cpos.x + root.viewport-x < 12px) {
-                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  - cpos.x + 12px ));
-                    } else if (cpos.x + root.viewport-x > i-scroll-view.visible-width - 12px) {
-                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  i-scroll-view.visible-width - cpos.x - 12px ));
-                    }
-                    if (cpos.y + root.viewport-y < 12px) {
-                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  - cpos.y + 12px ));
-                    } else if (cpos.y + root.viewport-y > i-scroll-view.visible-height - 12px - 20px) {
-                        // FIXME: font-height hardcoded to 20px
-                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  i-scroll-view.visible-height - cpos.y - 12px - 20px));
-                    }
-                }
-
-                edited => {
-                    root.edited(self.text);
-                }
-            }
-        }
-    }
-
-    if (root.has-focus) : FocusBorder {
-        width: 100%;
-        height: 100%;
-        border-radius: Radius.medium;
-    }
+    callback edited(/* text */ string);
 
     public function select-all() {
         i-text-input.select-all();
@@ -87,9 +42,54 @@ export component TextEdit {
         i-text-input.paste();
     }
 
+    forward-focus: i-text-input;
+    horizontal-stretch: 1;
+    vertical-stretch: 1;
+
     states [
         disabled when !root.enabled: {
             i-text-input.opacity: State.content-disabled;
         }
     ]
+
+    i-scroll-view := ScrollView {
+        VerticalLayout {
+            padding: Space.large;
+
+            i-text-input := TextInput {
+                cursor-position-changed(cpos) => {
+                    if (cpos.x + root.viewport-x < 12px) {
+                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  - cpos.x + 12px ));
+                    } else if (cpos.x + root.viewport-x > i-scroll-view.visible-width - 12px) {
+                        root.viewport-x = min(0px, max(i-scroll-view.visible-width - self.width,  i-scroll-view.visible-width - cpos.x - 12px ));
+                    }
+                    if (cpos.y + root.viewport-y < 12px) {
+                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  - cpos.y + 12px ));
+                    } else if (cpos.y + root.viewport-y > i-scroll-view.visible-height - 12px - 20px) {
+                        // FIXME: font-height hardcoded to 20px
+                        root.viewport-y = min(0px, max(i-scroll-view.visible-height - self.height,  i-scroll-view.visible-height - cpos.y - 12px - 20px));
+                    }
+                }
+
+                edited => {
+                    root.edited(self.text);
+                }
+
+                enabled: true;
+                color: Palette.foreground;
+                font-size: Typography.large-label.font-size;
+                font-weight: Typography.large-label.font-weight;
+                selection-background-color: Palette.selection;
+                selection-foreground-color: self.color;
+                single-line: false;
+                wrap: word-wrap;
+            }
+        }
+    }
+
+    if (root.has-focus) : FocusBorder {
+        width: 100%;
+        height: 100%;
+        border-radius: Radius.medium;
+    }
 }

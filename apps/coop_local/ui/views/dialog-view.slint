@@ -4,9 +4,9 @@
 import { AboutDialog } from "../dialogs/about-dialog.slint";
 
 export global DialogAdapter {
-    callback close-about();
-
     in property <bool> show-about;
+
+    callback close-about();
 }
 
 export component DialogView {

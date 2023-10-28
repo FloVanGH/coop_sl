@@ -9,16 +9,18 @@ export global LauncherStyle {
 }
 
 component LauncherItemDelegate  {
-    callback clicked <=> touch-area.clicked;
-    callback pointer-event <=> touch-area.pointer-event;
-
     in property <bool> selected: false;
     in property <image> image <=> i-image.source;
     out property <length> mouse-x <=> touch-area.mouse-x;
     out property <length> mouse-y <=> touch-area.mouse-y;
 
+    callback clicked <=> touch-area.clicked;
+    callback pointer-event <=> touch-area.pointer-event;
+
     width: root.selected ? LauncherStyle.max-item-size : LauncherStyle.item-size;
     height: self.width;
+
+    animate width { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
 
     touch-area := TouchArea {}
 
@@ -38,8 +40,6 @@ component LauncherItemDelegate  {
             height: 90%;
         }
     }
-
-    animate width { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
 }
 
 export struct LauncherItem {
@@ -48,17 +48,33 @@ export struct LauncherItem {
 }
 
 export component Launcher inherits Rectangle {
-    private property <length> start-x: 0;
-    private property <length> spacing: Space.large;
-    private property <length> item-width: LauncherStyle.item-size;
+    in property <[LauncherItem]> model;
+    out property <bool> has-focus: i-focus-scope.has-focus;
+    in-out property <int> current-item;
 
     callback launch(/* index */ int);
     callback current-item-changed(/* current-item */ int);
     callback item-pointer-event(/* row */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
 
-    in property <[LauncherItem]> model;
-    out property <bool> has-focus: i-focus-scope.has-focus;
-    in-out property <int> current-item;
+    private property <length> start-x: 0;
+    private property <length> spacing: Space.large;
+    private property <length> item-width: LauncherStyle.item-size;
+
+    function set-current-item(index: int) {
+        root.current-item = max(min(index, root.model.length - 1), 0);
+
+        if(root.current-item == index) {
+            root.current-item-changed(root.current-item);
+        }
+    }
+
+    function next() {
+        root.set-current-item(root.current-item + 1);
+    }
+
+    function previous() {
+        root.set-current-item(root.current-item - 1);
+    }
 
     forward-focus: i-focus-scope;
     min-height: max(LauncherStyle.max-item-size + Space.large, i-layout.min-height);
@@ -85,12 +101,12 @@ export component Launcher inherits Rectangle {
     }
 
     TouchArea {
-        width: parent.width;
-        height: parent.height;
-
         clicked => {
             i-focus-scope.focus()
         }
+
+        width: parent.width;
+        height: parent.height;
     }
 
     i-background := Rectangle {
@@ -106,13 +122,12 @@ export component Launcher inherits Rectangle {
             interactive: false;
             viewport-x: root.start-x - root.current-item * (root.item-width + root.spacing);
 
+            animate viewport-x { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0);  }
+
             i-layout := HorizontalLayout {
                 spacing <=> root.spacing;
 
                 for item[index] in root.model : LauncherItemDelegate {
-                    image: item.image;
-                    selected: index == root.current-item;
-
                     clicked => {
                         if(index != root.current-item) {
                             root.focus();
@@ -128,26 +143,11 @@ export component Launcher inherits Rectangle {
                             y: self.absolute-position.y + self.mouse-y - root.absolute-position.y,
                         });
                     }
+
+                    image: item.image;
+                    selected: index == root.current-item;
                 }
             }
-
-            animate viewport-x { duration: Duration.slow; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0);  }
         }
-    }
-
-    function set-current-item(index: int) {
-        root.current-item = max(min(index, root.model.length - 1), 0);
-
-        if(root.current-item == index) {
-            root.current-item-changed(root.current-item);
-        }
-    }
-
-    function next() {
-        root.set-current-item(root.current-item + 1);
-    }
-
-    function previous() {
-        root.set-current-item(root.current-item - 1);
     }
 }

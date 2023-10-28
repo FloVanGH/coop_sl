@@ -10,6 +10,13 @@ export component HeaderBarButton inherits TouchArea {
     vertical-stretch: 1;
     horizontal-stretch: 0;
 
+    states [
+        pressed when root.pressed : {
+            i-container.background: Palette.background.darker(State.pressed);
+            i-icon.colorize: Palette.foreground.darker(State.pressed);
+        }
+    ]
+
     i-container := Rectangle {
         border-radius: max(self.width, self.height) / 2;
 
@@ -20,13 +27,6 @@ export component HeaderBarButton inherits TouchArea {
             }
         }
     }
-
-    states [
-        pressed when root.pressed : {
-            i-container.background: Palette.background.darker(State.pressed);
-            i-icon.colorize: Palette.foreground.darker(State.pressed);
-        }
-    ]
 }
 
 export component HeaderBar inherits Rectangle {

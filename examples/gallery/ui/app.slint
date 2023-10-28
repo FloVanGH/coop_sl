@@ -75,14 +75,14 @@ export component App inherits CoopWindow {
             }
 
             SideBarView {
+                current-item-changed => {
+                    i-responsive-container.expand-shrunken = false;
+                }
+
                 x: i-responsive-container.expand-shrunken ? 0 : -self.width;
                 title: root.title;
                 navigation-items: [root.widgets, root.resources];
                 current-item <=> root.current-navigation-item;
-
-                current-item-changed => {
-                    i-responsive-container.expand-shrunken = false;
-                }
 
                 animate x { duration: Duration.fast;}
             }

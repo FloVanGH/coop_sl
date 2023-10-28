@@ -5,7 +5,7 @@ import { Duration, Palette, Size, State } from "../styling.slint";
 import { ButtonBase } from "../_internal/base-widgets.slint";
 
 export component RoundButton {
-    callback clicked <=> i-base.clicked;
+
 
     in property <image> icon <=> i-base.icon;
     in property <string> text <=> i-base.text;
@@ -14,23 +14,13 @@ export component RoundButton {
     in-out property <bool> enabled: true;
     in-out property <brush> icon-background: Palette.background;
 
+    callback clicked <=> i-base.clicked;
+
     accessible-role: button;
     min-height: max(Size.medium, i-base.min-height);
     width: self.height;
     vertical-stretch: 0;
     horizontal-stretch: 0;
-
-    i-base := ButtonBase {
-        enabled: root.enabled;
-        background: root.icon-background;
-        text-color: Palette.foreground;
-        icon-color: self.text-color;
-        padding-left: 0px;
-        padding-right: 0px;
-        border-radius: max(self.width, self.height) / 2;
-
-        animate text-color { duration: Duration.fast; }
-    }
 
     states [
         disabled when !root.enabled: {
@@ -47,4 +37,16 @@ export component RoundButton {
     ]
 
     animate icon-background { duration: Duration.fast; }
+
+    i-base := ButtonBase {
+        enabled: root.enabled;
+        background: root.icon-background;
+        text-color: Palette.foreground;
+        icon-color: self.text-color;
+        padding-left: 0px;
+        padding-right: 0px;
+        border-radius: max(self.width, self.height) / 2;
+
+        animate text-color { duration: Duration.fast; }
+    }
 }

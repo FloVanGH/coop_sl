@@ -11,45 +11,22 @@ component WindowButton inherits RoundButton {
 
 // `WindowView` represents a frame buffer based window that is drawn and handeld by `DisplayView`.
 export component WindowView inherits Rectangle {
-    // Received when a button was pressed or released on the window.
-    callback pointer-event(length, length, PointerEvent);
-
-    // Recived when key is pressed.
-    callback key-pressed-event <=> i-focus-scope.key-pressed;
-
-    // Recived when key is released.
-    callback key-released-event <=> i-focus-scope.key-released;
-
-    // Called when the window wants to be moved.
-    callback move(length, length);
-
-    // Request to close the window.accessible-delegate-focus.
-    callback close <=> i-close-button.clicked;
-
-    // Request to show the window on front.
-    callback bring-to-front <=> i-header-touch-area.clicked;
-
-    // Reference to the frame buffer.
     in-out property <image> buffer <=> i-canvas.source;
-
-    // Defines the width of the window without border.
     in-out property <length> inner-width;
-
-    // Defines the height of the window without border.
     in-out property <length> inner-height;
-
-    // Gets the current mouse x position on the window.
     in-out property <length> mouse-x: i-pointer.mouse-x;
-
-    // Gets the current mouse y position on the window.
     in-out property <length> mouse-y: i-pointer.mouse-y;
-
-    // Defines the window title.
     in-out property <string> title <=> i-title.text;
 
-    // privates
-    in-out property <length> header-height: Size.small;
-    in-out property <length> window-padding: 1px;
+    callback pointer-event(length, length, PointerEvent);
+    callback key-pressed-event <=> i-focus-scope.key-pressed;
+    callback key-released-event <=> i-focus-scope.key-released;
+    callback move(length, length);
+    callback close <=> i-close-button.clicked;
+    callback bring-to-front <=> i-header-touch-area.clicked;
+
+    private property <length> header-height: Size.small;
+    private property <length> window-padding: 1px;
 
     width: root.inner-width + 2 * root.window-padding;
     height: root.header-height + root.inner-height + root.window-padding;

@@ -5,7 +5,7 @@ import { Page } from "page.slint";
 import { RowTitle, ColumnTitle } from "titles.slint";
 import { HeaderBar } from "@coop/building-blocks.slint";
 import { Switch, TextEdit } from "@coop/widgets.slint";
-import { Space, Icons, ColorVariant, Palette } from "@coop/styling.slint";
+import { Space, Icons, ColorScheme, Palette } from "@coop/styling.slint";
 import { Popup, SmallLabel } from "@coop/components.slint";
 import { Spacer, HorizontalSeparator, VerticalSpacerMedium } from "@coop/layouts.slint";
 
@@ -26,7 +26,7 @@ export component TextEditPage inherits VerticalLayout {
                 checked: !Palette.dark-color-scheme;
 
                 toggled(checked) => {
-                    Palette.set-color-variant(checked ? ColorVariant.Light : ColorVariant.Dark);
+                    Palette.set-color-variant(checked ? ColorScheme.Light : ColorScheme.Dark);
                 }
             }
         }

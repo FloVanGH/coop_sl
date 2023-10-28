@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2022 Florian Blasius <co-sl@tutanota.com>
 // SPDX-License-Identifier: MIT
 
-import { Palette, Settings, ColorTheme, ColorVariant } from "../styling.slint";
+import { Palette, Settings, ColorTheme, ColorScheme } from "../styling.slint";
 
 
 export component CoopWindow inherits Window {
@@ -9,15 +9,15 @@ export component CoopWindow inherits Window {
     in-out property <brush> accent <=> Palette.accent;
     in-out property <brush> on-accent <=> Palette.on-accent;
 
-    background: Palette.background;
-
-    public function set-color-variant(variant: ColorVariant) {
+    public function set-color-variant(variant: ColorScheme) {
         Palette.set-color-variant(variant);
     }
 
     public function set-color-theme(theme: ColorTheme) {
         Palette.set-color-theme(theme);
     }
+
+    background: Palette.background;
 }
 
 export component ThemedWindow inherits Window {

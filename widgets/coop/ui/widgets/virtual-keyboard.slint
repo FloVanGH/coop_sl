@@ -11,8 +11,6 @@ component VirtualKeyboardButton inherits OutlineButton {
 }
 
 export global VirtualKeyboardAdapter {
-    callback key-pressed(/* key */ string);
-
     in property <[[[KeyModel]]]> default-key-sets: [
        [
             [
@@ -90,6 +88,8 @@ export global VirtualKeyboardAdapter {
     out property <int> current-key-set;
     out property <[[KeyModel]]> keys: default-key-sets[self.current-key-set];
 
+    callback key-pressed(/* key */ string);
+
     public function switch-keyboard() {
         if (self.current-key-set < self.default-key-sets.length - 1) {
             self.current-key-set += 1;
@@ -106,6 +106,8 @@ export component VirtualKeyboard  {
 
     preferred-width: 100%;
 
+    animate y { duration: 500ms; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
+
     Rectangle {
         background: Palette.background-alt;
         height: 100%;
@@ -119,62 +121,64 @@ export component VirtualKeyboard  {
             spacing: 4px;
 
             if (index == 0) : VirtualKeyboardButton {
-                text: "ESC";
-
                 clicked => {
                     VirtualKeyboardAdapter.key-pressed(Key.Escape);
                 }
+
+                text: "ESC";
+
+
             }
 
             if (index == 1) : VirtualKeyboardButton {
-                text: "Tab";
-
                 clicked => {
                     VirtualKeyboardAdapter.key-pressed(Key.Tab);
                 }
+
+                text: "Tab";
             }
 
             // shift
             if (index == 2) : VirtualKeyboardButton {
-                icon: Icons.arrow-upward;
-
                 clicked => {
                     root.shift = !root.shift;
                 }
+
+                icon: Icons.arrow-upward;
             }
 
             for km in row : VirtualKeyboardButton {
-                text: root.shift ? km.shift-key : km.key;
-
                 clicked() => {
                     VirtualKeyboardAdapter.key-pressed(self.text);
                     root.shift = false;
                 }
+
+                text: root.shift ? km.shift-key : km.key;
             }
 
             if (index == 0) : VirtualKeyboardButton {
-                icon: Icons.arrow-back;
-
                 clicked => {
                     VirtualKeyboardAdapter.key-pressed(Key.Backspace);
                 }
+
+                icon: Icons.arrow-back;
             }
 
             if (index == 1) : VirtualKeyboardButton {
-                icon: Icons.keyboard-return;
-
                 clicked => {
                     VirtualKeyboardAdapter.key-pressed(Key.Return);
                 }
+
+                icon: Icons.keyboard-return;
             }
 
             // shift
             if (index == 2) : VirtualKeyboardButton {
-                icon: Icons.arrow-upward;
-
                 clicked => {
                     root.shift = !root.shift;
                 }
+
+                icon: Icons.arrow-upward;
             }
         }
 
@@ -182,37 +186,38 @@ export component VirtualKeyboard  {
             spacing: 4px;
 
             VirtualKeyboardButton {
-                icon: Icons.calculate;
-
                 clicked => {
                     VirtualKeyboardAdapter.switch-keyboard();
                 }
-            }
-            VirtualKeyboardButton {
-                horizontal-stretch: 1;
-                text: " ";
 
+                icon: Icons.calculate;
+            }
+
+            VirtualKeyboardButton {
                 clicked => {
                     root.shift = false;
                     VirtualKeyboardAdapter.key-pressed(self.text);
                 }
-            }
-            VirtualKeyboardButton {
-                icon: Icons.arrow-back;
 
+                horizontal-stretch: 1;
+                text: " ";
+            }
+
+            VirtualKeyboardButton {
                 clicked => {
                     VirtualKeyboardAdapter.key-pressed(Key.LeftArrow);
                 }
-            }
-            VirtualKeyboardButton {
-                icon: Icons.arrow-forward;
 
+                icon: Icons.arrow-back;
+            }
+
+            VirtualKeyboardButton {
                 clicked => {
                     VirtualKeyboardAdapter.key-pressed(Key.RightArrow);
                 }
+
+                icon: Icons.arrow-forward;
             }
         }
     }
-
-    animate y { duration: 500ms; easing: cubic-bezier(0.05, 0.7, 0.1, 1.0); }
 }

@@ -10,16 +10,6 @@ import { ListView } from "list-view.slint";
 import { ListViewExtension } from "../_internal/extensions.slint";
 
 export component StandardListView  {
-    private property <int> into-view-item;
-    private property <length> item-height: i-list-view.viewport-height / self.model.length;
-    private property <length> into-view-item-y: i-list-view.viewport-y + into-view-item * item-height;
-
-    callback current-item-changed <=> i-list-view-extension.current-item-changed;
-    callback item-pointer-event(/* index */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
-    callback item-accepted(/* index */ int, /* text */ string);
-    callback key-pressed(/* event */ KeyEvent) -> EventResult;
-    callback drop-event <=> i-list-view-extension.drop-event;
-
     in property <[ListViewItem]> model;
     in property <SelectionMode> selection-mode <=> i-list-view-extension.selection-mode;
     in property <int> edit-item: -1;
@@ -27,6 +17,28 @@ export component StandardListView  {
     in property <bool> drag-drop-enabled <=> i-list-view-extension.drag-drop-enabled;
     out property <bool> has-focus: i-focus-scope.has-focus;
     in-out property <int> current-item <=> i-list-view-extension.current-item;
+
+    callback current-item-changed <=> i-list-view-extension.current-item-changed;
+    callback item-pointer-event(/* index */ int, /* event */ PointerEvent, /* absolute mouse position */ Point);
+    callback item-accepted(/* index */ int, /* text */ string);
+    callback key-pressed(/* event */ KeyEvent) -> EventResult;
+    callback drop-event <=> i-list-view-extension.drop-event;
+
+    public function set-current-item(index: int) {
+        i-list-view-extension.set-current-item(index);
+    }
+
+    public function bring-into-view(index: int) {
+        i-list-view-extension.bring-into-view(index);
+    }
+
+    public function item-y(index: int) -> length {
+        i-list-view-extension.item-y(index)
+    }
+
+    private property <int> into-view-item;
+    private property <length> item-height: i-list-view.viewport-height / self.model.length;
+    private property <length> into-view-item-y: i-list-view.viewport-y + into-view-item * item-height;
 
     forward-focus: i-focus-scope;
     min-width: Size.medium;
@@ -37,10 +49,6 @@ export component StandardListView  {
     preferred-width: 100%;
 
     i-focus-scope := FocusScope {
-        x: 0;
-        width: 0;  // Do not react on clicks
-        enabled: root.enabled;
-
         key-pressed(event) => {
             if (root.key-pressed(event) == accept) {
                 return accept;
@@ -58,6 +66,10 @@ export component StandardListView  {
 
             reject
         }
+
+        x: 0;
+        width: 0;  // Do not react on clicks
+        enabled: root.enabled;
     }
 
     i-background := Rectangle {
@@ -82,18 +94,6 @@ export component StandardListView  {
                 interactive: !root.drag-drop-enabled;
 
                 for item[index] in root.model : ItemDelegate {
-                    private property <bool> left-pressed;
-
-                    height: self.min-height;
-                    selected: (index == root.current-item && root.selection-mode == SelectionMode.Single)
-                        || (item.selected && root.selection-mode == SelectionMode.Custom);
-                    edit: index == root.edit-item;
-                    leading-icon: item.leading-icon;
-                    text: item.text;
-                    trailing-icon: item.trailing-icon;
-                    highlighted: item.highlighted;
-                    has-drag-hover: i-list-view-extension.dragging && index == i-list-view-extension.drag-hover-index;
-
                     clicked => {
                         /// FIXME set current
                         set-current-item(index);
@@ -137,6 +137,18 @@ export component StandardListView  {
                         i-list-view-extension.update-drag-position(self.absolute-position.x + self.mouse-x - root.absolute-position.x,
                             self.absolute-position.y + self.mouse-y - root.absolute-position.y);
                     }
+
+                    private property <bool> left-pressed;
+
+                    height: self.min-height;
+                    selected: (index == root.current-item && root.selection-mode == SelectionMode.Single)
+                        || (item.selected && root.selection-mode == SelectionMode.Custom);
+                    edit: index == root.edit-item;
+                    leading-icon: item.leading-icon;
+                    text: item.text;
+                    trailing-icon: item.trailing-icon;
+                    highlighted: item.highlighted;
+                    has-drag-hover: i-list-view-extension.dragging && index == i-list-view-extension.drag-hover-index;
                 }
             }
 
@@ -172,17 +184,5 @@ export component StandardListView  {
         width: 100%;
         height: i-background.height;
         border-radius: i-background.border-radius;
-    }
-
-    public function set-current-item(index: int) {
-        i-list-view-extension.set-current-item(index);
-    }
-
-    public function bring-into-view(index: int) {
-        i-list-view-extension.bring-into-view(index);
-    }
-
-    public function item-y(index: int) -> length {
-        i-list-view-extension.item-y(index)
     }
 }

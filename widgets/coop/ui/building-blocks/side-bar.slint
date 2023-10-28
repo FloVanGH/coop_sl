@@ -6,12 +6,20 @@ import { MediumTitle } from "../components/label.slint";
 import { Spacer } from "../layouts/spacer.slint";
 
 export component SideBar {
-    private property <length> side-bar-min-width: 160px;
-    private property <length> side-bar-max-width: 320px;
-
     in property <string> title;
     in property <bool> resizable;
     in property <bool> collapse-title;
+
+    private property <length> side-bar-min-width: 160px;
+    private property <length> side-bar-max-width: 320px;
+
+    function resize(new-width: length) {
+        if (!root.resizable) {
+            return;
+        }
+
+        root.width = min(root.side-bar-max-width, max(root.side-bar-min-width, new-width));
+    }
 
     width: self.side-bar-min-width;
     preferred-height: 100%;
@@ -57,13 +65,5 @@ export component SideBar {
             height: 100%;
             x: parent.width - self.width;
         }
-    }
-
-    function resize(new-width: length) {
-        if (!root.resizable) {
-            return;
-        }
-
-        root.width = min(root.side-bar-max-width, max(root.side-bar-min-width, new-width));
     }
 }

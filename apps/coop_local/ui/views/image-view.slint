@@ -8,45 +8,56 @@ import { HeaderBar, ControlBar } from "@coop/building-blocks.slint";
 import { ListViewItem } from "@coop/structs.slint";
 
 export global ImageAdapter {
+    in property <image> image;
+    in property <string> title;
+    in property <bool> loading;
+    in property <bool> single-image;
+
     callback back();
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
     callback previous();
     callback next();
-
-    in property <image> image;
-    in property <string> title;
-    in property <bool> loading;
-    in property <bool> single-image;
 }
 
 export component ImageView {
+    in property <length> header-offest;
+
     private property <float> display-loading;
     private property <bool> image-loaded: ImageAdapter.image.width > 0 && ImageAdapter.image.height > 0;
 
-    in property <length> header-offest;
+    states [
+        loading when ImageAdapter.loading : {
+            display-loading: 1.0;
+
+            in {
+                animate display-loading { duration: 500ms; }
+            }
+        }
+    ]
 
     VerticalLayout {
         i-header-bar := HeaderBar {
+            action => {
+                ImageAdapter.back();
+            }
+
             action-icon: Icons.arrow-back;
             action-enabled: true;
             title: ImageAdapter.title;
             offset: root.header-offest;
 
             i-context-menu := ContextMenu {
-                min-menu-width: 94px;
-                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
-                offset-y: i-menu-button.height;
-
                 item-clicked(row) => {
                     ImageAdapter.context-menu-action(self.model[row].spec);
                 }
+
+                min-menu-width: 94px;
+                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
+                offset-y: i-menu-button.height;
             }
 
             i-menu-button := RoundButton {
-                icon: Icons.more-vert;
-                horizontal-stretch: 0;
-
                 clicked => {
                     i-context-menu.model = ImageAdapter.get-context-menu();
 
@@ -56,10 +67,9 @@ export component ImageView {
 
                     i-context-menu.show();
                 }
-            }
 
-            action => {
-                ImageAdapter.back();
+                icon: Icons.more-vert;
+                horizontal-stretch: 0;
             }
         }
 
@@ -67,8 +77,6 @@ export component ImageView {
             vertical-stretch: 1;
 
             i-focus-scope := FocusScope {
-                enabled: !ImageAdapter.single-image;
-
                 key-pressed(event) => {
                     if (event.text == Key.RightArrow) {
                         ImageAdapter.next();
@@ -82,6 +90,8 @@ export component ImageView {
 
                     reject
                 }
+
+                enabled: !ImageAdapter.single-image;
             }
 
             VerticalLayout {
@@ -116,19 +126,19 @@ export component ImageView {
 
         if (!ImageAdapter.single-image) : ControlBar {
             RoundButton {
-                icon: Icons.arrow-back;
-
                 clicked => {
                     ImageAdapter.previous();
                 }
+
+                icon: Icons.arrow-back;
             }
 
             RoundButton {
-                icon: Icons.arrow-forward;
-
                 clicked => {
                     ImageAdapter.next();
                 }
+
+                icon: Icons.arrow-forward;
             }
         }
     }
@@ -137,14 +147,4 @@ export component ImageView {
         width: 100%;
         height: 100%;
     }
-
-    states [
-        loading when ImageAdapter.loading : {
-            display-loading: 1.0;
-
-            in {
-                animate display-loading { duration: 500ms; }
-            }
-        }
-    ]
 }

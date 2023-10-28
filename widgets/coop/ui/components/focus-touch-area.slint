@@ -4,11 +4,11 @@
 import { FocusBorder } from "../components/focus-border.slint";
 
 export component FocusTouchArea inherits TouchArea {
-    private property <bool> enter-pressed;
-
     in property <length> focus-border-radius: 0px;
     out property <bool> focus-pressed: root.pressed || root.enter-pressed;
     out property <bool> has-focus <=> i-focus-scope.has-focus;
+
+    private property <bool> enter-pressed;
 
     forward-focus: i-focus-scope;
 

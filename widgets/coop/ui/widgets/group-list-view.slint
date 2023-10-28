@@ -9,15 +9,25 @@ import { GroupItemDelegate } from "../_internal/delegates.slint";
 import { ListView } from "list-view.slint";
 
 export component GroupListView  {
-    callback current-item-changed(/* current-item */ { parent: int, item: int });
-    callback item-pointer-event(int /* par-row */, int /* item-row */, PointerEvent /* event */, Point /* absolute mouse position */);
-    callback key-pressed(/* event */ KeyEvent) -> EventResult;
-
     in property <[GroupListViewItem]> model;
     in property <SelectionMode> selection-mode: SelectionMode.Single;
     in property <bool> enabled: i-list-view.enabled;
     out property <bool> has-focus: i-focus-scope.has-focus;
     in-out property <{ parent: int, item: int }> current-item;
+
+    callback current-item-changed(/* current-item */ { parent: int, item: int });
+    callback item-pointer-event(int /* par-row */, int /* item-row */, PointerEvent /* event */, Point /* absolute mouse position */);
+    callback key-pressed(/* event */ KeyEvent) -> EventResult;
+
+    public function set-current-item(row: int, par-row: int) {
+        if (row < 0 || par-row < 0 || par-row >= self.model.length || row >= self.model[par-row].items.length
+            || self.selection-mode == SelectionMode.Custom) {
+            return;
+        }
+
+        self.current-item = { item: row, parent: par-row };
+        self.current-item-changed(self.current-item);
+    }
 
     forward-focus: i-focus-scope;
     min-width: Size.medium;
@@ -28,10 +38,6 @@ export component GroupListView  {
     preferred-width: 100%;
 
     i-focus-scope := FocusScope {
-        width: 0px;
-        height: 0px;
-        enabled: root.enabled;
-
         key-pressed(event) => {
             if (root.key-pressed(event) == accept) {
                 return accept;
@@ -61,6 +67,10 @@ export component GroupListView  {
 
             reject
         }
+
+        width: 0px;
+        height: 0px;
+        enabled: root.enabled;
     }
 
     i-background := Rectangle {
@@ -72,13 +82,6 @@ export component GroupListView  {
         i-list-view := ListView {
             for parent-item[par-row] in root.model: VerticalLayout {
                GroupItemDelegate {
-                    model: parent-item;
-                    item-row: par-row;
-                    current-item <=> root.current-item;
-                    height: self.min-height;
-                    selection-mode: root.selection-mode;
-                    has-focus: root.has-focus;
-
                     item-clicked(row) => {
                         root.set-current-item(row, par-row);
                     }
@@ -89,6 +92,13 @@ export component GroupListView  {
                             y: position.y,
                         });
                     }
+
+                    model: parent-item;
+                    item-row: par-row;
+                    current-item <=> root.current-item;
+                    height: self.min-height;
+                    selection-mode: root.selection-mode;
+                    has-focus: root.has-focus;
                 }
             }
         }
@@ -101,15 +111,5 @@ export component GroupListView  {
         width: 100%;
         height: i-background.height;
         border-radius: i-background.border-radius;
-    }
-
-    public function set-current-item(row: int, par-row: int) {
-        if (row < 0 || par-row < 0 || par-row >= self.model.length || row >= self.model[par-row].items.length
-            || self.selection-mode == SelectionMode.Custom) {
-            return;
-        }
-
-        self.current-item = { item: row, parent: par-row };
-        self.current-item-changed(self.current-item);
     }
 }

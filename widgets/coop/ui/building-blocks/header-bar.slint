@@ -7,13 +7,13 @@ import { RoundButton } from "../widgets.slint";
 import { Spacer } from "../layouts.slint";
 
 export component HeaderBar inherits HorizontalLayout {
-    callback action();
-
     in property <string> title;
     in property <image> action-icon;
     in property <string> action-text;
     in property <bool> action-enabled: false;
     in property <length> offset;
+
+    callback action();
 
     spacing: Space.medium;
     padding-left: root.offset + Space.medium;

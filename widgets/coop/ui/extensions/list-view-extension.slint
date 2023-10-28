@@ -5,13 +5,6 @@ import { DropEvent } from "../structs.slint";
 import { SelectionMode } from "../enums.slint";
 
 export component ListViewExtension {
-    private property <int> into-view-item;
-    private property <length> into-view-item-y: root.viewport-y + root.into-view-item * root.item-height;
-
-    callback current-item-changed(/* current-item */ int);
-    callback drop-event(/* event */ DropEvent);
-    callback drag-canceled();
-
     in property <bool> drag-drop-enabled;
     in property <length> drag-ghost-height;
     in property <int> item-count;
@@ -30,7 +23,9 @@ export component ListViewExtension {
     in-out property <length> viewport-y;
     in-out property <int> current-item: -1;
 
-    @children
+    callback current-item-changed(/* current-item */ int);
+    callback drop-event(/* event */ DropEvent);
+    callback drag-canceled();
 
     public pure function get-index(y: length) -> int {
         ((y - root.viewport-y - root.item-height / 2) / root.item-height)
@@ -105,7 +100,12 @@ export component ListViewExtension {
         self.dragging = false;
     }
 
+    private property <int> into-view-item;
+    private property <length> into-view-item-y: root.viewport-y + root.into-view-item * root.item-height;
+
     function check-bounds() -> bool {
         root.drag-position-x >= 0 && root.drag-position-y >= 0 && root.drag-position-x <= root.visible-width && root.drag-position-y <= root.viewport-height
     }
+
+    @children
 }

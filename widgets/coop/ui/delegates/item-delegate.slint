@@ -7,58 +7,21 @@ import { LineEdit } from "../widgets/line-edit.slint";
 import { ItemDelegateBase } from "item-delegate-base.slint";
 
 export component ItemDelegate inherits ItemDelegateBase {
-    private property <brush> foreground: Palette.foreground;
-    private property <brush> icon-color: highlighted ? Palette.primary : Palette.foreground;
-    private property <brush> text-color: root.foreground;
-
-    callback accepted(/* text*/ string);
-
     in property <bool> highlighted;
     in property <image> leading-icon;
     in property <image> trailing-icon;
     in property <bool> edit;
     in property <string> text;
 
+    callback accepted(/* text*/ string);
+
+    private property <brush> foreground: Palette.foreground;
+    private property <brush> icon-color: highlighted ? Palette.primary : Palette.foreground;
+    private property <brush> text-color: root.foreground;
+
     min-height: max(Size.small, i-layout.min-height);
     padding-right: Space.medium;
     padding-left: Space.medium;
-
-    i-layout := HorizontalLayout {
-        padding-left: root.padding-left;
-        padding-right: root.padding-right;
-        spacing: Space.medium;
-
-        if (root.leading-icon.width > 0 && root.leading-icon.height > 0) : Image {
-            source: root.leading-icon;
-            colorize: root.icon-color;
-            width: Icography.small;
-        }
-
-        if (!root.edit) : LargeLabel {
-            text <=> root.text;
-            vertical-alignment: center;
-            horizontal-alignment: left;
-            color: root.foreground;
-            overflow: elide;
-        }
-
-        if (root.edit) : LineEdit {
-            y: (parent.height - self.height) / 2;
-            text: root.text;
-            height: Size.extra-small;
-
-            accepted(text) => {
-                root.accepted(text);
-            }
-        }
-
-        if (root.trailing-icon.width > 0 && root.trailing-icon.height > 0) : Image {
-            source: root.trailing-icon;
-            colorize: root.foreground;
-            width: Icography.small;
-        }
-    }
-
 
     states [
         disabled when !root.enabled: {
@@ -81,4 +44,40 @@ export component ItemDelegate inherits ItemDelegateBase {
     ]
 
     animate foreground { duration: Duration.fast; }
+
+    i-layout := HorizontalLayout {
+        padding-left: root.padding-left;
+        padding-right: root.padding-right;
+        spacing: Space.medium;
+
+        if (root.leading-icon.width > 0 && root.leading-icon.height > 0) : Image {
+            source: root.leading-icon;
+            colorize: root.icon-color;
+            width: Icography.small;
+        }
+
+        if (!root.edit) : LargeLabel {
+            text <=> root.text;
+            vertical-alignment: center;
+            horizontal-alignment: left;
+            color: root.foreground;
+            overflow: elide;
+        }
+
+        if (root.edit) : LineEdit {
+            accepted(text) => {
+                root.accepted(text);
+            }
+
+            y: (parent.height - self.height) / 2;
+            text: root.text;
+            height: Size.extra-small;
+        }
+
+        if (root.trailing-icon.width > 0 && root.trailing-icon.height > 0) : Image {
+            source: root.trailing-icon;
+            colorize: root.foreground;
+            width: Icography.small;
+        }
+    }
 }

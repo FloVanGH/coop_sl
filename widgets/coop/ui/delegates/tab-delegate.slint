@@ -6,49 +6,20 @@ import { LargeLabel } from "../components.slint";
 import { ActionButton } from "../widgets/line-edit.slint";
 
 export component TabDelegate inherits TouchArea {
-    private property <brush> foreground: Palette.foreground;
-    private property <brush> text-color: root.foreground;
-
-    callback close();
-
     in property <bool> selected;
     in property <image> icon;
     in property <string> text;
     in property <bool> closeable;
 
+    callback close();
+
+    private property <brush> foreground: Palette.foreground;
+    private property <brush> text-color: root.foreground;
+
     min-width: max(Size.small, i-layout.min-width);
     min-height: max(Size.small, i-layout.min-height);
     padding-right: Space.medium;
     padding-left: Space.medium;
-
-    i-background := Rectangle {
-       i-layout := HorizontalLayout {
-            padding-left: root.padding-left;
-            padding-right: root.padding-right;
-            spacing: Space.medium;
-
-            if (root.icon.width > 0 && root.icon.height > 0) : Image {
-                source: root.icon;
-                colorize: root.foreground;
-                width: Icography.small;
-            }
-
-            LargeLabel {
-                text <=> root.text;
-                vertical-alignment: center;
-                color: root.foreground;
-            }
-
-            if (root.closeable) : ActionButton {
-                y: (parent.height - self.height) / 2;
-                icon: Icons.clear;
-
-                clicked => {
-                    root.close();
-                }
-            }
-        }
-    }
 
     states [
         disabled when !root.enabled: {
@@ -69,4 +40,33 @@ export component TabDelegate inherits TouchArea {
     ]
 
     animate foreground { duration: Duration.fast; }
+
+    i-background := Rectangle {
+       i-layout := HorizontalLayout {
+            padding-left: root.padding-left;
+            padding-right: root.padding-right;
+            spacing: Space.medium;
+
+            if (root.icon.width > 0 && root.icon.height > 0) : Image {
+                source: root.icon;
+                colorize: root.foreground;
+                width: Icography.small;
+            }
+
+            LargeLabel {
+                text <=> root.text;
+                vertical-alignment: center;
+                color: root.foreground;
+            }
+
+            if (root.closeable) : ActionButton {
+                clicked => {
+                    root.close();
+                }
+
+                y: (parent.height - self.height) / 2;
+                icon: Icons.clear;
+            }
+        }
+    }
 }

@@ -4,12 +4,11 @@
 import { RoundOutlineButton, Space } from "@coop/lib.slint";
 
 export component Launcher inherits HorizontalLayout {
-    callback open(string);
-
-    callback bring_to_front(int);
-
     in property <string> front_path;
     in-out property <[{ text: string, path: string} ]> entries;
+
+    callback open(string);
+    callback bring_to_front(int);
 
     padding: Space.medium;
     spacing: Space.small;

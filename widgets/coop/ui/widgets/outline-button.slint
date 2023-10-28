@@ -5,15 +5,14 @@ import { Duration, Palette, Size, State } from "../styling.slint";
 import { ButtonBase } from "../_internal/base-widgets.slint";
 
 export component OutlineButton {
-    callback clicked <=> i-base.clicked;
-
     in property <string> text;
-    // FIXME: image
     in property <image> icon;
     in property <bool> primary: false;
     out property <bool> has-focus: i-base.has-focus;
     out property <bool> pressed: self.enabled && i-base.pressed;
     in-out property <bool> enabled: true;
+
+    callback clicked <=> i-base.clicked;
 
     accessible-role: button;
     accessible-label: root.text;
@@ -22,19 +21,6 @@ export component OutlineButton {
     vertical-stretch: 0;
     horizontal-stretch: 1;
     forward-focus: i-base;
-
-    i-base := ButtonBase {
-        enabled: root.enabled;
-        background: root.primary ? Palette.primary: Palette.background;
-        text-color: root.primary ? Palette.on-primary: Palette.foreground;
-        icon-color: root.primary ? Palette.on-primary: Palette.primary;
-        border-width: 1px;
-        border-color: Palette.border;
-        text: root.text;
-        icon: root.icon;
-
-        animate background, text-color, icon-color, border-color, container-scale { duration: Duration.fast; }
-    }
 
     states [
         disabled when !root.enabled: {
@@ -55,4 +41,17 @@ export component OutlineButton {
             i-base.text-color: root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
         }
     ]
+
+    i-base := ButtonBase {
+        enabled: root.enabled;
+        background: root.primary ? Palette.primary: Palette.background;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: root.primary ? Palette.on-primary: Palette.primary;
+        border-width: 1px;
+        border-color: Palette.border;
+        text: root.text;
+        icon: root.icon;
+
+        animate background, text-color, icon-color, border-color, container-scale { duration: Duration.fast; }
+    }
 }

@@ -5,14 +5,14 @@ import { Duration, Palette, Size, State } from "../styling.slint";
 import { ButtonBase } from "../_internal/base-widgets.slint";
 
 export component Button {
-    callback clicked <=> i-base.clicked;
-
     in property <string> text;
     in property <image> icon;
     in property <bool> primary: false;
     out property <bool> has-focus: i-base.has-focus;
     out property <bool> pressed: self.enabled && i-base.pressed;
     in-out property <bool> enabled: true;
+
+    callback clicked <=> i-base.clicked;
 
     accessible-role: button;
     accessible-label: root.text;
@@ -21,17 +21,6 @@ export component Button {
     vertical-stretch: 0;
     horizontal-stretch: 1;
     forward-focus: i-base;
-
-    i-base := ButtonBase {
-        enabled: root.enabled;
-        background: root.primary ? Palette.primary: Palette.surface;
-        text-color: root.primary ? Palette.on-primary: Palette.foreground;
-        icon-color: self.text-color;
-        text: root.text;
-        icon: root.icon;
-
-        animate background, text-color, container-scale { duration: Duration.fast; }
-    }
 
     states [
         disabled when !root.enabled: {
@@ -48,4 +37,15 @@ export component Button {
             i-base.text-color:  root.primary ? Palette.on-primary.darker(State.hover) : Palette.foreground.darker(State.hover);
         }
     ]
+
+    i-base := ButtonBase {
+        animate background, text-color, container-scale { duration: Duration.fast; }
+
+        enabled: root.enabled;
+        background: root.primary ? Palette.primary: Palette.surface;
+        text-color: root.primary ? Palette.on-primary: Palette.foreground;
+        icon-color: self.text-color;
+        text: root.text;
+        icon: root.icon;
+    }
 }

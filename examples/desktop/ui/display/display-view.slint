@@ -6,61 +6,36 @@ import { WindowView } from "window-view.slint";
 import { Button } from "@coop/lib.slint";
 
 export global DisplayViewAdapter  {
-    callback open(string);
-
-    callback pointer-event(string, length, length, PointerEvent);
-
-    callback key-pressed-event(string, KeyEvent);
-
-    callback key-released-event(string, KeyEvent);
-
-    callback bring-to-front(string);
-
-    callback close(string);
-
-    callback close-all();
-
-    // property WindowModel front-window:
-
     in-out property <[WindowModel]> window-models;
-
     in-out property <string> front-key: root.window-models.length - 1 >= 0 ? root.window-models[root.window-models.length - 1].key : "";
-
     in-out property <string> front-path: root.window-models.length - 1 >= 0 ? root.window-models[root.window-models.length - 1].path : "";
+
+    callback open(string);
+    callback pointer-event(string, length, length, PointerEvent);
+    callback key-pressed-event(string, KeyEvent);
+    callback key-released-event(string, KeyEvent);
+    callback bring-to-front(string);
+    callback close(string);
+    callback close-all();
 }
 
 // `DisplayView` draws and handles windows.
 export component DisplayView inherits Rectangle {
-    // Open a window with the given binary path.
-    callback open <=> DisplayViewAdapter.open;
-
-    // Closes the given window.
-    callback close <=> DisplayViewAdapter.close;
-
-    // Resizes the given window to the given size.
-    callback resize(WindowModel, length, length);
-
-    // Sends a pointer event to the client.
-    callback pointer-event <=> DisplayViewAdapter.pointer-event;
-
-    callback key-pressed-event <=> DisplayViewAdapter.key-pressed-event;
-
-    callback key-released-event <=> DisplayViewAdapter.key-released-event;
-
-    callback bring-to-front <=> DisplayViewAdapter.bring-to-front;
-
     // The list of window window-models.
     in-out property <[WindowModel]> window-models <=> DisplayViewAdapter.window-models;
 
+    callback open <=> DisplayViewAdapter.open;
+    callback close <=> DisplayViewAdapter.close;
+    callback resize(WindowModel, length, length);
+    callback pointer-event <=> DisplayViewAdapter.pointer-event;
+    callback key-pressed-event <=> DisplayViewAdapter.key-pressed-event;
+    callback key-released-event <=> DisplayViewAdapter.key-released-event;
+    callback bring-to-front <=> DisplayViewAdapter.bring-to-front;
+
+
+
     Rectangle {
         for client[index] in root.window-models : WindowView {
-            x: client.x;
-            y: client.y;
-            inner-width: client.width;
-            inner-height: client.height;
-            buffer: client.buffer;
-            title: client.title;
-
             bring-to-front => {
                 root.bring-to-front(client.key);
             }
@@ -87,6 +62,13 @@ export component DisplayView inherits Rectangle {
             close => {
                 root.close(client.key);
             }
+
+            x: client.x;
+            y: client.y;
+            inner-width: client.width;
+            inner-height: client.height;
+            buffer: client.buffer;
+            title: client.title;
         }
     }
 }

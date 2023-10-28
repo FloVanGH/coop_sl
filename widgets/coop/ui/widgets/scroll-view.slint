@@ -4,11 +4,6 @@
 import { Radius, Duration, Size, Space, Palette } from "../styling.slint";
 
 export component ScrollBar inherits Rectangle {
-    private property <length> track-size: root.horizontal ? root.width - 2 * root.offset : root.height - 2 * offset;
-    private property <length> step-size: 10px;
-    private property <length> offset: 2px;
-    private property <length> pad: 2px;
-
     in property <bool> enabled;
     out property <bool> has-hover: i-touch-area.has-hover;
     in-out property <bool> horizontal;
@@ -16,7 +11,22 @@ export component ScrollBar inherits Rectangle {
     in-out property <length> page-size;
     in-out property <length> value;
 
+    private property <length> track-size: root.horizontal ? root.width - 2 * root.offset : root.height - 2 * offset;
+    private property <length> step-size: 10px;
+    private property <length> offset: 2px;
+    private property <length> pad: 2px;
+
     background: transparent;
+
+    states [
+        hover when i-touch-area.has-hover : {
+            background: Palette.foreground.with-alpha(0.2);
+            i-border.background: Palette.foreground.with-alpha(0.2);
+            pad: 4px;
+        }
+    ]
+
+    animate width, height, pad, background { duration: 150ms; easing: ease-out; }
 
     i-border := Rectangle {
         x: 0;
@@ -40,11 +50,6 @@ export component ScrollBar inherits Rectangle {
     }
 
     i-touch-area := TouchArea {
-        property <length> pressed-value;
-
-        width: parent.width;
-        height: parent.height;
-
         pointer-event(event) => {
             if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
                 self.pressed-value = -root.value;
@@ -59,23 +64,15 @@ export component ScrollBar inherits Rectangle {
                 )));
             }
         }
+
+        property <length> pressed-value;
+
+        width: parent.width;
+        height: parent.height;
     }
-
-    states [
-        hover when i-touch-area.has-hover : {
-            background: Palette.foreground.with-alpha(0.2);
-            i-border.background: Palette.foreground.with-alpha(0.2);
-            pad: 4px;
-        }
-    ]
-
-    animate width, height, pad, background { duration: 150ms; easing: ease-out; }
 }
 
 export component ScrollView {
-    private property <bool> vertical-scroll-bar-visible: root.viewport-height > root.height;
-    private property <bool> horizontal-scroll-bar-visible: root.viewport-width > root.width;
-
     in property <bool> enabled: true;
     in property <bool> interactive <=> i-flickable.interactive;
     out property <length> visible-width <=> i-flickable.width;
@@ -84,6 +81,9 @@ export component ScrollView {
     in-out property <length> viewport-height <=> i-flickable.viewport-height;
     in-out property <length> viewport-x <=> i-flickable.viewport-x;
     in-out property <length> viewport-y <=> i-flickable.viewport-y;
+
+    private property <bool> vertical-scroll-bar-visible: root.viewport-height > root.height;
+    private property <bool> horizontal-scroll-bar-visible: root.viewport-width > root.width;
 
     min-width: Size.medium;
     min-height: root.min-width;

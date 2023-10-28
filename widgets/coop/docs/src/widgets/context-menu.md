@@ -37,15 +37,17 @@ export component Example inherits Window {
     height: 25px;
 
     Button {
-        text: "Open context menu";
         clicked => {
             i-context-menu.show();
         }
+
+        text: "Open context menu";
     }
 
     i-context-menu := ContextMenu {
         x: 50px;
         y: 50px;
+
         model: [
             { text: "Item 1" },
             { text: "Item 2" },

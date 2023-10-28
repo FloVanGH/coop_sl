@@ -8,6 +8,18 @@ import { SelectionMode } from "@coop/enums.slint";
 import { HeaderBar } from "@coop/building-blocks.slint";
 
 export global FilesAdapter {
+    in property <string> title: "Root";
+    in property <[TableRowItem]> files;
+    in property <bool> back-enabled;
+    in property <{ row: int, column: int }> edit-file: { row: -1, column: -1 };
+    in property <bool> loading;
+    in property <[TableColumn]> columns: [
+        { horizontal-stretch: 0, min-width: 32px },
+        { title: @tr("Name"), horizontal-stretch: 1 },
+        { title: @tr("Size"), horizontal-stretch: 0, min-width: 64px },
+        { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 120px },
+    ];
+
     callback back();
     callback open-internal(/* row-index */ int);
     callback get-context-menu() -> [ListViewItem];
@@ -28,152 +40,16 @@ export global FilesAdapter {
     callback sort-ascending(/* column-index */ int) -> bool;
     callback sort-descending(/* column-index */ int) -> bool;
     callback move-files(/* source-row */ int, /* target-row*/ int);
-
-    in property <string> title: "Root";
-    in property <[TableRowItem]> files;
-    in property <bool> back-enabled;
-    in property <{ row: int, column: int }> edit-file: { row: -1, column: -1 };
-    in property <bool> loading;
-    in property <[TableColumn]> columns: [
-        { horizontal-stretch: 0, min-width: 32px },
-        { title: @tr("Name"), horizontal-stretch: 1 },
-        { title: @tr("Size"), horizontal-stretch: 0, min-width: 64px },
-        { title: @tr("Date Modified"), horizontal-stretch: 0, min-width: 120px },
-    ];
 }
 
 export component FilesView {
+    in property <length> window-height;
+    in property <length> header-offest;
+
     private property <[int]> selected-items;
     private property <int> last-selected-item: selected-items[selected-items.length - 1];
     private property <float> display-loading;
     private property <int> item-context-menu-item-row: -1;
-
-    in property <length> window-height;
-    in property <length> header-offest;
-
-    forward-focus: i-table-view;
-
-    VerticalLayout {
-        padding-bottom: 1px;
-
-        HeaderBar {
-            action-icon: Icons.arrow-back;
-            action-enabled: FilesAdapter.back-enabled;
-            title: FilesAdapter.title;
-            offset: root.header-offest;
-
-            i-context-menu := ContextMenu {
-                min-menu-width: 128px;
-                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
-                offset-y: i-menu-button.height;
-
-                item-clicked(row) => {
-                    FilesAdapter.context-menu-action(self.model[row].spec);
-                }
-
-                closed => {
-                   i-table-view.focus();
-                }
-            }
-
-            i-menu-button := RoundButton {
-                icon: Icons.more-vert;
-                horizontal-stretch: 0;
-
-                clicked => {
-                    i-table-view.focus();
-                    i-context-menu.model = FilesAdapter.get-context-menu();
-
-                    if (i-context-menu.model.length == 0) {
-                        return;
-                    }
-
-                    if (i-table-view.has-focus) {
-                        i-context-menu.show-and-focus();
-                    } else {
-                        i-context-menu.show();
-                    }
-                }
-            }
-
-            action => {
-                FilesAdapter.back();
-            }
-        }
-
-        i-table-view := StandardTableView {
-            x: 1px;
-            width: root.width - 2px;
-            rows: FilesAdapter.files;
-            selection-mode: SelectionMode.Custom;
-            edit-item <=> FilesAdapter.edit-file;
-            columns: FilesAdapter.columns;
-            drag-drop-enabled: true;
-
-            i-item-context-menu := ContextMenu {
-                item-clicked(row) => {
-                    if (self.has-focus) {
-                        i-table-view.focus();
-                    }
-
-                    FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
-                }
-
-                closed => {
-                    i-table-view.focus();
-                }
-            }
-
-            key-pressed(event) => {
-                root.key-pressed(event)
-            }
-
-            row-pointer-event(row, event, position) => {
-                i-table-view.focus();
-
-                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && (event.modifiers.control || event.modifiers.shift)) {
-                    if (event.modifiers.control) {
-                        FilesAdapter.toggle-selection(row);
-                    } else if(event.modifiers.shift) {
-                        FilesAdapter.shift-selection(row);
-                    }
-
-                    return;
-                }
-
-                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up && !event.modifiers.control && !event.modifiers.shift) {
-                    FilesAdapter.open-internal(row);
-                    return;
-                }
-
-
-                if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
-                    root.open-item-context-menu(row, position);
-                }
-            }
-
-            item-accepted(row, column, text) => {
-                FilesAdapter.rename-item(row, text);
-            }
-
-            sort-ascending(column-index) => {
-                FilesAdapter.sort-ascending(column-index);
-            }
-
-            sort-descending(column-index) => {
-                FilesAdapter.sort-descending(column-index);
-            }
-
-            drop-event(event) => {
-                FilesAdapter.move-files(event.source, event.target);
-            }
-        }
-    }
-
-    if (root.display-loading >= 1.0) : LoadingIndicator {
-        width: 100%;
-        height: 100%;
-    }
 
     function key-pressed(event: KeyEvent) -> EventResult {
         if (event.text == Key.Return) {
@@ -253,6 +129,8 @@ export component FilesView {
         }
     }
 
+    forward-focus: i-table-view;
+
     states [
         loading when FilesAdapter.loading : {
             display-loading: 1.0;
@@ -262,4 +140,126 @@ export component FilesView {
             }
         }
     ]
+
+    VerticalLayout {
+        padding-bottom: 1px;
+
+        HeaderBar {
+            action => {
+                FilesAdapter.back();
+            }
+
+            action-icon: Icons.arrow-back;
+            action-enabled: FilesAdapter.back-enabled;
+            title: FilesAdapter.title;
+            offset: root.header-offest;
+
+            i-context-menu := ContextMenu {
+                item-clicked(row) => {
+                    FilesAdapter.context-menu-action(self.model[row].spec);
+                }
+
+                closed => {
+                   i-table-view.focus();
+                }
+
+                min-menu-width: 128px;
+                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
+                offset-y: i-menu-button.height;
+            }
+
+            i-menu-button := RoundButton {
+                clicked => {
+                    i-table-view.focus();
+                    i-context-menu.model = FilesAdapter.get-context-menu();
+
+                    if (i-context-menu.model.length == 0) {
+                        return;
+                    }
+
+                    if (i-table-view.has-focus) {
+                        i-context-menu.show-and-focus();
+                    } else {
+                        i-context-menu.show();
+                    }
+                }
+
+                icon: Icons.more-vert;
+                horizontal-stretch: 0;
+            }
+        }
+
+        i-table-view := StandardTableView {
+            key-pressed(event) => {
+                root.key-pressed(event)
+            }
+
+            row-pointer-event(row, event, position) => {
+                i-table-view.focus();
+
+                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down && (event.modifiers.control || event.modifiers.shift)) {
+                    if (event.modifiers.control) {
+                        FilesAdapter.toggle-selection(row);
+                    } else if(event.modifiers.shift) {
+                        FilesAdapter.shift-selection(row);
+                    }
+
+                    return;
+                }
+
+                if (event.button == PointerEventButton.left && event.kind == PointerEventKind.up && !event.modifiers.control && !event.modifiers.shift) {
+                    FilesAdapter.open-internal(row);
+                    return;
+                }
+
+
+                if (event.button == PointerEventButton.right && event.kind == PointerEventKind.up) {
+                    root.open-item-context-menu(row, position);
+                }
+            }
+
+            item-accepted(row, column, text) => {
+                FilesAdapter.rename-item(row, text);
+            }
+
+            sort-ascending(column-index) => {
+                FilesAdapter.sort-ascending(column-index);
+            }
+
+            sort-descending(column-index) => {
+                FilesAdapter.sort-descending(column-index);
+            }
+
+            drop-event(event) => {
+                FilesAdapter.move-files(event.source, event.target);
+            }
+
+            x: 1px;
+            width: root.width - 2px;
+            rows: FilesAdapter.files;
+            selection-mode: SelectionMode.Custom;
+            edit-item <=> FilesAdapter.edit-file;
+            columns: FilesAdapter.columns;
+            drag-drop-enabled: true;
+
+            i-item-context-menu := ContextMenu {
+                item-clicked(row) => {
+                    if (self.has-focus) {
+                        i-table-view.focus();
+                    }
+
+                    FilesAdapter.item-context-menu-action(root.item-context-menu-item-row, self.model[row].spec);
+                }
+
+                closed => {
+                    i-table-view.focus();
+                }
+            }
+        }
+    }
+
+    if (root.display-loading >= 1.0) : LoadingIndicator {
+        width: 100%;
+        height: 100%;
+    }
 }

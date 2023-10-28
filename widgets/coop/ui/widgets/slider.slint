@@ -6,16 +6,16 @@ import { FocusBorder } from "../components/focus-border.slint";
 import { SmallLabel } from "../components/label.slint";
 
 export component Slider {
-    private property <bool> vertical: orientation == Orientation.vertical;
-
-    callback changed(/* value */ float);
-
     in property <bool> enabled <=> i-touch-area.enabled;
     in property <float> maximum: 100;
     in property <float> minimum;
     in property <Orientation> orientation: horizontal;
     out property <bool> has-focus <=> i-focus-scope.has-focus;
     in-out property <float> value;
+
+    callback changed(/* value */ float);
+
+    private property <bool> vertical: orientation == Orientation.vertical;
 
     min-width: vertical ? 20px : 0px;
     min-height: vertical ? 0px : 20px;
@@ -26,6 +26,22 @@ export component Slider {
     accessible-value-minimum: root.minimum;
     accessible-value-maximum: root.maximum;
     accessible-value-step: (root.maximum - root.minimum) / 100;
+
+    states [
+        disabled when !root.enabled: {
+            i-background.background: Palette.surface-disabled;
+            i-track.background: Palette.foreground-disabled;
+            i-thumb.background: Palette.foreground-disabled;
+        }
+        pressed when i-touch-area.pressed: {
+            i-thumb.background: Palette.primary.darker(State.pressed);
+            i-thumb.width: Size.small * 0.96;
+        }
+        hover when i-touch-area.has-hover: {
+            i-thumb.background: Palette.primary.darker(State.hover);
+
+        }
+    ]
 
     i-background := Rectangle {
         width: vertical ? Size.extra-extra-small : parent.width;
@@ -59,12 +75,6 @@ export component Slider {
     }
 
     i-touch-area := TouchArea {
-        property <float> pressed-value;
-        property <float> step-size: (root.maximum - root.minimum) / 100;
-
-        width: parent.width;
-        height: parent.height;
-
         pointer-event(event) => {
             if(event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
                 self.pressed-value = root.value;
@@ -78,13 +88,15 @@ export component Slider {
                 root.changed(root.value);
             }
         }
+
+        property <float> pressed-value;
+        property <float> step-size: (root.maximum - root.minimum) / 100;
+
+        width: parent.width;
+        height: parent.height;
     }
 
     i-focus-scope := FocusScope {
-        x:0;
-        width: 0px;
-        enabled: root.enabled;
-
         key-pressed(event) => {
             if(self.enabled && event.text == Key.RightArrow) {
                 root.value = Math.min(root.value + i-touch-area.step-size, root.maximum);
@@ -98,6 +110,10 @@ export component Slider {
                 reject
             }
         }
+
+        x: 0;
+        width: 0;
+        enabled: root.enabled;
     }
 
     if (i-focus-scope.has-focus) : FocusBorder {
@@ -107,20 +123,4 @@ export component Slider {
         y: (parent.height - self.height) / 2;
         border-radius: i-background.border-radius + 2px;
     }
-
-    states [
-        disabled when !root.enabled: {
-            i-background.background: Palette.surface-disabled;
-            i-track.background: Palette.foreground-disabled;
-            i-thumb.background: Palette.foreground-disabled;
-        }
-        pressed when i-touch-area.pressed: {
-            i-thumb.background: Palette.primary.darker(State.pressed);
-            i-thumb.width: Size.small * 0.96;
-        }
-        hover when i-touch-area.has-hover: {
-            i-thumb.background: Palette.primary.darker(State.hover);
-
-        }
-    ]
 }

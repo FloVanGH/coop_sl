@@ -6,17 +6,17 @@ import { SmallLabel } from "../components/label.slint";
 import { CheckableBase } from "../_internal/base-widgets.slint";
 
 export component Switch inherits Rectangle {
-    private property <brush> foreground: Palette.foreground;
-    private property <length> indicator-space: 4px;
-
-    callback toggled(/* checked */ bool);
-
     in property <string> text <=> i-label.text;
     in property <image> on-icon;
     in property <image> off-icon;
     in property <bool> enabled <=> i-base.enabled;
     out property <bool> has-focus: i-base.has-focus;
     in-out property <bool> checked <=> i-base.checked;
+
+    callback toggled(/* checked */ bool);
+
+    private property <brush> foreground: Palette.foreground;
+    private property <length> indicator-space: 4px;
 
     accessible-checkable: true;
     accessible-checked <=> root.checked;
@@ -27,7 +27,51 @@ export component Switch inherits Rectangle {
     horizontal-stretch: 0;
     forward-focus: i-base;
 
+    states [
+        disabled-checked when !root.enabled && root.checked: {
+            i-background.background: Palette.surface-disabled;
+            foreground: Palette.foreground-disabled;
+            i-indicator.background: Palette.foreground-disabled;
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+        }
+        disabled when !root.enabled: {
+            i-background.background: Palette.surface-disabled;
+            foreground: Palette.foreground-disabled;
+            i-indicator.background: Palette.foreground-disabled;
+        }
+        pressed-checked when i-base.focus-pressed && root.checked: {
+            i-background.background: Palette.primary.darker(State.pressed);
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+            i-indicator.background: Palette.background;
+            root.foreground: Palette.background;
+        }
+        hover-checked when i-base.has-hover && root.checked: {
+            i-background.background: Palette.primary.darker(State.hover);
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+            i-indicator.background: Palette.background;
+            root.foreground: Palette.background;
+        }
+        checked when !i-base.focus-pressed && root.checked: {
+            i-background.background: Palette.primary;
+            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
+            i-indicator.background: Palette.background;
+            root.foreground: Palette.background;
+        }
+        pressed when i-base.focus-pressed: {
+            i-background.background: Palette.surface.darker(State.pressed);
+        }
+        hover when i-base.has-hover: {
+            i-background.background: Palette.surface.darker(State.hover);
+        }
+    ]
+
+    animate foreground { duration: Duration.fast; }
+
     i-base := CheckableBase {
+        toggled(checked) => {
+            root.toggled(checked);
+        }
+
         focus-border-radius: i-background.border-radius;
 
         i-layout := HorizontalLayout {
@@ -80,48 +124,6 @@ export component Switch inherits Rectangle {
             }
         }
 
-        toggled(checked) => {
-            root.toggled(checked);
-        }
+
     }
-
-    states [
-        disabled-checked when !root.enabled && root.checked: {
-            i-background.background: Palette.surface-disabled;
-            foreground: Palette.foreground-disabled;
-            i-indicator.background: Palette.foreground-disabled;
-            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
-        }
-        disabled when !root.enabled: {
-            i-background.background: Palette.surface-disabled;
-            foreground: Palette.foreground-disabled;
-            i-indicator.background: Palette.foreground-disabled;
-        }
-        pressed-checked when i-base.focus-pressed && root.checked: {
-            i-background.background: Palette.primary.darker(State.pressed);
-            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
-            i-indicator.background: Palette.background;
-            root.foreground: Palette.background;
-        }
-        hover-checked when i-base.has-hover && root.checked: {
-            i-background.background: Palette.primary.darker(State.hover);
-            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
-            i-indicator.background: Palette.background;
-            root.foreground: Palette.background;
-        }
-        checked when !i-base.focus-pressed && root.checked: {
-            i-background.background: Palette.primary;
-            i-indicator.x: i-background.x + i-background.width - i-indicator.width - root.indicator-space;
-            i-indicator.background: Palette.background;
-            root.foreground: Palette.background;
-        }
-        pressed when i-base.focus-pressed: {
-            i-background.background: Palette.surface.darker(State.pressed);
-        }
-        hover when i-base.has-hover: {
-            i-background.background: Palette.surface.darker(State.hover);
-        }
-    ]
-
-    animate foreground { duration: Duration.fast; }
 }

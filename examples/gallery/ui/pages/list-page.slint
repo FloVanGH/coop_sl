@@ -7,17 +7,18 @@ import { StandardTableView, ScrollView, ListView, GroupListView, Switch, Standar
     Button } from "@coop/widgets.slint";
 import { HeaderBar } from "@coop/building-blocks.slint";
 import { HorizontalSeparator, VerticalSpacerMedium, VerticalBox, Spacer } from "@coop/layouts.slint";
-import { Palette, Icons, ColorVariant, Space } from "@coop/styling.slint";
+import { Palette, Icons, ColorScheme, Space } from "@coop/styling.slint";
 import { GroupListViewItem, TabItem } from "@coop/structs.slint";
 
 export global ListPageAdapter {
-    callback close-tab-item(/* index */ int);
-
     in property <[TabItem]> tab-items: [
         { icon: Icons.add, text: "Tab 1" },
         { icon: Icons.add, text: "Tab 2" },
         { icon: Icons.add, text: "Tab 3" },
     ];
+
+    callback close-tab-item(/* index */ int);
+
 }
 
 export component ListPage inherits GridLayout {
@@ -39,7 +40,7 @@ export component ListPage inherits GridLayout {
                     checked: !Palette.dark-color-scheme;
 
                     toggled(checked) => {
-                        Palette.set-color-variant(checked ? ColorVariant.Light : ColorVariant.Dark);
+                        Palette.set-color-variant(checked ? ColorScheme.Light : ColorScheme.Dark);
                     }
                 }
             }
@@ -106,7 +107,6 @@ export component ListPage inherits GridLayout {
                 }
 
                 GroupListView {
-                    height: 100px;
                     property <GroupListViewItem> group: {
                         text: "Group 1",
                         items: [
@@ -115,6 +115,7 @@ export component ListPage inherits GridLayout {
                             { text: "Item 3" },
                         ]
                     };
+
                     property <GroupListViewItem> group-two: {
                         text: "Group 2",
                         items: [
@@ -123,6 +124,8 @@ export component ListPage inherits GridLayout {
                             { text: "Item 3" },
                         ]
                     };
+
+                    height: 100px;
                     model: [self.group, self.group-two];
                 }
 
@@ -197,8 +200,11 @@ export component ListPage inherits GridLayout {
 
             Row {
                 i-tab-view := TabView {
-                    colspan: 4;
+                    close-item(index) => {
+                        ListPageAdapter.close-tab-item(index);
+                    }
 
+                    colspan: 4;
                     model: ListPageAdapter.tab-items;
 
                     for tab-item[index] in self.model : Rectangle {
@@ -209,10 +215,6 @@ export component ListPage inherits GridLayout {
                                 text: tab-item.text;
                             }
                         }
-                    }
-
-                    close-item(index) => {
-                        ListPageAdapter.close-tab-item(index);
                     }
                 }
             }

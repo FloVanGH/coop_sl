@@ -8,99 +8,26 @@ import { HeaderBar, ControlBar } from "@coop/building-blocks.slint";
 import { ScrollView, RoundButton, ContextMenu, TextEdit, LoadingIndicator } from "@coop/widgets.slint";
 
 export global TextAdapter {
-    callback back();
-    callback get-context-menu() -> [ListViewItem];
-    callback context-menu-action(/* spec */ string);
-    callback previous();
-    callback next();
-    callback update-text(/* text */ string);
-
     in property <string> title;
     in-out property <string> text;
     in property <bool> loading;
     in property <bool> single-text;
     in property <bool> has-changes;
     in property <bool> read-only: true;
+
+    callback back();
+    callback get-context-menu() -> [ListViewItem];
+    callback context-menu-action(/* spec */ string);
+    callback previous();
+    callback next();
+    callback update-text(/* text */ string);
 }
 
 export component TextView {
-    private property <float> display-loading;
-    private property <bool> text-loaded: TextAdapter.text != "";
     in property <length> header-offest;
 
-    VerticalLayout {
-        HeaderBar {
-            action-icon: Icons.arrow-back;
-            action-enabled: true;
-            title: TextAdapter.has-changes ? "\{TextAdapter.title}*" : TextAdapter.title;
-            offset: root.header-offest;
-
-            i-context-menu := ContextMenu {
-                min-menu-width: 94px;
-                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
-                offset-y: i-menu-button.height;
-
-                item-clicked(row) => {
-                    TextAdapter.context-menu-action(self.model[row].spec);
-                }
-            }
-
-            i-menu-button := RoundButton {
-                icon: Icons.more-vert;
-                horizontal-stretch: 0;
-
-                clicked => {
-                    i-context-menu.model = TextAdapter.get-context-menu();
-
-                    if (i-context-menu.model.length == 0) {
-                        return;
-                    }
-
-                    i-context-menu.show();
-                }
-            }
-
-            action => {
-                TextAdapter.back();
-            }
-        }
-
-        HorizontalLayout {
-            padding: Space.large;
-
-            i-text-Edit := TextEdit {
-                text <=> TextAdapter.text;
-                read-only: TextAdapter.read-only;
-
-                edited(text) => {
-                    TextAdapter.update-text(text);
-                }
-            }
-        }
-
-        if (!TextAdapter.single-text) : ControlBar {
-            RoundButton {
-                icon: Icons.arrow-back;
-
-                clicked => {
-                    TextAdapter.previous();
-                }
-            }
-
-            RoundButton {
-                icon: Icons.arrow-forward;
-
-                clicked => {
-                    TextAdapter.next();
-                }
-            }
-        }
-    }
-
-    if (root.display-loading >= 1.0) : LoadingIndicator {
-        width: 100%;
-        height: 100%;
-    }
+    private property <float> display-loading;
+    private property <bool> text-loaded: TextAdapter.text != "";
 
     states [
         loading when TextAdapter.loading : {
@@ -111,4 +38,78 @@ export component TextView {
             }
         }
     ]
+
+    VerticalLayout {
+        HeaderBar {
+            action => {
+                TextAdapter.back();
+            }
+
+            action-icon: Icons.arrow-back;
+            action-enabled: true;
+            title: TextAdapter.has-changes ? "\{TextAdapter.title}*" : TextAdapter.title;
+            offset: root.header-offest;
+
+            i-context-menu := ContextMenu {
+                item-clicked(row) => {
+                    TextAdapter.context-menu-action(self.model[row].spec);
+                }
+
+                min-menu-width: 94px;
+                offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
+                offset-y: i-menu-button.height;
+            }
+
+            i-menu-button := RoundButton {
+                clicked => {
+                    i-context-menu.model = TextAdapter.get-context-menu();
+
+                    if (i-context-menu.model.length == 0) {
+                        return;
+                    }
+
+                    i-context-menu.show();
+                }
+
+                icon: Icons.more-vert;
+                horizontal-stretch: 0;
+            }
+        }
+
+        HorizontalLayout {
+            padding: Space.large;
+
+            i-text-Edit := TextEdit {
+                edited(text) => {
+                    TextAdapter.update-text(text);
+                }
+
+                text <=> TextAdapter.text;
+                read-only: TextAdapter.read-only;
+            }
+        }
+
+        if (!TextAdapter.single-text) : ControlBar {
+            RoundButton {
+                clicked => {
+                    TextAdapter.previous();
+                }
+
+                icon: Icons.arrow-back;
+            }
+
+            RoundButton {
+                clicked => {
+                    TextAdapter.next();
+                }
+
+                icon: Icons.arrow-forward;
+            }
+        }
+    }
+
+    if (root.display-loading >= 1.0) : LoadingIndicator {
+        width: 100%;
+        height: 100%;
+    }
 }

@@ -7,7 +7,7 @@ export global Settings {
     in-out property <bool> dark-color-scheme: StyleMetrics.dark-color-scheme;
 }
 
-export enum ColorVariant {
+export enum ColorScheme {
     Dark,
     Light
  }
@@ -99,8 +99,8 @@ export global Palette {
     in-out property <brush> selection: CoopPalette.selection;
     in-out property <brush> focus: CoopPalette.focus;
 
-    public function set-color-variant(variant: ColorVariant) {
-        if (variant == ColorVariant.Light) {
+    public function set-color-variant(variant: ColorScheme) {
+        if (variant == ColorScheme.Light) {
             Settings.dark-color-scheme = false;
         } else {
             Settings.dark-color-scheme = true;

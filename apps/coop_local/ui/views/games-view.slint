@@ -9,12 +9,12 @@ import { SmallTitle, ExtraLargeTitle, LargeLabel, FocusBorder } from "@coop/comp
 import { Launcher, LauncherItem } from "../widgets/launcher.slint";
 
 export global GameSettingsAdapter {
-    callback set-arguments(/* row */ int, /* arguments */ string);
-    callback close();
-
     in property <string> title;
     in property <string> arguments;
     in property <int> row;
+
+    callback set-arguments(/* row */ int, /* arguments */ string);
+    callback close();
 }
 
 component GameSettingsView {

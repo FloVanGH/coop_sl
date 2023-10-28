@@ -640,8 +640,11 @@ export component BasicsPage inherits Page {
                 alignment: start;
 
                 i-popup-button := Button {
+                    clicked => {
+                        i-popup.show();
+                    }
+
                     text: "Open popup";
-                    clicked => { i-popup.show(); }
                 }
 
                 i-popup := Popup {

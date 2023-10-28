@@ -12,11 +12,11 @@ import { Login } from "login.slint";
 export { WindowModel, DisplayViewAdapter }
 
 export component Desktop inherits Window {
+    private property <bool> logged-in;
+
     title: "desktop example";
     width: 1020px;
     height: 720px;
-
-    private property <bool> logged-in;
 
     if(!root.logged-in) : Login {
         login(user, password) => {
@@ -69,10 +69,18 @@ export component Desktop inherits Window {
 
             i-menu := VerticalLayout {
                 property <bool> open;
+
+                states [
+                    open when i-menu.open : {
+                        opacity: 1.0;
+                    }
+                ]
+
+                animate opacity { duration: Duration.fast; }
+
                 alignment: start;
                 x: root.width - self.width - Space.small;
                 y: i-header-bar.height + Space.small;
-
                 width: 200px;
                 opacity: 0.0;
 
@@ -114,13 +122,7 @@ export component Desktop inherits Window {
                     }
                 }
 
-                states [
-                    open when i-menu.open : {
-                        opacity: 1.0;
-                    }
-                ]
 
-                animate opacity { duration: Duration.fast; }
             }
         }
      }

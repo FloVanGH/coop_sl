@@ -72,12 +72,12 @@ export component MainWindow inherits CoopWindow {
             }
 
             SideBarView {
-                x: i-responsive-container.expand-shrunken ? 0 : -self.width;
-                window-height: root.height;
-
                 item-clicked => {
                     i-responsive-container.expand-shrunken = false;
                 }
+
+                x: i-responsive-container.expand-shrunken ? 0 : -self.width;
+                window-height: root.height;
 
                 animate x { duration: Duration.fast;}
             }

@@ -5,18 +5,31 @@ import { RoundButton } from "../widgets/round-button.slint";
 import { Icons, Palette, Space, Size, Duration } from "../styling.slint";
 
 export component ResponsiveContainer {
-    private property <bool> on-break-point: root.reference-width < root.break-point;
-
     in property <length> reference-width;
     in property <length> break-point: 444px;
     out property <bool> on-break: root.reference-width < root.break-point;
     in-out property <bool> expand-shrunken;
     out property <length> expand-button-width: 2 *  i-layout.padding + i-expand-button.width;
 
+    private property <bool> on-break-point: root.reference-width < root.break-point;
+
+    function toggle-expand-shrunken() {
+        root.expand-shrunken = !root.expand-shrunken;
+    }
+
     preferred-width: 100%;
     preferred-height: 100%;
     vertical-stretch: 1;
     horizontal-stretch: 1;
+
+    states [
+        not-break when !root.on-break : {
+            root.expand-shrunken: false;
+        }
+        on-break when root.on-break : {
+            i-expander.opacity: 1;
+        }
+    ]
 
     Rectangle {
         width: 100%;
@@ -33,6 +46,8 @@ export component ResponsiveContainer {
         background: Palette.background-alt;
         opacity: 0;
 
+        animate opacity { duration: Duration.fast;}
+
         i-layout := HorizontalLayout {
             padding: Space.small;
 
@@ -46,20 +61,5 @@ export component ResponsiveContainer {
                 }
             }
         }
-
-        animate opacity { duration: Duration.fast;}
     }
-
-    function toggle-expand-shrunken() {
-        root.expand-shrunken = !root.expand-shrunken;
-    }
-
-    states [
-        not-break when !root.on-break : {
-            root.expand-shrunken: false;
-        }
-        on-break when root.on-break : {
-            i-expander.opacity: 1;
-        }
-    ]
 }

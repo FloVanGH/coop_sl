@@ -3,7 +3,7 @@
 
 import { AppManager } from "../app-manager.slint";
 
-import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Icons, ComboBox, Palette, ColorTheme, ColorVariant } from "@coop/lib.slint";
+import { HeaderBar, OutlineButton, CheckBox, Switch, ScrollView, Icons, ComboBox, Palette, ColorTheme, ColorScheme } from "@coop/lib.slint";
 
 export component Page inherits GridLayout {
     in-out property <string> title <=> i-header-bar.title;
@@ -26,16 +26,6 @@ export component Page inherits GridLayout {
             }
 
             ComboBox {
-                width: 94px;
-                placeholder-text: @tr("Select theme:");
-                current-index: Palette.current-color-theme == ColorTheme.Coop ? 0 : Palette.current-color-theme == ColorTheme.Cosmic ? 1 : 2;
-
-                model: [
-                    { text: "Coop" },
-                    { text: "Cosmic" },
-                    { text: "Cupertino" },
-                ];
-
                 selected (index) => {
                     if (index == 0) {
                         Palette.set-color-theme(ColorTheme.Coop);
@@ -50,19 +40,29 @@ export component Page inherits GridLayout {
                         Palette.set-color-theme(ColorTheme.Cupertino);
                     }
                 }
+
+                width: 94px;
+                placeholder-text: @tr("Select theme:");
+                current-index: Palette.current-color-theme == ColorTheme.Coop ? 0 : Palette.current-color-theme == ColorTheme.Cosmic ? 1 : 2;
+
+                model: [
+                    { text: "Coop" },
+                    { text: "Cosmic" },
+                    { text: "Cupertino" },
+                ];
             }
 
             VerticalLayout {
                 alignment: center;
 
                 Switch {
+                    toggled(checked) => {
+                        Palette.set-color-variant(checked ? ColorScheme.Light : ColorScheme.Dark);
+                    }
+
                     on_icon: Icons.mode-night;
                     off_icon: Icons.light-mode;
                     checked: !Palette.dark-color-scheme;
-
-                    toggled(checked) => {
-                        Palette.set-color-variant(checked ? ColorVariant.Light : ColorVariant.Dark);
-                    }
                 }
             }
         }
