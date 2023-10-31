@@ -7,30 +7,30 @@ import { Space, Palette, Typography, Icons } from "@coop/styling.slint";
 import { HeaderBar, ControlBar } from "@coop/building-blocks.slint";
 import { ScrollView, RoundButton, ContextMenu, TextEdit, LoadingIndicator } from "@coop/widgets.slint";
 
-export global TextAdapter {
+export global TextEditorAdapter {
     in property <string> title;
-    in-out property <string> text;
     in property <bool> loading;
-    in property <bool> single-text;
+    in property <bool> is-single-text;
     in property <bool> has-changes;
     in property <bool> read-only: true;
+    in-out property <string> text;
 
     callback back();
     callback get-context-menu() -> [ListViewItem];
     callback context-menu-action(/* spec */ string);
     callback previous();
     callback next();
-    callback update-text(/* text */ string);
+    callback update-text(/* text */ string) -> bool;
 }
 
-export component TextView {
+export component TextEditorView {
     in property <length> header-offest;
 
     private property <float> display-loading;
-    private property <bool> text-loaded: TextAdapter.text != "";
+    private property <bool> text-loaded: TextEditorAdapter.text != "";
 
     states [
-        loading when TextAdapter.loading : {
+        loading when TextEditorAdapter.loading : {
             display-loading: 1.0;
 
             in {
@@ -42,27 +42,27 @@ export component TextView {
     VerticalLayout {
         HeaderBar {
             action => {
-                TextAdapter.back();
+                TextEditorAdapter.back();
             }
 
             action-icon: Icons.arrow-back;
             action-enabled: true;
-            title: TextAdapter.has-changes ? "\{TextAdapter.title}*" : TextAdapter.title;
+            title: TextEditorAdapter.has-changes ? "\{TextEditorAdapter.title}*" : TextEditorAdapter.title;
             offset: root.header-offest;
 
             i-context-menu := ContextMenu {
-                item-clicked(row) => {
-                    TextAdapter.context-menu-action(self.model[row].spec);
-                }
-
                 min-menu-width: 94px;
                 offset-x: -((self.x + self.min-menu-width) - (i-menu-button.x + i-menu-button.width));
                 offset-y: i-menu-button.height;
+
+                item-clicked(row) => {
+                    TextEditorAdapter.context-menu-action(self.model[row].spec);
+                }
             }
 
             i-menu-button := RoundButton {
                 clicked => {
-                    i-context-menu.model = TextAdapter.get-context-menu();
+                    i-context-menu.model = TextEditorAdapter.get-context-menu();
 
                     if (i-context-menu.model.length == 0) {
                         return;
@@ -81,18 +81,20 @@ export component TextView {
 
             i-text-Edit := TextEdit {
                 edited(text) => {
-                    TextAdapter.update-text(text);
+                    TextEditorAdapter.has-changes = TextEditorAdapter.update-text(text);
                 }
 
-                text <=> TextAdapter.text;
-                read-only: TextAdapter.read-only;
+                text <=> TextEditorAdapter.text;
+                read-only: TextEditorAdapter.read-only;
+
+
             }
         }
 
-        if (!TextAdapter.single-text) : ControlBar {
+        if (!TextEditorAdapter.is-single-text) : ControlBar {
             RoundButton {
                 clicked => {
-                    TextAdapter.previous();
+                    TextEditorAdapter.previous();
                 }
 
                 icon: Icons.arrow-back;
@@ -100,7 +102,7 @@ export component TextView {
 
             RoundButton {
                 clicked => {
-                    TextAdapter.next();
+                    TextEditorAdapter.next();
                 }
 
                 icon: Icons.arrow-forward;

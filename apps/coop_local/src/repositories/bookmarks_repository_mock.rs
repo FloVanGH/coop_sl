@@ -43,6 +43,10 @@ impl crate::repositories::traits::BookmarksRepository for BookmarksRepositoryMoc
     fn bookmarks(&self) -> Vec<BookmarkModel> {
         self.bookmarks.borrow().clone()
     }
+
+    fn exists(&self, _bookmark: &BookmarkModel) -> bool {
+        true
+    }
 }
 
 #[cfg(test)]

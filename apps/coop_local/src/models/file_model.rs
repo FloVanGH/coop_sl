@@ -79,6 +79,10 @@ impl FileModel {
     }
 
     pub fn readonly(&self) -> Result<bool> {
+        if cfg!(test) {
+            return Ok(false);
+        }
+
         Ok(fs::metadata(self.path.as_str())?.permissions().readonly())
     }
 

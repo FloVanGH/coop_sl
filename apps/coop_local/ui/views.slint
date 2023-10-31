@@ -7,7 +7,7 @@ import { DialogView } from "views/dialog-view.slint";
 import { FilesView } from "views/files-view.slint";
 import { GamesView } from "views/games-view.slint";
 import { ImageView } from "views/image-view.slint";
-import { TextView } from "views/text-view.slint";
+import { TextEditorView } from "views/text-editor-view.slint";
 
 export enum View {
     Files,
@@ -39,7 +39,7 @@ export component Views {
         header-offest: root.header-offest;
     }
 
-    if (root.active-view == View.Text) : TextView {
+    if (root.active-view == View.Text) : TextEditorView {
         width: 100%;
         height: 100%;
         header-offest: root.header-offest;

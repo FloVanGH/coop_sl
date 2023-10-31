@@ -11,6 +11,7 @@ use crate::{
     models::{FileModel, FileType},
     repositories::{FilesRepository, ImageRepository},
     ui::*,
+    Callback,
 };
 use slint::*;
 use tokio::runtime::Builder;
@@ -26,10 +27,11 @@ pub struct ImageController {
     view_handle: Weak<MainWindow>,
     files_repository: FilesRepository,
     image_repository: ImageRepository,
-    show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     current_item: Rc<Cell<usize>>,
-    images: Rc<RefCell<Vec<FileModel>>>,
+    model: Rc<RefCell<Vec<FileModel>>>,
     image_cache: Rc<RefCell<HashMap<FileModel, Image>>>,
+    show_about_callback: Rc<Callback<(), ()>>,
+    back_callback: Rc<Callback<(), ()>>,
 }
 
 impl ImageController {
@@ -42,10 +44,12 @@ impl ImageController {
             view_handle,
             files_repository,
             image_repository,
-            show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
+
             current_item: Rc::new(Cell::new(0)),
-            images: Rc::new(RefCell::new(vec![])),
+            model: Rc::new(RefCell::new(vec![])),
             image_cache: Rc::new(RefCell::new(HashMap::new())),
+            show_about_callback: Rc::new(Callback::default()),
+            back_callback: Rc::new(Callback::default()),
         };
 
         upgrade_adapter(&controller.view_handle, {
@@ -84,7 +88,7 @@ impl ImageController {
         }
 
         if let Some(parent_file_model) = file_model.parent().map(FileModel::new) {
-            self.images.borrow_mut().clear();
+            self.model.borrow_mut().clear();
             self.current_item.set(0);
             self.image_cache.borrow_mut().clear();
 
@@ -129,27 +133,33 @@ impl ImageController {
                         adapter.set_single_image(single_image);
                     });
 
-                    controller.images.borrow_mut().append(&mut images);
+                    controller.model.borrow_mut().append(&mut images);
                     controller.show_image(0);
                 }
             });
         }
     }
 
-    pub fn on_back(&self, func: impl FnMut() + 'static) {
-        upgrade_adapter(&self.view_handle, move |adapter| {
-            adapter.on_back(func);
+    pub fn on_back(&self, callback: impl Fn() + 'static) {
+        self.back_callback.on(move |&()| {
+            callback();
         });
     }
 
-    pub fn on_show_about(&self, callback: impl FnMut() + 'static) {
-        *self.show_about_callback.borrow_mut() = Box::new(callback);
+    pub fn on_show_about(&self, mut callback: impl FnMut() + 'static) {
+        self.show_about_callback.on(move |&()| {
+            callback();
+        });
+    }
+
+    pub fn invoke_back(&self) {
+        self.back_callback.invoke(&());
     }
 
     fn get_context_menu(&self) -> ModelRc<ListViewItem> {
         let items = VecModel::default();
 
-        if let Some(current_image) = self.images.borrow().get(self.current_item.get()) {
+        if let Some(current_image) = self.model.borrow().get(self.current_item.get()) {
             if let Ok(readonly) = current_image.readonly() {
                 if !readonly {
                     items.push(ListViewItem {
@@ -171,7 +181,7 @@ impl ImageController {
     }
 
     fn show_image(&self, index: usize) {
-        if let Some(file_model) = self.images.borrow().get(index).cloned() {
+        if let Some(file_model) = self.model.borrow().get(index).cloned() {
             if let Some(image) = self.image_cache.borrow().get(&file_model).cloned() {
                 upgrade_adapter(&self.view_handle, move |adapter| {
                     adapter.set_image(image);
@@ -227,9 +237,7 @@ impl ImageController {
         match spec {
             context_menu::REMOVE => self.remove(),
             context_menu::ABOUT => {
-                if let Ok(mut callback) = self.show_about_callback.try_borrow_mut() {
-                    callback();
-                }
+                self.show_about_callback.invoke(&());
             }
             _ => {}
         }
@@ -237,18 +245,16 @@ impl ImageController {
 
     fn remove(&self) {
         let current_index = self.current_item.get();
-        let current_image = self.images.borrow().get(current_index).cloned();
+        let current_image = self.model.borrow().get(current_index).cloned();
         if let Some(current_image) = current_image {
             if self.files_repository.remove(&current_image) {
-                self.images.borrow_mut().remove(current_index);
+                self.model.borrow_mut().remove(current_index);
                 self.image_cache.borrow_mut().remove(&current_image);
             }
         }
 
-        if self.images.borrow().is_empty() {
-            upgrade_adapter(&self.view_handle, move |adapter| {
-                adapter.invoke_back();
-            });
+        if self.model.borrow().is_empty() {
+            self.invoke_back();
         } else {
             self.previous();
         }
@@ -257,7 +263,7 @@ impl ImageController {
     fn next(&self) {
         let mut next = self.current_item.get() + 1;
 
-        if next >= self.images.borrow().len() {
+        if next >= self.model.borrow().len() {
             next = 0;
         }
 
@@ -269,7 +275,7 @@ impl ImageController {
         let mut previous = self.current_item.get() as i32 - 1;
 
         if previous < 0 {
-            previous = self.images.borrow().len() as i32 - 1;
+            previous = self.model.borrow().len() as i32 - 1;
         }
 
         self.current_item.set(previous as usize);

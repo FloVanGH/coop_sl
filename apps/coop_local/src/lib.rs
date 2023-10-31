@@ -5,8 +5,10 @@ pub mod controllers;
 #[cfg(feature = "games")]
 pub mod gamepad;
 
-mod adapters;
-pub use adapters::*;
+mod callback;
+pub use callback::*;
+
+pub mod adapters;
 pub mod item_selector;
 pub mod models;
 pub mod repositories;

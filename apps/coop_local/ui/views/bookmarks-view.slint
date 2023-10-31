@@ -51,6 +51,20 @@ export component BookmarksView {
     forward-focus: i-list-view;
 
     i-list-view := StandardListView {
+        selection-mode: Custom;
+        model: BookmarksAdapter.bookmarks;
+        drag-drop-enabled: true;
+
+        i-context-menu := ContextMenu {
+            item-clicked(row) => {
+                BookmarksAdapter.item-context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
+            }
+
+            closed => {
+                i-list-view.focus();
+            }
+        }
+
         key-pressed(event) => {
             if (event.text == Key.UpArrow) {
                 BookmarksAdapter.open-previous-dir();
@@ -91,20 +105,6 @@ export component BookmarksView {
 
         drop-event(event) => {
             BookmarksAdapter.reorder(event.source, event.target);
-        }
-
-        selection-mode: Custom;
-        model: BookmarksAdapter.bookmarks;
-        drag-drop-enabled: true;
-
-        i-context-menu := ContextMenu {
-            item-clicked(row) => {
-                BookmarksAdapter.item-context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
-            }
-
-            closed => {
-                i-list-view.focus();
-            }
         }
     }
 }

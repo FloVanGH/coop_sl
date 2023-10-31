@@ -57,8 +57,8 @@ impl FilesRepository {
         ))
     }
 
-    pub fn remove(&self, file: &FileModel) -> bool {
-        if let Ok(()) = trash::delete(file.path()) {
+    pub fn remove(&self, file_model: &FileModel) -> bool {
+        if let Ok(()) = trash::delete(file_model.path()) {
             return true;
         }
 

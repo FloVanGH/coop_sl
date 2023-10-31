@@ -3,3 +3,6 @@
 
 mod bookmarks_repository;
 pub use bookmarks_repository::*;
+
+mod text_editor_repository;
+pub use text_editor_repository::*;

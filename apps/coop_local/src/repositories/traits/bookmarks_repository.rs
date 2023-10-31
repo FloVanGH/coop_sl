@@ -9,4 +9,5 @@ pub trait BookmarksRepository {
     fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel>;
     fn reorder(&self, source: usize, target: usize) -> io::Result<bool>;
     fn bookmarks(&self) -> Vec<BookmarkModel>;
+    fn exists(&self, bookmark: &BookmarkModel) -> bool;
 }

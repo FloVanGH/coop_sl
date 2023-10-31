@@ -18,5 +18,5 @@ pub use games_controller::*;
 mod image_controller;
 pub use image_controller::*;
 
-mod text_controller;
-pub use text_controller::*;
+mod text_editor_controller;
+pub use text_editor_controller::*;

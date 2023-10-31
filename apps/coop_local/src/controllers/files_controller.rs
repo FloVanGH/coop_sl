@@ -8,7 +8,7 @@ use crate::repositories::FilesRepository;
 #[cfg(feature = "games")]
 use crate::repositories::GamesRepository;
 
-use crate::ui::*;
+use crate::{ui::*, Callback};
 use chrono::{DateTime, Utc};
 use slint::*;
 use std::cell::{Cell, RefCell};
@@ -43,8 +43,8 @@ pub struct FilesController {
     root_file: Rc<RefCell<FileModel>>,
     root_modified: Rc<Cell<Option<SystemTime>>>,
     last_non_shift_selection: Rc<Cell<usize>>,
-    show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     add_bookmark_callback: FileCallback,
+    show_about_callback: Rc<Callback<(), ()>>,
 }
 
 impl FilesController {
@@ -77,8 +77,8 @@ impl FilesController {
             games_repository,
             root_modified,
             last_non_shift_selection: Rc::new(Cell::new(0)),
-            show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             add_bookmark_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
+            show_about_callback: Rc::new(Callback::default()),
         };
         controller.update_view_files_model();
 
@@ -259,12 +259,6 @@ impl FilesController {
         });
     }
 
-    pub fn on_back(&self, func: impl FnMut() + 'static) {
-        upgrade_adapter(&self.view_handle, move |adapter| {
-            adapter.on_back(func);
-        });
-    }
-
     pub fn on_open_internal(&self, mut func: impl FnMut(FileModel) + 'static) {
         let files_proxy_model = self.files_proxy_model.clone();
 
@@ -278,8 +272,10 @@ impl FilesController {
         });
     }
 
-    pub fn on_show_about(&self, callback: impl FnMut() + 'static) {
-        *self.show_about_callback.borrow_mut() = Box::new(callback);
+    pub fn on_show_about(&self, mut callback: impl FnMut() + 'static) {
+        self.show_about_callback.on(move |&()| {
+            callback();
+        });
     }
 
     pub fn on_add_bookmark(&self, callback: impl FnMut(&FileModel) + 'static) {
@@ -341,9 +337,7 @@ impl FilesController {
             context_menu::CREATE_GAME_FILE => self.create_game_file(),
             context_menu::PASTE => self.paste(),
             context_menu::ABOUT => {
-                if let Ok(mut callback) = self.show_about_callback.try_borrow_mut() {
-                    callback();
-                }
+                self.show_about_callback.invoke(&());
             }
             _ => {}
         }

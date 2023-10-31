@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023 Florian Blasius <co_sl@tutanota.com>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use coop_local::bookmarks_adapter;
+use coop_local::adapters::*;
 use coop_local::controllers::*;
 use coop_local::models::*;
 use coop_local::repositories::*;
@@ -130,7 +130,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
     );
 
     let files_controller_clone = files_controller.clone();
-    let on_back = {
+    let back = {
         let file_model_stack = file_model_stack.clone();
         let bookmarks_controller = bookmarks_controller.clone();
         let view_handle = view_handle.clone();
@@ -158,7 +158,13 @@ pub fn main() -> Result<(), slint::PlatformError> {
         move |loading| upgrade_adapter(&view_handle, move |adapter| adapter.set_loading(loading))
     };
 
-    files_controller.on_back(on_back.clone());
+    files_adapter::get(&view_handle, {
+        let on_back = back.clone();
+        move |adapter| {
+            adapter.on_back(on_back);
+        }
+    });
+
     files_controller.on_show_about(on_show_about.clone());
     files_controller.on_add_bookmark({
         let bookmarks_controller = bookmarks_controller.clone();
@@ -190,9 +196,13 @@ pub fn main() -> Result<(), slint::PlatformError> {
 
     #[cfg(feature = "games")]
     let games_controller = {
+        let on_back = back.clone();
+        games_adapter::get(&view_handle, |adapter| {
+            adapter.on_back(on_back);
+        });
+
         let games_controller = GamesController::new(view_handle.clone(), games_repository.clone());
 
-        games_controller.on_back(on_back.clone());
         games_controller.on_show_about(on_show_about.clone());
         let files_controller_clone = files_controller.clone();
 
@@ -221,21 +231,88 @@ pub fn main() -> Result<(), slint::PlatformError> {
         games_controller
     };
 
-    let text_controller = TextController::new(
-        view_handle.clone(),
-        files_repository.clone(),
-        TextRepository::new(),
+    // text controller
+    let text_input_controller = Rc::new(TextEditorController::new(TextEditorRepository::new()));
+
+    text_editor_adapter::connect(
+        &view_handle,
+        &text_input_controller,
+        |adapter, controller| {
+            adapter.on_update_text(move |text| controller.update_text(text.as_str()));
+        },
     );
-    text_controller.on_back(on_back.clone());
-    text_controller.on_show_about(on_show_about.clone());
+    text_editor_adapter::connect(
+        &view_handle,
+        &text_input_controller,
+        |adapter, controller| {
+            adapter.on_get_context_menu(move || controller.get_context_menu());
+        },
+    );
+    text_editor_adapter::connect(
+        &view_handle,
+        &text_input_controller,
+        |adapter, controller| {
+            adapter.on_context_menu_action({
+                move |spec| controller.execute_context_menu_action(spec.as_str(), true)
+            });
+        },
+    );
+    text_editor_adapter::connect(
+        &view_handle,
+        &text_input_controller,
+        |adapter, controller| {
+            adapter.on_next(move || controller.next(true));
+        },
+    );
+    text_editor_adapter::connect(
+        &view_handle,
+        &text_input_controller,
+        |adapter, controller| {
+            adapter.on_previous(move || controller.previous(true));
+        },
+    );
+    text_editor_adapter::connect(
+        &view_handle,
+        &text_input_controller,
+        |adapter, controller| {
+            adapter.on_back(move || controller.invoke_back());
+        },
+    );
+    text_input_controller.on_loading_changed({
+        let view_handle = view_handle.clone();
+        move |loading| {
+            text_editor_adapter::set_loading(&view_handle, *loading);
+        }
+    });
+    text_input_controller.on_single_text_changed({
+        let view_handle = view_handle.clone();
+        move |is_single_text| {
+            text_editor_adapter::set_is_single_text(&view_handle, *is_single_text);
+        }
+    });
+    text_input_controller.on_current_model_changed({
+        let view_handle = view_handle.clone();
+        move |model| {
+            text_editor_adapter::set_model(&view_handle, model);
+        }
+    });
+    text_input_controller.on_back(back.clone());
+    text_input_controller.on_show_about(on_show_about.clone());
 
     let image_controller = ImageController::new(
         view_handle.clone(),
         files_repository,
         ImageRepository::new(),
     );
-    image_controller.on_back(on_back);
+    image_controller.on_back(back.clone());
     image_controller.on_show_about(on_show_about);
+
+    image_adapter::get(&view_handle, {
+        let back = back.clone();
+        move |adapter| {
+            adapter.on_back(back);
+        }
+    });
 
     let files_controller_clone = files_controller.clone();
     let bookmark_controller_clone = bookmarks_controller.clone();
@@ -281,7 +358,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
                 });
             } else if file_model.file_type() == FileType::Text {
                 file_model_stack.borrow_mut().push(file_model.clone());
-                text_controller.load_text(file_model);
+                text_input_controller.load(file_model, false, true);
                 upgrade_adapter(&view_handle, |adapter| {
                     adapter.set_active_view(View::Text);
                 });

@@ -9,6 +9,7 @@ use crate::{
 use serde::{Deserialize, Serialize};
 use std::{
     io,
+    path::Path,
     sync::{Arc, Mutex},
 };
 
@@ -98,6 +99,10 @@ impl traits::BookmarksRepository for BookmarksRepository {
         }
 
         vec![]
+    }
+
+    fn exists(&self, bookmark: &BookmarkModel) -> bool {
+        Path::new(bookmark.path()).exists()
     }
 }
 

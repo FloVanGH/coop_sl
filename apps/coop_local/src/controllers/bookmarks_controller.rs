@@ -3,7 +3,6 @@
 
 use std::cell::Cell;
 use std::cell::RefCell;
-use std::path::Path;
 use std::rc::Rc;
 
 use crate::models::FileModel;
@@ -27,17 +26,14 @@ pub struct BookmarksController<T: BookmarksRepository> {
 impl<T: BookmarksRepository + 'static> BookmarksController<T> {
     pub fn new(repository: T) -> Self {
         let bookmarks = Rc::new(VecModel::default());
+        bookmarks.set_vec(repository.bookmarks());
 
-        let controller = Self {
+        Self {
             bookmarks,
             repository: Rc::new(repository),
             selected_bookmark: Cell::new(None),
             open_internal_callback: Rc::new(RefCell::new(Box::new(|_f: FileModel| {}))),
-        };
-
-        controller.load_bookmarks();
-
-        controller
+        }
     }
 
     pub fn bookmarks(&self) -> ModelRc<BookmarkModel> {
@@ -172,20 +168,12 @@ impl<T: BookmarksRepository + 'static> BookmarksController<T> {
         let _ = slint::spawn_local(async move {
             for r in (0..bookmarks.row_count()).rev() {
                 if let Some(bookmark) = bookmarks.row_data(r) {
-                    if !Path::new(bookmark.path()).exists() && repository.remove_bookmark(r).is_ok()
-                    {
+                    if !repository.exists(&bookmark) && repository.remove_bookmark(r).is_ok() {
                         bookmarks.remove(r);
                     }
                 }
             }
         });
-    }
-
-    fn load_bookmarks(&self) {
-        let repository = self.repository.clone();
-        let bookmarks = self.bookmarks.clone();
-
-        bookmarks.set_vec(repository.bookmarks());
     }
 }
 

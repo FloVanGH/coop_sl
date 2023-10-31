@@ -18,7 +18,10 @@ pub use games_repository::*;
 mod image_repository;
 pub use image_repository::*;
 
-mod text_repository;
-pub use text_repository::*;
+mod text_editor_repository_mock;
+pub use text_editor_repository_mock::*;
+
+mod text_editor_repository;
+pub use text_editor_repository::*;
 
 pub mod traits;

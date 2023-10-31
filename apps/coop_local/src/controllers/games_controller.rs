@@ -3,7 +3,7 @@
 
 use crate::models::{FileModel, GameModel};
 use crate::repositories::GamesRepository;
-use crate::ui::*;
+use crate::{ui::*, Callback};
 use chrono::{Local, LocalResult, TimeZone};
 use slint::*;
 use std::cell::{Cell, RefCell};
@@ -31,9 +31,9 @@ pub struct GamesController {
     games_model: Rc<VecModel<GameModel>>,
     games_proxy_model: Rc<RefCell<ModelRc<GameModel>>>,
     meta: Rc<VecModel<LauncherItem>>,
-    show_about_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     show_files_callback: Rc<RefCell<Box<dyn FnMut() + 'static>>>,
     loading_callback: LoadingCallback,
+    show_about_callback: Rc<Callback<(), ()>>,
 }
 
 impl GamesController {
@@ -55,9 +55,9 @@ impl GamesController {
             games_model,
             games_proxy_model,
             meta: meta.clone(),
-            show_about_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             show_files_callback: Rc::new(RefCell::new(Box::new(|| {}))),
             loading_callback: Rc::new(RefCell::new(Box::new(|_| {}))),
+            show_about_callback: Rc::new(Callback::default()),
         };
         controller.update_view_files_model();
 
@@ -120,14 +120,10 @@ impl GamesController {
         controller
     }
 
-    pub fn on_back(&self, func: impl FnMut() + 'static) {
-        upgrade_adapter(&self.view_handle, move |adapter| {
-            adapter.on_back(func);
+    pub fn on_show_about(&self, mut callback: impl FnMut() + 'static) {
+        self.show_about_callback.on(move |&()| {
+            callback();
         });
-    }
-
-    pub fn on_show_about(&self, callback: impl FnMut() + 'static) {
-        *self.show_about_callback.borrow_mut() = Box::new(callback);
     }
 
     pub fn on_loading(&self, callback: impl FnMut(bool) + 'static) {
@@ -290,9 +286,7 @@ impl GamesController {
                 }
             }
             context_menu::ABOUT => {
-                if let Ok(mut callback) = self.show_about_callback.try_borrow_mut() {
-                    callback();
-                }
+                self.show_about_callback.invoke(&());
             }
             _ => {}
         }

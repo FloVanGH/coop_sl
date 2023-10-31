@@ -12,5 +12,8 @@ mod game_model;
 #[cfg(feature = "games")]
 pub use game_model::*;
 
+mod text_editor_model;
+pub use text_editor_model::*;
+
 mod text_model;
 pub use text_model::*;
