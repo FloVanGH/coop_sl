@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use std::cell::Cell;
-use std::cell::RefCell;
+use std::cmp::Ordering;
 use std::rc::Rc;
 
 use crate::models::FileModel;
 use crate::repositories::traits::BookmarksRepository;
+use crate::Callback;
 use crate::{models::BookmarkModel, ui::*};
 use slint::*;
 
@@ -14,30 +15,63 @@ mod context_menu {
     pub const REMOVE_BOOKMARK: &str = "remove bookmark";
 }
 
-type FileCallback = Rc<RefCell<Box<dyn FnMut(FileModel) + 'static>>>;
-
 pub struct BookmarksController<T: BookmarksRepository> {
     bookmarks: Rc<VecModel<BookmarkModel>>,
     repository: Rc<T>,
     selected_bookmark: Cell<Option<usize>>,
-    open_internal_callback: FileCallback,
+    open_callback: Rc<Callback<FileModel, ()>>,
 }
 
 impl<T: BookmarksRepository + 'static> BookmarksController<T> {
     pub fn new(repository: T) -> Self {
         let bookmarks = Rc::new(VecModel::default());
-        bookmarks.set_vec(repository.bookmarks());
+        let mut bookmarks_vec = repository.load();
+
+        bookmarks_vec.sort_by(|a, b| {
+            if a.unremovable().eq(&b.unremovable()) {
+                return Ordering::Equal;
+            }
+
+            if !a.unremovable() && b.unremovable() {
+                Ordering::Less
+            } else {
+                Ordering::Greater
+            }
+        });
+        bookmarks.set_vec(bookmarks_vec);
 
         Self {
             bookmarks,
             repository: Rc::new(repository),
             selected_bookmark: Cell::new(None),
-            open_internal_callback: Rc::new(RefCell::new(Box::new(|_f: FileModel| {}))),
+            open_callback: Rc::new(Callback::default()),
         }
     }
 
     pub fn bookmarks(&self) -> ModelRc<BookmarkModel> {
         self.bookmarks.clone().into()
+    }
+
+    pub fn first_bookmark_path(&self) -> Option<String> {
+        if self.bookmarks.row_count() > 0 {
+            return self.bookmarks.row_data(0).map(|b| b.path().to_string());
+        }
+
+        None
+    }
+
+    pub fn context_menu(&self, index: usize) -> ModelRc<ListViewItem> {
+        if let Some(bookmark) = self.bookmarks.row_data(index) {
+            if bookmark.unremovable() {
+                return Rc::new(VecModel::default()).into();
+            }
+        }
+
+        VecModel::from_slice(&[ListViewItem {
+            text: "Remove".into(),
+            spec: context_menu::REMOVE_BOOKMARK.into(),
+            ..Default::default()
+        }])
     }
 
     pub fn select(&self, path: &str) {
@@ -62,93 +96,78 @@ impl<T: BookmarksRepository + 'static> BookmarksController<T> {
         }
     }
 
-    pub fn add_bookmark(&self, bookmark: BookmarkModel) {
+    pub fn add(&self, bookmark: BookmarkModel) {
         if self.bookmarks.iter().any(|b| b.eq(&bookmark)) {
             return;
         }
 
-        let repository = self.repository.clone();
-        let bookmarks = self.bookmarks.clone();
+        let mut insert_index = 0;
 
-        let _ = slint::spawn_local(async move {
-            if repository.add_bookmark(bookmark.clone()).is_ok() {
-                bookmarks.push(bookmark);
+        for i in (0..self.bookmarks.row_count()).rev() {
+            if let Some(bookmark) = self.bookmarks.row_data(i) {
+                if !bookmark.unremovable() {
+                    break;
+                }
             }
-        });
-    }
 
-    pub fn reorder(&self, source: usize, target: usize) {
-        if let Ok(reorder) = self.repository.reorder(source, target) {
-            if reorder {
-                self.bookmarks.set_vec(self.repository.bookmarks());
-            }
-        }
-    }
-
-    pub fn on_open_internal(&self, callback: impl FnMut(FileModel) + 'static) {
-        *self.open_internal_callback.borrow_mut() = Box::new(callback);
-    }
-
-    pub fn first_bookmark_path(&self) -> Option<String> {
-        if self.bookmarks.row_count() > 0 {
-            return self.bookmarks.row_data(0).map(|b| b.path().to_string());
+            insert_index = i;
         }
 
-        None
+        self.bookmarks.insert(insert_index, bookmark);
+        self.save();
     }
 
-    pub fn execute_item_context_menu_action(&self, index: usize, spec: &str) {
-        if !spec.eq(context_menu::REMOVE_BOOKMARK) {
+    pub fn execute_drop(&self, source: usize, target: usize) {
+        if self.bookmarks.row_count() == 0 || source == target {
             return;
         }
 
-        if let Some(bookmark) = self.bookmarks.row_data(index) {
+        if let Some(bookmark) = self.bookmarks.row_data(source) {
             if bookmark.unremovable() {
                 return;
             }
         }
 
-        if self.repository.remove_bookmark(index).is_ok() {
-            self.bookmarks.remove(index);
-        }
-    }
-
-    pub fn get_item_context_menu(&self, index: usize) -> ModelRc<ListViewItem> {
-        if let Some(bookmark) = self.bookmarks.row_data(index) {
+        if let Some(bookmark) = self.bookmarks.row_data(target) {
             if bookmark.unremovable() {
-                return Rc::new(VecModel::default()).into();
+                return;
             }
         }
 
-        VecModel::from_slice(&[ListViewItem {
-            text: "Remove".into(),
-            spec: context_menu::REMOVE_BOOKMARK.into(),
-            ..Default::default()
-        }])
+        let source_item = self.bookmarks.remove(source);
+        self.bookmarks.insert(target, source_item);
+        self.save();
     }
 
-    pub fn open_dir(&self, item: usize) {
+    pub fn execute_context_menu_action(&self, index: usize, spec: &str) {
+        if !spec.eq(context_menu::REMOVE_BOOKMARK) {
+            return;
+        }
+
+        self.remove(index);
+    }
+
+    pub fn open(&self, item: usize) {
         if let Some(bookmark) = self.bookmarks.row_data(item) {
-            let mut r: std::cell::RefMut<'_, Box<dyn FnMut(FileModel)>> =
-                self.open_internal_callback.try_borrow_mut().unwrap();
-            r(FileModel::new(bookmark.path()));
+            self.open_callback
+                .invoke(&(FileModel::new(bookmark.path())));
         }
     }
 
-    pub fn open_next_dir(&self) {
+    pub fn next(&self) {
         if let Some(selected_bookmark) = self.selected_bookmark.get() {
             if selected_bookmark + 1 < self.bookmarks.row_count() {
-                self.open_dir(selected_bookmark + 1);
+                self.open(selected_bookmark + 1);
             } else {
-                self.open_dir(0);
+                self.open(0);
             }
         }
     }
 
-    pub fn open_previous_dir(&self) {
+    pub fn previous(&self) {
         if let Some(selected_bookmark) = self.selected_bookmark.get() {
             if selected_bookmark > 0 {
-                self.open_dir(selected_bookmark - 1);
+                self.open(selected_bookmark - 1);
             }
         }
     }
@@ -162,18 +181,48 @@ impl<T: BookmarksRepository + 'static> BookmarksController<T> {
     }
 
     pub fn update(&self) {
-        let bookmarks = self.bookmarks.clone();
-        let repository = self.repository.clone();
+        let row_count = self.bookmarks.row_count();
 
-        let _ = slint::spawn_local(async move {
-            for r in (0..bookmarks.row_count()).rev() {
-                if let Some(bookmark) = bookmarks.row_data(r) {
-                    if !repository.exists(&bookmark) && repository.remove_bookmark(r).is_ok() {
-                        bookmarks.remove(r);
-                    }
+        for i in (0..row_count).rev() {
+            if let Some(bookmark) = self.bookmarks.row_data(i) {
+                if !self.repository.exists(&bookmark) {
+                    self.bookmarks.remove(i);
                 }
             }
+        }
+
+        if self.bookmarks.row_count() < row_count {
+            self.save();
+        }
+    }
+
+    pub fn on_open(&self, mut callback: impl FnMut(FileModel) + 'static) {
+        self.open_callback.on(move |file| {
+            callback(file.clone());
         });
+    }
+
+    fn remove(&self, index: usize) {
+        if let Some(bookmark) = self.bookmarks.row_data(index) {
+            if bookmark.unremovable() {
+                return;
+            }
+        }
+
+        self.bookmarks.remove(index);
+        self.save();
+    }
+
+    fn save(&self) {
+        let mut bookmarks = vec![];
+
+        for i in 0..self.bookmarks.row_count() {
+            if let Some(bookmark) = self.bookmarks.row_data(i) {
+                bookmarks.push(bookmark);
+            }
+        }
+
+        let _ = self.repository.save(&bookmarks);
     }
 }
 
@@ -242,25 +291,35 @@ mod tests {
     }
 
     #[test]
-    fn test_reorder() {
+    fn test_drop() {
         let controller = controller();
-        let bookmarks_model = controller.bookmarks();
-        let repository = BookmarksRepositoryMock::new(bookmarks());
 
-        repository.reorder(0, 2).unwrap();
-        controller.reorder(0, 2);
-        let bookmarks = repository.bookmarks();
-        assert_model(&bookmarks_model, &bookmarks);
+        controller.execute_drop(0, 2);
+        assert_eq!(controller.bookmarks.row_data(1).unwrap().name(), "Pictures");
+        assert_eq!(
+            controller.bookmarks.row_data(2).unwrap().name(),
+            "Documents"
+        );
 
-        repository.reorder(3, 1).unwrap();
-        controller.reorder(3, 1);
-        let bookmarks = repository.bookmarks();
-        assert_model(&bookmarks_model, &bookmarks);
+        controller.execute_drop(2, 1);
+        assert_eq!(
+            controller.bookmarks.row_data(1).unwrap().name(),
+            "Documents"
+        );
+        assert_eq!(controller.bookmarks.row_data(2).unwrap().name(), "Pictures");
 
-        repository.reorder(3, 3).unwrap();
-        controller.reorder(3, 3);
-        let bookmarks = repository.bookmarks();
-        assert_model(&bookmarks_model, &bookmarks);
+        controller.execute_drop(1, 1);
+        assert_eq!(
+            controller.bookmarks.row_data(1).unwrap().name(),
+            "Documents"
+        );
+
+        controller.execute_drop(3, 1);
+        assert_eq!(
+            controller.bookmarks.row_data(1).unwrap().name(),
+            "Documents"
+        );
+        assert_eq!(controller.bookmarks.row_data(3).unwrap().name(), "Root");
     }
 
     #[test]
@@ -274,7 +333,7 @@ mod tests {
         let controller = controller();
         let bookmarks_model = controller.bookmarks();
 
-        controller.execute_item_context_menu_action(0, context_menu::REMOVE_BOOKMARK);
+        controller.execute_context_menu_action(0, context_menu::REMOVE_BOOKMARK);
         assert_eq!(
             bookmarks_model.row_data(0),
             Some(BookmarkModel::new(
@@ -285,7 +344,7 @@ mod tests {
             ))
         );
 
-        controller.execute_item_context_menu_action(2, context_menu::REMOVE_BOOKMARK);
+        controller.execute_context_menu_action(2, context_menu::REMOVE_BOOKMARK);
         assert_eq!(
             bookmarks_model.row_data(2),
             Some(BookmarkModel::new(
@@ -300,14 +359,14 @@ mod tests {
     #[test]
     fn test_get_item_context_menu() {
         let controller = controller();
-        let context_menu_model = controller.get_item_context_menu(0);
+        let context_menu_model = controller.context_menu(0);
 
         assert_eq!(
             &context_menu_model.row_data(0).unwrap().spec,
             context_menu::REMOVE_BOOKMARK
         );
 
-        let context_menu_model = controller.get_item_context_menu(3);
+        let context_menu_model = controller.context_menu(3);
         assert_eq!(context_menu_model.row_count(), 0);
     }
 
@@ -315,31 +374,31 @@ mod tests {
     fn test_open_dir() {
         let controller = controller();
 
-        controller.on_open_internal(|file_model| {
+        controller.on_open(|file_model| {
             assert_eq!(file_model.path(), "/documents");
         });
-        controller.open_dir(0);
+        controller.open(0);
     }
 
     #[test]
     fn test_open_next_dir() {
         let controller = controller();
 
-        controller.on_open_internal(|file_model| {
+        controller.on_open(|file_model| {
             assert_eq!(file_model.path(), "/games");
         });
         controller.select("/documents");
-        controller.open_next_dir();
+        controller.next();
     }
 
     #[test]
     fn test_open_previous_dir() {
         let controller = controller();
 
-        controller.on_open_internal(|file_model| {
+        controller.on_open(|file_model| {
             assert_eq!(file_model.path(), "/pictures");
         });
         controller.select("/");
-        controller.open_previous_dir();
+        controller.previous();
     }
 }

@@ -13,40 +13,17 @@ export global BookmarksAdapter {
     callback open-dir(/* index */ int);
     callback open-previous-dir();
     callback open-next-dir();
-    callback get-item-context-menu(/* index */ int) -> [ListViewItem];
-    callback item-context-menu-action(/* index */ int, /* spec */ string);
+    callback context-menu(/* index */ int) -> [ListViewItem];
+    callback context-menu-action(/* index */ int, /* spec */ string);
     callback selected-item() -> int;
-    callback reorder(/* source */ int, /* target */ int);
+    callback drop(/* source */ int, /* target */ int);
 }
 
 export component BookmarksView {
     in property <length> window-height;
-
     callback item-clicked();
-
     private property <int> item-context-menu-item-index;
     private property <int> selected-item;
-
-    function open-item-context-menu(index: int, position: Point) {
-        i-context-menu.model = BookmarksAdapter.get-item-context-menu(index);
-
-        if (i-context-menu.model.length == 0) {
-            return;
-        }
-
-        root.item-context-menu-item-index = index;
-        i-context-menu.x = position.x;
-
-        // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
-        i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
-            position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
-
-        if (i-list-view.has-focus) {
-            i-context-menu.show-and-focus();
-        } else {
-            i-context-menu.show();
-        }
-    }
 
     forward-focus: i-list-view;
 
@@ -57,7 +34,7 @@ export component BookmarksView {
 
         i-context-menu := ContextMenu {
             item-clicked(row) => {
-                BookmarksAdapter.item-context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
+                BookmarksAdapter.context-menu-action(root.item-context-menu-item-index, self.model[row].spec);
             }
 
             closed => {
@@ -104,7 +81,28 @@ export component BookmarksView {
         }
 
         drop-event(event) => {
-            BookmarksAdapter.reorder(event.source, event.target);
+            BookmarksAdapter.drop(event.source, event.target);
+        }
+    }
+
+    function open-item-context-menu(index: int, position: Point) {
+        i-context-menu.model = BookmarksAdapter.context-menu(index);
+
+        if (i-context-menu.model.length == 0) {
+            return;
+        }
+
+        root.item-context-menu-item-index = index;
+        i-context-menu.x = position.x;
+
+        // FIXME: remove this hacky workaround after there is a solution for slint winit PopupWindows
+        i-context-menu.y = Size.large + position.y + i-context-menu.model.length * Size.small > root.window-height ?
+            position.y + root.window-height - (Size.large + position.y + i-context-menu.model.length * Size.small) : position.y;
+
+        if (i-list-view.has-focus) {
+            i-context-menu.show-and-focus();
+        } else {
+            i-context-menu.show();
         }
     }
 }

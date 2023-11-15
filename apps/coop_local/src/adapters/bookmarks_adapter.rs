@@ -11,7 +11,7 @@ use crate::{
 };
 use slint::*;
 
-pub fn connect<T: BookmarksRepository>(
+pub fn connect_with_controller<T: BookmarksRepository>(
     view_handle: &Weak<MainWindow>,
     controller: &Rc<BookmarksController<T>>,
     func: impl FnOnce(BookmarksAdapter, Rc<BookmarksController<T>>) + 'static,
@@ -46,4 +46,47 @@ fn bookmark_type_to_icon(view_handle: &Weak<MainWindow>, bookmark_type: Bookmark
     }
 
     Image::default()
+}
+
+pub fn connect<T: BookmarksRepository + 'static>(
+    view_handle: &Weak<MainWindow>,
+    controller: &Rc<BookmarksController<T>>,
+) {
+    connect_with_controller(view_handle, controller, {
+        let view_handle = view_handle.clone();
+        move |adapter, controller| {
+            adapter.set_bookmarks(map_bookmarks(view_handle, controller.bookmarks()));
+        }
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_open_dir(move |item| {
+            controller.open(item as usize);
+        });
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_open_next_dir(move || {
+            controller.next();
+        });
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_open_previous_dir(move || {
+            controller.previous();
+        });
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_context_menu(move |index| controller.context_menu(index as usize));
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_context_menu_action(move |index, spec| {
+            controller.execute_context_menu_action(index as usize, spec.as_str());
+        });
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_selected_item(move || controller.selected_item());
+    });
+    connect_with_controller(view_handle, controller, |adapter, controller| {
+        adapter.on_drop(move |source, target| {
+            controller.execute_drop(source as usize, target as usize);
+        });
+    });
 }

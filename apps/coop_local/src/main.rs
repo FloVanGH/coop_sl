@@ -33,76 +33,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
     let bookmarks_repository = BookmarksRepository::new(settings_service);
     let bookmarks_controller = Rc::new(BookmarksController::new(bookmarks_repository));
 
-    bookmarks_adapter::connect(&view_handle, &bookmarks_controller, {
-        let view_handle = view_handle.clone();
-        move |adapter, controller| {
-            adapter.set_bookmarks(bookmarks_adapter::map_bookmarks(
-                view_handle,
-                controller.bookmarks(),
-            ));
-        }
-    });
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_open_dir(move |item| {
-                controller.open_dir(item as usize);
-            });
-        },
-    );
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_open_next_dir(move || {
-                controller.open_next_dir();
-            });
-        },
-    );
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_open_previous_dir(move || {
-                controller.open_previous_dir();
-            });
-        },
-    );
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_get_item_context_menu(move |index| {
-                controller.get_item_context_menu(index as usize)
-            });
-        },
-    );
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_item_context_menu_action(move |index, spec| {
-                controller.execute_item_context_menu_action(index as usize, spec.as_str());
-            });
-        },
-    );
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_selected_item(move || controller.selected_item());
-        },
-    );
-    bookmarks_adapter::connect(
-        &view_handle,
-        &bookmarks_controller,
-        |adapter, controller| {
-            adapter.on_reorder(move |source, target| {
-                controller.reorder(source as usize, target as usize);
-            });
-        },
-    );
+    bookmarks_adapter::connect(&view_handle, &bookmarks_controller);
 
     let initial_location = if let Some(bookmark) = bookmarks_controller.first_bookmark_path() {
         bookmark
@@ -176,7 +107,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
             #[cfg(feature = "games")]
             if let Ok(is_games) = games_repository.is_games_dir(file_model.path()) {
                 if is_games {
-                    bookmarks_controller.add_bookmark(BookmarkModel::new(
+                    bookmarks_controller.add(BookmarkModel::new(
                         coop_local::models::BookmarkType::Game,
                         file_model.name().unwrap_or_default(),
                         file_model.path(),
@@ -185,7 +116,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
                     return;
                 }
             }
-            bookmarks_controller.add_bookmark(BookmarkModel::new(
+            bookmarks_controller.add(BookmarkModel::new(
                 coop_local::models::BookmarkType::Dir,
                 file_model.name().unwrap_or_default(),
                 file_model.path(),
@@ -234,68 +165,8 @@ pub fn main() -> Result<(), slint::PlatformError> {
     // text controller
     let text_input_controller = Rc::new(TextEditorController::new(TextEditorRepository::new()));
 
-    text_editor_adapter::connect(
-        &view_handle,
-        &text_input_controller,
-        |adapter, controller| {
-            adapter.on_update_text(move |text| controller.update_text(text.as_str()));
-        },
-    );
-    text_editor_adapter::connect(
-        &view_handle,
-        &text_input_controller,
-        |adapter, controller| {
-            adapter.on_get_context_menu(move || controller.get_context_menu());
-        },
-    );
-    text_editor_adapter::connect(
-        &view_handle,
-        &text_input_controller,
-        |adapter, controller| {
-            adapter.on_context_menu_action({
-                move |spec| controller.execute_context_menu_action(spec.as_str(), true)
-            });
-        },
-    );
-    text_editor_adapter::connect(
-        &view_handle,
-        &text_input_controller,
-        |adapter, controller| {
-            adapter.on_next(move || controller.next(true));
-        },
-    );
-    text_editor_adapter::connect(
-        &view_handle,
-        &text_input_controller,
-        |adapter, controller| {
-            adapter.on_previous(move || controller.previous(true));
-        },
-    );
-    text_editor_adapter::connect(
-        &view_handle,
-        &text_input_controller,
-        |adapter, controller| {
-            adapter.on_back(move || controller.invoke_back());
-        },
-    );
-    text_input_controller.on_loading_changed({
-        let view_handle = view_handle.clone();
-        move |loading| {
-            text_editor_adapter::set_loading(&view_handle, *loading);
-        }
-    });
-    text_input_controller.on_single_text_changed({
-        let view_handle = view_handle.clone();
-        move |is_single_text| {
-            text_editor_adapter::set_is_single_text(&view_handle, *is_single_text);
-        }
-    });
-    text_input_controller.on_current_model_changed({
-        let view_handle = view_handle.clone();
-        move |model| {
-            text_editor_adapter::set_model(&view_handle, model);
-        }
-    });
+    text_editor_adapter::connect(&view_handle, &text_input_controller);
+
     text_input_controller.on_back(back.clone());
     text_input_controller.on_show_about(on_show_about.clone());
 
@@ -369,7 +240,7 @@ pub fn main() -> Result<(), slint::PlatformError> {
     };
 
     files_controller.on_open_internal(open_internal.clone());
-    bookmarks_controller.on_open_internal(open_internal.clone());
+    bookmarks_controller.on_open(open_internal.clone());
 
     let update_timer = Timer::default();
     update_timer.start(

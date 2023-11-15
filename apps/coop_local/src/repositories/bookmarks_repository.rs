@@ -7,98 +7,51 @@ use crate::{
     services::SettingsService,
 };
 use serde::{Deserialize, Serialize};
-use std::{
-    io,
-    path::Path,
-    sync::{Arc, Mutex},
-};
+use std::{io, path::Path};
 
 const BOOKMARKS: &str = "bookmarks";
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq, Eq)]
 pub struct BookmarksVec {
-    bookmarks: Vec<BookmarkModel>,
+    items: Vec<BookmarkModel>,
 }
 
 pub struct BookmarksRepository {
     settings_service: SettingsService,
-    bookmarks: Arc<Mutex<BookmarksVec>>,
 }
 
 impl BookmarksRepository {
     pub fn new(settings_service: SettingsService) -> Self {
-        let mut bookmarks = if let Ok(bookmarks) = settings_service.load::<BookmarksVec>(BOOKMARKS)
-        {
-            bookmarks
-        } else {
-            BookmarksVec::default()
-        };
-
-        if bookmarks.bookmarks.is_empty() {
-            bookmarks.bookmarks.push(root());
-
-            if let Some(volumes) = volumes() {
-                bookmarks.bookmarks.push(volumes);
-            }
-        }
-
-        Self {
-            settings_service,
-            bookmarks: Arc::new(Mutex::new(bookmarks)),
-        }
+        Self { settings_service }
     }
 }
 
 impl traits::BookmarksRepository for BookmarksRepository {
-    fn add_bookmark(&self, bookmark: BookmarkModel) -> io::Result<()> {
-        let mut bookmark_vec = self
-            .bookmarks
-            .lock()
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
-        bookmark_vec.bookmarks.push(bookmark);
-        self.settings_service.save(BOOKMARKS, &*bookmark_vec)
-    }
+    fn load(&self) -> Vec<BookmarkModel> {
+        let mut bookmarks =
+            if let Ok(bookmarks) = self.settings_service.load::<BookmarksVec>(BOOKMARKS) {
+                bookmarks
+            } else {
+                BookmarksVec::default()
+            };
 
-    fn reorder(&self, source: usize, target: usize) -> io::Result<bool> {
-        if source == target {
-            return Ok(false);
+        if bookmarks.items.is_empty() {
+            bookmarks.items.push(root());
+
+            if let Some(volumes) = volumes() {
+                bookmarks.items.push(volumes);
+            }
         }
 
-        let mut bookmark_vec = self
-            .bookmarks
-            .lock()
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
-
-        if source >= bookmark_vec.bookmarks.len() || target >= bookmark_vec.bookmarks.len() {
-            return Ok(false);
-        }
-
-        let bookmark = bookmark_vec.bookmarks.remove(source);
-        bookmark_vec.bookmarks.insert(target, bookmark);
-
-        self.settings_service.save(BOOKMARKS, &*bookmark_vec)?;
-
-        Ok(true)
+        bookmarks.items
     }
 
-    fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel> {
-        let mut bookmark_vec = self
-            .bookmarks
-            .lock()
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e.to_string()))?;
-        let removed_bookmark = bookmark_vec.bookmarks.remove(index);
+    fn save(&self, bookmarks: &[BookmarkModel]) -> io::Result<()> {
+        let bookmarks_vec = BookmarksVec {
+            items: bookmarks.to_vec(),
+        };
 
-        self.settings_service.save(BOOKMARKS, &*bookmark_vec)?;
-
-        Ok(removed_bookmark)
-    }
-
-    fn bookmarks(&self) -> Vec<BookmarkModel> {
-        if let Ok(bookmarks) = self.bookmarks.lock() {
-            return bookmarks.bookmarks.clone();
-        }
-
-        vec![]
+        self.settings_service.save(BOOKMARKS, &bookmarks_vec)
     }
 
     fn exists(&self, bookmark: &BookmarkModel) -> bool {

@@ -5,9 +5,7 @@ use crate::models::BookmarkModel;
 use std::io;
 
 pub trait BookmarksRepository {
-    fn add_bookmark(&self, bookmark: BookmarkModel) -> io::Result<()>;
-    fn remove_bookmark(&self, index: usize) -> io::Result<BookmarkModel>;
-    fn reorder(&self, source: usize, target: usize) -> io::Result<bool>;
-    fn bookmarks(&self) -> Vec<BookmarkModel>;
+    fn load(&self) -> Vec<BookmarkModel>;
+    fn save(&self, bookmarks: &[BookmarkModel]) -> io::Result<()>;
     fn exists(&self, bookmark: &BookmarkModel) -> bool;
 }

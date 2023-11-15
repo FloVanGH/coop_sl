@@ -127,7 +127,7 @@ impl<T: TextEditorRepository + Clone + Send + Sync + 'static> TextEditorControll
         }
     }
 
-    pub fn get_context_menu(&self) -> ModelRc<ListViewItem> {
+    pub fn context_menu(&self) -> ModelRc<ListViewItem> {
         let items = VecModel::default();
 
         if let Some(current_text) = self.model.current_file() {
@@ -424,7 +424,7 @@ mod tests {
         let controller = TextEditorController::new(repository);
         controller.load(FileModel::new("/text.txt"), true, false);
 
-        let context_menu_model = controller.get_context_menu();
+        let context_menu_model = controller.context_menu();
 
         assert_eq!(
             context_menu_model.row_data(0).unwrap().spec,
@@ -436,7 +436,7 @@ mod tests {
         );
 
         assert!(controller.update_text("text_update"));
-        let context_menu_model = controller.get_context_menu();
+        let context_menu_model = controller.context_menu();
 
         assert_eq!(
             context_menu_model.row_data(0).unwrap().spec,
